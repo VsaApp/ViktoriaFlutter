@@ -6,6 +6,7 @@ import 'Color.dart';
 import 'Keys.dart';
 import 'views/Home.dart';
 import 'views/Login.dart';
+import 'views/Loading.dart';
 
 void main() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -22,8 +23,8 @@ void main() async {
     title: 'ViktoriaFlutter',
     theme: ThemeData(
       brightness: Brightness.light,
-      primaryColor: getColorHexFromStr('#5bc638'),
-      accentColor: getColorHexFromStr('#67a744'),
+      primaryColor: getColorHexFromStr('#67a744'),
+      accentColor: getColorHexFromStr('#5bc638'),
     ),
     localizationsDelegates: [
       const AppLocalizationsDelegate(),
@@ -35,7 +36,8 @@ void main() async {
     ],
     initialRoute: _initialRoute,
     routes: <String, WidgetBuilder>{
-      '/': (BuildContext context) => new HomePage(),
+      '/': (BuildContext context) => new LoadingPage(),
+      '/home': (BuildContext context) => new HomePage(),
       '/login': (BuildContext context) => new LoginPage()
     },
   ));

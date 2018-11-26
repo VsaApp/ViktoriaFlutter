@@ -79,6 +79,7 @@ class HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(drawerItems[_selectedDrawerIndex].title),
+        elevation: 0.0,
       ),
       drawer: Drawer(
         child: ListView(

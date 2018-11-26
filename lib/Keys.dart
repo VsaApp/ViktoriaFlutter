@@ -14,4 +14,8 @@ class Keys {
   static String get isTeacher {
     return 'isTeacher';
   }
+
+  static String get unitPlan {
+    return 'unitPlan-';
+  }
 }
