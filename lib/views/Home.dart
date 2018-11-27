@@ -57,8 +57,8 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     List<DrawerItem> drawerItems = [
-      DrawerItem(AppLocalizations.of(context).unitPlan, Icons.grid_on),
-      DrawerItem(AppLocalizations.of(context).replacementPlan, Icons.grid_off),
+      DrawerItem(AppLocalizations.of(context).unitPlan, Icons.event_note),
+      DrawerItem(AppLocalizations.of(context).replacementPlan, Icons.format_list_numbered),
     ];
     var drawerOptions = <Widget>[];
     for (var i = 0; i < drawerItems.length; i++) {
