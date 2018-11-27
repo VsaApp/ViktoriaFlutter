@@ -111,6 +111,7 @@ class LoginView extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    precacheImage(AssetImage('assets/images/logo.png'), context);
     return Scaffold(
       body: Container(
         margin: EdgeInsets.all(10.0),

@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/UnitPlan.dart';
 import '../Keys.dart';
 
 Future download() async {
@@ -35,50 +36,5 @@ Future<List<UnitPlanDay>> fetchDays() async {
 
 List<UnitPlanDay> parseDays(String responseBody) {
   final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
-
   return parsed.map<UnitPlanDay>((json) => UnitPlanDay.fromJson(json)).toList();
-}
-
-class UnitPlanDay {
-  final String name;
-  final List<UnitPlanLesson> lessons;
-
-  UnitPlanDay({this.name, this.lessons});
-
-  factory UnitPlanDay.fromJson(Map<String, dynamic> json) {
-    return UnitPlanDay(
-      name: json['name'] as String,
-      lessons: json['lessons'].cast<UnitPlanLesson>(),
-    );
-  }
-}
-
-class UnitPlanLesson {
-  final List<UnitPlanSubject> subjects;
-
-  UnitPlanLesson({this.subjects});
-
-  factory UnitPlanLesson.fromJson(Map<String, dynamic> json) {
-    return UnitPlanLesson(
-      subjects: json as List<UnitPlanSubject>,
-    );
-  }
-}
-
-class UnitPlanSubject {
-  final String teacher;
-  final String lesson;
-  final String room;
-  final String block;
-
-  UnitPlanSubject({this.teacher, this.lesson, this.room, this.block});
-
-  factory UnitPlanSubject.fromJson(Map<String, dynamic> json) {
-    return UnitPlanSubject(
-      teacher: json['teacher'] as String,
-      lesson: json['lesson'] as String,
-      room: json['room'] as String,
-      block: json['block'] as String,
-    );
-  }
 }

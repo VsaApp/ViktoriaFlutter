@@ -23,7 +23,8 @@ class AppLocalizations {
       'username': 'Nutzername',
       'password': 'Passwort',
       'notImplementedYet': 'Diese Funktion gibt es bislang noch nicht',
-      'credentialsNotCorrect': 'Nutzername oder Passwort falsch'
+      'credentialsNotCorrect': 'Nutzername oder Passwort falsch',
+      'lunchBreak': 'Mittagspause'
     },
   };
 
@@ -73,6 +74,10 @@ class AppLocalizations {
 
   String get credentialsNotCorrect {
     return _localizedValues[locale.languageCode]['credentialsNotCorrect'];
+  }
+
+  String get lunchBreak {
+    return _localizedValues[locale.languageCode]['lunchBreak'];
   }
 }
 
