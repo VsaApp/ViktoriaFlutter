@@ -3,6 +3,7 @@ import '../data/UnitPlan.dart';
 import '../models/UnitPlan.dart';
 import '../Times.dart';
 import '../Localizations.dart';
+import '../Subjects.dart';
 
 class UnitPlanPage extends StatefulWidget {
   @override
@@ -116,7 +117,7 @@ class UnitPlaRow extends StatelessWidget {
               Container(
                 width: constraints.maxWidth / 10,
                 child: Text(
-                  (unit + 1).toString(),
+                  (unit != 5 ? (unit + 1).toString() : ''),
                   style: TextStyle(
                     color: Colors.black54,
                   ),
@@ -125,20 +126,29 @@ class UnitPlaRow extends StatelessWidget {
               Column(
                 children: <Widget>[
                   Container(
-                    width: constraints.maxWidth / 10 * 8,
-                    child: Text(
-                      subject.lesson,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15.0,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
+                    width: constraints.maxWidth / 10 * 7.5,
+                    child: (unit != 5
+                        ? Text(
+                            getSubject(subject.lesson),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15.0,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          )
+                        : Center(
+                            child: Text(
+                              getSubject(subject.lesson),
+                              style: TextStyle(
+                                fontSize: 15.0,
+                              ),
+                            ),
+                          )),
                   ),
                   Container(
-                    width: constraints.maxWidth / 10 * 8,
+                    width: constraints.maxWidth / 10 * 7.5,
                     child: Text(
-                      times[unit],
+                      (unit != 5 ? times[unit] : ''),
                       style: TextStyle(
                         color: Colors.black54,
                       ),
@@ -149,11 +159,11 @@ class UnitPlaRow extends StatelessWidget {
               Column(
                 children: <Widget>[
                   Container(
-                    width: constraints.maxWidth / 10,
+                    width: constraints.maxWidth / 10 * 1.5,
                     child: Text(teacher),
                   ),
                   Container(
-                    width: constraints.maxWidth / 10,
+                    width: constraints.maxWidth / 10 * 1.5,
                     child: Text(subject.room),
                   ),
                 ],
