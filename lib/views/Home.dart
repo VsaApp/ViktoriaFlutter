@@ -4,6 +4,7 @@ import '../Localizations.dart';
 import '../Keys.dart';
 import 'UnitPlan.dart';
 import 'ReplacementPlan.dart';
+import 'Settings.dart';
 
 class DrawerItem {
   String title;
@@ -44,6 +45,8 @@ class HomePageState extends State<HomePage> {
         return UnitPlanPage();
       case 1:
         return ReplacementPlanPage();
+      case 2:
+        return SettingsPage();
       default:
         return Text('Error');
     }
@@ -58,7 +61,9 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     List<DrawerItem> drawerItems = [
       DrawerItem(AppLocalizations.of(context).unitPlan, Icons.event_note),
-      DrawerItem(AppLocalizations.of(context).replacementPlan, Icons.format_list_numbered),
+      DrawerItem(AppLocalizations.of(context).replacementPlan,
+          Icons.format_list_numbered),
+      DrawerItem(AppLocalizations.of(context).settings, Icons.settings),
     ];
     var drawerOptions = <Widget>[];
     for (var i = 0; i < drawerItems.length; i++) {

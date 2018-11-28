@@ -24,7 +24,10 @@ class AppLocalizations {
       'password': 'Passwort',
       'notImplementedYet': 'Diese Funktion gibt es bislang noch nicht',
       'credentialsNotCorrect': 'Nutzername oder Passwort falsch',
-      'lunchBreak': 'Mittagspause'
+      'lunchBreak': 'Mittagspause',
+      'settings': 'Einstellungen',
+      'personalData': 'Persönliche Daten',
+      'logout': 'Abmelden'
     },
   };
 
@@ -78,6 +81,18 @@ class AppLocalizations {
 
   String get lunchBreak {
     return _localizedValues[locale.languageCode]['lunchBreak'];
+  }
+
+  String get settings {
+    return _localizedValues[locale.languageCode]['settings'];
+  }
+
+  String get personalData {
+    return _localizedValues[locale.languageCode]['personalData'];
+  }
+
+  String get logout {
+    return _localizedValues[locale.languageCode]['logout'];
   }
 }
 
