@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_svg/svg.dart';
 import '../Localizations.dart';
 import '../Keys.dart';
 
@@ -111,17 +112,16 @@ class LoginView extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    precacheImage(AssetImage('assets/images/logo.png'), context);
     return Scaffold(
       body: Container(
         margin: EdgeInsets.all(10.0),
         child: ListView(
           children: <Widget>[
             Container(
+              height: 125.0,
               margin: EdgeInsets.only(bottom: 5.0),
-              child: Image.asset(
-                'assets/images/logo.png',
-                height: 125.0,
+              child: SvgPicture.asset(
+                'assets/images/logo.svg',
               ),
             ),
             Center(

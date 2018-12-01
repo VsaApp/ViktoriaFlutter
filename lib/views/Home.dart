@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_svg/svg.dart';
 import '../Localizations.dart';
 import '../Keys.dart';
 import 'UnitPlan.dart';
@@ -94,10 +95,9 @@ class HomePageState extends State<HomePage> {
               child: Column(
                 children: <Widget>[
                   Container(
-                    child: Image.asset(
-                      'assets/images/logo_white.png',
-                      height: 100.0,
-                      fit: BoxFit.cover,
+                    height: 100.0,
+                    child: SvgPicture.asset(
+                      'assets/images/logo_white.svg',
                     ),
                   ),
                   Text(
