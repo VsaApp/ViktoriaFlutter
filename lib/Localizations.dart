@@ -27,7 +27,8 @@ class AppLocalizations {
       'lunchBreak': 'Mittagspause',
       'settings': 'Einstellungen',
       'personalData': 'Persönliche Daten',
-      'logout': 'Abmelden'
+      'logout': 'Abmelden',
+      'freeLesson': 'Freistunde'
     },
   };
 
@@ -93,6 +94,10 @@ class AppLocalizations {
 
   String get logout {
     return _localizedValues[locale.languageCode]['logout'];
+  }
+
+  String get freeLesson {
+    return _localizedValues[locale.languageCode]['freeLesson'];
   }
 }
 

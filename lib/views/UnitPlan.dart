@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../data/UnitPlan.dart';
 import '../models/UnitPlan.dart';
 import '../Times.dart';
 import '../Localizations.dart';
 import '../Subjects.dart';
+import '../Keys.dart';
 
 class UnitPlanPage extends StatefulWidget {
   @override
@@ -30,22 +32,44 @@ class UnitPlanView extends State<UnitPlanPage> {
   }
 }
 
-class UnitPlanDayList extends StatelessWidget {
+class UnitPlanDayList extends StatefulWidget {
   final List<UnitPlanDay> days;
 
   UnitPlanDayList({Key key, this.days}) : super(key: key);
 
   @override
+  UnitPlanDayListState createState() => UnitPlanDayListState();
+}
+
+class UnitPlanDayListState extends State<UnitPlanDayList> {
+  SharedPreferences sharedPreferences;
+  String _grade = '';
+
+  @override
+  void initState() {
+    SharedPreferences.getInstance().then((instance) {
+      setState(() {
+        sharedPreferences = instance;
+        _grade = sharedPreferences.getString(Keys.grade);
+      });
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (sharedPreferences == null) {
+      return Container();
+    }
     return DefaultTabController(
-      length: days.length,
+      length: widget.days.length,
       child: Expanded(
         child: Scaffold(
           backgroundColor: Theme.of(context).primaryColor,
           appBar: TabBar(
             indicatorColor: Theme.of(context).accentColor,
             indicatorWeight: 2.5,
-            tabs: days.map((day) {
+            tabs: widget.days.map((day) {
               return Container(
                 padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
                 child: Text(day.name.substring(0, 2).toUpperCase()),
@@ -53,7 +77,7 @@ class UnitPlanDayList extends StatelessWidget {
             }).toList(),
           ),
           body: TabBarView(
-            children: days.map((day) {
+            children: widget.days.map((day) {
               return Container(
                 width: double.infinity,
                 height: double.infinity,
@@ -63,15 +87,87 @@ class UnitPlanDayList extends StatelessWidget {
                   shrinkWrap: true,
                   children: day.lessons.map((lesson) {
                     if (lesson.subjects.length > 0) {
-                      UnitPlanSubject subject =
-                          lesson.subjects[lesson.selected];
-                      return UnitPlaRow(
-                        subject: subject,
-                        unit: day.lessons.indexOf(lesson),
+                      if ((_grade == 'EF' ||
+                              _grade == 'Q1' ||
+                              _grade == 'Q2') &&
+                          lesson.subjects.length > 0 &&
+                          lesson.subjects[lesson.subjects.length - 1].lesson !=
+                              AppLocalizations.of(context).freeLesson) {
+                        lesson.subjects.add(UnitPlanSubject(
+                            teacher: '',
+                            lesson: AppLocalizations.of(context).freeLesson,
+                            room: '',
+                            block: lesson.subjects[0].block));
+                      }
+                      int _selected = sharedPreferences.getInt(Keys.unitPlan +
+                          _grade +
+                          '-' +
+                          (lesson.subjects[0].block == null
+                              ? widget.days.indexOf(day).toString() +
+                                  '-' +
+                                  day.lessons.indexOf(lesson).toString()
+                              : lesson.subjects[0].block));
+                      if (_selected == null) {
+                        _selected = 0;
+                      }
+                      return GestureDetector(
+                        onTap: () {
+                          if (lesson.subjects.length > 1) {
+                            showDialog<String>(
+                                context: context,
+                                barrierDismissible: true,
+                                builder: (BuildContext context1) {
+                                  return SimpleDialog(
+                                    title: Text(AppLocalizations.of(context)
+                                        .pleaseSelect),
+                                    children: lesson.subjects
+                                        .map((subject) {
+                                          return SimpleDialogOption(
+                                            onPressed: () {
+                                              setState(() {
+                                                sharedPreferences.setInt(
+                                                    Keys.unitPlan +
+                                                        _grade +
+                                                        '-' +
+                                                        (lesson.subjects[0]
+                                                                    .block ==
+                                                                null
+                                                            ? widget.days
+                                                                    .indexOf(
+                                                                        day)
+                                                                    .toString() +
+                                                                '-' +
+                                                                day.lessons
+                                                                    .indexOf(
+                                                                        lesson)
+                                                                    .toString()
+                                                            : lesson.subjects[0]
+                                                                .block),
+                                                    lesson.subjects
+                                                        .indexOf(subject));
+                                                Navigator.pop(context);
+                                              });
+                                            },
+                                            child: UnitPlanRow(
+                                              subject: subject,
+                                              unit: day.lessons.indexOf(lesson),
+                                            ),
+                                          );
+                                        })
+                                        .toList()
+                                        .cast<Widget>(),
+                                  );
+                                });
+                          }
+                        },
+                        child: UnitPlanRow(
+                          subject: lesson.subjects[_selected],
+                          unit: day.lessons.indexOf(lesson),
+                        ),
                       );
                     }
                     if (day.lessons.indexOf(lesson) == 5) {
-                      return UnitPlaRow(
+                      return UnitPlanRow(
                         subject: UnitPlanSubject(
                             teacher: '',
                             lesson: AppLocalizations.of(context).lunchBreak,
@@ -92,8 +188,8 @@ class UnitPlanDayList extends StatelessWidget {
   }
 }
 
-class UnitPlaRow extends StatelessWidget {
-  const UnitPlaRow({
+class UnitPlanRow extends StatelessWidget {
+  const UnitPlanRow({
     Key key,
     this.subject,
     this.unit,

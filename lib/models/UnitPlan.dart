@@ -14,14 +14,12 @@ class UnitPlanDay {
 
 class UnitPlanLesson {
   final List<UnitPlanSubject> subjects;
-  int selected;
 
-  UnitPlanLesson({this.subjects, this.selected});
+  UnitPlanLesson({this.subjects});
 
   factory UnitPlanLesson.fromJson(List<dynamic> json) {
     return UnitPlanLesson(
       subjects: json.map((i) => UnitPlanSubject.fromJson(i)).toList(),
-      selected: 0,
     );
   }
 }
