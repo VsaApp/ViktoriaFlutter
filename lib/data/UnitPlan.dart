@@ -20,7 +20,8 @@ Future download() async {
     final response = await http.Client().get(_url);
     sharedPreferences.setString(Keys.unitPlan + _grade, response.body);
     await sharedPreferences.commit();
-  } on SocketException catch (_) {
+  } catch (e) {
+    print("Error in download: " + e.toString());
     if (sharedPreferences.getString(Keys.unitPlan + _grade) == null) {
       sharedPreferences.setString(Keys.unitPlan + _grade, '[]');
     }
