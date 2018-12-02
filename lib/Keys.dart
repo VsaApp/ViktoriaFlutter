@@ -18,4 +18,8 @@ class Keys {
   static String get unitPlan {
     return 'unitPlan-';
   }
+
+  static String get replacementPlan {
+    return 'replacementPlan-';
+  }
 }

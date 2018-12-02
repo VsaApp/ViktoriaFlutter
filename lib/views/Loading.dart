@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/UnitPlan.dart' as UnitPlan;
+import '../data/ReplacementPlan.dart' as ReplacementPlan;
 
 class LoadingPage extends StatefulWidget {
   @override
@@ -11,7 +12,7 @@ class LoadingPage extends StatefulWidget {
 class LoadingPageState extends State<LoadingPage> {
   @override
   void initState() {
-    downloadUnitPlan().then((_) {
+    downloadAll().then((_) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         Navigator.of(context).pushReplacementNamed('/home');
       });
@@ -19,8 +20,9 @@ class LoadingPageState extends State<LoadingPage> {
     super.initState();
   }
 
-  Future downloadUnitPlan() async {
+  Future downloadAll() async {
     await UnitPlan.download();
+    await ReplacementPlan.download();
   }
 
   @override

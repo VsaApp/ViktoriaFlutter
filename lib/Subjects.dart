@@ -8,6 +8,7 @@ Map<String, String> subjects = {
   'IF': 'Info',
   'S8': 'Spanisch',
   'S1': 'Spanisch',
+  'S10' : 'Spanisch',
   'MU': 'Musik',
   'SP': 'Sport',
   'F6': 'Französisch',
