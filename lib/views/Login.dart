@@ -17,6 +17,9 @@ class LoginView extends State<LoginPage> {
   final _pupilFormKey = GlobalKey<FormState>();
   final _pupilFocus = FocusNode();
   bool _pupilCredentialsCorrect = true;
+  final _teacherFormKey = GlobalKey<FormState>();
+  final _teacherFocus = FocusNode();
+  bool _teacherCredentialsCorrect = true;
   static List<String> _grades = [
     '5a',
     '5b',
@@ -40,6 +43,8 @@ class LoginView extends State<LoginPage> {
   String _grade = _grades[0];
   final _pupilUsernameController = TextEditingController();
   final _pupilPasswordController = TextEditingController();
+  final _teacherUsernameController = TextEditingController();
+  final _teacherPasswordController = TextEditingController();
 
   void checkPupilForm() async {
     String _username =
@@ -66,10 +71,32 @@ class LoginView extends State<LoginPage> {
     }
   }
 
+  void checkTeacherForm() async {
+    String _username = _teacherUsernameController.text.toUpperCase();
+    String _password = _teacherPasswordController.text;
+    final response = await http
+        .get('https://api.vsa.lohl1kohl.de/sp/' + _username + '.json');
+    _teacherCredentialsCorrect = response.statusCode != 404;
+    if (_teacherFormKey.currentState.validate()) {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      sharedPreferences.setString(Keys.username, _username);
+      sharedPreferences.setString(Keys.password, _password);
+      sharedPreferences.setString(Keys.grade, _username);
+      sharedPreferences.setBool(Keys.isTeacher, true);
+      sharedPreferences.commit();
+      Navigator.pushReplacementNamed(context, '/');
+    } else {
+      _teacherPasswordController.clear();
+    }
+  }
+
   @override
   void dispose() {
     _pupilUsernameController.dispose();
     _pupilPasswordController.dispose();
+    _teacherUsernameController.dispose();
+    _teacherPasswordController.dispose();
     super.dispose();
   }
 
@@ -159,9 +186,6 @@ class LoginView extends State<LoginPage> {
                             ),
                             TextFormField(
                               controller: _pupilUsernameController,
-                              onSaved: (value) {
-                                print(value);
-                              },
                               validator: (value) {
                                 if (value.isEmpty) {
                                   return AppLocalizations.of(context)
@@ -218,7 +242,68 @@ class LoginView extends State<LoginPage> {
                           ],
                         ),
                       )
-                    : Text(AppLocalizations.of(context).notImplementedYet)))
+                    : Form(
+                        key: _teacherFormKey,
+                        child: Column(
+                          children: <Widget>[
+                            TextFormField(
+                              controller: _teacherUsernameController,
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return AppLocalizations.of(context)
+                                      .fieldCantBeEmpty;
+                                }
+                                if (!_teacherCredentialsCorrect) {
+                                  return AppLocalizations.of(context)
+                                      .credentialsNotCorrect;
+                                }
+                              },
+                              decoration: InputDecoration(
+                                  hintText:
+                                      AppLocalizations.of(context).username),
+                              onFieldSubmitted: (value) {
+                                FocusScope.of(context)
+                                    .requestFocus(_teacherFocus);
+                              },
+                            ),
+                            TextFormField(
+                              controller: _teacherPasswordController,
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return AppLocalizations.of(context)
+                                      .fieldCantBeEmpty;
+                                }
+                                if (!_teacherCredentialsCorrect) {
+                                  return AppLocalizations.of(context)
+                                      .credentialsNotCorrect;
+                                }
+                              },
+                              decoration: InputDecoration(
+                                  hintText:
+                                      AppLocalizations.of(context).password),
+                              onFieldSubmitted: (value) {
+                                checkTeacherForm();
+                              },
+                              obscureText: true,
+                              focusNode: _teacherFocus,
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: 20.0),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: RaisedButton(
+                                  color: Theme.of(context).accentColor,
+                                  onPressed: () {
+                                    checkTeacherForm();
+                                  },
+                                  child:
+                                      Text(AppLocalizations.of(context).login),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ))),
           ],
         ),
       ),

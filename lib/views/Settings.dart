@@ -51,6 +51,9 @@ class SettingsPageView extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (sharedPreferences == null) {
+      return Container();
+    }
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -60,29 +63,31 @@ class SettingsPageView extends State<SettingsPage> {
         children: <Widget>[
           SettingsSection(
             children: <Widget>[
-              SizedBox(
-                width: double.infinity,
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    isDense: true,
-                    items: _grades.map((String value) {
-                      return new DropdownMenuItem<String>(
-                        value: value,
-                        child: new Text(value),
-                      );
-                    }).toList(),
-                    value: _grade,
-                    onChanged: (grade) async {
-                      setState(() {
-                        sharedPreferences.setString(Keys.grade, grade);
-                        sharedPreferences.commit().then((_) {
-                          Navigator.of(context).pushReplacementNamed('/');
-                        });
-                      });
-                    },
-                  ),
-                ),
-              ),
+              (sharedPreferences.getBool(Keys.isTeacher)
+                  ? Container()
+                  : SizedBox(
+                      width: double.infinity,
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          isDense: true,
+                          items: _grades.map((String value) {
+                            return new DropdownMenuItem<String>(
+                              value: value,
+                              child: new Text(value),
+                            );
+                          }).toList(),
+                          value: _grade,
+                          onChanged: (grade) async {
+                            setState(() {
+                              sharedPreferences.setString(Keys.grade, grade);
+                              sharedPreferences.commit().then((_) {
+                                Navigator.of(context).pushReplacementNamed('/');
+                              });
+                            });
+                          },
+                        ),
+                      ),
+                    )),
               Container(
                 margin: EdgeInsets.only(top: 20.0),
                 child: SizedBox(
@@ -91,7 +96,10 @@ class SettingsPageView extends State<SettingsPage> {
                     color: Theme.of(context).accentColor,
                     child: Text(AppLocalizations.of(context).logout),
                     onPressed: () async {
-                      sharedPreferences.clear();
+                      sharedPreferences.remove(Keys.username);
+                      sharedPreferences.remove(Keys.password);
+                      sharedPreferences.remove(Keys.grade);
+                      sharedPreferences.remove(Keys.isTeacher);
                       sharedPreferences.commit().then((_) {
                         Navigator.of(context).pushReplacementNamed('/login');
                       });
