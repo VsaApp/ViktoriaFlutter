@@ -119,7 +119,6 @@ class ReplacementPlanRow extends StatelessWidget {
               Container(
                 padding: EdgeInsets.only(left: constraints.maxWidth * 0.03 - 2, top: 5, bottom: 5),
                 decoration: BoxDecoration(
-                      color: getColorHexFromStr('#fafafa'),
                       border: Border(
                           left: BorderSide(width: 2, color: Theme.of(context).primaryColor),
                       ),
