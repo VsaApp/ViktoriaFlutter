@@ -56,15 +56,47 @@ class ReplacementPlanDayList extends StatelessWidget {
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.white,
-                padding: EdgeInsets.all(10.0),
+                padding: EdgeInsets.only(10.0),
                 child: ListView(
                   shrinkWrap: true,
-                  children: day.changes.map((change) {
-                    return ReplacementPlanRow(
-                      changes: day.changes,
-                      change: change
-                    );
-                  }).toList(),
+                  children: <Widget>[
+                    Center(
+                      child: RichText(
+                        text: new TextSpan(
+                          style: new TextStyle(
+                            color: Colors.black,
+                          ),
+                          children: <TextSpan>[
+                            new TextSpan(text: 'Vertretungsplan für '),
+                            new TextSpan(text: '${day.weekday}', style: new TextStyle(fontWeight: FontWeight.bold)),
+                            new TextSpan(text: ', den '),
+                            new TextSpan(text: '${day.date}', style: new TextStyle(fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      )
+                    ),
+                    Center(
+                      child: RichText(
+                        text: new TextSpan(
+                          style: new TextStyle(
+                            color: Colors.black,
+                          ),
+                          children: <TextSpan>[
+                            new TextSpan(text: 'Zuletzt aktualisiert am '),
+                            new TextSpan(text: '${day.update}', style: new TextStyle(fontWeight: FontWeight.bold)),
+                            new TextSpan(text: ' um '),
+                            new TextSpan(text: '${day.time}', style: new TextStyle(fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      )
+                    ),
+                  ]..addAll(day.changes.map((change) {
+                      return ReplacementPlanRow(
+                        changes: day.changes,
+                        change: change
+                      );
+                    }).toList()
+                  ),
                 ),
               );
             }).toList(),
@@ -193,7 +225,6 @@ class ReplacementPlanRow extends StatelessWidget {
                         ),
                       ],
                     ),
-
                   ],
                 ),
               ),
