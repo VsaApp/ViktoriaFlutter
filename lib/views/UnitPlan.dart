@@ -162,7 +162,7 @@ class UnitPlanDayListState extends State<UnitPlanDayList> {
                           ReplacementPlanRow(change: lesson.subjects[_selected].change, changes: [lesson.subjects[_selected].change]),
                       );
                     }
-                    if (day.lessons.indexOf(lesson) == 5) {
+                    if (day.lessons.indexOf(lesson) == 5 && (day.lessons[6].subjects.length > 0 || day.lessons[7].subjects.length > 0)) {
                       return UnitPlanRow(
                         subject: UnitPlanSubject(
                             teacher: '',
