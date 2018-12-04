@@ -7,8 +7,9 @@ import '../Keys.dart';
 class ReplacementPlan {
   static List<ReplacementPlanDay> days;
 
-  static void updateFilter(UnitPlanLesson lesson, SharedPreferences sharedPreferences){
-    lesson.subjects.where((s) => s.change != null).forEach((s) => s.change.setFilter(sharedPreferences));
+  static void updateFilter(UnitPlanDay day, UnitPlanLesson lesson, SharedPreferences sharedPreferences){
+    ReplacementPlanDay replacementPlanDay = days[0].weekday == day.name ? days[0] : days[1];
+    replacementPlanDay.changes.where((change) => change.unit-1 == day.lessons.indexOf(lesson)).forEach((c) => c.setFilter(sharedPreferences));
   }
 }
 
@@ -95,26 +96,37 @@ class Change {
 
     int day = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag'].indexOf(weekday);
     UnitPlanLesson nLesson = UnitPlan.days[day].lessons[unit - 1];
+    List<UnitPlanSubject> possibleSubjects = [];
     UnitPlanSubject nSubject;
     for (int i = 0; i < nLesson.subjects.length; i++){
       UnitPlanSubject subject = nLesson.subjects[i];
       // There is only one Subject with the correct name...
-      if (getSubject(subject.lesson) == getSubject(lesson) && nLesson.subjects.where((j) => getSubject(j.lesson) == getSubject(lesson)).toList().length == 1){
-        nSubject = subject;
-        break;
+      if (getSubject(subject.lesson) == getSubject(lesson)){
+        if (nLesson.subjects.where((j) => getSubject(j.lesson) == getSubject(lesson)).toList().length == 1){
+          nSubject = subject;
+          break;
+        }
+        else possibleSubjects.addAll(nLesson.subjects.where((j) => getSubject(j.lesson) == getSubject(lesson)).toList());
       }  
       // There is only one Subject with the correct room...
-      if (subject.room == room && nLesson.subjects.where((j) => j.room == room).toList().length == 1){
-        nSubject = subject;
-        break;
+      if (subject.room == room){
+        if (nLesson.subjects.where((j) => j.room == room).toList().length == 1){
+          nSubject = subject;
+          break;
+        }
+        else possibleSubjects.addAll(nLesson.subjects.where((j) => j.room == room).toList());
       }  
       // There is only one Subject with the correct teacher...
-      if (subject.teacher == teacher && nLesson.subjects.where((j) => j.teacher == teacher).toList().length == 1){
+      if (subject.teacher == teacher){
+        if (nLesson.subjects.where((j) => j.teacher == teacher).toList().length == 1){
         nSubject = subject;
         break;
+        }
+        else possibleSubjects.addAll(nLesson.subjects.where((j) => j.teacher == teacher).toList());
       }  
     }
 
+    isMy = -1;
     if (nSubject != null){
       int selected = sharedPreferences.getInt(Keys.unitPlan +
                           sharedPreferences.getString(Keys.grade) + '-' +
@@ -132,6 +144,16 @@ class Change {
       normalSubject = nSubject;
       room = nSubject.room;
       teacher = nSubject.teacher;
+    }
+    // If there are more than one possibilty and no one is selected, it's sure that it isn't my change...
+    else if (possibleSubjects.length > 0){
+      int selected = sharedPreferences.getInt(Keys.unitPlan +
+                          sharedPreferences.getString(Keys.grade) + '-' +
+                          ((possibleSubjects[0].block == null) ? (day.toString() + '-' + (unit - 1).toString()) : (possibleSubjects[0].block)));
+      // If the normal Subject is the selected subject, the subject is my subject...
+      if (!possibleSubjects.contains(UnitPlan.days[day].lessons[unit-1].subjects[(selected == null) ? 0 : selected])){
+        isMy = 0;
+      }
     }
   }
 }

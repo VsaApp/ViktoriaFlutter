@@ -138,7 +138,7 @@ class UnitPlanDayListState extends State<UnitPlanDayList> {
                                                     lesson.subjects
                                                         .indexOf(subject));
                                                 Navigator.pop(context);
-                                                ReplacementPlan.updateFilter(lesson, sharedPreferences); 
+                                                ReplacementPlan.updateFilter(day, lesson, sharedPreferences); 
                                               });
                                             },
                                             child: UnitPlanRow(
