@@ -33,19 +33,25 @@ class SettingsPageView extends State<SettingsPage> {
     'Q2'
   ];
   String _grade = _grades[0];
+  bool _sortReplacementPlan = true;
+  bool _showReplacementPlanInUnitPlan = true;
+  bool _getReplacementPlanNotifications = true;
 
   @override
   void initState() {
-    loadGrade();
+    loadSettings();
     super.initState();
   }
 
-  void loadGrade() async {
+  void loadSettings() async {
     sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
       _grade = (sharedPreferences.get(Keys.grade) == null
           ? ''
           : sharedPreferences.get(Keys.grade));
+      _sortReplacementPlan = sharedPreferences.getBool(Keys.sortReplacementPlan);
+      _showReplacementPlanInUnitPlan = sharedPreferences.getBool(Keys.showReplacementPlanInUnitPlan);
+      _getReplacementPlanNotifications = sharedPreferences.getBool(Keys.getReplacementPlanNotifications);
     });
   }
 
@@ -62,6 +68,42 @@ class SettingsPageView extends State<SettingsPage> {
         shrinkWrap: true,
         children: <Widget>[
           SettingsSection(
+            title: AppLocalizations.of(context).appSettings,
+            children: <Widget>[
+              SwitchListTile(
+                value: _sortReplacementPlan,
+                onChanged: (bool value) {
+                  setState(() {
+                    sharedPreferences.setBool(Keys.sortReplacementPlan, value);
+                    sharedPreferences.commit();
+                  });
+                },
+                title: new Text(AppLocalizations.of(context).sortReplacementPlan),
+              ),
+              SwitchListTile(
+                value: _showReplacementPlanInUnitPlan,
+                onChanged: (bool value) {
+                  setState(() {
+                    sharedPreferences.setBool(Keys.showReplacementPlanInUnitPlan, value);
+                    sharedPreferences.commit();
+                  });
+                },
+                title: new Text(AppLocalizations.of(context).showReplacementPlanInUnitPlan),
+              ),
+              SwitchListTile(
+                value: _getReplacementPlanNotifications,
+                onChanged: (bool value) {
+                  setState(() {
+                    sharedPreferences.setBool(Keys.getReplacementPlanNotifications, value);
+                    sharedPreferences.commit();
+                  });
+                },
+                title: new Text(AppLocalizations.of(context).getReplacementPlanNotifications),
+              ),
+            ]
+          ),
+          SettingsSection(
+            title: AppLocalizations.of(context).personalData,
             children: <Widget>[
               (sharedPreferences.getBool(Keys.isTeacher)
                   ? Container()
@@ -108,7 +150,6 @@ class SettingsPageView extends State<SettingsPage> {
                 ),
               ),
             ],
-            title: AppLocalizations.of(context).personalData,
           )
         ],
       ),
@@ -133,22 +174,27 @@ class SettingsSectionView extends State<SettingsSection> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Container(
-          child: ListTile(
-            title: Text(widget.title),
+        Text(
+          widget.title, 
+          style: TextStyle(
+            color: Colors.grey,
           ),
+        ),
+        Container(
+          padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
           decoration: BoxDecoration(
             border: Border(
-              bottom: BorderSide(
-                color: Colors.black54,
+              top: BorderSide(
+                width: 1,
+                color: Colors.grey,
               ),
             ),
           ),
-          margin: EdgeInsets.only(bottom: 10.0),
-        ),
-        Column(
-          children: widget.children,
+          child: Column(
+            children: widget.children,
+          )
         )
+        
       ],
     );
   }

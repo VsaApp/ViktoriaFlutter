@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../data/ReplacementPlan.dart';
 import '../models/ReplacementPlan.dart';
 import '../Localizations.dart';
 import '../Subjects.dart';
 import '../Color.dart';
+import '../Keys.dart';
 
 class ReplacementPlanPage extends StatefulWidget {
   @override
@@ -14,36 +16,48 @@ class ReplacementPlanView extends State<ReplacementPlanPage> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: <Widget>[
-        FutureBuilder<List<ReplacementPlanDay>>(
-          future: fetchDays(),
-          builder: (context, snapshot) {
-            return snapshot.hasData
-                ? ReplacementPlanDayList(days: snapshot.data)
-                : Container();
-          },
-        )
-      ],
+      children: <Widget>[ ReplacementPlanDayList(days: getReplacementPlan()) ]
     );
   }
 }
 
-class ReplacementPlanDayList extends StatelessWidget {
+class ReplacementPlanDayList extends StatefulWidget {
   final List<ReplacementPlanDay> days;
 
   ReplacementPlanDayList({Key key, this.days}) : super(key: key);
 
   @override
+  ReplacementPlanDayListState createState() => ReplacementPlanDayListState();
+}
+
+class ReplacementPlanDayListState extends State<ReplacementPlanDayList> {
+  
+  SharedPreferences sharedPreferences;
+
+  @override
+  void initState() {
+    SharedPreferences.getInstance().then((instance) {
+      setState(() {
+        sharedPreferences = instance;
+      });
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (sharedPreferences == null) {
+      return Container();
+    }
     return DefaultTabController(
-      length: days.length,
+      length: widget.days.length,
       child: Expanded(
         child: Scaffold(
           backgroundColor: Theme.of(context).primaryColor,
           appBar: TabBar(
             indicatorColor: Theme.of(context).accentColor,
             indicatorWeight: 2.5,
-            tabs: days.map((day) {
+            tabs: widget.days.map((day) {
               return Container(
                 padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
                 child: Text(day.weekday),
@@ -51,12 +65,12 @@ class ReplacementPlanDayList extends StatelessWidget {
             }).toList(),
           ),
           body: TabBarView(
-            children: days.map((day) {
+            children: widget.days.map((day) {
               return Container(
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.white,
-                padding: EdgeInsets.only(10.0),
+                padding: EdgeInsets.all(10.0),
                 child: ListView(
                   shrinkWrap: true,
                   children: <Widget>[
@@ -76,26 +90,65 @@ class ReplacementPlanDayList extends StatelessWidget {
                       )
                     ),
                     Center(
-                      child: RichText(
-                        text: new TextSpan(
-                          style: new TextStyle(
-                            color: Colors.black,
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 10.0),
+                        child: RichText(
+                          text: new TextSpan(
+                            style: new TextStyle(
+                              color: Colors.black,
+                            ),
+                            children: <TextSpan>[
+                              new TextSpan(text: 'Zuletzt aktualisiert am '),
+                              new TextSpan(text: '${day.update}', style: new TextStyle(fontWeight: FontWeight.bold)),
+                              new TextSpan(text: ' um '),
+                              new TextSpan(text: '${day.time}', style: new TextStyle(fontWeight: FontWeight.bold)),
+                            ],
                           ),
-                          children: <TextSpan>[
-                            new TextSpan(text: 'Zuletzt aktualisiert am '),
-                            new TextSpan(text: '${day.update}', style: new TextStyle(fontWeight: FontWeight.bold)),
-                            new TextSpan(text: ' um '),
-                            new TextSpan(text: '${day.time}', style: new TextStyle(fontWeight: FontWeight.bold)),
-                          ],
                         ),
                       )
                     ),
-                  ]..addAll(day.changes.map((change) {
+                  ]..addAll((!sharedPreferences.getBool(Keys.sortReplacementPlan)) ? 
+                    // Show all changes in a list...
+                    day.changes.map((change) {
                       return ReplacementPlanRow(
                         changes: day.changes,
                         change: change
                       );
-                    }).toList()
+                    }).toList() : 
+
+                    // Show the changes in three categories...
+                    [
+                      day.getMyChanges().length > 0 ?
+                      Section(
+                        title: AppLocalizations.of(context).myChanges,
+                        children: day.getMyChanges().map((change) {
+                          return ReplacementPlanRow(
+                            changes: day.getMyChanges(),
+                            change: change
+                          );
+                        }).toList()
+                      ) : Container(),
+                      day.getUndefChanges().length > 0 ?
+                      Section(
+                        title: AppLocalizations.of(context).undefChanges,
+                        children: day.getUndefChanges().map((change) {
+                          return ReplacementPlanRow(
+                            changes: day.getUndefChanges(),
+                            change: change
+                          );
+                        }).toList()
+                      ) : Container (),
+                      day.getOtherChanges().length > 0 ?
+                      Section(
+                        title: AppLocalizations.of(context).otherChanges,
+                        children: day.getOtherChanges().map((change) {
+                          return ReplacementPlanRow(
+                            changes: day.getOtherChanges(),
+                            change: change
+                          );
+                        }).toList()
+                      ) : Container(),
+                    ]
                   ),
                 ),
               );
@@ -106,6 +159,50 @@ class ReplacementPlanDayList extends StatelessWidget {
     );
   }
 }
+
+class Section extends StatefulWidget {
+  final List<Widget> children;
+  final String title;
+
+  Section({Key key, this.children, this.title}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() {
+    return SectionView();
+  }
+}
+
+class SectionView extends State<Section> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Text(
+          widget.title, 
+          style: TextStyle(
+            color: Colors.grey,
+          ),
+        ),
+        Container(
+          padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                width: 1,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          child: Column(
+            children: widget.children,
+          )
+        )
+        
+      ],
+    );
+  }
+}
+
 
 class ReplacementPlanRow extends StatelessWidget {
   const ReplacementPlanRow({
@@ -130,7 +227,7 @@ class ReplacementPlanRow extends StatelessWidget {
     bool showUnit = true;
     if (changes.indexOf(change) != 0) if (changes[changes.indexOf(change) - 1].unit == change.unit) showUnit = false;
     return Container(
-      padding: EdgeInsets.only(top: showUnit ? 20 : 5, bottom: 0, left: 10, right: 10),
+      padding: EdgeInsets.only(top: showUnit ? (changes.indexOf(change) == 0 ? 10 : 20) : 5, bottom: 0, left: 10, right: 10),
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           return Row(
@@ -152,7 +249,7 @@ class ReplacementPlanRow extends StatelessWidget {
                 padding: EdgeInsets.only(left: constraints.maxWidth * 0.03 - 2, top: 5, bottom: 5),
                 decoration: BoxDecoration(
                       border: Border(
-                          left: BorderSide(width: 2, color: Theme.of(context).primaryColor),
+                          left: BorderSide(width: 2, color: (change.color == null) ? Theme.of(context).primaryColor : change.color),
                       ),
                 ),
                 child: Row(

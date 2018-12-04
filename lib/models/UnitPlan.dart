@@ -1,3 +1,9 @@
+import 'ReplacementPlan.dart';
+
+class UnitPlan {
+  static List<UnitPlanDay> days;
+}
+
 class UnitPlanDay {
   final String name;
   final List<dynamic> lessons;
@@ -29,6 +35,7 @@ class UnitPlanSubject {
   final String lesson;
   final String room;
   final String block;
+  Change change;
 
   UnitPlanSubject({this.teacher, this.lesson, this.room, this.block});
 

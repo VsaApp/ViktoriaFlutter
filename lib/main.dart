@@ -12,6 +12,14 @@ void main() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String _initialRoute = '/';
 
+  if (sharedPreferences.get(Keys.sortReplacementPlan) == null ||
+      sharedPreferences.get(Keys.showReplacementPlanInUnitPlan) == null ||
+      sharedPreferences.get(Keys.getReplacementPlanNotifications) == null){
+    sharedPreferences.setBool(Keys.sortReplacementPlan, true);
+    sharedPreferences.setBool(Keys.showReplacementPlanInUnitPlan, true);
+    sharedPreferences.setBool(Keys.getReplacementPlanNotifications, true);
+  }
+
   if (sharedPreferences.get(Keys.grade) == null ||
       sharedPreferences.get(Keys.username) == null ||
       sharedPreferences.get(Keys.password) == null ||
@@ -25,6 +33,7 @@ void main() async {
       brightness: Brightness.light,
       primaryColor: getColorHexFromStr('#67a744'),
       accentColor: getColorHexFromStr('#5bc638'),
+      fontFamily: 'Ubuntu'
     ),
     localizationsDelegates: [
       const AppLocalizationsDelegate(),

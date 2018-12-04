@@ -26,13 +26,18 @@ Future download() async {
       sharedPreferences.setString(Keys.unitPlan + _grade, '[]');
     }
   }
+
+  UnitPlan.days = await fetchDays();
+}
+
+List<UnitPlanDay> getUnitPlan(){
+  return UnitPlan.days;
 }
 
 Future<List<UnitPlanDay>> fetchDays() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String _grade = sharedPreferences.getString(Keys.grade);
-  return compute(
-      parseDays, sharedPreferences.getString(Keys.unitPlan + _grade));
+  return parseDays(sharedPreferences.getString(Keys.unitPlan + _grade));
 }
 
 List<UnitPlanDay> parseDays(String responseBody) {

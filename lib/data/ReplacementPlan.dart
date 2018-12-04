@@ -13,6 +13,10 @@ Future download() async {
   String _grade = sharedPreferences.getString(Keys.grade);
   await downloadDay(sharedPreferences, _grade, "today");
   await downloadDay(sharedPreferences, _grade, "tomorrow");
+
+  ReplacementPlan.days = await fetchDays();
+  for (int i = 0; i < 2; i++) ReplacementPlan.days[i].insertInUnitPlan(await SharedPreferences.getInstance());
+
 }
 
 Future downloadDay(SharedPreferences sharedPreferences, String _grade, String _day) async {
@@ -24,14 +28,19 @@ Future downloadDay(SharedPreferences sharedPreferences, String _grade, String _d
         new Random().nextInt(99999999).toString();
     print(_url);
     final response = await http.Client().get(_url);
-    sharedPreferences.setString(Keys.replacementPlan + _grade + _day, response.body);
+    await sharedPreferences.setString(Keys.replacementPlan + _grade + _day, response.body);
     await sharedPreferences.commit();
   } catch (e) {
     print("Error in download: " + e.toString());
     if (sharedPreferences.getString(Keys.replacementPlan + _grade + _day) == null) {
-      sharedPreferences.setString(Keys.replacementPlan + _grade + _day, '[]');
+      await sharedPreferences.setString(Keys.replacementPlan + _grade + _day, '[]');
+      await sharedPreferences.commit();
     }
   }
+}
+
+List<ReplacementPlanDay> getReplacementPlan(){
+  return ReplacementPlan.days;
 }
 
 Future<List<ReplacementPlanDay>> fetchDays() async {

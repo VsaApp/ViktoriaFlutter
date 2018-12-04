@@ -11,6 +11,18 @@ class Keys {
     return 'password';
   }
 
+  static String get sortReplacementPlan {
+    return 'sortReplacementPlan';
+  }
+
+  static String get showReplacementPlanInUnitPlan {
+    return 'showReplacementPlanInUnitPlan';
+  }
+
+  static String get getReplacementPlanNotifications {
+    return 'getReplacementPlanNotifications';
+  }
+
   static String get isTeacher {
     return 'isTeacher';
   }

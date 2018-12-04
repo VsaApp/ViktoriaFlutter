@@ -26,11 +26,47 @@ class AppLocalizations {
       'credentialsNotCorrect': 'Nutzername oder Passwort falsch',
       'lunchBreak': 'Mittagspause',
       'settings': 'Einstellungen',
-      'personalData': 'Persönliche Daten',
+      'personalData': 'PERSÖNLICHE DATEN',
+      'appSettings': 'APPEINSTELLUNGEN',
       'logout': 'Abmelden',
-      'freeLesson': 'Freistunde'
+      'freeLesson': 'Freistunde',
+      'sortReplacementPlan' : 'Vertretungsplan sortieren',
+      'showReplacementPlanInUnitPlan' : 'Vertretungsplan im Stundenplan anzeigen',
+      'getReplacementPlanNotifications' : 'Benachrichtigungen für Änderungen auf dem Vertretungsplan',
+      'nUnit' : '. Stunde',
+      'myChanges' : 'Meine Vertretungen',
+      'undefChanges' : 'Eventuell meine Vertretungen',
+      'otherChanges' : 'Weitere Vertretugnen'
     },
   };
+
+  String get myChanges {
+    return _localizedValues[locale.languageCode]['myChanges'];
+  }
+
+  String get undefChanges {
+    return _localizedValues[locale.languageCode]['undefChanges'];
+  }
+
+  String get otherChanges {
+    return _localizedValues[locale.languageCode]['otherChanges'];
+  }
+
+  String get nUnit {
+    return _localizedValues[locale.languageCode]['nUnit'];
+  }
+
+  String get sortReplacementPlan {
+    return _localizedValues[locale.languageCode]['sortReplacementPlan'];
+  }
+
+  String get showReplacementPlanInUnitPlan {
+    return _localizedValues[locale.languageCode]['showReplacementPlanInUnitPlan'];
+  }
+
+  String get getReplacementPlanNotifications {
+    return _localizedValues[locale.languageCode]['getReplacementPlanNotifications'];
+  }
 
   String get title {
     return _localizedValues[locale.languageCode]['title'];
@@ -90,6 +126,10 @@ class AppLocalizations {
 
   String get personalData {
     return _localizedValues[locale.languageCode]['personalData'];
+  }
+
+  String get appSettings {
+    return _localizedValues[locale.languageCode]['appSettings'];
   }
 
   String get logout {

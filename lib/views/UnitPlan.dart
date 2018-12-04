@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/ReplacementPlan.dart';
+import 'ReplacementPlan.dart';
 import '../data/UnitPlan.dart';
 import '../models/UnitPlan.dart';
 import '../Times.dart';
@@ -17,18 +19,7 @@ class UnitPlanView extends State<UnitPlanPage> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: <Widget>[
-        FutureBuilder<List<UnitPlanDay>>(
-          future: fetchDays(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) print(snapshot.error);
-
-            return snapshot.hasData
-                ? UnitPlanDayList(days: snapshot.data)
-                : Container();
-          },
-        )
-      ],
+      children: <Widget>[ UnitPlanDayList(days: getUnitPlan()) ]
     );
   }
 }
@@ -119,8 +110,8 @@ class UnitPlanDayListState extends State<UnitPlanDayList> {
                                 barrierDismissible: true,
                                 builder: (BuildContext context1) {
                                   return SimpleDialog(
-                                    title: Text(AppLocalizations.of(context)
-                                        .pleaseSelect),
+                                    title: Text((day.lessons.indexOf(lesson) + 1).toString() + AppLocalizations.of(context)
+                                        .nUnit),
                                     children: lesson.subjects
                                         .map((subject) {
                                           return SimpleDialogOption(
@@ -147,11 +138,13 @@ class UnitPlanDayListState extends State<UnitPlanDayList> {
                                                     lesson.subjects
                                                         .indexOf(subject));
                                                 Navigator.pop(context);
+                                                ReplacementPlan.updateFilter(lesson, sharedPreferences); 
                                               });
                                             },
                                             child: UnitPlanRow(
                                               subject: subject,
                                               unit: day.lessons.indexOf(lesson),
+                                              showUnit: false
                                             ),
                                           );
                                         })
@@ -161,10 +154,12 @@ class UnitPlanDayListState extends State<UnitPlanDayList> {
                                 });
                           }
                         },
-                        child: UnitPlanRow(
-                          subject: lesson.subjects[_selected],
-                          unit: day.lessons.indexOf(lesson),
-                        ),
+                        child: (lesson.subjects[_selected].change == null || !sharedPreferences.getBool(Keys.showReplacementPlanInUnitPlan)) ? 
+                          UnitPlanRow(
+                            subject: lesson.subjects[_selected],
+                            unit: day.lessons.indexOf(lesson),
+                          ) :
+                          ReplacementPlanRow(change: lesson.subjects[_selected].change, changes: [lesson.subjects[_selected].change]),
                       );
                     }
                     if (day.lessons.indexOf(lesson) == 5) {
@@ -194,10 +189,12 @@ class UnitPlanRow extends StatelessWidget {
     Key key,
     this.subject,
     this.unit,
+    this.showUnit = true,
   }) : super(key: key);
 
   final UnitPlanSubject subject;
   final int unit;
+  final bool showUnit;
 
   @override
   Widget build(BuildContext context) {
@@ -212,9 +209,9 @@ class UnitPlanRow extends StatelessWidget {
           return Row(
             children: <Widget>[
               Container(
-                width: constraints.maxWidth / 10,
+                width: (showUnit) ? constraints.maxWidth * 0.1 : 0,
                 child: Text(
-                  (unit != 5 ? (unit + 1).toString() : ''),
+                  ((unit != 5 && showUnit)  ? (unit + 1).toString() : ''),
                   style: TextStyle(
                     color: Colors.black54,
                   ),
@@ -223,7 +220,7 @@ class UnitPlanRow extends StatelessWidget {
               Column(
                 children: <Widget>[
                   Container(
-                    width: constraints.maxWidth / 10 * 7.5,
+                    width: constraints.maxWidth * 0.75,
                     child: (unit != 5
                         ? Text(
                             getSubject(subject.lesson),
@@ -243,7 +240,7 @@ class UnitPlanRow extends StatelessWidget {
                           )),
                   ),
                   Container(
-                    width: constraints.maxWidth / 10 * 7.5,
+                    width: constraints.maxWidth * 0.75,
                     child: Text(
                       (unit != 5 ? times[unit] : ''),
                       style: TextStyle(
@@ -256,11 +253,11 @@ class UnitPlanRow extends StatelessWidget {
               Column(
                 children: <Widget>[
                   Container(
-                    width: constraints.maxWidth / 10 * 1.5,
+                    width: (showUnit) ? constraints.maxWidth * 0.15 : constraints.maxWidth * 0.25,
                     child: Text(teacher),
                   ),
                   Container(
-                    width: constraints.maxWidth / 10 * 1.5,
+                    width: (showUnit) ? constraints.maxWidth * 0.15 : constraints.maxWidth * 0.25,
                     child: Text(subject.room),
                   ),
                 ],
