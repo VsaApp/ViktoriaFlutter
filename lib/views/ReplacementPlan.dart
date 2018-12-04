@@ -4,7 +4,6 @@ import '../data/ReplacementPlan.dart';
 import '../models/ReplacementPlan.dart';
 import '../Localizations.dart';
 import '../Subjects.dart';
-import '../Color.dart';
 import '../Keys.dart';
 
 class ReplacementPlanPage extends StatefulWidget {

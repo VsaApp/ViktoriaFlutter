@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:onesignal/onesignal.dart';
 import '../Localizations.dart';
 import '../Keys.dart';
 import 'UnitPlan.dart';
@@ -28,6 +31,12 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     loadGrade();
+    OneSignal.shared.init('1d7b8ef7-9c9d-4843-a833-8a1e9999818c');
+    OneSignal.shared.sendTag('EF', true);
+    OneSignal.shared
+        .setNotificationReceivedHandler((OSNotification notification) {
+      MethodChannel('viktoriaflutter').invokeMethod(json.encode(notification.payload.additionalData));
+    });
     super.initState();
   }
 
