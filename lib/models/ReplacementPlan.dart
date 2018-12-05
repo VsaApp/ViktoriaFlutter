@@ -13,13 +13,9 @@ class ReplacementPlan {
     days.forEach((day) => day.insertInUnitPlan(sharedPreferences));
   }
 
-  static void updateFilter(UnitPlanDay day, UnitPlanLesson lesson,
-      SharedPreferences sharedPreferences) {
-    ReplacementPlanDay replacementPlanDay =
-    days[0].weekday == day.name ? days[0] : days[1];
-    replacementPlanDay.changes
-        .where((change) => change.unit - 1 == day.lessons.indexOf(lesson))
-        .forEach((c) => c.setFilter(sharedPreferences));
+  static void updateFilter(UnitPlanDay day, UnitPlanLesson lesson, SharedPreferences sharedPreferences) {
+    // Need to update the whole unitplan, because of the exams...
+    update(sharedPreferences);
   }
 }
 
@@ -118,8 +114,8 @@ class Change {
 
     // With the current database it is not possible to filter exams...
     if (changed.info.toLowerCase().contains('klausur')) {
-      bool allSelected = true;
-      bool nothingSelected = true;
+      int countSubjects = 0;
+      int selectedSubjects = 0;
       bool writing = false;
       UnitPlan.days.forEach((day) =>
           day.lessons.forEach((lesson) =>
@@ -134,29 +130,26 @@ class Change {
                           '-' +
                           (day.lessons.indexOf(lesson)).toString())
                           : (subject.block)));
-                  if (lesson.subjects.length <= selected)
-                    allSelected = false;
-                  else if (lesson.subjects[selected] == subject) {
-                    nothingSelected = false;
-                  } else
-                    allSelected = false;
-                  if (allSelected) {
-                    bool exams = (subject.block != null)
+                  countSubjects++;
+                  if (selected < lesson.subjects.length){
+                    if (lesson.subjects[selected] == subject) {
+                      selectedSubjects++;
+                      bool exams = (subject.block != null)
                         ? sharedPreferences.getBool(
                         Keys.exams + subject.block + subject.teacher)
                         : null;
-                    writing = writing || ((exams == null) ? true : exams);
+                      writing = writing || ((exams == null) ? true : exams);
+                    }
                   }
                 }
               })));
-      if (allSelected && writing) {
+      if ((selectedSubjects >= countSubjects - 1) && writing) {
         isMy = 1;
         UnitPlan.days[day].lessons[unit - 1].subjects
             .forEach((subject) => subject.change = this);
-      } else if (nothingSelected || !writing) isMy = 0;
+      } else if (selectedSubjects == 0 || !writing) isMy = 0;
       return;
-    }
-    ;
+    };
 
     UnitPlanLesson nLesson = UnitPlan.days[day].lessons[unit - 1];
     List<UnitPlanSubject> possibleSubjects = [];
