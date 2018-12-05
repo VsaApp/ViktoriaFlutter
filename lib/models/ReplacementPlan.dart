@@ -90,11 +90,32 @@ class Change {
   void setFilter(SharedPreferences sharedPreferences){
     // Set the category of this change...
     setColor();
+    int day = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag'].indexOf(weekday);
 
     // With the current database it is not possible to filter exams...
-    if (changed.info.toLowerCase().contains('klausur')) return;
+    if (changed.info.toLowerCase().contains('klausur')) {
+      bool allSelected = true;
+      bool nothingSelected = true;
+      UnitPlan.days.forEach((day) => day.lessons.forEach((lesson) => lesson.subjects.forEach((subject) {
+        if (subject.lesson == this.lesson && subject.teacher == this.teacher){
+          int selected = sharedPreferences.getInt(Keys.unitPlan +
+                              sharedPreferences.getString(Keys.grade) + '-' +
+                              ((subject.block == null) ? (day.toString() + '-' + (day.lessons.indexOf(lesson)).toString()) : (subject.block)));
+          if (lesson.subjects.length <= selected) allSelected = false;
+          else if (lesson.subjects[selected] == subject){
+            nothingSelected = false;
+          }
+          else allSelected = false;
+        }
+      })));
+      if (allSelected) {
+        isMy = 1;
+        UnitPlan.days[day].lessons[unit - 1].subjects.forEach((subject) => subject.change = this);
+      }
+      else if (nothingSelected) isMy = 0;
+      return;
+    };
 
-    int day = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag'].indexOf(weekday);
     UnitPlanLesson nLesson = UnitPlan.days[day].lessons[unit - 1];
     List<UnitPlanSubject> possibleSubjects = [];
     UnitPlanSubject nSubject;
@@ -138,7 +159,7 @@ class Change {
       else isMy = 0;
 
       // Add the change to the normal subject...
-      nSubject.change = this;
+      if (nSubject.change == null) nSubject.change = this;
 
       // Add new information to this change...
       normalSubject = nSubject;
