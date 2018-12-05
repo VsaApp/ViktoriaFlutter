@@ -69,24 +69,27 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList> {
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.white,
-                padding: EdgeInsets.all(10.0),
+                padding: EdgeInsets.only(right: 10.0, left: 10.0, bottom: 10.0, top: 0.0),
                 child: ListView(
                   shrinkWrap: true,
                   children: <Widget>[
                     Center(
-                      child: RichText(
-                        text: new TextSpan(
-                          style: new TextStyle(
-                            color: Colors.black,
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 10.0),
+                        child: RichText(
+                          text: new TextSpan(
+                            style: new TextStyle(
+                              color: Colors.black,
+                            ),
+                            children: <TextSpan>[
+                              new TextSpan(text: 'Vertretungsplan für '),
+                              new TextSpan(text: '${day.weekday}', style: new TextStyle(fontWeight: FontWeight.bold)),
+                              new TextSpan(text: ', den '),
+                              new TextSpan(text: '${day.date}', style: new TextStyle(fontWeight: FontWeight.bold)),
+                            ],
                           ),
-                          children: <TextSpan>[
-                            new TextSpan(text: 'Vertretungsplan für '),
-                            new TextSpan(text: '${day.weekday}', style: new TextStyle(fontWeight: FontWeight.bold)),
-                            new TextSpan(text: ', den '),
-                            new TextSpan(text: '${day.date}', style: new TextStyle(fontWeight: FontWeight.bold)),
-                          ],
                         ),
-                      )
+                      ),
                     ),
                     Center(
                       child: Container(

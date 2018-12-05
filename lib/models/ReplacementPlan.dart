@@ -7,6 +7,11 @@ import '../Keys.dart';
 class ReplacementPlan {
   static List<ReplacementPlanDay> days;
 
+  static void update(SharedPreferences sharedPreferences){
+    UnitPlan.resetChanges();
+    days.forEach((day) => day.insertInUnitPlan(sharedPreferences));
+  }
+
   static void updateFilter(UnitPlanDay day, UnitPlanLesson lesson, SharedPreferences sharedPreferences){
     ReplacementPlanDay replacementPlanDay = days[0].weekday == day.name ? days[0] : days[1];
     replacementPlanDay.changes.where((change) => change.unit-1 == day.lessons.indexOf(lesson)).forEach((c) => c.setFilter(sharedPreferences));
@@ -96,6 +101,7 @@ class Change {
     if (changed.info.toLowerCase().contains('klausur')) {
       bool allSelected = true;
       bool nothingSelected = true;
+      bool writing = false;
       UnitPlan.days.forEach((day) => day.lessons.forEach((lesson) => lesson.subjects.forEach((subject) {
         if (subject.lesson == this.lesson && subject.teacher == this.teacher){
           int selected = sharedPreferences.getInt(Keys.unitPlan +
@@ -106,13 +112,17 @@ class Change {
             nothingSelected = false;
           }
           else allSelected = false;
+          if (allSelected) {
+            bool exams = (subject.block != null) ? sharedPreferences.getBool(Keys.exams + subject.block + subject.teacher) : null;
+            writing = writing || ((exams == null) ? true : exams);
+          }
         }
       })));
-      if (allSelected) {
+      if (allSelected && writing) {
         isMy = 1;
         UnitPlan.days[day].lessons[unit - 1].subjects.forEach((subject) => subject.change = this);
       }
-      else if (nothingSelected) isMy = 0;
+      else if (nothingSelected || !writing) isMy = 0;
       return;
     };
 

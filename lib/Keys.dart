@@ -34,4 +34,8 @@ class Keys {
   static String get replacementPlan {
     return 'replacementPlan-';
   }
+
+  static String get exams {
+    return 'exams-';
+  }
 }

@@ -154,6 +154,34 @@ class UnitPlanDayListState extends State<UnitPlanDayList> {
                                 });
                           }
                         },
+                        onLongPress: () {
+                          if (lesson.subjects[_selected].block != null) {
+                            showDialog<String>(
+                              context: context,
+                              barrierDismissible: true,
+                              builder: (BuildContext context1) {
+                                bool _exams = sharedPreferences.getBool(Keys.exams + lesson.subjects[_selected].block + lesson.subjects[_selected].teacher);
+                                return SimpleDialog(
+                                  title: Text(getSubject(lesson.subjects[_selected].lesson) + ' ' + lesson.subjects[_selected].teacher),
+                                  children: <Widget>[
+                                    SwitchListTile(
+                                      value: (_exams == null) ? true : _exams,
+                                      onChanged: (bool value) {
+                                        setState(() {
+                                          sharedPreferences.setBool(Keys.exams + lesson.subjects[_selected].block + lesson.subjects[_selected].teacher, value);
+                                          sharedPreferences.commit();
+                                          ReplacementPlan.update(sharedPreferences);
+                                          Navigator.pop(context);
+                                        });
+                                      },
+                                      title: new Text(AppLocalizations.of(context).writeExams),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
+                        },
                         child: (lesson.subjects[_selected].change == null || !sharedPreferences.getBool(Keys.showReplacementPlanInUnitPlan)) ? 
                           UnitPlanRow(
                             subject: lesson.subjects[_selected],

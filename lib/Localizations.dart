@@ -36,9 +36,14 @@ class AppLocalizations {
       'nUnit' : '. Stunde',
       'myChanges' : 'Meine Vertretungen',
       'undefChanges' : 'Eventuell meine Vertretungen',
-      'otherChanges' : 'Weitere Vertretugnen'
+      'otherChanges' : 'Weitere Vertretungen',
+      'writeExams' : 'Schriftlich',
     },
   };
+
+  String get writeExams {
+    return _localizedValues[locale.languageCode]['writeExams'];
+  }
 
   String get myChanges {
     return _localizedValues[locale.languageCode]['myChanges'];
