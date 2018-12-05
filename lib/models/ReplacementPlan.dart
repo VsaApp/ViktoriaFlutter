@@ -131,6 +131,7 @@ class Change {
                           (day.lessons.indexOf(lesson)).toString())
                           : (subject.block)));
                   countSubjects++;
+                  if (selected == null) selected = 0;
                   if (selected < lesson.subjects.length){
                     if (lesson.subjects[selected] == subject) {
                       selectedSubjects++;
