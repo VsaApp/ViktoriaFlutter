@@ -3,8 +3,10 @@ import 'ReplacementPlan.dart';
 class UnitPlan {
   static List<UnitPlanDay> days;
 
-  static void resetChanges(){
-    days.forEach((day) => day.lessons.forEach((lesson) => lesson.subjects.forEach((subject) => subject.change = null)));
+  static void resetChanges() {
+    days.forEach((day) =>
+        day.lessons.forEach((lesson) =>
+            lesson.subjects.forEach((subject) => subject.change = null)));
   }
 }
 

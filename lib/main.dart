@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'Localizations.dart';
+
 import 'Color.dart';
 import 'Keys.dart';
+import 'Localizations.dart';
 import 'views/Home.dart';
-import 'views/Login.dart';
 import 'views/Loading.dart';
+import 'views/Login.dart';
 
 void main() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -14,7 +15,7 @@ void main() async {
 
   if (sharedPreferences.get(Keys.sortReplacementPlan) == null ||
       sharedPreferences.get(Keys.showReplacementPlanInUnitPlan) == null ||
-      sharedPreferences.get(Keys.getReplacementPlanNotifications) == null){
+      sharedPreferences.get(Keys.getReplacementPlanNotifications) == null) {
     sharedPreferences.setBool(Keys.sortReplacementPlan, true);
     sharedPreferences.setBool(Keys.showReplacementPlanInUnitPlan, true);
     sharedPreferences.setBool(Keys.getReplacementPlanNotifications, true);
@@ -30,11 +31,10 @@ void main() async {
   runApp(MaterialApp(
     title: 'ViktoriaFlutter',
     theme: ThemeData(
-      brightness: Brightness.light,
-      primaryColor: getColorHexFromStr('#67a744'),
-      accentColor: getColorHexFromStr('#5bc638'),
-      fontFamily: 'Ubuntu'
-    ),
+        brightness: Brightness.light,
+        primaryColor: getColorHexFromStr('#67a744'),
+        accentColor: getColorHexFromStr('#5bc638'),
+        fontFamily: 'Ubuntu'),
     localizationsDelegates: [
       const AppLocalizationsDelegate(),
       GlobalMaterialLocalizations.delegate,

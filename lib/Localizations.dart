@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show SynchronousFuture;
+import 'package:flutter/material.dart';
 
 class AppLocalizations {
   AppLocalizations(this.locale);
@@ -30,14 +30,16 @@ class AppLocalizations {
       'appSettings': 'APPEINSTELLUNGEN',
       'logout': 'Abmelden',
       'freeLesson': 'Freistunde',
-      'sortReplacementPlan' : 'Vertretungsplan sortieren',
-      'showReplacementPlanInUnitPlan' : 'Vertretungsplan im Stundenplan anzeigen',
-      'getReplacementPlanNotifications' : 'Benachrichtigungen für Änderungen auf dem Vertretungsplan',
-      'nUnit' : '. Stunde',
-      'myChanges' : 'Meine Vertretungen',
-      'undefChanges' : 'Eventuell meine Vertretungen',
-      'otherChanges' : 'Weitere Vertretungen',
-      'writeExams' : 'Schriftlich',
+      'sortReplacementPlan': 'Vertretungsplan sortieren',
+      'showReplacementPlanInUnitPlan':
+      'Vertretungsplan im Stundenplan anzeigen',
+      'getReplacementPlanNotifications':
+      'Benachrichtigungen für Änderungen auf dem Vertretungsplan',
+      'nUnit': '. Stunde',
+      'myChanges': 'Meine Vertretungen',
+      'undefChanges': 'Eventuell meine Vertretungen',
+      'otherChanges': 'Weitere Vertretungen',
+      'writeExams': 'Schriftlich',
     },
   };
 
@@ -66,11 +68,13 @@ class AppLocalizations {
   }
 
   String get showReplacementPlanInUnitPlan {
-    return _localizedValues[locale.languageCode]['showReplacementPlanInUnitPlan'];
+    return _localizedValues[locale.languageCode]
+    ['showReplacementPlanInUnitPlan'];
   }
 
   String get getReplacementPlanNotifications {
-    return _localizedValues[locale.languageCode]['getReplacementPlanNotifications'];
+    return _localizedValues[locale.languageCode]
+    ['getReplacementPlanNotifications'];
   }
 
   String get title {

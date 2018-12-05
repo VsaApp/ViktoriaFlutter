@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/UnitPlan.dart';
+
 import '../Keys.dart';
+import '../models/UnitPlan.dart';
 
 Future download() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -28,7 +30,7 @@ Future download() async {
   UnitPlan.days = await fetchDays();
 }
 
-List<UnitPlanDay> getUnitPlan(){
+List<UnitPlanDay> getUnitPlan() {
   return UnitPlan.days;
 }
 

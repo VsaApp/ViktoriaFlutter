@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/ReplacementPlan.dart';
-import 'ReplacementPlan.dart';
-import '../data/UnitPlan.dart';
-import '../models/UnitPlan.dart';
-import '../Times.dart';
+
+import '../Keys.dart';
 import '../Localizations.dart';
 import '../Subjects.dart';
-import '../Keys.dart';
-
+import '../Times.dart';
+import '../data/UnitPlan.dart';
+import '../models/ReplacementPlan.dart';
+import '../models/UnitPlan.dart';
+import 'ReplacementPlan.dart';
 
 class UnitPlanPage extends StatefulWidget {
   @override
@@ -18,9 +18,7 @@ class UnitPlanPage extends StatefulWidget {
 class UnitPlanView extends State<UnitPlanPage> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[ UnitPlanDayList(days: getUnitPlan()) ]
-    );
+    return Column(children: <Widget>[UnitPlanDayList(days: getUnitPlan())]);
   }
 }
 
@@ -110,8 +108,12 @@ class UnitPlanDayListState extends State<UnitPlanDayList> {
                                 barrierDismissible: true,
                                 builder: (BuildContext context1) {
                                   return SimpleDialog(
-                                    title: Text((day.lessons.indexOf(lesson) + 1).toString() + AppLocalizations.of(context)
-                                        .nUnit),
+                                    title: Text(
+                                        (day.lessons.indexOf(lesson) + 1)
+                                            .toString() +
+                                            AppLocalizations
+                                                .of(context)
+                                                .nUnit),
                                     children: lesson.subjects
                                         .map((subject) {
                                           return SimpleDialogOption(
@@ -138,14 +140,17 @@ class UnitPlanDayListState extends State<UnitPlanDayList> {
                                                     lesson.subjects
                                                         .indexOf(subject));
                                                 Navigator.pop(context);
-                                                ReplacementPlan.updateFilter(day, lesson, sharedPreferences); 
+                                                ReplacementPlan.updateFilter(
+                                                    day,
+                                                    lesson,
+                                                    sharedPreferences);
                                               });
                                             },
                                             child: UnitPlanRow(
-                                              subject: subject,
-                                              unit: day.lessons.indexOf(lesson),
-                                              showUnit: false
-                                            ),
+                                                subject: subject,
+                                                unit:
+                                                day.lessons.indexOf(lesson),
+                                                showUnit: false),
                                           );
                                         })
                                         .toList()
@@ -160,21 +165,37 @@ class UnitPlanDayListState extends State<UnitPlanDayList> {
                               context: context,
                               barrierDismissible: true,
                               builder: (BuildContext context1) {
-                                bool _exams = sharedPreferences.getBool(Keys.exams + lesson.subjects[_selected].block + lesson.subjects[_selected].teacher);
+                                bool _exams = sharedPreferences.getBool(
+                                    Keys.exams +
+                                        lesson.subjects[_selected].block +
+                                        lesson.subjects[_selected].teacher);
                                 return SimpleDialog(
-                                  title: Text(getSubject(lesson.subjects[_selected].lesson) + ' ' + lesson.subjects[_selected].teacher),
+                                  title: Text(getSubject(
+                                      lesson.subjects[_selected].lesson) +
+                                      ' ' +
+                                      lesson.subjects[_selected].teacher),
                                   children: <Widget>[
                                     SwitchListTile(
                                       value: (_exams == null) ? true : _exams,
                                       onChanged: (bool value) {
                                         setState(() {
-                                          sharedPreferences.setBool(Keys.exams + lesson.subjects[_selected].block + lesson.subjects[_selected].teacher, value);
+                                          sharedPreferences.setBool(
+                                              Keys.exams +
+                                                  lesson.subjects[_selected]
+                                                      .block +
+                                                  lesson.subjects[_selected]
+                                                      .teacher,
+                                              value);
                                           sharedPreferences.commit();
-                                          ReplacementPlan.update(sharedPreferences);
+                                          ReplacementPlan.update(
+                                              sharedPreferences);
                                           Navigator.pop(context);
                                         });
                                       },
-                                      title: new Text(AppLocalizations.of(context).writeExams),
+                                      title: new Text(
+                                          AppLocalizations
+                                              .of(context)
+                                              .writeExams),
                                     ),
                                   ],
                                 );
@@ -182,15 +203,21 @@ class UnitPlanDayListState extends State<UnitPlanDayList> {
                             );
                           }
                         },
-                        child: (lesson.subjects[_selected].change == null || !sharedPreferences.getBool(Keys.showReplacementPlanInUnitPlan)) ? 
-                          UnitPlanRow(
-                            subject: lesson.subjects[_selected],
-                            unit: day.lessons.indexOf(lesson),
-                          ) :
-                          ReplacementPlanRow(change: lesson.subjects[_selected].change, changes: [lesson.subjects[_selected].change]),
+                        child: (lesson.subjects[_selected].change == null ||
+                            !sharedPreferences.getBool(
+                                Keys.showReplacementPlanInUnitPlan))
+                            ? UnitPlanRow(
+                          subject: lesson.subjects[_selected],
+                          unit: day.lessons.indexOf(lesson),
+                        )
+                            : ReplacementPlanRow(
+                            change: lesson.subjects[_selected].change,
+                            changes: [lesson.subjects[_selected].change]),
                       );
                     }
-                    if (day.lessons.indexOf(lesson) == 5 && (day.lessons[6].subjects.length > 0 || day.lessons[7].subjects.length > 0)) {
+                    if (day.lessons.indexOf(lesson) == 5 &&
+                        (day.lessons[6].subjects.length > 0 ||
+                            day.lessons[7].subjects.length > 0)) {
                       return UnitPlanRow(
                         subject: UnitPlanSubject(
                             teacher: '',
@@ -239,7 +266,7 @@ class UnitPlanRow extends StatelessWidget {
               Container(
                 width: (showUnit) ? constraints.maxWidth * 0.1 : 0,
                 child: Text(
-                  ((unit != 5 && showUnit)  ? (unit + 1).toString() : ''),
+                  ((unit != 5 && showUnit) ? (unit + 1).toString() : ''),
                   style: TextStyle(
                     color: Colors.black54,
                   ),
@@ -281,11 +308,15 @@ class UnitPlanRow extends StatelessWidget {
               Column(
                 children: <Widget>[
                   Container(
-                    width: (showUnit) ? constraints.maxWidth * 0.15 : constraints.maxWidth * 0.25,
+                    width: (showUnit)
+                        ? constraints.maxWidth * 0.15
+                        : constraints.maxWidth * 0.25,
                     child: Text(teacher),
                   ),
                   Container(
-                    width: (showUnit) ? constraints.maxWidth * 0.15 : constraints.maxWidth * 0.25,
+                    width: (showUnit)
+                        ? constraints.maxWidth * 0.15
+                        : constraints.maxWidth * 0.25,
                     child: Text(subject.room),
                   ),
                 ],
