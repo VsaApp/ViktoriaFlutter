@@ -1,0 +1,17 @@
+name: viktoriaflutterplugin
+description: A plugin for the ViktoriaFlutter app
+version: 0.0.1
+author:
+homepage:
+
+environment:
+  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+flutter:
+  plugin:
+    androidPackage: de.lohl1kohl.viktoriaflutterplugin
+    pluginClass: ViktoriaflutterpluginPlugin

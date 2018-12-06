@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:onesignal/onesignal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:viktoriaflutterplugin/viktoriaflutterplugin.dart';
 
 import '../Keys.dart';
 import '../Localizations.dart';
@@ -15,6 +15,7 @@ import 'UnitPlan.dart';
 class DrawerItem {
   String title;
   IconData icon;
+
   DrawerItem(this.title, this.icon);
 }
 
@@ -37,8 +38,8 @@ class HomePageState extends State<HomePage> {
     OneSignal.shared.sendTag('EF', true);
     OneSignal.shared
         .setNotificationReceivedHandler((OSNotification notification) {
-      MethodChannel('viktoriaflutter')
-          .invokeMethod(json.encode(notification.payload.additionalData));
+      Viktoriaflutterplugin.showNotification(
+          json.encode(notification.payload.additionalData));
     });
     super.initState();
   }
