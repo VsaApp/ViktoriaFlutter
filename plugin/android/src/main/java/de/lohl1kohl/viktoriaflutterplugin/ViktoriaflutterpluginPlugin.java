@@ -3,6 +3,7 @@ package de.lohl1kohl.viktoriaflutterplugin;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
@@ -38,9 +39,10 @@ public class ViktoriaflutterpluginPlugin implements MethodCallHandler {
         createNotificationChannel(context);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "replacementplan")
                 .setSmallIcon(R.drawable.logo)
-                .setContentTitle(new JSONObject(json).getString("day").equals("today") ? "Heute" : "Morgen")
+                .setContentTitle(new JSONObject(json).getString("weekday"))
                 .setContentText("Ein neuer Vertretungsplan ist erschienen")
-                .setVibrate(new long[]{250, 250, 250, 250});
+                .setVibrate(new long[]{250, 250, 250, 250})
+                .setContentIntent(PendingIntent.getActivity(context, 0, context.getPackageManager().getLaunchIntentForPackage("de.lohl1kohl.viktoriaflutter"), PendingIntent.FLAG_UPDATE_CURRENT));
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(new JSONObject(json).getString("day").equals("today") ? 0 : 1, builder.build());
     }
@@ -64,6 +66,10 @@ public class ViktoriaflutterpluginPlugin implements MethodCallHandler {
         try {
             if (new JSONObject(call.method).getString("type").equals("replacementplan")) {
                 showReplacementPlanNotification(activity, call.method);
+                result.success(0);
+            } else if (new JSONObject(call.method).getString("type").equals("clear")) {
+                NotificationManager notificationManager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.cancelAll();
                 result.success(0);
             } else {
                 result.notImplemented();

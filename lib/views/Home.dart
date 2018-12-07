@@ -41,6 +41,7 @@ class HomePageState extends State<HomePage> {
       Viktoriaflutterplugin.showNotification(
           json.encode(notification.payload.additionalData));
     });
+    Viktoriaflutterplugin.showNotification('{"type":"clear"}');
     super.initState();
   }
 
