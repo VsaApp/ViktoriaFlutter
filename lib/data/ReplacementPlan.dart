@@ -23,7 +23,7 @@ Future download() async {
 Future downloadDay(SharedPreferences sharedPreferences, String _grade,
     String _day) async {
   try {
-    String _url = 'https://api.vsa.lohl1kohl.de/vp/' +
+    String _url = 'https://api.vsa.2bad2c0.de/replacementplan/' +
         _day +
         '/' +
         _grade +

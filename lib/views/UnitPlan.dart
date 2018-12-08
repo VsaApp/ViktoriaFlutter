@@ -76,19 +76,6 @@ class UnitPlanDayListState extends State<UnitPlanDayList> {
                 child: ListView(
                   shrinkWrap: true,
                   children: day.lessons.map((lesson) {
-                    if (lesson.subjects.length > 0) {
-                      if ((_grade == 'EF' ||
-                              _grade == 'Q1' ||
-                              _grade == 'Q2') &&
-                          lesson.subjects.length > 0 &&
-                          lesson.subjects[lesson.subjects.length - 1].lesson !=
-                              AppLocalizations.of(context).freeLesson) {
-                        lesson.subjects.add(UnitPlanSubject(
-                            teacher: '',
-                            lesson: AppLocalizations.of(context).freeLesson,
-                            room: '',
-                            block: lesson.subjects[0].block));
-                      }
                       int _selected = sharedPreferences.getInt(Keys.unitPlan +
                           _grade +
                           '-' +
@@ -97,9 +84,8 @@ class UnitPlanDayListState extends State<UnitPlanDayList> {
                                   '-' +
                                   day.lessons.indexOf(lesson).toString()
                               : lesson.subjects[0].block));
-                      if (_selected == null) {
-                        _selected = 0;
-                      }
+                      bool nothingSelected = _selected == null;
+                      if (nothingSelected) _selected = 0;
                       return GestureDetector(
                         onTap: () {
                           if (lesson.subjects.length > 1) {
@@ -167,8 +153,7 @@ class UnitPlanDayListState extends State<UnitPlanDayList> {
                               builder: (BuildContext context1) {
                                 bool _exams = sharedPreferences.getBool(
                                     Keys.exams +
-                                        lesson.subjects[_selected].block +
-                                        lesson.subjects[_selected].teacher);
+                                        lesson.subjects[_selected].lesson);
                                 return SimpleDialog(
                                   title: Text(getSubject(
                                       lesson.subjects[_selected].lesson) +
@@ -182,9 +167,7 @@ class UnitPlanDayListState extends State<UnitPlanDayList> {
                                           sharedPreferences.setBool(
                                               Keys.exams +
                                                   lesson.subjects[_selected]
-                                                      .block +
-                                                  lesson.subjects[_selected]
-                                                      .teacher,
+                                                      .lesson,
                                               value);
                                           sharedPreferences.commit();
                                           ReplacementPlan.update(
@@ -203,31 +186,29 @@ class UnitPlanDayListState extends State<UnitPlanDayList> {
                             );
                           }
                         },
-                        child: (lesson.subjects[_selected].change == null ||
+                        child: (nothingSelected ? 
+                          UnitPlanRow(
+                            subject: UnitPlanSubject(
+                                teacher: '-',
+                                lesson: AppLocalizations.of(context).selectLesson,
+                                room: '-',
+                                block: ''),
+                            unit: day.lessons.indexOf(lesson),
+                          ) :
+                          ( lesson.subjects[_selected].change == null ||
                             !sharedPreferences.getBool(
-                                Keys.showReplacementPlanInUnitPlan))
-                            ? UnitPlanRow(
-                          subject: lesson.subjects[_selected],
-                          unit: day.lessons.indexOf(lesson),
-                        )
-                            : ReplacementPlanRow(
-                            change: lesson.subjects[_selected].change,
-                            changes: [lesson.subjects[_selected].change]),
+                                Keys.showReplacementPlanInUnitPlan) ?
+                            UnitPlanRow(
+                                subject: lesson.subjects[_selected],
+                                unit: day.lessons.indexOf(lesson),
+                            ) : 
+                            ReplacementPlanRow(
+                              change: lesson.subjects[_selected].change,
+                              changes: [lesson.subjects[_selected].change]
+                            )
+                          )
+                        ),
                       );
-                    }
-                    if (day.lessons.indexOf(lesson) == 5 &&
-                        (day.lessons[6].subjects.length > 0 ||
-                            day.lessons[7].subjects.length > 0)) {
-                      return UnitPlanRow(
-                        subject: UnitPlanSubject(
-                            teacher: '',
-                            lesson: AppLocalizations.of(context).lunchBreak,
-                            room: '',
-                            block: ''),
-                        unit: day.lessons.indexOf(lesson),
-                      );
-                    }
-                    return Container();
                   }).toList(),
                 ),
               );
@@ -253,10 +234,6 @@ class UnitPlanRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String teacher = subject.teacher.replaceAll('Ã', 'Ö');
-    if (teacher.length > 0) {
-      teacher = teacher.substring(0, 2) + teacher.split('')[teacher.length - 1];
-    }
     return Container(
       padding: EdgeInsets.all(10.0),
       child: LayoutBuilder(
@@ -311,7 +288,7 @@ class UnitPlanRow extends StatelessWidget {
                     width: (showUnit)
                         ? constraints.maxWidth * 0.15
                         : constraints.maxWidth * 0.25,
-                    child: Text(teacher),
+                    child: Text(subject.teacher),
                   ),
                   Container(
                     width: (showUnit)

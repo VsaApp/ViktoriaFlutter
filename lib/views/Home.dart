@@ -9,6 +9,7 @@ import 'package:viktoriaflutterplugin/viktoriaflutterplugin.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
 import 'ReplacementPlan.dart';
+import 'Courses.dart';
 import 'Settings.dart';
 import 'UnitPlan.dart';
 
@@ -61,6 +62,8 @@ class HomePageState extends State<HomePage> {
       case 1:
         return ReplacementPlanPage();
       case 2:
+        return CoursesPage();
+      case 3:
         return SettingsPage();
       default:
         return Text('Error');
@@ -78,6 +81,7 @@ class HomePageState extends State<HomePage> {
       DrawerItem(AppLocalizations.of(context).unitPlan, Icons.event_note),
       DrawerItem(AppLocalizations.of(context).replacementPlan,
           Icons.format_list_numbered),
+      DrawerItem(AppLocalizations.of(context).courses, Icons.person),
       DrawerItem(AppLocalizations.of(context).settings, Icons.settings),
     ];
     var drawerOptions = <Widget>[];

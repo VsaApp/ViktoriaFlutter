@@ -31,12 +31,12 @@ class ReplacementPlanDay {
 
   factory ReplacementPlanDay.fromJson(Map<String, dynamic> json) {
     return ReplacementPlanDay(
-      date: json['date'] as String,
-      time: json['time'] as String,
-      update: json['update'] as String,
-      weekday: json['weekday'] as String,
-      changes: json['changes']
-          .map((i) => Change.fromJson(i, (json['weekday'] as String)))
+      date: json['for']['date'] as String,
+      time: json['updated']['time'] as String,
+      update: json['updated']['date'] as String,
+      weekday: json['for']['weekday'] as String,
+      changes: json['data']
+          .map((i) => Change.fromJson(i, (json['for']['weekday'] as String)))
           .toList(),
     );
   }
@@ -60,7 +60,6 @@ class ReplacementPlanDay {
 }
 
 class Change {
-  final String grade;
   final int unit;
   final String lesson;
   final String type;
@@ -72,8 +71,7 @@ class Change {
   UnitPlanSubject normalSubject;
   Color color;
 
-  Change({this.grade,
-    this.unit,
+  Change({this.unit,
     this.lesson,
     this.type,
     this.room,
@@ -83,13 +81,12 @@ class Change {
 
   factory Change.fromJson(Map<String, dynamic> json, String _weekday) {
     return Change(
-        grade: json['grade'] as String,
         unit: json['unit'] as int,
-        lesson: json['lesson'] as String,
-        type: json['type'] as String,
+        lesson: json['subject'] as String,
+        type: json['course'] as String,
         room: json['room'] as String,
-        teacher: json['teacher'] as String,
-        changed: Changed.fromJson(json['changed']),
+        teacher: json['participant'] as String,
+        changed: Changed.fromJson(json['change']),
         weekday: _weekday);
   }
 
@@ -126,18 +123,21 @@ class Change {
                       sharedPreferences.getString(Keys.grade) +
                       '-' +
                       ((subject.block == null)
-                          ? (day.toString() +
+                          ? (UnitPlan.days.indexOf(day).toString() +
                           '-' +
                           (day.lessons.indexOf(lesson)).toString())
                           : (subject.block)));
                   countSubjects++;
-                  if (selected == null) selected = 0;
+                  if (selected == null) {
+                    isMy = 0;
+                    return;
+                  }
                   if (selected < lesson.subjects.length){
                     if (lesson.subjects[selected] == subject) {
                       selectedSubjects++;
                       bool exams = (subject.block != null)
                         ? sharedPreferences.getBool(
-                        Keys.exams + subject.block + subject.teacher)
+                        Keys.exams + subject.lesson)
                         : null;
                       writing = writing || ((exams == null) ? true : exams);
                     }
@@ -146,13 +146,13 @@ class Change {
               })));
       if ((selectedSubjects >= countSubjects - 1) && writing) {
         isMy = 1;
-        UnitPlan.days[day].lessons[unit - 1].subjects
+        UnitPlan.days[day].lessons[unit].subjects
             .forEach((subject) => subject.change = this);
       } else if (selectedSubjects == 0 || !writing) isMy = 0;
       return;
     };
 
-    UnitPlanLesson nLesson = UnitPlan.days[day].lessons[unit - 1];
+    UnitPlanLesson nLesson = UnitPlan.days[day].lessons[unit];
     List<UnitPlanSubject> possibleSubjects = [];
     UnitPlanSubject nSubject;
     for (int i = 0; i < nLesson.subjects.length; i++) {
@@ -186,16 +186,11 @@ class Change {
       }
       // There is only one Subject with the correct teacher...
       if (subject.teacher == teacher) {
-        if (nLesson.subjects
-            .where((j) => j.teacher == teacher)
-            .toList()
-            .length ==
-            1) {
+        if (nLesson.subjects.where((j) => j.teacher == teacher).toList().length == 1) {
           nSubject = subject;
           break;
         } else
-          possibleSubjects.addAll(
-              nLesson.subjects.where((j) => j.teacher == teacher).toList());
+          possibleSubjects.addAll(nLesson.subjects.where((j) => j.teacher == teacher).toList());
       }
     }
 
@@ -205,11 +200,15 @@ class Change {
           sharedPreferences.getString(Keys.grade) +
           '-' +
           ((nSubject.block == null)
-              ? (day.toString() + '-' + (unit - 1).toString())
+              ? (day.toString() + '-' + (unit).toString())
               : (nSubject.block)));
+      if (selected == null) {
+        isMy = 0;
+        return;
+      }
       // If the normal Subject is the selected subject, the subject is my subject...
-      if (UnitPlan.days[day].lessons[unit - 1]
-          .subjects[(selected == null) ? 0 : selected] ==
+      if (UnitPlan.days[day].lessons[unit]
+          .subjects[selected] ==
           nSubject) {
         isMy = 1;
       } else
@@ -229,11 +228,15 @@ class Change {
           sharedPreferences.getString(Keys.grade) +
           '-' +
           ((possibleSubjects[0].block == null)
-              ? (day.toString() + '-' + (unit - 1).toString())
+              ? (day.toString() + '-' + (unit).toString())
               : (possibleSubjects[0].block)));
+      if (selected == null){
+        isMy = 0;
+        return;
+      }
       // If the normal Subject is the selected subject, the subject is my subject...
-      if (!possibleSubjects.contains(UnitPlan.days[day].lessons[unit - 1]
-          .subjects[(selected == null) ? 0 : selected])) {
+      if (!possibleSubjects.contains(UnitPlan.days[day].lessons[unit]
+          .subjects[selected])) {
         isMy = 0;
       }
     }
@@ -244,13 +247,16 @@ class Changed {
   final String info;
   final String teacher;
   final String room;
+  final String subject;
 
-  Changed({this.info, this.teacher, this.room});
+  Changed({this.info, this.teacher, this.room, this.subject});
 
   factory Changed.fromJson(Map<String, dynamic> json) {
     return Changed(
         info: json['info'] as String,
         teacher: json['teacher'] as String,
-        room: json['room'] as String);
+        room: json['room'] as String,
+        subject: json['subject'] as String
+    );
   }
 }

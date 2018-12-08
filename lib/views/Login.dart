@@ -54,11 +54,11 @@ class LoginView extends State<LoginPage> {
     String _password =
         sha256.convert(utf8.encode(_pupilPasswordController.text)).toString();
     final response = await http.get(
-        'https://api.vsa.lohl1kohl.de/validate?username=' +
+        'https://api.vsa.2bad2c0.de/login/' +
             _username +
-            '&password=' +
-            _password);
-    _pupilCredentialsCorrect = response.body == '0';
+            '/' +
+            _password + '/');
+    _pupilCredentialsCorrect = json.decode(response.body)['status'];
     if (_pupilFormKey.currentState.validate()) {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
@@ -77,7 +77,7 @@ class LoginView extends State<LoginPage> {
     String _username = _teacherUsernameController.text.toUpperCase();
     String _password = _teacherPasswordController.text;
     final response = await http
-        .get('https://api.vsa.lohl1kohl.de/sp/' + _username + '.json');
+        .get('https://api.vsa.2bad2c0.de/unitplan/' + _username + '.json');
     _teacherCredentialsCorrect = response.statusCode != 404;
     if (_teacherFormKey.currentState.validate()) {
       SharedPreferences sharedPreferences =

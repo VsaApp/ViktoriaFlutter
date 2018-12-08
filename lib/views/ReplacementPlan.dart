@@ -235,19 +235,11 @@ class ReplacementPlanRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String nTeacher = change.teacher.replaceAll('Ã', 'Ö');
-    if (nTeacher.length > 0) {
-      nTeacher =
-          nTeacher.substring(0, 2) + nTeacher.split('')[nTeacher.length - 1];
-    }
-    String cTeacher = change.changed.teacher.replaceAll('Ã', 'Ö');
-    if (cTeacher.length > 0) {
-      cTeacher =
-          cTeacher.substring(0, 2) + cTeacher.split('')[cTeacher.length - 1];
-    }
+    String nTeacher = change.teacher;
+    String cTeacher = change.changed.teacher;
     bool showUnit = true;
     if (changes.indexOf(change) !=
-        0) if (changes[changes.indexOf(change) - 1].unit == change.unit)
+        0) if (changes[changes.indexOf(change)].unit == change.unit)
       showUnit = false;
     return Container(
       padding: EdgeInsets.only(
@@ -263,7 +255,7 @@ class ReplacementPlanRow extends StatelessWidget {
                 Container(
                   width: constraints.maxWidth * 0.07,
                   child: Text(
-                    (showUnit) ? '${change.unit}' : '',
+                    (showUnit) ? '${change.unit + 1}' : '',
                     style: TextStyle(
                       color: Colors.black54,
                     ),

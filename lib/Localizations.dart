@@ -40,8 +40,33 @@ class AppLocalizations {
       'undefChanges': 'Eventuell meine Vertretungen',
       'otherChanges': 'Weitere Vertretungen',
       'writeExams': 'Schriftlich',
+      'writing': 'Schr.',
+      'speaking' : 'Mündl.',
+      'courses' : 'Meine Kurse',
+      'selectLesson' : 'Stunde auswählen',
+      'noCourses' : 'Es wurden noch keine Kurse ausgewählt!'
     },
   };
+
+  String get noCourses {
+    return _localizedValues[locale.languageCode]['noCourses'];
+  }
+
+  String get selectLesson {
+    return _localizedValues[locale.languageCode]['selectLesson'];
+  }
+
+  String get courses {
+    return _localizedValues[locale.languageCode]['courses'];
+  }
+
+  String get writing {
+    return _localizedValues[locale.languageCode]['writing'];
+  }
+
+  String get speaking {
+    return _localizedValues[locale.languageCode]['speaking'];
+  }
 
   String get writeExams {
     return _localizedValues[locale.languageCode]['writeExams'];

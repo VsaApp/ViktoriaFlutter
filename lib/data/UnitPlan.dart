@@ -12,7 +12,7 @@ Future download() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String _grade = sharedPreferences.getString(Keys.grade);
   try {
-    String _url = 'https://api.vsa.lohl1kohl.de/sp/' +
+    String _url = 'https://api.vsa.2bad2c0.de/unitplan/' +
         _grade +
         '.json?v=' +
         new Random().nextInt(99999999).toString();
@@ -28,6 +28,7 @@ Future download() async {
   }
 
   UnitPlan.days = await fetchDays();
+  UnitPlan.setAllSelections(sharedPreferences);
 }
 
 List<UnitPlanDay> getUnitPlan() {
@@ -41,6 +42,6 @@ Future<List<UnitPlanDay>> fetchDays() async {
 }
 
 List<UnitPlanDay> parseDays(String responseBody) {
-  final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
+  final parsed = json.decode(responseBody).cast<String, dynamic>()['data'];
   return parsed.map<UnitPlanDay>((json) => UnitPlanDay.fromJson(json)).toList();
 }
