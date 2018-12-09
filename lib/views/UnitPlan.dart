@@ -76,139 +76,143 @@ class UnitPlanDayListState extends State<UnitPlanDayList> {
                 child: ListView(
                   shrinkWrap: true,
                   children: day.lessons.map((lesson) {
-                      int _selected = sharedPreferences.getInt(Keys.unitPlan +
-                          _grade +
-                          '-' +
-                          (lesson.subjects[0].block == null
-                              ? widget.days.indexOf(day).toString() +
-                                  '-' +
-                                  day.lessons.indexOf(lesson).toString()
-                              : lesson.subjects[0].block));
-                      bool nothingSelected = _selected == null;
-                      if (nothingSelected) _selected = 0;
-                      return GestureDetector(
-                        onTap: () {
-                          if (lesson.subjects.length > 1) {
-                            showDialog<String>(
-                                context: context,
-                                barrierDismissible: true,
-                                builder: (BuildContext context1) {
-                                  return SimpleDialog(
-                                    title: Text(
-                                        (day.lessons.indexOf(lesson) + 1)
-                                            .toString() +
-                                            AppLocalizations
-                                                .of(context)
-                                                .nUnit),
-                                    children: lesson.subjects
-                                        .map((subject) {
-                                          return SimpleDialogOption(
-                                            onPressed: () {
-                                              setState(() {
-                                                sharedPreferences.setInt(
-                                                    Keys.unitPlan +
-                                                        _grade +
-                                                        '-' +
-                                                        (lesson.subjects[0]
-                                                                    .block ==
-                                                                null
-                                                            ? widget.days
-                                                                    .indexOf(
-                                                                        day)
-                                                                    .toString() +
-                                                                '-' +
-                                                                day.lessons
-                                                                    .indexOf(
-                                                                        lesson)
-                                                                    .toString()
-                                                            : lesson.subjects[0]
-                                                                .block),
-                                                    lesson.subjects
-                                                        .indexOf(subject));
-                                                Navigator.pop(context);
-                                                ReplacementPlan.updateFilter(
-                                                    day,
-                                                    lesson,
-                                                    sharedPreferences);
-                                              });
-                                            },
-                                            child: UnitPlanRow(
-                                                subject: subject,
-                                                unit:
-                                                day.lessons.indexOf(lesson),
-                                                showUnit: false),
-                                          );
-                                        })
-                                        .toList()
-                                        .cast<Widget>(),
-                                  );
-                                });
-                          }
-                        },
-                        onLongPress: () {
-                          if (lesson.subjects[_selected].block != null) {
-                            showDialog<String>(
+                    int _selected = sharedPreferences.getInt(Keys.unitPlan +
+                        _grade +
+                        '-' +
+                        (lesson.subjects[0].block == null
+                            ? widget.days.indexOf(day).toString() +
+                            '-' +
+                            day.lessons.indexOf(lesson).toString()
+                            : lesson.subjects[0].block));
+                    bool nothingSelected = _selected == null;
+                    if (nothingSelected) _selected = 0;
+                    return GestureDetector(
+                      onTap: () {
+                        if (lesson.subjects.length > 1) {
+                          showDialog<String>(
                               context: context,
                               barrierDismissible: true,
                               builder: (BuildContext context1) {
-                                bool _exams = sharedPreferences.getBool(
-                                    Keys.exams +
-                                        lesson.subjects[_selected].lesson);
                                 return SimpleDialog(
-                                  title: Text(getSubject(
-                                      lesson.subjects[_selected].lesson) +
-                                      ' ' +
-                                      lesson.subjects[_selected].teacher),
-                                  children: <Widget>[
-                                    SwitchListTile(
-                                      value: (_exams == null) ? true : _exams,
-                                      onChanged: (bool value) {
+                                  title: Text((day.lessons.indexOf(lesson) + 1)
+                                      .toString() +
+                                      AppLocalizations
+                                          .of(context)
+                                          .nUnit),
+                                  children: lesson.subjects
+                                      .map((subject) {
+                                    return SimpleDialogOption(
+                                      onPressed: () {
                                         setState(() {
-                                          sharedPreferences.setBool(
-                                              Keys.exams +
-                                                  lesson.subjects[_selected]
-                                                      .lesson,
-                                              value);
-                                          sharedPreferences.commit();
-                                          ReplacementPlan.update(
-                                              sharedPreferences);
+                                          sharedPreferences.setInt(
+                                              Keys.unitPlan +
+                                                  _grade +
+                                                  '-' +
+                                                  (lesson.subjects[0]
+                                                      .block ==
+                                                      null
+                                                      ? widget.days
+                                                      .indexOf(day)
+                                                      .toString() +
+                                                      '-' +
+                                                      day.lessons
+                                                          .indexOf(
+                                                          lesson)
+                                                          .toString()
+                                                      : lesson.subjects[0]
+                                                      .block),
+                                              lesson.subjects
+                                                  .indexOf(subject));
                                           Navigator.pop(context);
+                                          ReplacementPlan.updateFilter(day,
+                                              lesson, sharedPreferences);
                                         });
                                       },
-                                      title: new Text(
-                                          AppLocalizations
-                                              .of(context)
-                                              .writeExams),
-                                    ),
-                                  ],
+                                      child: UnitPlanRow(
+                                          subject: subject,
+                                          unit: day.lessons.indexOf(lesson),
+                                          showUnit: false),
+                                    );
+                                  })
+                                      .toList()
+                                      .cast<Widget>(),
                                 );
-                              },
-                            );
-                          }
-                        },
-                        child: (nothingSelected ? 
-                          UnitPlanRow(
-                            subject: UnitPlanSubject(
-                                teacher: '-',
-                                lesson: AppLocalizations.of(context).selectLesson,
-                                room: '-',
-                                block: ''),
-                            unit: day.lessons.indexOf(lesson),
-                          ) :
-                          ( lesson.subjects[_selected].change == null ||
-                            !sharedPreferences.getBool(
-                                Keys.showReplacementPlanInUnitPlan) ?
-                            UnitPlanRow(
-                                subject: lesson.subjects[_selected],
-                                unit: day.lessons.indexOf(lesson),
-                            ) : 
-                            ReplacementPlanRow(
-                              change: lesson.subjects[_selected].change,
-                              changes: [lesson.subjects[_selected].change]
-                            )
-                          )
-                        ),
-                      );
+                              });
+                        }
+                      },
+                      onLongPress: () {
+                        if (lesson.subjects[_selected].block != null &&
+                            lesson.subjects[_selected].lesson !=
+                                AppLocalizations
+                                    .of(context)
+                                    .freeLesson &&
+                            lesson.subjects[_selected].lesson !=
+                                AppLocalizations
+                                    .of(context)
+                                    .lunchBreak) {
+                          showDialog<String>(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (BuildContext context1) {
+                              bool _exams = sharedPreferences.getBool(
+                                  Keys.exams +
+                                      lesson.subjects[_selected].lesson);
+                              return SimpleDialog(
+                                title: Text(getSubject(
+                                    lesson.subjects[_selected].lesson) +
+                                    ' ' +
+                                    lesson.subjects[_selected].teacher),
+                                children: <Widget>[
+                                  SwitchListTile(
+                                    value: (_exams == null) ? true : _exams,
+                                    onChanged: (bool value) {
+                                      setState(() {
+                                        sharedPreferences.setBool(
+                                            Keys.exams +
+                                                lesson
+                                                    .subjects[_selected].lesson,
+                                            value);
+                                        sharedPreferences.commit();
+                                        ReplacementPlan.update(
+                                            sharedPreferences);
+                                        Navigator.pop(context);
+                                      });
+                                    },
+                                    title: new Text(AppLocalizations
+                                        .of(context)
+                                        .writeExams),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      },
+                      child: (nothingSelected
+                          ? UnitPlanRow(
+                        subject: UnitPlanSubject(
+                            teacher: '-',
+                            lesson:
+                            AppLocalizations
+                                .of(context)
+                                .selectLesson,
+                            room: '-',
+                            block: ''),
+                        unit: day.lessons.indexOf(lesson),
+                      )
+                          : (lesson.subjects[_selected].change == null ||
+                          !sharedPreferences.getBool(
+                              Keys.showReplacementPlanInUnitPlan)
+                          ? UnitPlanRow(
+                        subject: lesson.subjects[_selected],
+                        unit: day.lessons.indexOf(lesson),
+                      )
+                          : ReplacementPlanRow(
+                          change: lesson.subjects[_selected].change,
+                          changes: [
+                            lesson.subjects[_selected].change
+                          ]))),
+                    );
                   }).toList(),
                 ),
               );
