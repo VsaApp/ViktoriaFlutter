@@ -8,8 +8,8 @@ import 'package:viktoriaflutterplugin/viktoriaflutterplugin.dart';
 
 import '../Keys.dart';
 import '../Localizations.dart';
-import 'ReplacementPlan.dart';
 import 'Courses.dart';
+import 'ReplacementPlan.dart';
 import 'Settings.dart';
 import 'UnitPlan.dart';
 
@@ -31,6 +31,7 @@ class HomePageState extends State<HomePage> {
   int _selectedDrawerIndex = 0;
   SharedPreferences sharedPreferences;
   static String grade = '';
+  bool _dialogShown = false;
 
   @override
   void initState() {
@@ -98,6 +99,46 @@ class HomePageState extends State<HomePage> {
         selected: i == _selectedDrawerIndex,
         onTap: () => _onSelectItem(i),
       ));
+    }
+    if (!_dialogShown) {
+      _dialogShown = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        showDialog<String>(
+            context: context,
+            barrierDismissible: true,
+            builder: (BuildContext context1) {
+              return SimpleDialog(
+                title: Center(
+                  child: Text(AppLocalizations
+                      .of(context)
+                      .whatDoFirst),
+                ),
+                children: drawerItems.map((item) {
+                  return GestureDetector(
+                    onTap: () {
+                      _onSelectItem(drawerItems.indexOf(item));
+                    },
+                    child: Chip(
+                      avatar: CircleAvatar(
+                        backgroundColor: Theme
+                            .of(context)
+                            .primaryColor,
+                        child: Transform(
+                          transform: new Matrix4.identity()
+                            ..scale(0.8),
+                          child: Container(
+                            margin: EdgeInsets.all(3.0),
+                            child: Icon(item.icon),
+                          ),
+                        ),
+                      ),
+                      label: Text(item.title),
+                    ),
+                  );
+                }).toList(),
+              );
+            });
+      });
     }
 
     return Scaffold(

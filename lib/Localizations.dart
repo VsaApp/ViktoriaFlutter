@@ -41,10 +41,11 @@ class AppLocalizations {
       'otherChanges': 'Weitere Vertretungen',
       'writeExams': 'Schriftlich',
       'writing': 'Schr.',
-      'speaking' : 'Mündl.',
-      'courses' : 'Meine Kurse',
-      'selectLesson' : 'Stunde auswählen',
-      'noCourses' : 'Es wurden noch keine Kurse ausgewählt!'
+      'speaking': 'Mündl.',
+      'courses': 'Meine Kurse',
+      'selectLesson': 'Stunde auswählen',
+      'noCourses': 'Es wurden noch keine Kurse ausgewählt!',
+      'whatDoFirst': 'Was möchtest du als erstes machen?'
     },
   };
 
@@ -172,6 +173,10 @@ class AppLocalizations {
 
   String get freeLesson {
     return _localizedValues[locale.languageCode]['freeLesson'];
+  }
+
+  String get whatDoFirst {
+    return _localizedValues[locale.languageCode]['whatDoFirst'];
   }
 }
 
