@@ -191,12 +191,12 @@ class UnitPlanDayListState extends State<UnitPlanDayList> {
                       child: (nothingSelected
                           ? UnitPlanRow(
                         subject: UnitPlanSubject(
-                            teacher: '-',
+                            teacher: '',
                             lesson:
                             AppLocalizations
                                 .of(context)
                                 .selectLesson,
-                            room: '-',
+                            room: '',
                             block: ''),
                         unit: day.lessons.indexOf(lesson),
                       )

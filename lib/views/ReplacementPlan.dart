@@ -82,12 +82,18 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList> {
                               color: Colors.black,
                             ),
                             children: <TextSpan>[
-                              new TextSpan(text: 'Vertretungsplan für '),
+                              new TextSpan(
+                                  text: AppLocalizations
+                                      .of(context)
+                                      .replacementplanFor),
                               new TextSpan(
                                   text: '${day.weekday}',
                                   style: new TextStyle(
                                       fontWeight: FontWeight.bold)),
-                              new TextSpan(text: ', den '),
+                              new TextSpan(
+                                  text: AppLocalizations
+                                      .of(context)
+                                      .replacementplanThe),
                               new TextSpan(
                                   text: '${day.date}',
                                   style: new TextStyle(
@@ -106,12 +112,18 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList> {
                                 color: Colors.black,
                               ),
                               children: <TextSpan>[
-                                new TextSpan(text: 'Zuletzt aktualisiert am '),
+                                new TextSpan(
+                                    text: AppLocalizations
+                                        .of(context)
+                                        .replacementplanLastUpdated),
                                 new TextSpan(
                                     text: '${day.update}',
                                     style:
                                     new TextStyle(fontWeight: FontWeight.bold)),
-                                new TextSpan(text: ' um '),
+                                new TextSpan(
+                                    text: AppLocalizations
+                                        .of(context)
+                                        .replacementplanAt),
                                 new TextSpan(
                                     text: '${day.time}',
                                     style:

@@ -45,7 +45,12 @@ class AppLocalizations {
       'courses': 'Meine Kurse',
       'selectLesson': 'Stunde auswählen',
       'noCourses': 'Es wurden noch keine Kurse ausgewählt!',
-      'whatDoFirst': 'Was möchtest du als erstes machen?'
+      'whatDoFirst': 'Was möchtest du als erstes machen?',
+      'replacementplanFor': 'Vertretungsplan für ',
+      'replacementplanThe': ', den ',
+      'replacementplanLastUpdated': 'Zuletzt aktualisiert am ',
+      'replacementplanAt': ' um ',
+      'edit': 'Bearbeiten'
     },
   };
 
@@ -177,6 +182,26 @@ class AppLocalizations {
 
   String get whatDoFirst {
     return _localizedValues[locale.languageCode]['whatDoFirst'];
+  }
+
+  String get replacementplanFor {
+    return _localizedValues[locale.languageCode]['replacementplanFor'];
+  }
+
+  String get replacementplanThe {
+    return _localizedValues[locale.languageCode]['replacementplanThe'];
+  }
+
+  String get replacementplanLastUpdated {
+    return _localizedValues[locale.languageCode]['replacementplanLastUpdated'];
+  }
+
+  String get replacementplanAt {
+    return _localizedValues[locale.languageCode]['replacementplanAt'];
+  }
+
+  String get edit {
+    return _localizedValues[locale.languageCode]['edit'];
   }
 }
 
