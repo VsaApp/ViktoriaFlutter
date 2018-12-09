@@ -83,16 +83,14 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList> {
                             ),
                             children: <TextSpan>[
                               new TextSpan(
-                                  text: AppLocalizations
-                                      .of(context)
+                                  text: AppLocalizations.of(context)
                                       .replacementplanFor),
                               new TextSpan(
                                   text: '${day.weekday}',
                                   style: new TextStyle(
                                       fontWeight: FontWeight.bold)),
                               new TextSpan(
-                                  text: AppLocalizations
-                                      .of(context)
+                                  text: AppLocalizations.of(context)
                                       .replacementplanThe),
                               new TextSpan(
                                   text: '${day.date}',
@@ -105,88 +103,73 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList> {
                     ),
                     Center(
                         child: Container(
-                          margin: EdgeInsets.only(bottom: 10.0),
-                          child: RichText(
-                            text: new TextSpan(
-                              style: new TextStyle(
-                                color: Colors.black,
-                              ),
-                              children: <TextSpan>[
-                                new TextSpan(
-                                    text: AppLocalizations
-                                        .of(context)
-                                        .replacementplanLastUpdated),
-                                new TextSpan(
-                                    text: '${day.update}',
-                                    style:
-                                    new TextStyle(fontWeight: FontWeight.bold)),
-                                new TextSpan(
-                                    text: AppLocalizations
-                                        .of(context)
-                                        .replacementplanAt),
-                                new TextSpan(
-                                    text: '${day.time}',
-                                    style:
-                                    new TextStyle(fontWeight: FontWeight.bold)),
-                              ],
-                            ),
+                      margin: EdgeInsets.only(bottom: 10.0),
+                      child: RichText(
+                        text: new TextSpan(
+                          style: new TextStyle(
+                            color: Colors.black,
                           ),
-                        )),
-                  ]
-                    ..addAll((!sharedPreferences
-                        .getBool(Keys.sortReplacementPlan))
-                        ?
-                    // Show all changes in a list...
-                    day.changes.map((change) {
-                      return ReplacementPlanRow(
-                          changes: day.changes, change: change);
-                    }).toList()
-                        :
+                          children: <TextSpan>[
+                            new TextSpan(
+                                text: AppLocalizations.of(context)
+                                    .replacementplanLastUpdated),
+                            new TextSpan(
+                                text: '${day.update}',
+                                style:
+                                    new TextStyle(fontWeight: FontWeight.bold)),
+                            new TextSpan(
+                                text: AppLocalizations.of(context)
+                                    .replacementplanAt),
+                            new TextSpan(
+                                text: '${day.time}',
+                                style:
+                                    new TextStyle(fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                    )),
+                  ]..addAll((!sharedPreferences
+                          .getBool(Keys.sortReplacementPlan))
+                      ?
+                      // Show all changes in a list...
+                      day.changes.map((change) {
+                          return ReplacementPlanRow(
+                              changes: day.changes, change: change);
+                        }).toList()
+                      :
 
-                    // Show the changes in three categories...
-                    [
-                      day
-                          .getMyChanges()
-                          .length > 0
-                          ? Section(
-                          title: AppLocalizations
-                              .of(context)
-                              .myChanges,
-                          children: day.getMyChanges().map((change) {
-                            return ReplacementPlanRow(
-                                changes: day.getMyChanges(),
-                                change: change);
-                          }).toList())
-                          : Container(),
-                      day
-                          .getUndefChanges()
-                          .length > 0
-                          ? Section(
-                          title:
-                          AppLocalizations
-                              .of(context)
-                              .undefChanges,
-                          children: day.getUndefChanges().map((change) {
-                            return ReplacementPlanRow(
-                                changes: day.getUndefChanges(),
-                                change: change);
-                          }).toList())
-                          : Container(),
-                      day
-                          .getOtherChanges()
-                          .length > 0
-                          ? Section(
-                          title:
-                          AppLocalizations
-                              .of(context)
-                              .otherChanges,
-                          children: day.getOtherChanges().map((change) {
-                            return ReplacementPlanRow(
-                                changes: day.getOtherChanges(),
-                                change: change);
-                          }).toList())
-                          : Container(),
-                    ]),
+                      // Show the changes in three categories...
+                      [
+                          day.getMyChanges().length > 0
+                              ? Section(
+                                  title: AppLocalizations.of(context).myChanges,
+                                  children: day.getMyChanges().map((change) {
+                                    return ReplacementPlanRow(
+                                        changes: day.getMyChanges(),
+                                        change: change);
+                                  }).toList())
+                              : Container(),
+                          day.getUndefChanges().length > 0
+                              ? Section(
+                                  title:
+                                      AppLocalizations.of(context).undefChanges,
+                                  children: day.getUndefChanges().map((change) {
+                                    return ReplacementPlanRow(
+                                        changes: day.getUndefChanges(),
+                                        change: change);
+                                  }).toList())
+                              : Container(),
+                          day.getOtherChanges().length > 0
+                              ? Section(
+                                  title:
+                                      AppLocalizations.of(context).otherChanges,
+                                  children: day.getOtherChanges().map((change) {
+                                    return ReplacementPlanRow(
+                                        changes: day.getOtherChanges(),
+                                        change: change);
+                                  }).toList())
+                              : Container(),
+                        ]),
                 ),
               );
             }).toList(),
@@ -282,9 +265,7 @@ class ReplacementPlanRow extends StatelessWidget {
                     left: BorderSide(
                         width: 2,
                         color: (change.color == null)
-                            ? Theme
-                            .of(context)
-                            .primaryColor
+                            ? Theme.of(context).primaryColor
                             : change.color),
                   ),
                 ),
@@ -299,9 +280,7 @@ class ReplacementPlanRow extends StatelessWidget {
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 15.0,
-                              color: Theme
-                                  .of(context)
-                                  .primaryColor,
+                              color: Theme.of(context).primaryColor,
                             ),
                           ),
                         ),
@@ -322,9 +301,7 @@ class ReplacementPlanRow extends StatelessWidget {
                           child: Text(
                             change.room,
                             style: TextStyle(
-                              color: Theme
-                                  .of(context)
-                                  .primaryColor,
+                              color: Theme.of(context).primaryColor,
                             ),
                           ),
                         ),
@@ -356,7 +333,7 @@ class ReplacementPlanRow extends StatelessWidget {
                             width: constraints.maxWidth * 0.15,
                             child: Text(
                               nTeacher == cTeacher &&
-                                  change.changed.info != 'Klausur'
+                                      change.changed.info != 'Klausur'
                                   ? ''
                                   : cTeacher,
                               style: TextStyle(

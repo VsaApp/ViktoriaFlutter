@@ -109,9 +109,7 @@ class HomePageState extends State<HomePage> {
             builder: (BuildContext context1) {
               return SimpleDialog(
                 title: Center(
-                  child: Text(AppLocalizations
-                      .of(context)
-                      .whatDoFirst),
+                  child: Text(AppLocalizations.of(context).whatDoFirst),
                 ),
                 children: drawerItems.map((item) {
                   return GestureDetector(
@@ -120,12 +118,9 @@ class HomePageState extends State<HomePage> {
                     },
                     child: Chip(
                       avatar: CircleAvatar(
-                        backgroundColor: Theme
-                            .of(context)
-                            .primaryColor,
+                        backgroundColor: Theme.of(context).primaryColor,
                         child: Transform(
-                          transform: new Matrix4.identity()
-                            ..scale(0.8),
+                          transform: new Matrix4.identity()..scale(0.8),
                           child: Container(
                             margin: EdgeInsets.all(3.0),
                             child: Icon(item.icon),

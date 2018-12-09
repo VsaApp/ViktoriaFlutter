@@ -36,30 +36,26 @@ class CoursesView extends State<CoursesPage> {
 
     // Get all selected subjects...
     getUnitPlan().forEach((day) => day.lessons.forEach((lesson) {
-      if (lesson.subjects.length > 0) {
-        int selected = sharedPreferences.getInt(Keys.unitPlan +
-            sharedPreferences.getString(Keys.grade) +
-            '-' +
-            ((lesson.subjects[0].block == null)
-                ? (getUnitPlan().indexOf(day).toString() +
-                '-' +
-                (day.lessons.indexOf(lesson)).toString())
-                : (lesson.subjects[0].block))) ??
-            lesson.subjects.length;
-        if (selected < lesson.subjects.length)
-          selectedSubjects.add(lesson.subjects[selected]);
-      }
-    }));
+          if (lesson.subjects.length > 0) {
+            int selected = sharedPreferences.getInt(Keys.unitPlan +
+                    sharedPreferences.getString(Keys.grade) +
+                    '-' +
+                    ((lesson.subjects[0].block == null)
+                        ? (getUnitPlan().indexOf(day).toString() +
+                            '-' +
+                            (day.lessons.indexOf(lesson)).toString())
+                        : (lesson.subjects[0].block))) ??
+                lesson.subjects.length;
+            if (selected < lesson.subjects.length)
+              selectedSubjects.add(lesson.subjects[selected]);
+          }
+        }));
 
     Map<String, List<UnitPlanSubject>> courses = {};
 
     selectedSubjects.forEach((subject) {
-      if (subject.lesson != AppLocalizations
-          .of(context)
-          .lunchBreak &&
-          subject.lesson != AppLocalizations
-              .of(context)
-              .freeLesson) {
+      if (subject.lesson != AppLocalizations.of(context).lunchBreak &&
+          subject.lesson != AppLocalizations.of(context).freeLesson) {
         String key = subject.lesson + subject.teacher;
         if (courses.containsKey(key)) {
           courses[key].add(subject);
@@ -70,21 +66,16 @@ class CoursesView extends State<CoursesPage> {
 
     return ListView(
         shrinkWrap: true,
-        children: (courses.keys
-            .toList()
-            .length > 0)
+        children: (courses.keys.toList().length > 0)
             ? courses.keys
-            .toList()
-            .map((key) =>
-            CourseRow(
-                subjects: courses[key].toList(),
-                sharedPreferences: sharedPreferences))
-            .toList()
+                .toList()
+                .map((key) => CourseRow(
+                    subjects: courses[key].toList(),
+                    sharedPreferences: sharedPreferences))
+                .toList()
             : <Widget>[
-          Center(child: Text(AppLocalizations
-              .of(context)
-              .noCourses))
-        ]);
+                Center(child: Text(AppLocalizations.of(context).noCourses))
+              ]);
   }
 }
 
@@ -112,7 +103,7 @@ class CourseRowView extends State<CourseRow> {
     course = '';
     blocks = [];
     _exams = widget.sharedPreferences
-        .getBool(Keys.exams + widget.subjects[0].lesson) ??
+            .getBool(Keys.exams + widget.subjects[0].lesson) ??
         true;
 
     widget.subjects.forEach((subject) {
@@ -146,9 +137,7 @@ class CourseRowView extends State<CourseRow> {
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 15.0,
-                              color: Theme
-                                  .of(context)
-                                  .primaryColor,
+                              color: Theme.of(context).primaryColor,
                             ),
                           ),
                         ),
@@ -169,9 +158,7 @@ class CourseRowView extends State<CourseRow> {
                           child: Text(
                             course,
                             style: TextStyle(
-                              color: Theme
-                                  .of(context)
-                                  .primaryColor,
+                              color: Theme.of(context).primaryColor,
                             ),
                           ),
                         ),
@@ -179,12 +166,8 @@ class CourseRowView extends State<CourseRow> {
                           width: constraints.maxWidth * 0.20,
                           child: Text(
                             (_exams)
-                                ? AppLocalizations
-                                .of(context)
-                                .writing
-                                : AppLocalizations
-                                .of(context)
-                                .speaking,
+                                ? AppLocalizations.of(context).writing
+                                : AppLocalizations.of(context).speaking,
                             style: TextStyle(
                               color: Colors.black54,
                             ),
@@ -198,9 +181,7 @@ class CourseRowView extends State<CourseRow> {
                           width: constraints.maxWidth * 0.10,
                           child: IconButton(
                               icon: Icon(Icons.edit),
-                              tooltip: AppLocalizations
-                                  .of(context)
-                                  .edit,
+                              tooltip: AppLocalizations.of(context).edit,
                               onPressed: () {
                                 showDialog<String>(
                                   context: context,
@@ -216,7 +197,7 @@ class CourseRowView extends State<CourseRow> {
                                               blocks.forEach((block) {
                                                 widget.sharedPreferences
                                                     .setBool(Keys.exams + name,
-                                                    value);
+                                                        value);
                                               });
                                               widget.sharedPreferences.commit();
                                               ReplacementPlan.update(
@@ -225,8 +206,7 @@ class CourseRowView extends State<CourseRow> {
                                             });
                                           },
                                           title: new Text(
-                                              AppLocalizations
-                                                  .of(context)
+                                              AppLocalizations.of(context)
                                                   .writeExams),
                                         ),
                                       ],
