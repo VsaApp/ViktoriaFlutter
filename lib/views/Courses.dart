@@ -102,9 +102,7 @@ class CourseRowView extends State<CourseRow> {
     teacher = widget.subjects[0].teacher;
     course = '';
     blocks = [];
-    _exams = widget.sharedPreferences
-            .getBool(Keys.exams + widget.subjects[0].lesson) ??
-        true;
+    _exams = widget.sharedPreferences.getBool(Keys.exams + name) ?? true;
 
     widget.subjects.forEach((subject) {
       if (course.length == 0) course = subject.course;
@@ -190,7 +188,7 @@ class CourseRowView extends State<CourseRow> {
                                     return SimpleDialog(
                                       title: Text(name + ' ' + teacher),
                                       children: <Widget>[
-                                        SwitchListTile(
+                                        CheckboxListTile(
                                           value: _exams,
                                           onChanged: (bool value) {
                                             setState(() {
@@ -202,6 +200,7 @@ class CourseRowView extends State<CourseRow> {
                                               widget.sharedPreferences.commit();
                                               ReplacementPlan.update(
                                                   widget.sharedPreferences);
+                                              _exams = value;
                                               Navigator.pop(context);
                                             });
                                           },
