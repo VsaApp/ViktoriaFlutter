@@ -234,7 +234,7 @@ class ReplacementPlanRow extends StatelessWidget {
     String cTeacher = change.changed.teacher;
     bool showUnit = true;
     if (changes.indexOf(change) !=
-        0) if (changes[changes.indexOf(change)].unit == change.unit)
+        0) if (changes[changes.indexOf(change) - 1].unit == change.unit)
       showUnit = false;
     return Container(
       padding: EdgeInsets.only(

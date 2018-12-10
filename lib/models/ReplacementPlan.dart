@@ -62,7 +62,7 @@ class ReplacementPlanDay {
 class Change {
   final int unit;
   final String lesson;
-  final String type;
+  final String course;
   String room;
   String teacher;
   final Changed changed;
@@ -73,7 +73,7 @@ class Change {
 
   Change({this.unit,
     this.lesson,
-    this.type,
+    this.course,
     this.room,
     this.teacher,
     this.changed,
@@ -83,7 +83,7 @@ class Change {
     return Change(
         unit: json['unit'] as int,
         lesson: json['subject'] as String,
-        type: json['course'] as String,
+        course: json['course'] as String,
         room: json['room'] as String,
         teacher: json['participant'] as String,
         changed: Changed.fromJson(json['change']),
@@ -108,6 +108,35 @@ class Change {
     setColor();
     int day = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag']
         .indexOf(weekday);
+
+    // Check if the course set...
+    UnitPlan.days.forEach((day) => day.lessons.forEach((lesson) {
+      if (lesson.subjects.length > 0) {
+        int selected = sharedPreferences.getInt(Keys.unitPlan +
+                sharedPreferences.getString(Keys.grade) +
+                '-' +
+                ((lesson.subjects[0].block == null)
+                    ? (UnitPlan.days.indexOf(day).toString() +
+                        '-' +
+                        (day.lessons.indexOf(lesson)).toString())
+                    : (lesson.subjects[0].block))) ??
+            lesson.subjects.length;
+        if (selected < lesson.subjects.length){
+          UnitPlanSubject subject = lesson.subjects[selected];
+          if (this.lesson == subject.lesson && (teacher.length == 0 || teacher == subject.teacher)){
+            // It's the correct lesson...
+            if (course == subject.course){
+              isMy = 1;
+              return;
+            }
+            else if (course.length > 0) {
+              isMy = 0;
+              return;
+            }
+          }
+        }
+      }
+    }));
 
     // With the current database it is not possible to filter exams...
     if (changed.info.toLowerCase().contains('klausur')) {
