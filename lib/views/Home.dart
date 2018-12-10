@@ -102,38 +102,46 @@ class HomePageState extends State<HomePage> {
     }
     if (!_dialogShown) {
       _dialogShown = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        showDialog<String>(
-            context: context,
-            barrierDismissible: true,
-            builder: (BuildContext context1) {
-              return SimpleDialog(
-                title: Center(
-                  child: Text(AppLocalizations.of(context).whatDoFirst),
-                ),
-                children: drawerItems.map((item) {
-                  return GestureDetector(
-                    onTap: () {
-                      _onSelectItem(drawerItems.indexOf(item));
-                    },
-                    child: Chip(
-                      avatar: CircleAvatar(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        child: Transform(
-                          transform: new Matrix4.identity()..scale(0.8),
-                          child: Container(
-                            margin: EdgeInsets.all(3.0),
-                            child: Icon(item.icon),
+      
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+          bool selectedSubjects = sharedPreferences.getKeys().where((key) => key.contains(Keys.unitPlan)).length > 0;
+    
+          if (selectedSubjects){
+            showDialog<String>(
+              context: context,
+              barrierDismissible: true,
+              builder: (BuildContext context1) {
+                return SimpleDialog(
+                  title: Center(
+                    child: Text(AppLocalizations.of(context).whatDoFirst),
+                  ),
+                  children: drawerItems.map((item) {
+                    return GestureDetector(
+                      onTap: () {
+                        _onSelectItem(drawerItems.indexOf(item));
+                      },
+                      child: Chip(
+                        avatar: CircleAvatar(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          child: Transform(
+                            transform: new Matrix4.identity()..scale(0.8),
+                            child: Container(
+                              margin: EdgeInsets.all(3.0),
+                              child: Icon(item.icon),
+                            ),
                           ),
                         ),
+                        label: Text(item.title),
                       ),
-                      label: Text(item.title),
-                    ),
-                  );
-                }).toList(),
-              );
-            });
-      });
+                    );
+                  }).toList(),
+                );
+              }
+            );
+          }
+        });
+      
     }
 
     return Scaffold(
