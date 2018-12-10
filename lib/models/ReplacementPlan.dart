@@ -126,6 +126,12 @@ class Change {
           if (this.lesson == subject.lesson && (teacher.length == 0 || teacher == subject.teacher)){
             // It's the correct lesson...
             if (course == subject.course){
+              if (changed.info.toLowerCase().contains('klausur')){
+                if (!sharedPreferences.getBool(Keys.exams + subject.lesson) ?? true) {
+                  isMy = 0; 
+                  return;
+                }
+              }
               isMy = 1;
               return;
             }
@@ -164,11 +170,8 @@ class Change {
                   if (selected < lesson.subjects.length){
                     if (lesson.subjects[selected] == subject) {
                       selectedSubjects++;
-                      bool exams = (subject.block != null)
-                        ? sharedPreferences.getBool(
-                        Keys.exams + subject.lesson)
-                        : null;
-                      writing = writing || ((exams == null) ? true : exams);
+                      bool exams = sharedPreferences.getBool(Keys.exams + subject.lesson) ?? true;
+                      writing = exams;
                     }
                   }
                 }
