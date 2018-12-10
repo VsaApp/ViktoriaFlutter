@@ -163,7 +163,7 @@ class UnitPlanDayListState extends State<UnitPlanDayList> {
                                     ' ' +
                                     lesson.subjects[_selected].teacher),
                                 children: <Widget>[
-                                  SwitchListTile(
+                                  CheckboxListTile(
                                     value: (_exams == null) ? true : _exams,
                                     onChanged: (bool value) {
                                       setState(() {
