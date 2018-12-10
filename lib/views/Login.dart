@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
@@ -53,11 +54,11 @@ class LoginView extends State<LoginPage> {
         sha256.convert(utf8.encode(_pupilUsernameController.text)).toString();
     String _password =
         sha256.convert(utf8.encode(_pupilPasswordController.text)).toString();
-    final response = await http.get(
-        'https://api.vsa.2bad2c0.de/login/' +
-            _username +
-            '/' +
-            _password + '/');
+    final response = await http.get('https://api.vsa.2bad2c0.de/login/' +
+        _username +
+        '/' +
+        _password +
+        '/');
     _pupilCredentialsCorrect = json.decode(response.body)['status'];
     if (_pupilFormKey.currentState.validate()) {
       SharedPreferences sharedPreferences =
@@ -105,9 +106,18 @@ class LoginView extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    if (_type == '') {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await showDialog<String>(
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      prepareLogin();
+    });
+  }
+
+  void prepareLogin() {
+    checkOnline.then((online) {
+      setState(() {
+        _type = (online ? '' : 'offline');
+      });
+      if (_type == '') {
+        showDialog<String>(
             context: context,
             barrierDismissible: false,
             builder: (BuildContext context1) {
@@ -135,7 +145,19 @@ class LoginView extends State<LoginPage> {
                 ],
               );
             });
-      });
+      }
+    });
+  }
+
+  Future<bool> get checkOnline async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+      return false;
+    } on SocketException catch (_) {
+      return false;
     }
   }
 
@@ -161,151 +183,199 @@ class LoginView extends State<LoginPage> {
             ),
             (_type == ''
                 ? Container()
+                : (_type == 'offline'
+                ? Padding(
+              padding: EdgeInsets.only(top: 10.0),
+              child: Center(
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                        AppLocalizations
+                            .of(context)
+                            .goOnlineToLogin),
+                    FlatButton(
+                      color: Theme
+                          .of(context)
+                          .accentColor,
+                      child: Text(AppLocalizations
+                          .of(context)
+                          .retry),
+                      onPressed: () async {
+                        /*while (Navigator.of(context).canPop()) {
+                                    Navigator.of(context).pop();
+                                  }*/
+                        prepareLogin();
+                      },
+                    )
+                  ],
+                ),
+              ),
+            )
                 : (_type == 'pupil'
-                    ? Form(
-                        key: _pupilFormKey,
-                        child: Column(
-                          children: <Widget>[
-                            SizedBox(
-                              width: double.infinity,
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                                  isDense: true,
-                                  items: _grades.map((String value) {
-                                    return new DropdownMenuItem<String>(
-                                      value: value,
-                                      child: new Text(value),
-                                    );
-                                  }).toList(),
-                                  value: _grade,
-                                  onChanged: (grade) {
-                                    setState(() {
-                                      _grade = grade;
-                                    });
-                                  },
-                                ),
-                              ),
-                            ),
-                            TextFormField(
-                              controller: _pupilUsernameController,
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return AppLocalizations.of(context)
-                                      .fieldCantBeEmpty;
-                                }
-                                if (!_pupilCredentialsCorrect) {
-                                  return AppLocalizations.of(context)
-                                      .credentialsNotCorrect;
-                                }
-                              },
-                              decoration: InputDecoration(
-                                  hintText:
-                                      AppLocalizations.of(context).username),
-                              onFieldSubmitted: (value) {
-                                FocusScope.of(context)
-                                    .requestFocus(_pupilFocus);
-                              },
-                            ),
-                            TextFormField(
-                              controller: _pupilPasswordController,
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return AppLocalizations.of(context)
-                                      .fieldCantBeEmpty;
-                                }
-                                if (!_pupilCredentialsCorrect) {
-                                  return AppLocalizations.of(context)
-                                      .credentialsNotCorrect;
-                                }
-                              },
-                              decoration: InputDecoration(
-                                  hintText:
-                                      AppLocalizations.of(context).password),
-                              onFieldSubmitted: (value) {
-                                checkPupilForm();
-                              },
-                              obscureText: true,
-                              focusNode: _pupilFocus,
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(top: 20.0),
-                              child: SizedBox(
-                                width: double.infinity,
-                                child: RaisedButton(
-                                  color: Theme.of(context).accentColor,
-                                  onPressed: () {
-                                    checkPupilForm();
-                                  },
-                                  child:
-                                      Text(AppLocalizations.of(context).login),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : Form(
-                        key: _teacherFormKey,
-                        child: Column(
-                          children: <Widget>[
-                            TextFormField(
-                              controller: _teacherUsernameController,
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return AppLocalizations.of(context)
-                                      .fieldCantBeEmpty;
-                                }
-                                if (!_teacherCredentialsCorrect) {
-                                  return AppLocalizations.of(context)
-                                      .credentialsNotCorrect;
-                                }
-                              },
-                              decoration: InputDecoration(
-                                  hintText:
-                                      AppLocalizations.of(context).username),
-                              onFieldSubmitted: (value) {
-                                FocusScope.of(context)
-                                    .requestFocus(_teacherFocus);
-                              },
-                            ),
-                            TextFormField(
-                              controller: _teacherPasswordController,
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return AppLocalizations.of(context)
-                                      .fieldCantBeEmpty;
-                                }
-                                if (!_teacherCredentialsCorrect) {
-                                  return AppLocalizations.of(context)
-                                      .credentialsNotCorrect;
-                                }
-                              },
-                              decoration: InputDecoration(
-                                  hintText:
-                                      AppLocalizations.of(context).password),
-                              onFieldSubmitted: (value) {
-                                checkTeacherForm();
-                              },
-                              obscureText: true,
-                              focusNode: _teacherFocus,
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(top: 20.0),
-                              child: SizedBox(
-                                width: double.infinity,
-                                child: RaisedButton(
-                                  color: Theme.of(context).accentColor,
-                                  onPressed: () {
-                                    checkTeacherForm();
-                                  },
-                                  child:
-                                      Text(AppLocalizations.of(context).login),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ))),
+                ? Form(
+              key: _pupilFormKey,
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    width: double.infinity,
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        isDense: true,
+                        items: _grades.map((String value) {
+                          return new DropdownMenuItem<String>(
+                            value: value,
+                            child: new Text(value),
+                          );
+                        }).toList(),
+                        value: _grade,
+                        onChanged: (grade) {
+                          setState(() {
+                            _grade = grade;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  TextFormField(
+                    controller: _pupilUsernameController,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return AppLocalizations
+                            .of(context)
+                            .fieldCantBeEmpty;
+                      }
+                      if (!_pupilCredentialsCorrect) {
+                        return AppLocalizations
+                            .of(context)
+                            .credentialsNotCorrect;
+                      }
+                    },
+                    decoration: InputDecoration(
+                        hintText: AppLocalizations
+                            .of(context)
+                            .username),
+                    onFieldSubmitted: (value) {
+                      FocusScope.of(context)
+                          .requestFocus(_pupilFocus);
+                    },
+                  ),
+                  TextFormField(
+                    controller: _pupilPasswordController,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return AppLocalizations
+                            .of(context)
+                            .fieldCantBeEmpty;
+                      }
+                      if (!_pupilCredentialsCorrect) {
+                        return AppLocalizations
+                            .of(context)
+                            .credentialsNotCorrect;
+                      }
+                    },
+                    decoration: InputDecoration(
+                        hintText: AppLocalizations
+                            .of(context)
+                            .password),
+                    onFieldSubmitted: (value) {
+                      checkPupilForm();
+                    },
+                    obscureText: true,
+                    focusNode: _pupilFocus,
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 20.0),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: RaisedButton(
+                        color: Theme
+                            .of(context)
+                            .accentColor,
+                        onPressed: () {
+                          checkPupilForm();
+                        },
+                        child: Text(
+                            AppLocalizations
+                                .of(context)
+                                .login),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+                : Form(
+              key: _teacherFormKey,
+              child: Column(
+                children: <Widget>[
+                  TextFormField(
+                    controller: _teacherUsernameController,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return AppLocalizations
+                            .of(context)
+                            .fieldCantBeEmpty;
+                      }
+                      if (!_teacherCredentialsCorrect) {
+                        return AppLocalizations
+                            .of(context)
+                            .credentialsNotCorrect;
+                      }
+                    },
+                    decoration: InputDecoration(
+                        hintText: AppLocalizations
+                            .of(context)
+                            .username),
+                    onFieldSubmitted: (value) {
+                      FocusScope.of(context)
+                          .requestFocus(_teacherFocus);
+                    },
+                  ),
+                  TextFormField(
+                    controller: _teacherPasswordController,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return AppLocalizations
+                            .of(context)
+                            .fieldCantBeEmpty;
+                      }
+                      if (!_teacherCredentialsCorrect) {
+                        return AppLocalizations
+                            .of(context)
+                            .credentialsNotCorrect;
+                      }
+                    },
+                    decoration: InputDecoration(
+                        hintText: AppLocalizations
+                            .of(context)
+                            .password),
+                    onFieldSubmitted: (value) {
+                      checkTeacherForm();
+                    },
+                    obscureText: true,
+                    focusNode: _teacherFocus,
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 20.0),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: RaisedButton(
+                        color: Theme
+                            .of(context)
+                            .accentColor,
+                        onPressed: () {
+                          checkTeacherForm();
+                        },
+                        child: Text(
+                            AppLocalizations
+                                .of(context)
+                                .login),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )))),
           ],
         ),
       ),

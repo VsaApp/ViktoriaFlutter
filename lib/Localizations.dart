@@ -50,7 +50,11 @@ class AppLocalizations {
       'replacementplanThe': ', den ',
       'replacementplanLastUpdated': 'Zuletzt aktualisiert am ',
       'replacementplanAt': ' um ',
-      'edit': 'Bearbeiten'
+      'edit': 'Bearbeiten',
+      'goOnlineToLogin': 'Du musst online sein um dich anzumelden',
+      'retry': 'Erneut versuchen',
+      'oldDataIsShown': 'Alte Daten werden angezeigt, weil du offline bist',
+      'ok': 'OK'
     },
   };
 
@@ -202,6 +206,22 @@ class AppLocalizations {
 
   String get edit {
     return _localizedValues[locale.languageCode]['edit'];
+  }
+
+  String get goOnlineToLogin {
+    return _localizedValues[locale.languageCode]['goOnlineToLogin'];
+  }
+
+  String get retry {
+    return _localizedValues[locale.languageCode]['retry'];
+  }
+
+  String get oldDataIsShown {
+    return _localizedValues[locale.languageCode]['oldDataIsShown'];
+  }
+
+  String get ok {
+    return _localizedValues[locale.languageCode]['ok'];
   }
 }
 

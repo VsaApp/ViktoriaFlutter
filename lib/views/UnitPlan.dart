@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,8 +18,42 @@ class UnitPlanPage extends StatefulWidget {
 }
 
 class UnitPlanView extends State<UnitPlanPage> {
+  bool _offlineShown = false;
+
+  Future<bool> get checkOnline async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+      return false;
+    } on SocketException catch (_) {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (!_offlineShown) {
+      checkOnline.then((online) {
+        _offlineShown = true;
+        if (!online) {
+          Scaffold.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations
+                  .of(context)
+                  .oldDataIsShown),
+              action: SnackBarAction(
+                label: AppLocalizations
+                    .of(context)
+                    .ok,
+                onPressed: () {},
+              ),
+            ),
+          );
+        }
+      });
+    }
     return Column(children: <Widget>[UnitPlanDayList(days: getUnitPlan())]);
   }
 }
@@ -259,21 +295,21 @@ class UnitPlanRow extends StatelessWidget {
                     width: constraints.maxWidth * 0.75,
                     child: (unit != 5
                         ? Text(
-                            getSubject(subject.lesson),
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15.0,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          )
+                      getSubject(subject.lesson),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15.0,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    )
                         : Center(
-                            child: Text(
-                              getSubject(subject.lesson),
-                              style: TextStyle(
-                                fontSize: 15.0,
-                              ),
-                            ),
-                          )),
+                      child: Text(
+                        getSubject(subject.lesson),
+                        style: TextStyle(
+                          fontSize: 15.0,
+                        ),
+                      ),
+                    )),
                   ),
                   Container(
                     width: constraints.maxWidth * 0.75,

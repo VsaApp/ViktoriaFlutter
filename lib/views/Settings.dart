@@ -147,7 +147,7 @@ class SettingsPageView extends State<SettingsPage> {
                 margin: EdgeInsets.only(top: 20.0),
                 child: SizedBox(
                   width: double.infinity,
-                  child: RaisedButton(
+                  child: FlatButton(
                     color: Theme.of(context).accentColor,
                     child: Text(AppLocalizations.of(context).logout),
                     onPressed: () async {
