@@ -72,48 +72,46 @@ class SettingsPageView extends State<SettingsPage> {
         shrinkWrap: true,
         children: <Widget>[
           SettingsSection(
-              title: AppLocalizations
-                  .of(context)
-                  .appSettings,
+              title: AppLocalizations.of(context).appSettings,
               children: <Widget>[
-                SwitchListTile(
+                CheckboxListTile(
                   value: _sortReplacementPlan,
                   onChanged: (bool value) {
                     setState(() {
                       sharedPreferences.setBool(
                           Keys.sortReplacementPlan, value);
                       sharedPreferences.commit();
+                      _sortReplacementPlan = value;
                     });
                   },
                   title: new Text(
-                      AppLocalizations
-                          .of(context)
-                          .sortReplacementPlan),
+                      AppLocalizations.of(context).sortReplacementPlan),
+                  controlAffinity: ListTileControlAffinity.trailing,
                 ),
-                SwitchListTile(
+                CheckboxListTile(
                   value: _showReplacementPlanInUnitPlan,
                   onChanged: (bool value) {
                     setState(() {
                       sharedPreferences.setBool(
                           Keys.showReplacementPlanInUnitPlan, value);
                       sharedPreferences.commit();
+                      _showReplacementPlanInUnitPlan = value;
                     });
                   },
-                  title: new Text(AppLocalizations
-                      .of(context)
+                  title: new Text(AppLocalizations.of(context)
                       .showReplacementPlanInUnitPlan),
                 ),
-                SwitchListTile(
+                CheckboxListTile(
                   value: _getReplacementPlanNotifications,
                   onChanged: (bool value) {
                     setState(() {
                       sharedPreferences.setBool(
                           Keys.getReplacementPlanNotifications, value);
                       sharedPreferences.commit();
+                      _getReplacementPlanNotifications = value;
                     });
                   },
-                  title: new Text(AppLocalizations
-                      .of(context)
+                  title: new Text(AppLocalizations.of(context)
                       .getReplacementPlanNotifications),
                 ),
               ]),
