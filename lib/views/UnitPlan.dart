@@ -185,7 +185,8 @@ class UnitPlanDayListState extends State<UnitPlanDayList> {
                             lesson.subjects[_selected].lesson !=
                                 AppLocalizations
                                     .of(context)
-                                    .lunchBreak) {
+                                    .lunchBreak &&
+                            !nothingSelected ){
                           showDialog<String>(
                             context: context,
                             barrierDismissible: true,
