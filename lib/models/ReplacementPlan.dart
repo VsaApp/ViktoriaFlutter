@@ -127,7 +127,7 @@ class Change {
             // It's the correct lesson...
             if (course == subject.course){
               if (changed.info.toLowerCase().contains('klausur')){
-                if (!sharedPreferences.getBool(Keys.exams + subject.lesson) ?? true) {
+                if (!(sharedPreferences.getBool(Keys.exams + subject.lesson) ?? true)) {
                   isMy = 0; 
                   return;
                 }
