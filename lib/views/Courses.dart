@@ -102,7 +102,7 @@ class CourseRowView extends State<CourseRow> {
     teacher = widget.subjects[0].teacher;
     course = '';
     blocks = [];
-    _exams = widget.sharedPreferences.getBool(Keys.exams + name) ?? true;
+    _exams = widget.sharedPreferences.getBool(Keys.exams + widget.subjects[0].lesson) ?? true;
 
     widget.subjects.forEach((subject) {
       if (course.length == 0) course = subject.course;
@@ -194,7 +194,7 @@ class CourseRowView extends State<CourseRow> {
                                             setState(() {
                                               blocks.forEach((block) {
                                                 widget.sharedPreferences
-                                                    .setBool(Keys.exams + name,
+                                                    .setBool(Keys.exams + widget.subjects[0].lesson,
                                                         value);
                                               });
                                               widget.sharedPreferences.commit();
