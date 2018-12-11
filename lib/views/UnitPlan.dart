@@ -115,7 +115,7 @@ class UnitPlanDayListState extends State<UnitPlanDayList> {
                     int _selected = sharedPreferences.getInt(Keys.unitPlan +
                         _grade +
                         '-' +
-                        (lesson.subjects[0].block == null
+                        (lesson.subjects[0].block == ''
                             ? widget.days.indexOf(day).toString() +
                             '-' +
                             day.lessons.indexOf(lesson).toString()

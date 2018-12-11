@@ -105,8 +105,14 @@ class HomePageState extends State<HomePage> {
       
         WidgetsBinding.instance.addPostFrameCallback((_) async {
           SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-          bool selectedSubjects = sharedPreferences.getKeys().where((key) => key.contains(Keys.unitPlan)).length > 0;
-    
+          print(sharedPreferences.getKeys().toString());
+          bool selectedSubjects = sharedPreferences.getKeys().where((key) {
+            if (key.startsWith('${Keys.unitPlan}${sharedPreferences.getString(Keys.grade)}-')){
+              if ('-'.allMatches(key).length == 3) return key.split('-')[key.split('-').length - 1] != '5';
+              return true;
+            }
+            return false;
+          }).length > 0;
           if (selectedSubjects){
             showDialog<String>(
               context: context,

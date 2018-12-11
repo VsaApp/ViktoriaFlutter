@@ -40,7 +40,7 @@ class CoursesView extends State<CoursesPage> {
             int selected = sharedPreferences.getInt(Keys.unitPlan +
                     sharedPreferences.getString(Keys.grade) +
                     '-' +
-                    ((lesson.subjects[0].block == null)
+                    ((lesson.subjects[0].block == '')
                         ? (getUnitPlan().indexOf(day).toString() +
                             '-' +
                             (day.lessons.indexOf(lesson)).toString())

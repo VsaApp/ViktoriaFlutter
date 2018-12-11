@@ -115,7 +115,7 @@ class Change {
         int selected = sharedPreferences.getInt(Keys.unitPlan +
                 sharedPreferences.getString(Keys.grade) +
                 '-' +
-                ((lesson.subjects[0].block == null)
+                ((lesson.subjects[0].block == '')
                     ? (UnitPlan.days.indexOf(day).toString() +
                         '-' +
                         (day.lessons.indexOf(lesson)).toString())
@@ -157,7 +157,7 @@ class Change {
                   int selected = sharedPreferences.getInt(Keys.unitPlan +
                       sharedPreferences.getString(Keys.grade) +
                       '-' +
-                      ((subject.block == null)
+                      ((subject.block == '')
                           ? (UnitPlan.days.indexOf(day).toString() +
                           '-' +
                           (day.lessons.indexOf(lesson)).toString())
@@ -231,7 +231,7 @@ class Change {
       int selected = sharedPreferences.getInt(Keys.unitPlan +
           sharedPreferences.getString(Keys.grade) +
           '-' +
-          ((nSubject.block == null)
+          ((nSubject.block == '')
               ? (day.toString() + '-' + (unit).toString())
               : (nSubject.block)));
       if (selected == null) {
@@ -259,7 +259,7 @@ class Change {
       int selected = sharedPreferences.getInt(Keys.unitPlan +
           sharedPreferences.getString(Keys.grade) +
           '-' +
-          ((possibleSubjects[0].block == null)
+          ((possibleSubjects[0].block == '')
               ? (day.toString() + '-' + (unit).toString())
               : (possibleSubjects[0].block)));
       if (selected == null){
