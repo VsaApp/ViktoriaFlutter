@@ -42,4 +42,8 @@ class Keys {
   static String get showShortCutDialog {
     return 'showShortCut';
   }
+
+  static String get initialPage {
+    return 'initialPage';
+  }
 }

@@ -131,6 +131,7 @@ class HomePageState extends State<HomePage> {
     setState(() {
       grade = sharedPreferences.get(Keys.grade) ?? '';
       _showDialog = sharedPreferences.getBool(Keys.showShortCutDialog) ?? true;
+      _selectedDrawerIndex = sharedPreferences.getInt(Keys.initialPage) ?? 0;
     });
   }
 

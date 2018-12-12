@@ -34,6 +34,8 @@ class SettingsPageView extends State<SettingsPage> {
     'Q2'
   ];
   String _grade = _grades[0];
+  List<String> _pages = [];
+  String _page = '';
   bool _sortReplacementPlan = true;
   bool _showReplacementPlanInUnitPlan = true;
   bool _getReplacementPlanNotifications = true;
@@ -58,6 +60,18 @@ class SettingsPageView extends State<SettingsPage> {
       _getReplacementPlanNotifications =
           sharedPreferences.getBool(Keys.getReplacementPlanNotifications);
       _showShortCutDialog = sharedPreferences.getBool(Keys.showShortCutDialog);
+      _pages = [
+        AppLocalizations
+            .of(context)
+            .unitPlan,
+        AppLocalizations
+            .of(context)
+            .replacementPlan,
+        AppLocalizations
+            .of(context)
+            .courses
+      ];
+      _page = _pages[sharedPreferences.getInt(Keys.initialPage) ?? 0];
     });
   }
 
@@ -130,32 +144,78 @@ class SettingsPageView extends State<SettingsPage> {
                       .of(context)
                       .showShortCutDialog),
                 ),
+                Padding(
+                  padding: EdgeInsets.only(left: 15.0, right: 22.5),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        width: double.infinity,
+                        child: Text(
+                          AppLocalizations
+                              .of(context)
+                              .initialPage,
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            isDense: true,
+                            items: _pages.map((String value) {
+                              return new DropdownMenuItem<String>(
+                                value: value,
+                                child: new Text(value),
+                              );
+                            }).toList(),
+                            value: _page,
+                            onChanged: (page) async {
+                              setState(() {
+                                _page = page;
+                                sharedPreferences.setInt(
+                                    Keys.initialPage, _pages.indexOf(page));
+                                sharedPreferences.commit();
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ]),
           SettingsSection(
             title: AppLocalizations.of(context).personalData,
             children: <Widget>[
               (sharedPreferences.getBool(Keys.isTeacher)
                   ? Container()
-                  : SizedBox(
-                      width: double.infinity,
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          isDense: true,
-                          items: _grades.map((String value) {
-                            return new DropdownMenuItem<String>(
-                              value: value,
-                              child: new Text(value),
-                            );
-                          }).toList(),
-                          value: _grade,
-                          onChanged: (grade) async {
-                            setState(() {
-                              sharedPreferences.setString(Keys.grade, grade);
-                              sharedPreferences.commit().then((_) {
-                                Navigator.of(context).pushReplacementNamed('/');
-                              });
-                            });
-                          },
+                  : Padding(
+                padding: EdgeInsets.only(left: 15.0, right: 22.5),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      isDense: true,
+                      items: _grades.map((String value) {
+                        return new DropdownMenuItem<String>(
+                          value: value,
+                          child: new Text(value),
+                        );
+                      }).toList(),
+                      value: _grade,
+                      onChanged: (grade) async {
+                        setState(() {
+                          sharedPreferences.setString(Keys.grade, grade);
+                          sharedPreferences.commit().then((_) {
+                            Navigator.of(context)
+                                .pushReplacementNamed('/');
+                          });
+                        });
+                      },
+                    ),
                         ),
                       ),
                     )),

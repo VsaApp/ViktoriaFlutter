@@ -55,7 +55,8 @@ class AppLocalizations {
       'retry': 'Erneut versuchen',
       'oldDataIsShown': 'Alte Daten werden angezeigt, weil du offline bist',
       'ok': 'OK',
-      'showShortCutDialog': 'Schnellstartdialog anzeigen'
+      'showShortCutDialog': 'Schnellstartdialog anzeigen',
+      'initialPage': 'Startseite'
     },
   };
 
@@ -227,6 +228,10 @@ class AppLocalizations {
 
   String get showShortCutDialog {
     return _localizedValues[locale.languageCode]['showShortCutDialog'];
+  }
+
+  String get initialPage {
+    return _localizedValues[locale.languageCode]['initialPage'];
   }
 }
 
