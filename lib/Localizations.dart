@@ -54,7 +54,8 @@ class AppLocalizations {
       'goOnlineToLogin': 'Du musst online sein um dich anzumelden',
       'retry': 'Erneut versuchen',
       'oldDataIsShown': 'Alte Daten werden angezeigt, weil du offline bist',
-      'ok': 'OK'
+      'ok': 'OK',
+      'showShortCutDialog': 'Schnellstartdialog anzeigen'
     },
   };
 
@@ -222,6 +223,10 @@ class AppLocalizations {
 
   String get ok {
     return _localizedValues[locale.languageCode]['ok'];
+  }
+
+  String get showShortCutDialog {
+    return _localizedValues[locale.languageCode]['showShortCutDialog'];
   }
 }
 

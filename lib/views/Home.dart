@@ -20,6 +20,84 @@ class DrawerItem {
   DrawerItem(this.title, this.icon);
 }
 
+class ShortCutDialog extends StatefulWidget {
+  final List<DrawerItem> items;
+  final Function selectItem;
+
+  ShortCutDialog({Key key, @required this.items, @required this.selectItem})
+      : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => ShortCutDialogState();
+}
+
+class ShortCutDialogState extends State<ShortCutDialog> {
+  SharedPreferences sharedPreferences;
+  bool _showDialog = true;
+
+  @override
+  void initState() {
+    SharedPreferences.getInstance().then((instance) {
+      setState(() {
+        sharedPreferences = instance;
+        _showDialog =
+            sharedPreferences.getBool(Keys.showShortCutDialog) ?? true;
+      });
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (sharedPreferences == null) {
+      return Container();
+    }
+    return SimpleDialog(
+        title: Text(AppLocalizations
+            .of(context)
+            .whatDoFirst),
+        children: <Widget>[
+          Column(
+              children: widget.items.map((item) {
+                return GestureDetector(
+                  onTap: () {
+                    widget.selectItem(widget.items.indexOf(item));
+                  },
+                  child: Chip(
+                    avatar: CircleAvatar(
+                      backgroundColor: Theme
+                          .of(context)
+                          .primaryColor,
+                      child: Transform(
+                        transform: new Matrix4.identity()
+                          ..scale(0.8),
+                        child: Container(
+                          margin: EdgeInsets.all(3.0),
+                          child: Icon(item.icon),
+                        ),
+                      ),
+                    ),
+                    label: Text(item.title),
+                  ),
+                );
+              }).toList()),
+          CheckboxListTile(
+            value: _showDialog,
+            onChanged: (value) {
+              sharedPreferences.setBool(Keys.showShortCutDialog, value);
+              sharedPreferences.commit();
+              setState(() {
+                _showDialog = value;
+              });
+            },
+            title: new Text(AppLocalizations
+                .of(context)
+                .showShortCutDialog),
+          ),
+        ]);
+  }
+}
+
 class HomePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -32,10 +110,11 @@ class HomePageState extends State<HomePage> {
   SharedPreferences sharedPreferences;
   static String grade = '';
   bool _dialogShown = false;
+  bool _showDialog = true;
 
   @override
   void initState() {
-    loadGrade();
+    loadData();
     OneSignal.shared.init('1d7b8ef7-9c9d-4843-a833-8a1e9999818c');
     OneSignal.shared.sendTag('EF', true);
     OneSignal.shared
@@ -47,12 +126,11 @@ class HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  void loadGrade() async {
+  void loadData() async {
     sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
-      grade = (sharedPreferences.get(Keys.grade) == null
-          ? ''
-          : sharedPreferences.get(Keys.grade));
+      grade = sharedPreferences.get(Keys.grade) ?? '';
+      _showDialog = sharedPreferences.getBool(Keys.showShortCutDialog) ?? true;
     });
   }
 
@@ -102,52 +180,38 @@ class HomePageState extends State<HomePage> {
     }
     if (!_dialogShown) {
       _dialogShown = true;
-      
-        WidgetsBinding.instance.addPostFrameCallback((_) async {
-          SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-          print(sharedPreferences.getKeys().toString());
-          bool selectedSubjects = sharedPreferences.getKeys().where((key) {
-            if (key.startsWith('${Keys.unitPlan}${sharedPreferences.getString(Keys.grade)}-')){
-              if ('-'.allMatches(key).length == 3) return key.split('-')[key.split('-').length - 1] != '5';
-              return true;
-            }
-            return false;
-          }).length > 0;
-          if (selectedSubjects){
-            showDialog<String>(
-              context: context,
-              barrierDismissible: true,
-              builder: (BuildContext context1) {
-                return SimpleDialog(
-                  title: Center(
-                    child: Text(AppLocalizations.of(context).whatDoFirst),
-                  ),
-                  children: drawerItems.map((item) {
-                    return GestureDetector(
-                      onTap: () {
-                        _onSelectItem(drawerItems.indexOf(item));
-                      },
-                      child: Chip(
-                        avatar: CircleAvatar(
-                          backgroundColor: Theme.of(context).primaryColor,
-                          child: Transform(
-                            transform: new Matrix4.identity()..scale(0.8),
-                            child: Container(
-                              margin: EdgeInsets.all(3.0),
-                              child: Icon(item.icon),
-                            ),
-                          ),
-                        ),
-                        label: Text(item.title),
-                      ),
-                    );
-                  }).toList(),
-                );
-              }
-            );
+
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
+        bool selectedSubjects = sharedPreferences.getKeys().where((key) {
+          if (key.startsWith(
+              '${Keys.unitPlan}${sharedPreferences.getString(Keys.grade)}-')) {
+            if ('-'
+                .allMatches(key)
+                .length == 3)
+              return key.split('-')[key
+                  .split('-')
+                  .length - 1] != '5';
+            return true;
           }
-        });
-      
+          return false;
+        }).length >
+            0;
+        if (selectedSubjects) {
+          if (_showDialog) {
+            showDialog<String>(
+                context: context,
+                barrierDismissible: true,
+                builder: (BuildContext context1) {
+                  return ShortCutDialog(
+                    items: drawerItems,
+                    selectItem: _onSelectItem,
+                  );
+                });
+          }
+        }
+      });
     }
 
     return Scaffold(

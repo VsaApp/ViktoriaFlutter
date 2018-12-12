@@ -38,4 +38,8 @@ class Keys {
   static String get exams {
     return 'exams-';
   }
+
+  static String get showShortCutDialog {
+    return 'showShortCut';
+  }
 }

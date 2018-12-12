@@ -37,6 +37,7 @@ class SettingsPageView extends State<SettingsPage> {
   bool _sortReplacementPlan = true;
   bool _showReplacementPlanInUnitPlan = true;
   bool _getReplacementPlanNotifications = true;
+  bool _showShortCutDialog = true;
 
   @override
   void initState() {
@@ -56,6 +57,7 @@ class SettingsPageView extends State<SettingsPage> {
           sharedPreferences.getBool(Keys.showReplacementPlanInUnitPlan);
       _getReplacementPlanNotifications =
           sharedPreferences.getBool(Keys.getReplacementPlanNotifications);
+      _showShortCutDialog = sharedPreferences.getBool(Keys.showShortCutDialog);
     });
   }
 
@@ -113,6 +115,20 @@ class SettingsPageView extends State<SettingsPage> {
                   },
                   title: new Text(AppLocalizations.of(context)
                       .getReplacementPlanNotifications),
+                ),
+                CheckboxListTile(
+                  value: _showShortCutDialog,
+                  onChanged: (bool value) {
+                    setState(() {
+                      sharedPreferences.setBool(Keys.showShortCutDialog, value);
+                      sharedPreferences.commit();
+                      _showShortCutDialog = value;
+                    });
+                  },
+                  title:
+                  new Text(AppLocalizations
+                      .of(context)
+                      .showShortCutDialog),
                 ),
               ]),
           SettingsSection(
