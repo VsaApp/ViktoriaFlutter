@@ -140,15 +140,26 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList> {
 
                       // Show the changes in three categories...
                       [
-                          day.getMyChanges().length > 0
-                              ? Section(
-                                  title: AppLocalizations.of(context).myChanges,
-                                  children: day.getMyChanges().map((change) {
-                                    return ReplacementPlanRow(
-                                        changes: day.getMyChanges(),
-                                        change: change);
-                                  }).toList())
-                              : Container(),
+                        Section(
+                            title: AppLocalizations
+                                .of(context)
+                                .myChanges,
+                            children: day
+                                .getMyChanges()
+                                .length > 0
+                                ? day.getMyChanges().map((change) {
+                              return ReplacementPlanRow(
+                                  changes: day.getMyChanges(),
+                                  change: change);
+                            }).toList()
+                                : <Widget>[
+                              SizedBox(
+                                width: double.infinity,
+                                child: Center(
+                                  child: Text('Keine Änderungen'),
+                                ),
+                              ),
+                            ]),
                           day.getUndefChanges().length > 0
                               ? Section(
                                   title:
