@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/ReplacementPlan.dart' as ReplacementPlan;
 import '../data/UnitPlan.dart' as UnitPlan;
+import '../Keys.dart';
 
 class LoadingPage extends StatefulWidget {
   @override
@@ -23,7 +25,8 @@ class LoadingPageState extends State<LoadingPage> {
 
   Future downloadAll() async {
     await UnitPlan.download();
-    await ReplacementPlan.download();
+    await ReplacementPlan.download(
+        (await SharedPreferences.getInstance()).getString(Keys.grade), true);
   }
 
   @override

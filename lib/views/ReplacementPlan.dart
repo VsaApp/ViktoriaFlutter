@@ -6,6 +6,7 @@ import '../Localizations.dart';
 import '../Subjects.dart';
 import '../data/ReplacementPlan.dart';
 import '../models/ReplacementPlan.dart';
+import './BrotherSisterReplacementPlan.dart';
 
 class ReplacementPlanPage extends StatefulWidget {
   @override
@@ -31,6 +32,26 @@ class ReplacementPlanDayList extends StatefulWidget {
 
 class ReplacementPlanDayListState extends State<ReplacementPlanDayList> {
   SharedPreferences sharedPreferences;
+  static List<String> _grades = [
+    '5a',
+    '5b',
+    '5c',
+    '6a',
+    '6b',
+    '6c',
+    '7a',
+    '7b',
+    '7c',
+    '8a',
+    '8b',
+    '8c',
+    '9a',
+    '9b',
+    '9c',
+    'EF',
+    'Q1',
+    'Q2'
+  ];
 
   @override
   void initState() {
@@ -73,6 +94,42 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList> {
                 child: ListView(
                   shrinkWrap: true,
                   children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(top: 10.0),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: FlatButton(
+                          color: Theme.of(context).accentColor,
+                          child: Text(AppLocalizations.of(context)
+                              .showReplacementPlanForBrotherSister),
+                          onPressed: () {
+                            showDialog<String>(
+                                context: context,
+                                barrierDismissible: true,
+                                builder: (BuildContext context1) {
+                                  return SimpleDialog(
+                                    title: Text(AppLocalizations.of(context)
+                                        .pleaseSelect),
+                                    children: _grades.map((_grade) {
+                                      return SimpleDialogOption(
+                                        onPressed: () {
+                                          print(_grade);
+                                          Navigator.of(context).pop();
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      BrotherSisterReplacementPlanPage(
+                                                          grade: _grade)));
+                                        },
+                                        child: Text(_grade),
+                                      );
+                                    }).toList(),
+                                  );
+                                });
+                          },
+                        ),
+                      ),
+                    ),
                     Center(
                       child: Padding(
                         padding: EdgeInsets.only(top: 10.0),
@@ -140,26 +197,22 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList> {
 
                       // Show the changes in three categories...
                       [
-                        Section(
-                            title: AppLocalizations
-                                .of(context)
-                                .myChanges,
-                            children: day
-                                .getMyChanges()
-                                .length > 0
-                                ? day.getMyChanges().map((change) {
-                              return ReplacementPlanRow(
-                                  changes: day.getMyChanges(),
-                                  change: change);
-                            }).toList()
-                                : <Widget>[
-                              SizedBox(
-                                width: double.infinity,
-                                child: Center(
-                                  child: Text('Keine Änderungen'),
-                                ),
-                              ),
-                            ]),
+                          Section(
+                              title: AppLocalizations.of(context).myChanges,
+                              children: day.getMyChanges().length > 0
+                                  ? day.getMyChanges().map((change) {
+                                      return ReplacementPlanRow(
+                                          changes: day.getMyChanges(),
+                                          change: change);
+                                    }).toList()
+                                  : <Widget>[
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: Center(
+                                          child: Text('Keine Änderungen'),
+                                        ),
+                                      ),
+                                    ]),
                           day.getUndefChanges().length > 0
                               ? Section(
                                   title:

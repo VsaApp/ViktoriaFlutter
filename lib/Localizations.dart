@@ -32,9 +32,9 @@ class AppLocalizations {
       'freeLesson': 'Freistunde',
       'sortReplacementPlan': 'Vertretungsplan sortieren',
       'showReplacementPlanInUnitPlan':
-      'Vertretungsplan im Stundenplan anzeigen',
+          'Vertretungsplan im Stundenplan anzeigen',
       'getReplacementPlanNotifications':
-      'Benachrichtigungen für Änderungen auf dem Vertretungsplan',
+          'Benachrichtigungen für Änderungen auf dem Vertretungsplan',
       'nUnit': '. Stunde',
       'myChanges': 'Meine Vertretungen',
       'undefChanges': 'Eventuell meine Vertretungen',
@@ -56,7 +56,9 @@ class AppLocalizations {
       'oldDataIsShown': 'Alte Daten werden angezeigt, weil du offline bist',
       'ok': 'OK',
       'showShortCutDialog': 'Schnellstartdialog anzeigen',
-      'initialPage': 'Startseite'
+      'initialPage': 'Startseite',
+      'showReplacementPlanForBrotherSister':
+          'Vertretungsplan für Geschwisterkind anzeigen'
     },
   };
 
@@ -106,12 +108,12 @@ class AppLocalizations {
 
   String get showReplacementPlanInUnitPlan {
     return _localizedValues[locale.languageCode]
-    ['showReplacementPlanInUnitPlan'];
+        ['showReplacementPlanInUnitPlan'];
   }
 
   String get getReplacementPlanNotifications {
     return _localizedValues[locale.languageCode]
-    ['getReplacementPlanNotifications'];
+        ['getReplacementPlanNotifications'];
   }
 
   String get title {
@@ -232,6 +234,11 @@ class AppLocalizations {
 
   String get initialPage {
     return _localizedValues[locale.languageCode]['initialPage'];
+  }
+
+  String get showReplacementPlanForBrotherSister {
+    return _localizedValues[locale.languageCode]
+        ['showReplacementPlanForBrotherSister'];
   }
 }
 
