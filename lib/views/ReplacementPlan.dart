@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import './BrotherSisterReplacementPlan.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
 import '../Subjects.dart';
 import '../data/ReplacementPlan.dart';
 import '../models/ReplacementPlan.dart';
-import './BrotherSisterReplacementPlan.dart';
 
 class ReplacementPlanPage extends StatefulWidget {
   @override
@@ -209,7 +209,10 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList> {
                                       SizedBox(
                                         width: double.infinity,
                                         child: Center(
-                                          child: Text('Keine Änderungen'),
+                                          child: Text(
+                                              AppLocalizations
+                                                  .of(context)
+                                                  .noChanges),
                                         ),
                                       ),
                                     ]),

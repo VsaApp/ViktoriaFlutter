@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import './ReplacementPlan.dart';
+import '../Keys.dart';
 import '../Localizations.dart';
 import '../data/ReplacementPlan.dart';
 import '../models/ReplacementPlan.dart';
-import './ReplacementPlan.dart';
 
 class BrotherSisterReplacementPlanPage extends StatefulWidget {
   final String grade;
 
   BrotherSisterReplacementPlanPage({Key key, @required this.grade})
       : super(key: key);
+
   @override
   BrotherSisterReplacementPlanView createState() =>
       BrotherSisterReplacementPlanView();
@@ -18,17 +20,37 @@ class BrotherSisterReplacementPlanPage extends StatefulWidget {
 
 class BrotherSisterReplacementPlanView
     extends State<BrotherSisterReplacementPlanPage> {
+  List<ReplacementPlanDay> days;
+
+  @override
+  void initState() {
+    download(widget.grade).then((_) {
+      fetchDays(widget.grade).then((d) {
+        setState(() {
+          days = d;
+        });
+        SharedPreferences.getInstance().then((instance) {
+          download(instance.getString(Keys.grade)).then((_) {
+            fetchDays(instance.getString(Keys.grade));
+          });
+        });
+      });
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    download(widget.grade, false);
+    if (days == null) {
+      return Container();
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.grade),
         elevation: 0.0,
       ),
-      body: Column(children: <Widget>[
-        BrotherSisterReplacementPlanDayList(days: getReplacementPlan())
-      ]),
+      body: Column(
+          children: <Widget>[BrotherSisterReplacementPlanDayList(days: days)]),
     );
   }
 }
