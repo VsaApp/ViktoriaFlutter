@@ -82,8 +82,7 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
     bool over = false;
     if (weekday > 4) {
       weekday = 0;
-    }
-    else if (widget.days[weekday].lessons.length > 0) {
+    } else if (widget.days[weekday].lessons.length > 0) {
       if (DateTime.now().isAfter(DateTime(
         DateTime.now().year,
         DateTime.now().month,
@@ -267,18 +266,24 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                                   block: ''),
                               unit: day.lessons.indexOf(lesson),
                             )
-                          : (lesson.subjects[_selected].change == null ||
+                          : (lesson.subjects[_selected].changes.length == 0 ||
                                   !sharedPreferences.getBool(
                                       Keys.showReplacementPlanInUnitPlan)
                               ? UnitPlanRow(
                                   subject: lesson.subjects[_selected],
                                   unit: day.lessons.indexOf(lesson),
                                 )
-                              : ReplacementPlanRow(
-                                  change: lesson.subjects[_selected].change,
-                                  changes: [
-                                      lesson.subjects[_selected].change
-                                    ]))),
+                          : Column(
+                        children: lesson.subjects[_selected].changes
+                            .map((change) {
+                          return ReplacementPlanRow(
+                              change: change,
+                              changes: lesson
+                                  .subjects[_selected].changes);
+                        })
+                            .toList()
+                            .cast<Widget>(),
+                      ))),
                     );
                   }).toList(),
                 ),
