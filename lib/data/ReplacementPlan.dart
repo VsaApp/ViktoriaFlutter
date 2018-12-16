@@ -13,7 +13,41 @@ Future download(String _grade) async {
   await downloadDay(sharedPreferences, _grade, "today");
   await downloadDay(sharedPreferences, _grade, "tomorrow");
 
-  ReplacementPlan.days = await fetchDays(_grade);
+  List<ReplacementPlanDay> days = await fetchDays(_grade);
+  if (DateTime(
+        (int.parse(days[0].date.split('.')[2]) < 2000) ? (int.parse(days[0].date.split('.')[2]) + 2000) : (int.parse(days[0].date.split('.')[2])),
+        int.parse(days[0].date.split('.')[1]),
+        int.parse(days[0].date.split('.')[0])
+      ).isAfter(DateTime(
+        (int.parse(days[1].date.split('.')[2]) < 2000) ? (int.parse(days[1].date.split('.')[2]) + 2000) : (int.parse(days[1].date.split('.')[2])),
+        int.parse(days[1].date.split('.')[1]),
+        int.parse(days[1].date.split('.')[0])
+      ))
+    ) {
+    days = [days[1], days[0]];
+  }
+  else if (days[0].date == days[1].date){
+    if (DateTime(
+        (int.parse(days[0].update.split('.')[2]) < 2000) ? (int.parse(days[0].update.split('.')[2]) + 2000) : (int.parse(days[0].update.split('.')[2])),
+        int.parse(days[0].update.split('.')[1]),
+        int.parse(days[0].update.split('.')[0]),
+        int.parse(days[0].time.split(':')[0]),
+        int.parse(days[0].time.split(':')[1])
+      ).isAfter(DateTime(
+        (int.parse(days[1].date.split('.')[2]) < 2000) ? (int.parse(days[1].date.split('.')[2]) + 2000) : (int.parse(days[1].date.split('.')[2])),
+        int.parse(days[1].date.split('.')[1]),
+        int.parse(days[1].date.split('.')[0]),
+        int.parse(days[1].time.split(':')[0]),
+        int.parse(days[1].time.split(':')[1])
+      ))
+      ) {
+      days = [days[1]];
+    }
+    else {
+      days = [days[0]];
+    }
+  }
+  ReplacementPlan.days = days;
   for (int i = 0; i < 2; i++)
     ReplacementPlan.days[i]
         .insertInUnitPlan(await SharedPreferences.getInstance());
