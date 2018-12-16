@@ -7,6 +7,7 @@ import '../Localizations.dart';
 import '../Subjects.dart';
 import '../data/ReplacementPlan.dart';
 import '../models/ReplacementPlan.dart';
+import '../models/UnitPlan.dart';
 
 class ReplacementPlanPage extends StatefulWidget {
   @override
@@ -30,8 +31,10 @@ class ReplacementPlanDayList extends StatefulWidget {
   ReplacementPlanDayListState createState() => ReplacementPlanDayListState();
 }
 
-class ReplacementPlanDayListState extends State<ReplacementPlanDayList> {
+class ReplacementPlanDayListState extends State<ReplacementPlanDayList> 
+    with SingleTickerProviderStateMixin{
   SharedPreferences sharedPreferences;
+  TabController _tabController;
   static List<String> _grades = [
     '5a',
     '5b',
@@ -60,6 +63,49 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList> {
         sharedPreferences = instance;
       });
     });
+    _tabController = new TabController(vsync: this, length: widget.days.length);
+    int day = 0;
+    if (widget.days.length > 1){
+      bool over = false;
+      int weekday = DateTime.now().weekday;
+      if (weekday <= 4) {
+        if (UnitPlan.days[weekday].lessons.length > 0) {
+          if (DateTime.now().isAfter(DateTime(
+            DateTime.now().year,
+            DateTime.now().month,
+            DateTime.now().day,
+            8
+          ).add(Duration(
+              minutes: [
+            60,
+            130,
+            210,
+            280,
+            360,
+            420,
+            480,
+            545
+          ][UnitPlan.days[weekday].lessons.length - 1])))) {
+            over = true;
+          }
+        }
+      }
+
+      // If the first day is passed, select the next day...
+      if (DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+      ).add(Duration(days: (over) ? 1 : 0)).isAfter(
+        DateTime(
+        (int.parse(widget.days[0].date.split('.')[2]) < 2000) ? (int.parse(widget.days[0].date.split('.')[2]) + 2000) : (int.parse(widget.days[0].date.split('.')[2])),
+        int.parse(widget.days[0].date.split('.')[1]),
+        int.parse(widget.days[0].date.split('.')[0]),
+      ))) day = 1;
+    
+      _tabController.animateTo(day);
+    }
+
     super.initState();
   }
 
@@ -74,6 +120,7 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList> {
         child: Scaffold(
           backgroundColor: Theme.of(context).primaryColor,
           appBar: TabBar(
+            controller: _tabController,
             indicatorColor: Theme.of(context).accentColor,
             indicatorWeight: 2.5,
             tabs: widget.days.map((day) {
@@ -84,6 +131,7 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList> {
             }).toList(),
           ),
           body: TabBarView(
+            controller: _tabController,
             children: widget.days.map((day) {
               return Container(
                 width: double.infinity,
