@@ -83,7 +83,7 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
     if (weekday > 4) {
       weekday = 0;
     }
-    if (widget.days[weekday].lessons.length > 0) {
+    else if (widget.days[weekday].lessons.length > 0) {
       if (DateTime.now().isAfter(DateTime(
         DateTime.now().year,
         DateTime.now().month,
