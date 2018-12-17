@@ -58,6 +58,11 @@ class ReplacementPlanDay {
     for (int i = 0; i < changes.length; i++)
       changes[i].setFilter(sharedPreferences);
   }
+
+  void setColors() {
+    for (int i = 0; i < changes.length; i++)
+      changes[i].setColor();
+  }
 }
 
 class Change {

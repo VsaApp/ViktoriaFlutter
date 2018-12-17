@@ -6,6 +6,7 @@ import '../Keys.dart';
 import '../Localizations.dart';
 import '../data/ReplacementPlan.dart';
 import '../models/ReplacementPlan.dart';
+import '../models/unitPlan.dart';
 
 class BrotherSisterReplacementPlanPage extends StatefulWidget {
   final String grade;
@@ -28,11 +29,11 @@ class BrotherSisterReplacementPlanView
       fetchDays(widget.grade).then((d) {
         setState(() {
           days = d;
+          days.forEach((ReplacementPlanDay day) => day.setColors());
         });
         SharedPreferences.getInstance().then((instance) {
-          download(instance.getString(Keys.grade)).then((_) {
-            fetchDays(instance.getString(Keys.grade));
-          });
+          UnitPlan.resetChanges();
+          fetchDays(instance.getString(Keys.grade));
         });
       });
     });
