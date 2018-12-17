@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Color.dart';
 import './BrotherSisterReplacementPlan.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
@@ -15,10 +16,92 @@ class ReplacementPlanPage extends StatefulWidget {
 }
 
 class ReplacementPlanView extends State<ReplacementPlanPage> {
+  SharedPreferences sharedPreferences;
+  static List<String> _grades = [
+    '5a',
+    '5b',
+    '5c',
+    '6a',
+    '6b',
+    '6c',
+    '7a',
+    '7b',
+    '7c',
+    '8a',
+    '8b',
+    '8c',
+    '9a',
+    '9b',
+    '9c',
+    'EF',
+    'Q1',
+    'Q2'
+  ];
+
+  @override
+  void initState() {
+    SharedPreferences.getInstance().then((instance) {
+      setState(() {
+        sharedPreferences = instance;
+      });
+    });
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-        children: <Widget>[ReplacementPlanDayList(days: getReplacementPlan())]);
+    List<ReplacementPlanDay> data = getReplacementPlan();
+    return new Scaffold(
+      body: Stack(
+        children: <Widget>[
+          Column(
+            children: <Widget>[ReplacementPlanDayList(days: data)],
+          ),
+          Positioned(
+            bottom: 16.0,
+            right: 16.0,
+            child: Container(
+              child: GradeFab(
+                onSelectPressed: (Function(String grade) selected) {
+                  showDialog<String>(
+                    context: context,
+                    barrierDismissible: true,
+                    builder: (BuildContext context1) {
+                      return SimpleDialog(
+                        title: Text(AppLocalizations.of(context)
+                            .pleaseSelect),
+                        children: _grades.map((_grade) {
+                          return SimpleDialogOption(
+                            onPressed: () {
+                              print(_grade);
+                              selected(_grade);
+                              Navigator.of(context).pop();
+                              Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          BrotherSisterReplacementPlanPage(
+                                              grade: _grade)));
+                            },
+                            child: Text(_grade),
+                          );
+                        }).toList(),
+                      );
+                    }
+                  );
+                },
+                onSelected: (String grade) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => BrotherSisterReplacementPlanPage(grade: grade)
+                    )
+                  );
+                },
+              ),
+            )
+          ),
+        ]),
+    );
   }
 }
 
@@ -144,43 +227,6 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
                 child: ListView(
                   shrinkWrap: true,
                   children: <Widget>[
-                    Container(
-                      margin:
-                      EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: FlatButton(
-                          color: Theme.of(context).accentColor,
-                          child: Text(AppLocalizations.of(context)
-                              .showReplacementPlanForBrotherSister),
-                          onPressed: () {
-                            showDialog<String>(
-                                context: context,
-                                barrierDismissible: true,
-                                builder: (BuildContext context1) {
-                                  return SimpleDialog(
-                                    title: Text(AppLocalizations.of(context)
-                                        .pleaseSelect),
-                                    children: _grades.map((_grade) {
-                                      return SimpleDialogOption(
-                                        onPressed: () {
-                                          print(_grade);
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      BrotherSisterReplacementPlanPage(
-                                                          grade: _grade)));
-                                        },
-                                        child: Text(_grade),
-                                      );
-                                    }).toList(),
-                                  );
-                                });
-                          },
-                        ),
-                      ),
-                    ),
                     Center(
                       child: Padding(
                         padding: EdgeInsets.only(top: 10.0),
@@ -242,7 +288,7 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
                       // Show all changes in a list...
                       day.changes.map((change) {
                           return ReplacementPlanRow(
-                              changes: day.changes, change: change);
+                              changes: day.changes, change: change, isLast: day.changes.indexOf(change) == day.changes.length - 1);
                         }).toList()
                       :
 
@@ -250,6 +296,7 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
                       [
                           Section(
                               title: AppLocalizations.of(context).myChanges,
+                              isLast: day.getUndefChanges().length == 0 && day.getOtherChanges().length == 0,
                               children: day.getMyChanges().length > 0
                                   ? day.getMyChanges().map((change) {
                                       return ReplacementPlanRow(
@@ -272,6 +319,7 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
                                     ]),
                           day.getUndefChanges().length > 0
                               ? Section(
+                                  isLast: day.getOtherChanges().length == 0,
                                   title:
                                       AppLocalizations.of(context).undefChanges,
                                   children: day.getUndefChanges().map((change) {
@@ -282,6 +330,7 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
                               : Container(),
                           day.getOtherChanges().length > 0
                               ? Section(
+                                  isLast: true,
                                   title:
                                       AppLocalizations.of(context).otherChanges,
                                   children: day.getOtherChanges().map((change) {
@@ -304,8 +353,9 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
 class Section extends StatefulWidget {
   final List<Widget> children;
   final String title;
+  final bool isLast;
 
-  Section({Key key, this.children, this.title}) : super(key: key);
+  Section({Key key, this.children, this.title, this.isLast = false}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -327,17 +377,19 @@ class SectionView extends State<Section> {
             ),
           ),
           Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    width: 1,
-                    color: Colors.grey,
-                  ),
+            padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  width: 1,
+                  color: Colors.grey,
                 ),
               ),
-              child: Column(
+            ),
+            child: Column(
                 children: widget.children,
-              ))
+            )
+          ),
         ],
       ),
     );
@@ -345,11 +397,12 @@ class SectionView extends State<Section> {
 }
 
 class ReplacementPlanRow extends StatelessWidget {
-  const ReplacementPlanRow({Key key, this.change, this.changes})
+  const ReplacementPlanRow({Key key, this.change, this.changes, this.isLast = false})
       : super(key: key);
 
   final Change change;
   final List<dynamic> changes;
+  final bool isLast;
 
   @override
   Widget build(BuildContext context) {
@@ -362,7 +415,7 @@ class ReplacementPlanRow extends StatelessWidget {
     return Container(
       padding: EdgeInsets.only(
           top: showUnit ? (changes.indexOf(change) == 0 ? 10 : 20) : 5,
-          bottom: 0,
+          bottom: isLast ? 100.0 : 0,
           left: 10,
           right: 10),
       child: LayoutBuilder(
@@ -471,6 +524,218 @@ class ReplacementPlanRow extends StatelessWidget {
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+class GradeFab extends StatefulWidget {
+  final Function(Function(String grade)) onSelectPressed;
+  final Function(String grade) onSelected;
+
+  GradeFab({this.onSelectPressed, this.onSelected});
+
+  @override
+  _GradeFabState createState() => _GradeFabState();
+}
+
+class _GradeFabState extends State<GradeFab>
+    with SingleTickerProviderStateMixin {
+
+  static List<String> _grades = [
+    '5a',
+    '5b',
+    '5c',
+    '6a',
+    '6b',
+    '6c',
+    '7a',
+    '7b',
+    '7c',
+    '8a',
+    '8b',
+    '8c',
+    '9a',
+    '9b',
+    '9c',
+    'EF',
+    'Q1',
+    'Q2'
+  ];
+
+  SharedPreferences sharedPreferences;
+  bool isOpened = false;
+  List<String> grades;
+  AnimationController _animationController;
+  Animation<Color> _buttonColor;
+  Animation<double> _animateIcon;
+  Animation<double> _translateButton;
+  Curve _curve = Curves.easeOut;
+  double _fabHeight = 50.0;
+  String grade;
+
+  @override
+  initState() {
+    SharedPreferences.getInstance().then((instance) {
+      setState(() {
+        sharedPreferences = instance;
+        grade = instance.getString(Keys.grade);
+        grades = (instance.getString(Keys.lastGrades) ?? '').split(':');
+        if (grades.length > 0) if (grades[0].length == 0) grades = [];
+        if (grades.length == 0) grades = [_grades[_grades.indexOf(grade) + 1 % _grades.length], _grades[(_grades.indexOf(grade) - 1 < 0) ? _grades.length : _grades.indexOf(grade) - 1]];
+        else if (grades.length == 1) grades.add(_grades[_grades.indexOf(grade) + 1 % _grades.length]);
+      });
+    });
+    _animationController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 250))
+          ..addListener(() {
+            setState(() {});
+          });
+    _animateIcon =
+        Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
+    _buttonColor = ColorTween(
+      begin: Theme.of(context).primaryColor,
+      end: getColorHexFromStr('#275600'),
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Interval(
+        0.00,
+        1.00,
+        curve: Curves.linear,
+      ),
+    ));
+    _translateButton = Tween<double>(
+      begin: _fabHeight,
+      end: 0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Interval(
+        0.0,
+        0.75,
+        curve: _curve,
+      ),
+    ));
+    super.initState();
+  }
+
+  @override
+  dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  animate() {
+    if (!isOpened) {
+      _animationController.forward();
+    } else {
+      _animationController.reverse();
+    }
+    isOpened = !isOpened;
+  }
+
+  Widget select() {
+    return Container(
+      child: FloatingActionButton(
+        mini: true,
+        onPressed: () {
+          animate();
+          widget.onSelectPressed((String grade) {
+            List<String> prefValue = (sharedPreferences.getString(Keys.lastGrades) ?? '').split(':');
+            if (prefValue.length > 0) if (prefValue[0].length == 0) prefValue = [];
+            if (!prefValue.contains(grade)){
+              setState(() {
+                if (prefValue.length == 0) {
+                  sharedPreferences.setString(Keys.lastGrades, grade);
+                  grades[1] = grade;
+                }
+                else if (prefValue.length == 1) {
+                  sharedPreferences.setString(Keys.lastGrades, prefValue[0] + ':' + grade);
+                  grades[1] = grade;
+                }
+                else {
+                  sharedPreferences.setString(Keys.lastGrades, prefValue[1] + ':' + grade);
+                  grades[0] = grades[1];
+                  grades[1] = grade;
+                }                  
+              });
+            }
+          });
+        },
+        tooltip: 'Select',
+        child: Icon(Icons.playlist_add, color: Colors.white),
+      ),
+    );
+  }
+
+  Widget toggle() {
+    return Container(
+      child: FloatingActionButton(
+        backgroundColor: _buttonColor.value,
+        onPressed: animate,
+        tooltip: 'Grade',
+        child: AnimatedIcon(
+          color: Colors.white,
+          icon: AnimatedIcons.menu_close,
+          progress: _animateIcon,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (sharedPreferences == null) return Container();
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children:  <Widget>[
+        Transform(
+          transform: Matrix4.translationValues(
+            0.0,
+            _translateButton.value * 3.0,
+            0.0,
+          ),
+          child: select(),
+        ),
+        toggle(),
+      ]..insertAll(1, grades.map((grade) {
+        return Transform(
+          transform: Matrix4.translationValues(
+            0.0,
+            _translateButton.value * (grades.length - grades.indexOf(grade)),
+            0.0,
+          ),
+          child: Container(
+            child: FloatingActionButton(
+              mini: true,
+              onPressed: () {
+                animate();
+                List<String> prefValue = (sharedPreferences.getString(Keys.lastGrades) ?? '').split(':');
+                if (prefValue.length > 0) if (prefValue[0].length == 0) prefValue = [];
+                if (!prefValue.contains(grade)){
+                  setState(() {
+                    if (prefValue.length == 0) {
+                      sharedPreferences.setString(Keys.lastGrades, grade);
+                      grades[1] = grade;
+                    }
+                    else if (prefValue.length == 1) {
+                      sharedPreferences.setString(Keys.lastGrades, prefValue[0] + ':' + grade);
+                      grades[1] = grade;
+                    }
+                    else {
+                      sharedPreferences.setString(Keys.lastGrades, prefValue[1] + ':' + grade);
+                      grades[0] = grades[1];
+                      grades[1] = grade;
+                    }                  
+                  });
+                }
+                widget.onSelected(grade);
+              },
+              tooltip: grade,
+              child: Text(grade, style: TextStyle(color: Colors.white)),
+            ),
+          )
+        );
+      }).toList(),
       ),
     );
   }

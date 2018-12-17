@@ -3,6 +3,10 @@ class Keys {
     return 'grade';
   }
 
+  static String get lastGrades {
+    return 'lastGrades';
+  }
+
   static String get username {
     return 'username';
   }
