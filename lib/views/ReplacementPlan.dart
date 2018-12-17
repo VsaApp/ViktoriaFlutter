@@ -31,8 +31,8 @@ class ReplacementPlanDayList extends StatefulWidget {
   ReplacementPlanDayListState createState() => ReplacementPlanDayListState();
 }
 
-class ReplacementPlanDayListState extends State<ReplacementPlanDayList> 
-    with SingleTickerProviderStateMixin{
+class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
+    with SingleTickerProviderStateMixin {
   SharedPreferences sharedPreferences;
   TabController _tabController;
   static List<String> _grades = [
@@ -65,17 +65,20 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
     });
     _tabController = new TabController(vsync: this, length: widget.days.length);
     int day = 0;
-    if (widget.days.length > 1){
+    if (widget.days.length > 1) {
       bool over = false;
       int weekday = DateTime.now().weekday;
       if (weekday <= 4) {
         if (UnitPlan.days[weekday].lessons.length > 0) {
-          if (DateTime.now().isAfter(DateTime(
-            DateTime.now().year,
-            DateTime.now().month,
-            DateTime.now().day,
-            8
-          ).add(Duration(
+          if (DateTime.now().isAfter(DateTime(DateTime
+              .now()
+              .year,
+              DateTime
+                  .now()
+                  .month, DateTime
+                  .now()
+                  .day, 8)
+              .add(Duration(
               minutes: [
             60,
             130,
@@ -96,13 +99,14 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
         DateTime.now().year,
         DateTime.now().month,
         DateTime.now().day,
-      ).add(Duration(days: (over) ? 1 : 0)).isAfter(
-        DateTime(
-        (int.parse(widget.days[0].date.split('.')[2]) < 2000) ? (int.parse(widget.days[0].date.split('.')[2]) + 2000) : (int.parse(widget.days[0].date.split('.')[2])),
+      ).add(Duration(days: (over) ? 1 : 0)).isAfter(DateTime(
+        (int.parse(widget.days[0].date.split('.')[2]) < 2000)
+            ? (int.parse(widget.days[0].date.split('.')[2]) + 2000)
+            : (int.parse(widget.days[0].date.split('.')[2])),
         int.parse(widget.days[0].date.split('.')[1]),
         int.parse(widget.days[0].date.split('.')[0]),
       ))) day = 1;
-    
+
       _tabController.animateTo(day);
     }
 
@@ -137,13 +141,12 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.white,
-                padding: EdgeInsets.only(
-                    right: 10.0, left: 10.0, bottom: 10.0, top: 0.0),
                 child: ListView(
                   shrinkWrap: true,
                   children: <Widget>[
                     Container(
-                      margin: EdgeInsets.only(top: 10.0),
+                      margin:
+                      EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
                       child: SizedBox(
                         width: double.infinity,
                         child: FlatButton(
@@ -254,13 +257,16 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
                                           change: change);
                                     }).toList()
                                   : <Widget>[
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: Center(
-                                          child: Text(
-                                              AppLocalizations
-                                                  .of(context)
-                                                  .noChanges),
+                                Container(
+                                  margin: EdgeInsets.only(top: 10.0),
+                                  child: SizedBox(
+                                    width: double.infinity,
+                                    child: Center(
+                                      child: Text(
+                                          AppLocalizations
+                                              .of(context)
+                                              .noChanges),
+                                    ),
                                         ),
                                       ),
                                     ]),
@@ -310,28 +316,30 @@ class Section extends StatefulWidget {
 class SectionView extends State<Section> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Text(
-          widget.title,
-          style: TextStyle(
-            color: Colors.grey,
+    return Container(
+      margin: EdgeInsets.all(10.0),
+      child: Column(
+        children: <Widget>[
+          Text(
+            widget.title,
+            style: TextStyle(
+              color: Colors.grey,
+            ),
           ),
-        ),
-        Container(
-            padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(
-                  width: 1,
-                  color: Colors.grey,
+          Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                    width: 1,
+                    color: Colors.grey,
+                  ),
                 ),
               ),
-            ),
-            child: Column(
-              children: widget.children,
-            ))
-      ],
+              child: Column(
+                children: widget.children,
+              ))
+        ],
+      ),
     );
   }
 }

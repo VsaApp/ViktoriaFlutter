@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Keys.dart';
 import '../Localizations.dart';
+import 'ReplacementPlan.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -50,26 +51,20 @@ class SettingsPageView extends State<SettingsPage> {
   void loadSettings() async {
     sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
-      _grade = (sharedPreferences.get(Keys.grade) == null
-          ? ''
-          : sharedPreferences.get(Keys.grade));
+      _grade = sharedPreferences.get(Keys.grade) ?? '';
       _sortReplacementPlan =
-          sharedPreferences.getBool(Keys.sortReplacementPlan);
+          sharedPreferences.getBool(Keys.sortReplacementPlan) ?? true;
       _showReplacementPlanInUnitPlan =
-          sharedPreferences.getBool(Keys.showReplacementPlanInUnitPlan);
+          sharedPreferences.getBool(Keys.showReplacementPlanInUnitPlan) ?? true;
       _getReplacementPlanNotifications =
-          sharedPreferences.getBool(Keys.getReplacementPlanNotifications);
-      _showShortCutDialog = sharedPreferences.getBool(Keys.showShortCutDialog);
+          sharedPreferences.getBool(Keys.getReplacementPlanNotifications) ??
+              true;
+      _showShortCutDialog =
+          sharedPreferences.getBool(Keys.showShortCutDialog) ?? true;
       _pages = [
-        AppLocalizations
-            .of(context)
-            .unitPlan,
-        AppLocalizations
-            .of(context)
-            .replacementPlan,
-        AppLocalizations
-            .of(context)
-            .courses
+        AppLocalizations.of(context).unitPlan,
+        AppLocalizations.of(context).replacementPlan,
+        AppLocalizations.of(context).courses
       ];
       _page = _pages[sharedPreferences.getInt(Keys.initialPage) ?? 0];
     });
@@ -83,139 +78,130 @@ class SettingsPageView extends State<SettingsPage> {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      padding: EdgeInsets.all(10.0),
       child: ListView(
         shrinkWrap: true,
         children: <Widget>[
-          SettingsSection(
-              title: AppLocalizations.of(context).appSettings,
-              children: <Widget>[
-                CheckboxListTile(
-                  value: _sortReplacementPlan,
-                  onChanged: (bool value) {
-                    setState(() {
-                      sharedPreferences.setBool(
-                          Keys.sortReplacementPlan, value);
-                      sharedPreferences.commit();
-                      _sortReplacementPlan = value;
-                    });
-                  },
-                  title: new Text(
-                      AppLocalizations.of(context).sortReplacementPlan),
-                  controlAffinity: ListTileControlAffinity.trailing,
-                ),
-                CheckboxListTile(
-                  value: _showReplacementPlanInUnitPlan,
-                  onChanged: (bool value) {
-                    setState(() {
-                      sharedPreferences.setBool(
-                          Keys.showReplacementPlanInUnitPlan, value);
-                      sharedPreferences.commit();
-                      _showReplacementPlanInUnitPlan = value;
-                    });
-                  },
-                  title: new Text(AppLocalizations.of(context)
-                      .showReplacementPlanInUnitPlan),
-                ),
-                CheckboxListTile(
-                  value: _getReplacementPlanNotifications,
-                  onChanged: (bool value) {
-                    setState(() {
-                      sharedPreferences.setBool(
-                          Keys.getReplacementPlanNotifications, value);
-                      sharedPreferences.commit();
-                      _getReplacementPlanNotifications = value;
-                    });
-                  },
-                  title: new Text(AppLocalizations.of(context)
-                      .getReplacementPlanNotifications),
-                ),
-                CheckboxListTile(
-                  value: _showShortCutDialog,
-                  onChanged: (bool value) {
-                    setState(() {
-                      sharedPreferences.setBool(Keys.showShortCutDialog, value);
-                      sharedPreferences.commit();
-                      _showShortCutDialog = value;
-                    });
-                  },
-                  title:
-                  new Text(AppLocalizations
-                      .of(context)
-                      .showShortCutDialog),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 15.0, right: 22.5),
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        width: double.infinity,
-                        child: Text(
-                          AppLocalizations
-                              .of(context)
-                              .initialPage,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                          ),
-                        ),
+          Section(title: AppLocalizations.of(context).appSettings, children: <
+              Widget>[
+            CheckboxListTile(
+              value: _sortReplacementPlan,
+              onChanged: (bool value) {
+                setState(() {
+                  sharedPreferences.setBool(Keys.sortReplacementPlan, value);
+                  sharedPreferences.commit();
+                  _sortReplacementPlan = value;
+                });
+              },
+              title: new Text(AppLocalizations.of(context).sortReplacementPlan),
+              controlAffinity: ListTileControlAffinity.trailing,
+            ),
+            CheckboxListTile(
+              value: _showReplacementPlanInUnitPlan,
+              onChanged: (bool value) {
+                setState(() {
+                  sharedPreferences.setBool(
+                      Keys.showReplacementPlanInUnitPlan, value);
+                  sharedPreferences.commit();
+                  _showReplacementPlanInUnitPlan = value;
+                });
+              },
+              title: new Text(
+                  AppLocalizations.of(context).showReplacementPlanInUnitPlan),
+            ),
+            CheckboxListTile(
+              value: _getReplacementPlanNotifications,
+              onChanged: (bool value) {
+                setState(() {
+                  sharedPreferences.setBool(
+                      Keys.getReplacementPlanNotifications, value);
+                  sharedPreferences.commit();
+                  _getReplacementPlanNotifications = value;
+                });
+              },
+              title: new Text(
+                  AppLocalizations.of(context).getReplacementPlanNotifications),
+            ),
+            CheckboxListTile(
+              value: _showShortCutDialog,
+              onChanged: (bool value) {
+                setState(() {
+                  sharedPreferences.setBool(Keys.showShortCutDialog, value);
+                  sharedPreferences.commit();
+                  _showShortCutDialog = value;
+                });
+              },
+              title: new Text(AppLocalizations.of(context).showShortCutDialog),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 15.0, right: 22.5),
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      AppLocalizations.of(context).initialPage,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 16.0,
                       ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            isDense: true,
-                            items: _pages.map((String value) {
-                              return new DropdownMenuItem<String>(
-                                value: value,
-                                child: new Text(value),
-                              );
-                            }).toList(),
-                            value: _page,
-                            onChanged: (page) async {
-                              setState(() {
-                                _page = page;
-                                sharedPreferences.setInt(
-                                    Keys.initialPage, _pages.indexOf(page));
-                                sharedPreferences.commit();
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ]),
-          SettingsSection(
+                  SizedBox(
+                    width: double.infinity,
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        isDense: true,
+                        items: _pages.map((String value) {
+                          return new DropdownMenuItem<String>(
+                            value: value,
+                            child: new Text(value),
+                          );
+                        }).toList(),
+                        value: _page,
+                        onChanged: (page) async {
+                          setState(() {
+                            _page = page;
+                            sharedPreferences.setInt(
+                                Keys.initialPage, _pages.indexOf(page));
+                            sharedPreferences.commit();
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ]),
+          Section(
             title: AppLocalizations.of(context).personalData,
             children: <Widget>[
               (sharedPreferences.getBool(Keys.isTeacher)
                   ? Container()
                   : Padding(
-                padding: EdgeInsets.only(left: 15.0, right: 22.5),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      isDense: true,
-                      items: _grades.map((String value) {
-                        return new DropdownMenuItem<String>(
-                          value: value,
-                          child: new Text(value),
-                        );
-                      }).toList(),
-                      value: _grade,
-                      onChanged: (grade) async {
-                        setState(() {
-                          sharedPreferences.setString(Keys.grade, grade);
-                          sharedPreferences.commit().then((_) {
-                            Navigator.of(context)
-                                .pushReplacementNamed('/');
-                          });
-                        });
-                      },
-                    ),
+                      padding: EdgeInsets.only(left: 15.0, right: 22.5),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            isDense: true,
+                            items: _grades.map((String value) {
+                              return new DropdownMenuItem<String>(
+                                value: value,
+                                child: new Text(value),
+                              );
+                            }).toList(),
+                            value: _grade,
+                            onChanged: (grade) async {
+                              setState(() {
+                                sharedPreferences.setString(Keys.grade, grade);
+                                sharedPreferences.commit().then((_) {
+                                  Navigator.of(context)
+                                      .pushReplacementNamed('/');
+                                });
+                              });
+                            },
+                          ),
                         ),
                       ),
                     )),
@@ -242,47 +228,6 @@ class SettingsPageView extends State<SettingsPage> {
           )
         ],
       ),
-    );
-  }
-}
-
-class SettingsSection extends StatefulWidget {
-  final List<Widget> children;
-  final String title;
-
-  SettingsSection({Key key, this.children, this.title}) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() {
-    return SettingsSectionView();
-  }
-}
-
-class SettingsSectionView extends State<SettingsSection> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Text(
-          widget.title,
-          style: TextStyle(
-            color: Colors.grey,
-          ),
-        ),
-        Container(
-            padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(
-                  width: 1,
-                  color: Colors.grey,
-                ),
-              ),
-            ),
-            child: Column(
-              children: widget.children,
-            ))
-      ],
     );
   }
 }

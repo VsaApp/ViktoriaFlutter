@@ -147,7 +147,6 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.white,
-                padding: EdgeInsets.all(10.0),
                 child: ListView(
                   shrinkWrap: true,
                   children: day.lessons.map((lesson) {
