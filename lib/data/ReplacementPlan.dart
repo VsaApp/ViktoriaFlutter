@@ -8,11 +8,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Keys.dart';
 import '../models/ReplacementPlan.dart';
 
-Future download(String _grade) async {
+Future download(String _grade, {bool alreadyLoad}) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   await downloadDay(sharedPreferences, _grade, "today");
   await downloadDay(sharedPreferences, _grade, "tomorrow");
 
+  if (alreadyLoad ?? true) load(_grade);
+}
+
+Future<List<ReplacementPlanDay>> load(String _grade, {bool temp, bool setOnlyColor, bool setFilter}) async {
   List<ReplacementPlanDay> days = await fetchDays(_grade);
   if (DateTime(
         (int.parse(days[0].date.split('.')[2]) < 2000) ? (int.parse(days[0].date.split('.')[2]) + 2000) : (int.parse(days[0].date.split('.')[2])),
@@ -47,10 +51,15 @@ Future download(String _grade) async {
       days = [days[0]];
     }
   }
-  ReplacementPlan.days = days;
-  for (int i = 0; i < 2; i++)
-    ReplacementPlan.days[i]
-        .insertInUnitPlan(await SharedPreferences.getInstance());
+
+  if (setOnlyColor ?? false) setFilter = false;
+
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  if (setFilter ?? true) days.forEach((day) => day.insertInUnitPlan(sharedPreferences));
+  else if (setOnlyColor ?? false) days.forEach((day) => day.setColors());
+  if (!(temp ?? false)) ReplacementPlan.days = days;
+  else return days;
+  return null;
 }
 
 Future downloadDay(SharedPreferences sharedPreferences, String _grade,
