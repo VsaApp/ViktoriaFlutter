@@ -582,8 +582,6 @@ class _GradeFabState extends State<GradeFab>
         grade = instance.getString(Keys.grade);
         grades = (instance.getString(Keys.lastGrades) ?? '').split(':');
         if (grades.length > 0) if (grades[0].length == 0) grades = [];
-        if (grades.length == 0) grades = [_grades[_grades.indexOf(grade) + 1 % _grades.length], _grades[(_grades.indexOf(grade) - 1 < 0) ? _grades.length : _grades.indexOf(grade) - 1]];
-        else if (grades.length == 1) grades.add(_grades[_grades.indexOf(grade) + 1 % _grades.length]);
       });
     });
     _animationController =
@@ -633,33 +631,33 @@ class _GradeFabState extends State<GradeFab>
     isOpened = !isOpened;
   }
 
+  void updatePrefs(String grade){
+    if (!grades.contains(grade)){
+      setState(() {
+        if (grades.length == 0) {
+          sharedPreferences.setString(Keys.lastGrades, grade);
+          grades.add(grade);
+        }
+        else if (grades.length == 1) {
+          sharedPreferences.setString(Keys.lastGrades, grades[0] + ':' + grade);
+          grades.add(grade);
+        }
+        else {
+          sharedPreferences.setString(Keys.lastGrades, grades[1] + ':' + grade);
+          grades[0] = grades[1];
+          grades[1] = grade;
+        }                  
+      });
+    }
+  }
+
   Widget select() {
     return Container(
       child: FloatingActionButton(
         mini: true,
         onPressed: () {
           animate();
-          widget.onSelectPressed((String grade) {
-            List<String> prefValue = (sharedPreferences.getString(Keys.lastGrades) ?? '').split(':');
-            if (prefValue.length > 0) if (prefValue[0].length == 0) prefValue = [];
-            if (!prefValue.contains(grade)){
-              setState(() {
-                if (prefValue.length == 0) {
-                  sharedPreferences.setString(Keys.lastGrades, grade);
-                  grades[1] = grade;
-                }
-                else if (prefValue.length == 1) {
-                  sharedPreferences.setString(Keys.lastGrades, prefValue[0] + ':' + grade);
-                  grades[1] = grade;
-                }
-                else {
-                  sharedPreferences.setString(Keys.lastGrades, prefValue[1] + ':' + grade);
-                  grades[0] = grades[1];
-                  grades[1] = grade;
-                }                  
-              });
-            }
-          });
+          widget.onSelectPressed(updatePrefs);
         },
         tooltip: 'Select',
         child: Icon(Icons.playlist_add, color: Colors.white),
@@ -671,7 +669,10 @@ class _GradeFabState extends State<GradeFab>
     return Container(
       child: FloatingActionButton(
         backgroundColor: _buttonColor.value,
-        onPressed: animate,
+        onPressed: () {
+          if (grades.length > 0) animate();
+          else widget.onSelectPressed(updatePrefs);
+        },
         tooltip: 'Grade',
         child: AnimatedIcon(
           color: Colors.white,
@@ -691,7 +692,7 @@ class _GradeFabState extends State<GradeFab>
         Transform(
           transform: Matrix4.translationValues(
             0.0,
-            _translateButton.value * 3.0,
+            _translateButton.value * (grades.length + 1),
             0.0,
           ),
           child: select(),
