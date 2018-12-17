@@ -8,6 +8,74 @@ import '../data/UnitPlan.dart';
 import '../models/ReplacementPlan.dart';
 import '../models/UnitPlan.dart';
 
+class CourseEdit extends StatefulWidget {
+  UnitPlanSubject subject;
+  List<String> blocks;
+  Function onExamChange;
+
+  CourseEdit({Key key,
+    @required this.subject,
+    @required this.blocks,
+    this.onExamChange})
+      : super(key: key);
+
+  @override
+  CourseEditView createState() => CourseEditView();
+}
+
+class CourseEditView extends State<CourseEdit> {
+  SharedPreferences sharedPreferences;
+  bool _exams = false;
+
+  @override
+  void initState() {
+    SharedPreferences.getInstance().then((instance) {
+      setState(() {
+        sharedPreferences = instance;
+        _exams =
+            sharedPreferences.getBool(Keys.exams + widget.subject.lesson) ??
+                true;
+      });
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (sharedPreferences == null) {
+      return Container();
+    }
+    return SimpleDialog(
+      title: Text(
+          getSubject(widget.subject.lesson) + ' ' + widget.subject.teacher),
+      children: <Widget>[
+        CheckboxListTile(
+          value: _exams,
+          onChanged: (bool value) {
+            setState(() {
+              widget.blocks.forEach((block) {
+                sharedPreferences.setBool(
+                    Keys.exams + widget.subject.lesson, value);
+              });
+              sharedPreferences.commit();
+              ReplacementPlan.update(sharedPreferences);
+              setState(() {
+                _exams = value;
+              });
+              if (widget.onExamChange != null) {
+                widget.onExamChange(_exams);
+              }
+            });
+          },
+          title: Text(AppLocalizations
+              .of(context)
+              .writeExams),
+        ),
+      ],
+    );
+  }
+}
+
 class CoursesPage extends StatefulWidget {
   @override
   CoursesView createState() => CoursesView();
@@ -102,7 +170,9 @@ class CourseRowView extends State<CourseRow> {
     teacher = widget.subjects[0].teacher;
     course = '';
     blocks = [];
-    _exams = widget.sharedPreferences.getBool(Keys.exams + widget.subjects[0].lesson) ?? true;
+    _exams = widget.sharedPreferences
+        .getBool(Keys.exams + widget.subjects[0].lesson) ??
+        true;
 
     widget.subjects.forEach((subject) {
       if (course.length == 0) course = subject.course;
@@ -184,33 +254,16 @@ class CourseRowView extends State<CourseRow> {
                                 showDialog<String>(
                                   context: context,
                                   barrierDismissible: true,
-                                  builder: (BuildContext context1) {
-                                    return SimpleDialog(
-                                      title: Text(name + ' ' + teacher),
-                                      children: <Widget>[
-                                        CheckboxListTile(
-                                          value: _exams,
-                                          onChanged: (bool value) {
-                                            setState(() {
-                                              blocks.forEach((block) {
-                                                widget.sharedPreferences
-                                                    .setBool(Keys.exams + widget.subjects[0].lesson,
-                                                        value);
-                                              });
-                                              widget.sharedPreferences.commit();
-                                              ReplacementPlan.update(
-                                                  widget.sharedPreferences);
-                                              _exams = value;
-                                              Navigator.pop(context);
-                                            });
-                                          },
-                                          title: new Text(
-                                              AppLocalizations.of(context)
-                                                  .writeExams),
-                                        ),
-                                      ],
-                                    );
-                                  },
+                                  builder: (BuildContext context1) =>
+                                      CourseEdit(
+                                        subject: widget.subjects[0],
+                                        blocks: blocks,
+                                        onExamChange: (exams) {
+                                          setState(() {
+                                            _exams = exams;
+                                          });
+                                        },
+                                      ),
                                 );
                               }),
                         ),

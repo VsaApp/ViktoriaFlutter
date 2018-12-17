@@ -9,7 +9,8 @@ class UnitPlan {
   static void resetChanges() {
     days.forEach((day) =>
         day.lessons.forEach((lesson) =>
-            lesson.subjects.forEach((subject) => subject.change = null)));
+            lesson.subjects
+                .forEach((subject) => subject.changes = [].cast<Change>())));
   }
 
   static void setAllSelections(SharedPreferences sharedPreferences) {

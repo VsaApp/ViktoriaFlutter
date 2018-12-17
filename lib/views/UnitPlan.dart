@@ -10,6 +10,7 @@ import '../Times.dart';
 import '../data/UnitPlan.dart';
 import '../models/ReplacementPlan.dart';
 import '../models/UnitPlan.dart';
+import 'Courses.dart';
 import 'ReplacementPlan.dart';
 
 class UnitPlanPage extends StatefulWidget {
@@ -199,6 +200,61 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                                               ReplacementPlan.updateFilter(day,
                                                   lesson, sharedPreferences);
                                             });
+                                            bool _selected = (sharedPreferences
+                                                .getKeys()
+                                                .where((key) =>
+                                            key ==
+                                                Keys.exams +
+                                                    lesson
+                                                        .subjects[lesson
+                                                        .subjects
+                                                        .indexOf(
+                                                        subject)]
+                                                        .lesson)
+                                                .length >
+                                                0);
+                                            if (!_selected &&
+                                                lesson
+                                                    .subjects[lesson
+                                                    .subjects
+                                                    .indexOf(subject)]
+                                                    .block !=
+                                                    null &&
+                                                lesson
+                                                    .subjects[lesson
+                                                    .subjects
+                                                    .indexOf(subject)]
+                                                    .lesson !=
+                                                    AppLocalizations
+                                                        .of(context)
+                                                        .freeLesson) {
+                                              showDialog<String>(
+                                                context: context1,
+                                                barrierDismissible: true,
+                                                builder:
+                                                    (BuildContext context2) {
+                                                  return CourseEdit(
+                                                    subject: lesson.subjects[
+                                                    lesson.subjects
+                                                        .indexOf(subject)],
+                                                    blocks: [
+                                                      lesson
+                                                          .subjects[lesson
+                                                          .subjects
+                                                          .indexOf(subject)]
+                                                          .block
+                                                    ],
+                                                    onExamChange: (_) {
+                                                      setState(() {
+                                                        UnitPlan
+                                                            .setAllSelections(
+                                                            sharedPreferences);
+                                                      });
+                                                    },
+                                                  );
+                                                },
+                                              );
+                                            }
                                           },
                                           child: UnitPlanRow(
                                               subject: subject,
@@ -223,34 +279,15 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                             context: context,
                             barrierDismissible: true,
                             builder: (BuildContext context1) {
-                              bool _exams = sharedPreferences.getBool(
-                                  Keys.exams +
-                                      lesson.subjects[_selected].lesson);
-                              return SimpleDialog(
-                                title: Text(getSubject(
-                                        lesson.subjects[_selected].lesson) +
-                                    ' ' +
-                                    lesson.subjects[_selected].teacher),
-                                children: <Widget>[
-                                  CheckboxListTile(
-                                    value: (_exams == null) ? true : _exams,
-                                    onChanged: (bool value) {
-                                      setState(() {
-                                        sharedPreferences.setBool(
-                                            Keys.exams +
-                                                lesson
-                                                    .subjects[_selected].lesson,
-                                            value);
-                                        sharedPreferences.commit();
-                                        ReplacementPlan.update(
-                                            sharedPreferences);
-                                        Navigator.pop(context);
-                                      });
-                                    },
-                                    title: new Text(AppLocalizations.of(context)
-                                        .writeExams),
-                                  ),
-                                ],
+                              return CourseEdit(
+                                subject: lesson.subjects[_selected],
+                                blocks: [lesson.subjects[_selected].block],
+                                onExamChange: (_) {
+                                  setState(() {
+                                    UnitPlan.setAllSelections(
+                                        sharedPreferences);
+                                  });
+                                },
                               );
                             },
                           );
