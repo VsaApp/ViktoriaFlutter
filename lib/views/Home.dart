@@ -114,7 +114,7 @@ class HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    loadData();
+    loadData(); /*
     OneSignal.shared.init('1d7b8ef7-9c9d-4843-a833-8a1e9999818c');
     OneSignal.shared.sendTag('EF', true);
     OneSignal.shared
@@ -122,8 +122,37 @@ class HomePageState extends State<HomePage> {
       Viktoriaflutterplugin.showNotification(
           json.encode(notification.payload.additionalData));
     });
-    Viktoriaflutterplugin.showNotification('{"type":"clear"}');
+    Viktoriaflutterplugin.showNotification('{"type":"clear"}'); */
+    initPlatformState();
     super.initState();
+  }
+
+  Future<void> initPlatformState() async {
+    if (!mounted) return;
+
+    OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
+
+    //OneSignal.shared.setRequiresUserPrivacyConsent(_requireConsent);
+
+    var settings = {
+      OSiOSSettings.autoPrompt: false,
+      OSiOSSettings.promptBeforeOpeningPushUrl: true
+    };
+
+    OneSignal.shared
+        .setNotificationReceivedHandler((OSNotification notification) {
+      Viktoriaflutterplugin.showNotification(
+          json.encode(notification.payload.additionalData));
+    });
+
+    // NOTE: Replace with your own app ID from https://www.onesignal.com
+    await OneSignal.shared
+        .init("1d7b8ef7-9c9d-4843-a833-8a1e9999818c", iOSSettings: settings);
+
+    Viktoriaflutterplugin.showNotification('{"type":"clear"}');
+    OneSignal.shared.sendTag('EF', true);
+    OneSignal.shared
+        .setInFocusDisplayType(OSNotificationDisplayType.notification);
   }
 
   void loadData() async {
