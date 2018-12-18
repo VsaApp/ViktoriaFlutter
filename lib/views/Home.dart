@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
 import '../data/UnitPlan.dart';
+import '../data/ReplacementPlan.dart' as replacementPlan;
 import 'Courses.dart';
 import 'ReplacementPlan.dart';
 import 'Settings.dart';
@@ -113,6 +114,9 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     loadData();
+    OneSignal.shared.setNotificationReceivedHandler((osNotification) {
+      replacementPlan.download(sharedPreferences.getString(Keys.grade));
+    });
     OneSignal.shared.init('1d7b8ef7-9c9d-4843-a833-8a1e9999818c');
     OneSignal.shared
         .setInFocusDisplayType(OSNotificationDisplayType.notification);
