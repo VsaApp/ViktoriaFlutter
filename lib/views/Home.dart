@@ -114,6 +114,8 @@ class HomePageState extends State<HomePage> {
   void initState() {
     loadData();
     OneSignal.shared.init('1d7b8ef7-9c9d-4843-a833-8a1e9999818c');
+    OneSignal.shared
+        .setInFocusDisplayType(OSNotificationDisplayType.notification);
     syncTags();
     super.initState();
   }
