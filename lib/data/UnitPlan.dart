@@ -48,6 +48,10 @@ List<UnitPlanDay> parseDays(String responseBody) {
 }
 
 Future syncTags() async {
+  Map<String, dynamic> tags = await OneSignal.shared.getTags();
+  tags.forEach((key, value) {
+    OneSignal.shared.deleteTag(key);
+  });
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   getUnitPlan().forEach((day) {
     day.lessons.forEach((lesson) {
@@ -58,14 +62,8 @@ Future syncTags() async {
               '-' +
               day.lessons.indexOf(lesson).toString()
               : lesson.subjects[0].block);
-      OneSignal.shared.getTags().then((keys) {
-        if (keys[prefKey] == null ||
-            keys[prefKey].toString() !=
-                sharedPreferences.getInt(Keys.unitPlan + prefKey).toString()) {
-          OneSignal.shared.sendTag(prefKey,
-              sharedPreferences.getInt(Keys.unitPlan + prefKey).toString());
-        }
-      });
+      OneSignal.shared.sendTag(prefKey,
+          sharedPreferences.getInt(Keys.unitPlan + prefKey).toString());
     });
   });
 }

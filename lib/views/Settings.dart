@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Keys.dart';
 import '../Localizations.dart';
+import '../data/UnitPlan.dart';
 import 'ReplacementPlan.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -196,6 +197,7 @@ class SettingsPageView extends State<SettingsPage> {
                               setState(() {
                                 sharedPreferences.setString(Keys.grade, grade);
                                 sharedPreferences.commit().then((_) {
+                                  syncTags();
                                   Navigator.of(context)
                                       .pushReplacementNamed('/');
                                 });
@@ -218,6 +220,7 @@ class SettingsPageView extends State<SettingsPage> {
                       sharedPreferences.remove(Keys.grade);
                       sharedPreferences.remove(Keys.isTeacher);
                       sharedPreferences.commit().then((_) {
+                        syncTags();
                         Navigator.of(context).pushReplacementNamed('/login');
                       });
                     },
