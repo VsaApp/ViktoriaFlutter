@@ -3,7 +3,6 @@ package io.flutter.plugins;
 import io.flutter.plugin.common.PluginRegistry;
 import com.onesignal.flutter.OneSignalPlugin;
 import io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin;
-import de.lohl1kohl.viktoriaflutterplugin.ViktoriaflutterpluginPlugin;
 
 /**
  * Generated file. Do not edit.
@@ -15,7 +14,6 @@ public final class GeneratedPluginRegistrant {
     }
     OneSignalPlugin.registerWith(registry.registrarFor("com.onesignal.flutter.OneSignalPlugin"));
     SharedPreferencesPlugin.registerWith(registry.registrarFor("io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin"));
-    ViktoriaflutterpluginPlugin.registerWith(registry.registrarFor("de.lohl1kohl.viktoriaflutterplugin.ViktoriaflutterpluginPlugin"));
   }
 
   private static boolean alreadyRegisteredWith(PluginRegistry registry) {

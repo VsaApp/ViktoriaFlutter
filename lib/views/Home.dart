@@ -1,13 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:onesignal/onesignal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:viktoriaflutterplugin/viktoriaflutterplugin.dart';
 
 import '../Keys.dart';
 import '../Localizations.dart';
+import '../data/UnitPlan.dart';
 import 'Courses.dart';
 import 'ReplacementPlan.dart';
 import 'Settings.dart';
@@ -114,45 +112,10 @@ class HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    loadData(); /*
+    loadData();
     OneSignal.shared.init('1d7b8ef7-9c9d-4843-a833-8a1e9999818c');
-    OneSignal.shared.sendTag('EF', true);
-    OneSignal.shared
-        .setNotificationReceivedHandler((OSNotification notification) {
-      Viktoriaflutterplugin.showNotification(
-          json.encode(notification.payload.additionalData));
-    });
-    Viktoriaflutterplugin.showNotification('{"type":"clear"}'); */
-    initPlatformState();
+    syncTags();
     super.initState();
-  }
-
-  Future<void> initPlatformState() async {
-    if (!mounted) return;
-
-    OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
-
-    //OneSignal.shared.setRequiresUserPrivacyConsent(_requireConsent);
-
-    var settings = {
-      OSiOSSettings.autoPrompt: false,
-      OSiOSSettings.promptBeforeOpeningPushUrl: true
-    };
-
-    OneSignal.shared
-        .setNotificationReceivedHandler((OSNotification notification) {
-      Viktoriaflutterplugin.showNotification(
-          json.encode(notification.payload.additionalData));
-    });
-
-    // NOTE: Replace with your own app ID from https://www.onesignal.com
-    await OneSignal.shared
-        .init("1d7b8ef7-9c9d-4843-a833-8a1e9999818c", iOSSettings: settings);
-
-    Viktoriaflutterplugin.showNotification('{"type":"clear"}');
-    OneSignal.shared.sendTag('EF', true);
-    OneSignal.shared
-        .setInFocusDisplayType(OSNotificationDisplayType.notification);
   }
 
   void loadData() async {

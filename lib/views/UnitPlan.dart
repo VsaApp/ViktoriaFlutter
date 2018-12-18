@@ -199,6 +199,7 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                                               ReplacementPlan.updateFilter(day,
                                                   lesson, sharedPreferences);
                                             });
+                                            syncTags();
                                             bool _selected = (sharedPreferences
                                                 .getKeys()
                                                 .where((key) =>

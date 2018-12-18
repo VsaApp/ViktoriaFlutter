@@ -17,8 +17,6 @@ dependencies:
   crypto: ^2.0.6
   flutter_svg: ^0.7.0+1
   onesignal: ^1.0.3
-  viktoriaflutterplugin:
-    path: ./plugin
 
 dev_dependencies:
   flutter_test:
