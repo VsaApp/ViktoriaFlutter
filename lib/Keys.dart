@@ -50,4 +50,8 @@ class Keys {
   static String get initialPage {
     return 'initialPage';
   }
+
+  static String get lastUpdate {
+    return 'lastUpdate';
+  }
 }

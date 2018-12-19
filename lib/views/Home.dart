@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
 import '../data/UnitPlan.dart';
-import '../data/ReplacementPlan.dart' as replacementPlan;
 import 'Courses.dart';
 import 'ReplacementPlan.dart';
 import 'Settings.dart';
@@ -52,34 +51,29 @@ class ShortCutDialogState extends State<ShortCutDialog> {
       return Container();
     }
     return SimpleDialog(
-        title: Text(AppLocalizations
-            .of(context)
-            .whatDoFirst),
+        title: Text(AppLocalizations.of(context).whatDoFirst),
         children: <Widget>[
           Column(
               children: widget.items.map((item) {
-                return GestureDetector(
-                  onTap: () {
-                    widget.selectItem(widget.items.indexOf(item));
-                  },
-                  child: Chip(
-                    avatar: CircleAvatar(
-                      backgroundColor: Theme
-                          .of(context)
-                          .primaryColor,
-                      child: Transform(
-                        transform: new Matrix4.identity()
-                          ..scale(0.8),
-                        child: Container(
-                          margin: EdgeInsets.all(3.0),
-                          child: Icon(item.icon),
-                        ),
-                      ),
+            return GestureDetector(
+              onTap: () {
+                widget.selectItem(widget.items.indexOf(item));
+              },
+              child: Chip(
+                avatar: CircleAvatar(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  child: Transform(
+                    transform: new Matrix4.identity()..scale(0.8),
+                    child: Container(
+                      margin: EdgeInsets.all(3.0),
+                      child: Icon(item.icon),
                     ),
-                    label: Text(item.title),
                   ),
-                );
-              }).toList()),
+                ),
+                label: Text(item.title),
+              ),
+            );
+          }).toList()),
           CheckboxListTile(
             value: _showDialog,
             onChanged: (value) {
@@ -89,9 +83,7 @@ class ShortCutDialogState extends State<ShortCutDialog> {
                 _showDialog = value;
               });
             },
-            title: new Text(AppLocalizations
-                .of(context)
-                .showShortCutDialog),
+            title: new Text(AppLocalizations.of(context).showShortCutDialog),
           ),
         ]);
   }
@@ -117,7 +109,8 @@ class HomePageState extends State<HomePage> {
     OneSignal.shared.setNotificationReceivedHandler((osNotification) {
       DateTime now = DateTime.now();
       String lastUpdate = sharedPreferences.getString(Keys.lastUpdate);
-      if (lastUpdate == null || now.isAfter(DateTime.parse(lastUpdate).add(Duration(minutes: 1)))){
+      if (lastUpdate == null ||
+          now.isAfter(DateTime.parse(lastUpdate).add(Duration(minutes: 1)))) {
         sharedPreferences.setString(Keys.lastUpdate, now.toIso8601String());
         Navigator.of(context).pushReplacementNamed('/');
       }
@@ -187,20 +180,16 @@ class HomePageState extends State<HomePage> {
 
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         SharedPreferences sharedPreferences =
-        await SharedPreferences.getInstance();
+            await SharedPreferences.getInstance();
         bool selectedSubjects = sharedPreferences.getKeys().where((key) {
-          if (key.startsWith(
-              '${Keys.unitPlan}${sharedPreferences.getString(Keys.grade)}-')) {
-            if ('-'
-                .allMatches(key)
-                .length == 3)
-              return key.split('-')[key
-                  .split('-')
-                  .length - 1] != '5';
-            return true;
-          }
-          return false;
-        }).length >
+              if (key.startsWith(
+                  '${Keys.unitPlan}${sharedPreferences.getString(Keys.grade)}-')) {
+                if ('-'.allMatches(key).length == 3)
+                  return key.split('-')[key.split('-').length - 1] != '5';
+                return true;
+              }
+              return false;
+            }).length >
             0;
         if (selectedSubjects) {
           if (_showDialog) {
