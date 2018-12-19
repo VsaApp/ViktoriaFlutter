@@ -115,7 +115,12 @@ class HomePageState extends State<HomePage> {
   void initState() {
     loadData();
     OneSignal.shared.setNotificationReceivedHandler((osNotification) {
-      replacementPlan.download(sharedPreferences.getString(Keys.grade));
+      DateTime now = DateTime.now();
+      String lastUpdate = sharedPreferences.getString(Keys.lastUpdate);
+      if (lastUpdate == null || now.isAfter(DateTime.parse(lastUpdate).add(Duration(minutes: 1)))){
+        sharedPreferences.setString(Keys.lastUpdate, now.toIso8601String());
+        Navigator.of(context).pushReplacementNamed('/');
+      }
     });
     OneSignal.shared.init('1d7b8ef7-9c9d-4843-a833-8a1e9999818c');
     OneSignal.shared
