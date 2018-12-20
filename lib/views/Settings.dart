@@ -117,6 +117,7 @@ class SettingsPageView extends State<SettingsPage> {
                       Keys.getReplacementPlanNotifications, value);
                   sharedPreferences.commit();
                   _getReplacementPlanNotifications = value;
+                  syncTags();
                 });
               },
               title: new Text(

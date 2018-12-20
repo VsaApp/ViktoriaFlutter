@@ -53,6 +53,10 @@ Future syncTags() async {
     OneSignal.shared.deleteTag(key);
   });
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  if (!(sharedPreferences.getBool(Keys.getReplacementPlanNotifications) ??
+      true)) {
+    return;
+  }
   getUnitPlan().forEach((day) {
     day.lessons.forEach((lesson) {
       String prefKey = sharedPreferences.getString(Keys.grade) +
