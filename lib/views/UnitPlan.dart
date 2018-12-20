@@ -275,6 +275,10 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                             lesson.subjects[_selected].lesson !=
                                 AppLocalizations.of(context).lunchBreak &&
                             !nothingSelected) {
+                          sharedPreferences.setBool(
+                              Keys.exams + lesson.subjects[_selected].lesson,
+                              true);
+                          sharedPreferences.commit();
                           showDialog<String>(
                             context: context,
                             barrierDismissible: true,
