@@ -58,8 +58,9 @@ class AppLocalizations {
       'showShortCutDialog': 'Schnellstartdialog anzeigen',
       'initialPage': 'Startseite',
       'showReplacementPlanForBrotherSister':
-      'Vertretungsplan für Geschwisterkind anzeigen',
-      'noChanges': 'Keine Änderungen'
+          'Vertretungsplan für Geschwisterkind anzeigen',
+      'noChanges': 'Keine Änderungen',
+      'workGroups': 'AGs'
     },
   };
 
@@ -244,6 +245,10 @@ class AppLocalizations {
 
   String get noChanges {
     return _localizedValues[locale.languageCode]['noChanges'];
+  }
+
+  String get workGroups {
+    return _localizedValues[locale.languageCode]['workGroups'];
   }
 }
 

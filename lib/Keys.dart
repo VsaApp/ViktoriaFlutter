@@ -54,4 +54,8 @@ class Keys {
   static String get lastUpdate {
     return 'lastUpdate';
   }
+
+  static String get workGroups {
+    return 'workGroups';
+  }
 }

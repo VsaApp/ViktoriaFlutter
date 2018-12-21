@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:onesignal/onesignal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../Keys.dart';
 import '../Localizations.dart';
@@ -10,6 +11,7 @@ import 'Courses.dart';
 import 'ReplacementPlan.dart';
 import 'Settings.dart';
 import 'UnitPlan.dart';
+import 'WorkGroups.dart';
 
 class DrawerItem {
   String title;
@@ -140,6 +142,8 @@ class HomePageState extends State<HomePage> {
       case 2:
         return CoursesPage();
       case 3:
+        return WorkGroupsPage();
+      case 4:
         return SettingsPage();
       default:
         return Text('Error');
@@ -158,6 +162,7 @@ class HomePageState extends State<HomePage> {
       DrawerItem(AppLocalizations.of(context).replacementPlan,
           Icons.format_list_numbered),
       DrawerItem(AppLocalizations.of(context).courses, Icons.person),
+      DrawerItem(AppLocalizations.of(context).workGroups, MdiIcons.soccer),
       DrawerItem(AppLocalizations.of(context).settings, Icons.settings),
     ];
     var drawerOptions = <Widget>[];

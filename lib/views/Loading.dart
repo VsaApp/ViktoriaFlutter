@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Keys.dart';
 import '../data/ReplacementPlan.dart' as ReplacementPlan;
 import '../data/UnitPlan.dart' as UnitPlan;
+import '../data/WorkGroups.dart' as WorkGroups;
 
 class LoadingPage extends StatefulWidget {
   @override
@@ -27,6 +28,7 @@ class LoadingPageState extends State<LoadingPage> {
     await UnitPlan.download();
     await ReplacementPlan.download(
         (await SharedPreferences.getInstance()).getString(Keys.grade));
+    await WorkGroups.download();
   }
 
   @override
