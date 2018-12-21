@@ -57,12 +57,25 @@ class AppLocalizations {
       'ok': 'OK',
       'showShortCutDialog': 'Schnellstartdialog anzeigen',
       'initialPage': 'Startseite',
+      'showReplacementPlanForBrotherSister': 'Vertretungsplan für Geschwisterkind anzeigen',
+      'noChanges': 'Keine Änderungen',
+      'cafetoria' : 'Cafetoria',
+      'cafetoriaNoMenues' : 'Es gibt keine Menüs für diesen Tag',
+      'cafetoriaLogin' : 'Keyfobdaten eingeben',
       'showReplacementPlanForBrotherSister':
           'Vertretungsplan für Geschwisterkind anzeigen',
       'noChanges': 'Keine Änderungen',
       'workGroups': 'AGs'
     },
   };
+
+  String get cafetoria {
+    return _localizedValues[locale.languageCode]['cafetoria'];
+  }
+
+  String get cafetoriaNoMenues {
+    return _localizedValues[locale.languageCode]['cafetoriaNoMenues'];
+  }
 
   String get noCourses {
     return _localizedValues[locale.languageCode]['noCourses'];
@@ -140,6 +153,10 @@ class AppLocalizations {
 
   String get pleaseSelect {
     return _localizedValues[locale.languageCode]['pleaseSelect'];
+  }
+
+    String get cafetoriaLogin {
+    return _localizedValues[locale.languageCode]['cafetoriaLogin'];
   }
 
   String get login {

@@ -9,6 +9,7 @@ import '../Localizations.dart';
 import '../data/UnitPlan.dart';
 import 'Courses.dart';
 import 'ReplacementPlan.dart';
+import 'Cafetoria.dart';
 import 'Settings.dart';
 import 'UnitPlan.dart';
 import 'WorkGroups.dart';
@@ -140,10 +141,12 @@ class HomePageState extends State<HomePage> {
       case 1:
         return ReplacementPlanPage();
       case 2:
-        return CoursesPage();
+        return CafetoriaPage();
       case 3:
-        return WorkGroupsPage();
+        return CoursesPage();
       case 4:
+        return WorkGroupsPage();
+      case 5:
         return SettingsPage();
       default:
         return Text('Error');
@@ -161,6 +164,7 @@ class HomePageState extends State<HomePage> {
       DrawerItem(AppLocalizations.of(context).unitPlan, Icons.event_note),
       DrawerItem(AppLocalizations.of(context).replacementPlan,
           Icons.format_list_numbered),
+      DrawerItem(AppLocalizations.of(context).cafetoria, Icons.fastfood),
       DrawerItem(AppLocalizations.of(context).courses, Icons.person),
       DrawerItem(AppLocalizations.of(context).workGroups, MdiIcons.soccer),
       DrawerItem(AppLocalizations.of(context).settings, Icons.settings),

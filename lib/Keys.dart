@@ -7,6 +7,23 @@ class Keys {
     return 'lastGrades';
   }
 
+  static String get lastUpdate {
+    return 'lastUpdate';
+  }
+
+  static String get cafetoria {
+    return 'cafetoria';
+  }
+
+  static String get cafetoriaUsername {
+    return 'cafetoriaUsername';
+  }
+
+  
+  static String get cafetoriaPassword {
+    return 'cafetoriaPassword';
+  }
+
   static String get username {
     return 'username';
   }
@@ -49,10 +66,6 @@ class Keys {
 
   static String get initialPage {
     return 'initialPage';
-  }
-
-  static String get lastUpdate {
-    return 'lastUpdate';
   }
 
   static String get workGroups {
