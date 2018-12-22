@@ -515,7 +515,8 @@ class LoginView extends State<LoginDialog> {
                           }
                         },
                         decoration: InputDecoration(
-                            hintText: AppLocalizations.of(context).username),
+                            hintText:
+                                AppLocalizations.of(context).cafetoriaUsername),
                         onFieldSubmitted: (value) {
                           FocusScope.of(context).requestFocus(_focus);
                         },
@@ -533,7 +534,8 @@ class LoginView extends State<LoginDialog> {
                           }
                         },
                         decoration: InputDecoration(
-                            hintText: AppLocalizations.of(context).password),
+                            hintText:
+                                AppLocalizations.of(context).cafetoriaPassword),
                         onFieldSubmitted: (value) {
                           checkForm();
                         },

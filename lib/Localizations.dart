@@ -20,8 +20,12 @@ class AppLocalizations {
       'pleaseSelect': 'Bitte auswählen',
       'login': 'Anmelden',
       'fieldCantBeEmpty': 'Das Feld darf nicht leer sein',
-      'username': 'Nutzername der Homepage',
-      'password': 'Passwort der Homepage',
+      'pupilUsername': 'Nutzername der Homepage',
+      'pupilPassword': 'Passwort der Homepage',
+      'teacherUsername': 'Kürzel',
+      'teacherPassword': 'Passwort',
+      'cafetoriaUsername': 'ID',
+      'cafetoriaPassword': 'Pin',
       'notImplementedYet': 'Diese Funktion gibt es bislang noch nicht',
       'credentialsNotCorrect': 'Nutzername oder Passwort falsch',
       'lunchBreak': 'Mittagspause',
@@ -165,12 +169,28 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]['fieldCantBeEmpty'];
   }
 
-  String get username {
-    return _localizedValues[locale.languageCode]['username'];
+  String get pupilUsername {
+    return _localizedValues[locale.languageCode]['pupilUsername'];
   }
 
-  String get password {
-    return _localizedValues[locale.languageCode]['password'];
+  String get pupilPassword {
+    return _localizedValues[locale.languageCode]['pupilPassword'];
+  }
+
+  String get teacherUsername {
+    return _localizedValues[locale.languageCode]['teacherUsername'];
+  }
+
+  String get teacherPassword {
+    return _localizedValues[locale.languageCode]['teacherPassword'];
+  }
+
+  String get cafetoriaUsername {
+    return _localizedValues[locale.languageCode]['cafetoriaUsername'];
+  }
+
+  String get cafetoriaPassword {
+    return _localizedValues[locale.languageCode]['cafetoriaPassword'];
   }
 
   String get notImplementedYet {
