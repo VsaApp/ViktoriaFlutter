@@ -5,6 +5,7 @@ import '../Keys.dart';
 import '../data/ReplacementPlan.dart' as ReplacementPlan;
 import '../data/UnitPlan.dart' as UnitPlan;
 import '../data/WorkGroups.dart' as WorkGroups;
+import '../data/Calendar.dart' as Calendar;
 
 class LoadingPage extends StatefulWidget {
   @override
@@ -29,6 +30,7 @@ class LoadingPageState extends State<LoadingPage> {
     await ReplacementPlan.download(
         (await SharedPreferences.getInstance()).getString(Keys.grade));
     await WorkGroups.download();
+    await Calendar.download();
   }
 
   @override

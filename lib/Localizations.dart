@@ -67,7 +67,9 @@ class AppLocalizations {
       'cafetoria': 'Cafetoria',
       'cafetoriaNoMenues': 'Es gibt keine Menüs für diesen Tag',
       'cafetoriaLogin': 'Keyfobdaten eingeben',
-      'workGroups': 'AGs'
+      'workGroups': 'AGs',
+      'calendar': 'Kalender',
+      'dates': 'Termine'
     },
   };
 
@@ -284,6 +286,14 @@ class AppLocalizations {
 
   String get workGroups {
     return _localizedValues[locale.languageCode]['workGroups'];
+  }
+
+  String get calendar {
+    return _localizedValues[locale.languageCode]['calendar'];
+  }
+
+  String get dates {
+    return _localizedValues[locale.languageCode]['dates'];
   }
 }
 

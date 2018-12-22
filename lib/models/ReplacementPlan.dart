@@ -60,8 +60,7 @@ class ReplacementPlanDay {
   }
 
   void setColors() {
-    for (int i = 0; i < changes.length; i++)
-      changes[i].setColor();
+    for (int i = 0; i < changes.length; i++) changes[i].setColor();
   }
 }
 
@@ -77,13 +76,14 @@ class Change {
   UnitPlanSubject normalSubject;
   Color color;
 
-  Change({this.unit,
-    this.lesson,
-    this.course,
-    this.room,
-    this.teacher,
-    this.changed,
-    this.weekday});
+  Change(
+      {this.unit,
+      this.lesson,
+      this.course,
+      this.room,
+      this.teacher,
+      this.changed,
+      this.weekday});
 
   factory Change.fromJson(Map<String, dynamic> json, String _weekday) {
     return Change(
@@ -117,40 +117,40 @@ class Change {
 
     // Check if the course set...
     UnitPlan.days.forEach((day) => day.lessons.forEach((lesson) {
-      if (lesson.subjects.length > 0) {
-        int selected = sharedPreferences.getInt(Keys.unitPlan +
-            sharedPreferences.getString(Keys.grade) +
-            '-' +
-            ((lesson.subjects[0].block == '')
-                ? (UnitPlan.days.indexOf(day).toString() +
-                '-' +
-                (day.lessons.indexOf(lesson)).toString())
-                : (lesson.subjects[0].block))) ??
-            lesson.subjects.length;
-        if (selected < lesson.subjects.length) {
-          UnitPlanSubject subject = lesson.subjects[selected];
-          if (this.lesson == subject.lesson &&
-              (teacher.length == 0 || teacher == subject.teacher)) {
-            // It's the correct lesson...
-            if (course == subject.course) {
-              if (changed.info.toLowerCase().contains('klausur')) {
-                if (!(sharedPreferences
-                    .getBool(Keys.exams + subject.lesson.toUpperCase()) ??
-                    true)) {
+          if (lesson.subjects.length > 0) {
+            int selected = sharedPreferences.getInt(Keys.unitPlan +
+                    sharedPreferences.getString(Keys.grade) +
+                    '-' +
+                    ((lesson.subjects[0].block == '')
+                        ? (UnitPlan.days.indexOf(day).toString() +
+                            '-' +
+                            (day.lessons.indexOf(lesson)).toString())
+                        : (lesson.subjects[0].block))) ??
+                lesson.subjects.length;
+            if (selected < lesson.subjects.length) {
+              UnitPlanSubject subject = lesson.subjects[selected];
+              if (this.lesson == subject.lesson &&
+                  (teacher.length == 0 || teacher == subject.teacher)) {
+                // It's the correct lesson...
+                if (course == subject.course) {
+                  if (changed.info.toLowerCase().contains('klausur')) {
+                    if (!(sharedPreferences.getBool(
+                            Keys.exams + subject.lesson.toUpperCase()) ??
+                        true)) {
+                      isMy = 0;
+                      return;
+                    }
+                  }
+                  isMy = 1;
+                  return;
+                } else if (course.length > 0) {
                   isMy = 0;
                   return;
                 }
               }
-              isMy = 1;
-              return;
-            } else if (course.length > 0) {
-              isMy = 0;
-              return;
             }
           }
-        }
-      }
-    }));
+        }));
 
     // With the current database it is not possible to filter exams...
     if (changed.info.toLowerCase().contains('klausur')) {
@@ -158,8 +158,7 @@ class Change {
       int selectedSubjects = 0;
       bool writing = false;
       UnitPlan.days.forEach((day) =>
-          day.lessons.forEach((lesson) =>
-              lesson.subjects.forEach((subject) {
+          day.lessons.forEach((lesson) => lesson.subjects.forEach((subject) {
                 if (subject.lesson == this.lesson &&
                     subject.teacher == this.teacher) {
                   int selected = sharedPreferences.getInt(Keys.unitPlan +
@@ -167,8 +166,8 @@ class Change {
                       '-' +
                       ((subject.block == '')
                           ? (UnitPlan.days.indexOf(day).toString() +
-                          '-' +
-                          (day.lessons.indexOf(lesson)).toString())
+                              '-' +
+                              (day.lessons.indexOf(lesson)).toString())
                           : (subject.block)));
                   countSubjects++;
                   if (selected == null) {
@@ -178,8 +177,8 @@ class Change {
                   if (selected < lesson.subjects.length) {
                     if (lesson.subjects[selected] == subject) {
                       selectedSubjects++;
-                      bool exams = sharedPreferences
-                          .getBool(Keys.exams + subject.lesson.toUpperCase()) ??
+                      bool exams = sharedPreferences.getBool(
+                              Keys.exams + subject.lesson.toUpperCase()) ??
                           true;
                       writing = exams;
                     }
@@ -193,7 +192,6 @@ class Change {
       } else if (selectedSubjects == 0 || !writing) isMy = 0;
       return;
     }
-    ;
 
     UnitPlanLesson nLesson = UnitPlan.days[day].lessons[unit];
     List<UnitPlanSubject> possibleSubjects = [];
@@ -203,9 +201,9 @@ class Change {
       // There is only one Subject with the correct name...
       if (getSubject(subject.lesson) == getSubject(lesson)) {
         if (nLesson.subjects
-            .where((j) => getSubject(j.lesson) == getSubject(lesson))
-            .toList()
-            .length ==
+                .where((j) => getSubject(j.lesson) == getSubject(lesson))
+                .toList()
+                .length ==
             1) {
           nSubject = subject;
           break;
@@ -216,10 +214,7 @@ class Change {
       }
       // There is only one Subject with the correct room...
       if (subject.room == room) {
-        if (nLesson.subjects
-            .where((j) => j.room == room)
-            .toList()
-            .length ==
+        if (nLesson.subjects.where((j) => j.room == room).toList().length ==
             1) {
           nSubject = subject;
           break;
@@ -230,9 +225,9 @@ class Change {
       // There is only one Subject with the correct teacher...
       if (subject.teacher == teacher) {
         if (nLesson.subjects
-            .where((j) => j.teacher == teacher)
-            .toList()
-            .length ==
+                .where((j) => j.teacher == teacher)
+                .toList()
+                .length ==
             1) {
           nSubject = subject;
           break;

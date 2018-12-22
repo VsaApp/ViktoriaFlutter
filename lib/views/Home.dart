@@ -13,6 +13,7 @@ import 'Cafetoria.dart';
 import 'Settings.dart';
 import 'UnitPlan.dart';
 import 'WorkGroups.dart';
+import 'Calendar.dart';
 
 class DrawerItem {
   String title;
@@ -145,8 +146,10 @@ class HomePageState extends State<HomePage> {
       case 3:
         return CafetoriaPage();
       case 4:
-        return WorkGroupsPage();
+        return CalendarPage();
       case 5:
+        return WorkGroupsPage();
+      case 6:
         return SettingsPage();
       default:
         return Text('Error');
@@ -166,6 +169,7 @@ class HomePageState extends State<HomePage> {
           Icons.format_list_numbered),
       DrawerItem(AppLocalizations.of(context).courses, Icons.person),
       DrawerItem(AppLocalizations.of(context).cafetoria, Icons.fastfood),
+      DrawerItem(AppLocalizations.of(context).calendar, Icons.calendar_today),
       DrawerItem(AppLocalizations.of(context).workGroups, MdiIcons.soccer),
       DrawerItem(AppLocalizations.of(context).settings, Icons.settings),
     ];

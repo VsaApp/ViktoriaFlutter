@@ -19,7 +19,6 @@ class Keys {
     return 'cafetoriaUsername';
   }
 
-  
   static String get cafetoriaPassword {
     return 'cafetoriaPassword';
   }
@@ -70,5 +69,9 @@ class Keys {
 
   static String get workGroups {
     return 'workGroups';
+  }
+
+  static String get calendar {
+    return 'calendar';
   }
 }

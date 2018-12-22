@@ -9,14 +9,15 @@ import '../models/ReplacementPlan.dart';
 import '../models/UnitPlan.dart';
 
 class CourseEdit extends StatefulWidget {
-  UnitPlanSubject subject;
-  List<String> blocks;
-  Function onExamChange;
+  final UnitPlanSubject subject;
+  final List<String> blocks;
+  final Function onExamChange;
 
-  CourseEdit({Key key,
-    @required this.subject,
-    @required this.blocks,
-    this.onExamChange})
+  CourseEdit(
+      {Key key,
+      @required this.subject,
+      @required this.blocks,
+      this.onExamChange})
       : super(key: key);
 
   @override
@@ -32,9 +33,9 @@ class CourseEditView extends State<CourseEdit> {
     SharedPreferences.getInstance().then((instance) {
       setState(() {
         sharedPreferences = instance;
-        _exams =
-            sharedPreferences.getBool(Keys.exams + widget.subject.lesson.toUpperCase()) ??
-                true;
+        _exams = sharedPreferences
+                .getBool(Keys.exams + widget.subject.lesson.toUpperCase()) ??
+            true;
       });
     });
     super.initState();
@@ -67,9 +68,7 @@ class CourseEditView extends State<CourseEdit> {
               }
             });
           },
-          title: Text(AppLocalizations
-              .of(context)
-              .writeExams),
+          title: Text(AppLocalizations.of(context).writeExams),
         ),
       ],
     );
@@ -171,7 +170,7 @@ class CourseRowView extends State<CourseRow> {
     course = '';
     blocks = [];
     _exams = widget.sharedPreferences
-        .getBool(Keys.exams + widget.subjects[0].lesson.toUpperCase()) ??
+            .getBool(Keys.exams + widget.subjects[0].lesson.toUpperCase()) ??
         true;
 
     widget.subjects.forEach((subject) {
