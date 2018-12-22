@@ -12,7 +12,6 @@ import '../models/Cafetoria.dart';
 
 import 'dart:convert';
 
-
 Function(String input) jsonDecode = json.decode;
 
 class CafetoriaPage extends StatefulWidget {
@@ -38,48 +37,44 @@ class CafetoriaView extends State<CafetoriaPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      body: Stack(
-        children: <Widget>[
-          (data == null) ?
-            Scaffold(
-              body: Center(
-                child: SizedBox(
-                  child: new CircularProgressIndicator(strokeWidth: 5.0),
-                  height: 75.0,
-                  width: 75.0,
+      body: Stack(children: <Widget>[
+        (data == null)
+            ? Scaffold(
+                body: Center(
+                  child: SizedBox(
+                    child: new CircularProgressIndicator(strokeWidth: 5.0),
+                    height: 75.0,
+                    width: 75.0,
+                  ),
                 ),
-              ),
-            )
-            :
-            Column(children: <Widget>[CafetoriaDayList(days: data.days)]),
-          Positioned(
+              )
+            : Column(children: <Widget>[CafetoriaDayList(days: data.days)]),
+        Positioned(
             bottom: 16.0,
             right: 16.0,
             child: Container(
-              child: GradeFab(
-                onLogin: () {
-                  showDialog<String>(
-                    context: context,
-                    barrierDismissible: true,
-                    builder: (BuildContext context1) {
-                      return SimpleDialog(
-                        title: Text(AppLocalizations.of(context)
-                            .cafetoriaLogin),
-                        children: <Widget>[ 
-                          //LoginDialog() 
-                        ],
-                      );
-                    },
-                  );
-                },
-                onOrder: () {
-                  launch('https://www.opc-asp.de/vs-aachen/');
-                },
-                saldo: (data == null) ? -1.0 : data.saldo
-              ),
-            )
-          ),
-        ]),
+              child: ActionFab(
+                  onLogin: () {
+                    showDialog<String>(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (BuildContext context1) {
+                        return SimpleDialog(
+                          title:
+                              Text(AppLocalizations.of(context).cafetoriaLogin),
+                          children: <Widget>[
+                            //LoginDialog()
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  onOrder: () {
+                    launch('https://www.opc-asp.de/vs-aachen/');
+                  },
+                  saldo: (data == null) ? -1.0 : data.saldo),
+            )),
+      ]),
     );
   }
 
@@ -94,7 +89,6 @@ class CafetoriaView extends State<CafetoriaPage> {
       return false;
     }
   }
-
 }
 
 class CafetoriaDayList extends StatefulWidget {
@@ -150,22 +144,25 @@ class CafetoriaDayListState extends State<CafetoriaDayList>
           body: TabBarView(
             controller: _tabController,
             children: widget.days.map((day) {
-              List<MenuRow> rows = day.menues.map((menu) => MenuRow(menu: menu)).toList();
+              List<MenuRow> rows =
+                  day.menues.map((menu) => MenuRow(menu: menu)).toList();
               return Container(
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.white,
                 child: ListView(
                   shrinkWrap: true,
-                  children: (rows.length > 0) ? rows : 
-                    <Widget>[
-                      Center(
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 10.0),
-                          child: Text(AppLocalizations.of(context).cafetoriaNoMenues),
-                        ),
-                      ),
-                    ],
+                  children: (rows.length > 0)
+                      ? rows
+                      : <Widget>[
+                          Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 10.0),
+                              child: Text(AppLocalizations.of(context)
+                                  .cafetoriaNoMenues),
+                            ),
+                          ),
+                        ],
                 ),
               );
             }).toList(),
@@ -177,9 +174,7 @@ class CafetoriaDayListState extends State<CafetoriaDayList>
 }
 
 class MenuRow extends StatelessWidget {
-
-  const MenuRow({Key key, this.menu})
-      : super(key: key);
+  const MenuRow({Key key, this.menu}) : super(key: key);
 
   final CafetoriaMenu menu;
 
@@ -199,28 +194,32 @@ class MenuRow extends StatelessWidget {
                         Container(
                           width: constraints.maxWidth * 0.80,
                           child: Text(
-                            (menu.name.length > 1) ? menu.name[0].toUpperCase() + menu.name.substring(1) : menu.name.toUpperCase(),
+                            (menu.name.length > 1)
+                                ? menu.name[0].toUpperCase() +
+                                    menu.name.substring(1)
+                                : menu.name.toUpperCase(),
                             style: TextStyle(
                               color: Colors.black,
                             ),
                           ),
                         ),
-                        (menu.time.length > 0) ?
-                          Container(
-                              width: constraints.maxWidth * 0.80,
-                              child: Text(
-                                menu.time,
-                                style: TextStyle(
-                                  color: Colors.black54,
-                              ),
-                              )) :
-                          Container(),
+                        (menu.time.length > 0)
+                            ? Container(
+                                width: constraints.maxWidth * 0.80,
+                                child: Text(
+                                  menu.time,
+                                  style: TextStyle(
+                                    color: Colors.black54,
+                                  ),
+                                ))
+                            : Container(),
                       ],
                     ),
                     Column(
                       children: <Widget>[
                         Container(
-                          padding: EdgeInsets.only(left: constraints.maxWidth * 0.03),
+                          padding: EdgeInsets.only(
+                              left: constraints.maxWidth * 0.03),
                           width: constraints.maxWidth * 0.17,
                           child: Text(
                             '${menu.price}€',
@@ -239,24 +238,22 @@ class MenuRow extends StatelessWidget {
         },
       ),
     );
-
   }
 }
 
-class GradeFab extends StatefulWidget {
+class ActionFab extends StatefulWidget {
   final Function() onLogin;
   final Function() onOrder;
   final double saldo;
 
-  GradeFab({this.onLogin, this.onOrder, this.saldo});
+  ActionFab({this.onLogin, this.onOrder, this.saldo});
 
   @override
-  _GradeFabState createState() => _GradeFabState();
+  _ActionFabState createState() => _ActionFabState();
 }
 
-class _GradeFabState extends State<GradeFab> 
-  with SingleTickerProviderStateMixin {
-
+class _ActionFabState extends State<ActionFab>
+    with SingleTickerProviderStateMixin {
   SharedPreferences sharedPreferences;
   bool isOpened = false;
   AnimationController _animationController;
@@ -278,28 +275,30 @@ class _GradeFabState extends State<GradeFab>
           ..addListener(() {
             setState(() {});
           });
-    _buttonColor = ColorTween(
-      begin: Theme.of(context).primaryColor,
-      end: getColorHexFromStr('#275600'),
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Interval(
-        0.00,
-        1.00,
-        curve: Curves.linear,
-      ),
-    ));
-    _translateButton = Tween<double>(
-      begin: _fabHeight,
-      end: 0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Interval(
-        0.0,
-        0.75,
-        curve: _curve,
-      ),
-    ));
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _buttonColor = ColorTween(
+        begin: Theme.of(context).primaryColor,
+        end: getColorHexFromStr('#275600'),
+      ).animate(CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(
+          0.00,
+          1.00,
+          curve: Curves.linear,
+        ),
+      ));
+      _translateButton = Tween<double>(
+        begin: _fabHeight,
+        end: 0,
+      ).animate(CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(
+          0.0,
+          0.75,
+          curve: _curve,
+        ),
+      ));
+    });
     super.initState();
   }
 
@@ -332,7 +331,7 @@ class _GradeFabState extends State<GradeFab>
     );
   }
 
-   Widget login() {
+  Widget login() {
     return Container(
       child: FloatingActionButton(
         mini: true,
@@ -349,12 +348,11 @@ class _GradeFabState extends State<GradeFab>
   Widget toggle() {
     return Container(
       child: FloatingActionButton.extended(
-        backgroundColor: _buttonColor.value,
-        onPressed: animate,
-        tooltip: 'Saldo',
-        icon: Icon(Icons.euro_symbol),
-        label: Text(widget.saldo == -1.0 ? 'Anmelden' : '${widget.saldo}€')
-      ),
+          backgroundColor: _buttonColor.value,
+          onPressed: animate,
+          tooltip: 'Saldo',
+          icon: Icon(Icons.euro_symbol),
+          label: Text(widget.saldo == -1.0 ? 'Anmelden' : '${widget.saldo}€')),
     );
   }
 
@@ -363,27 +361,26 @@ class _GradeFabState extends State<GradeFab>
     if (sharedPreferences == null) return Container();
     return Column(
         crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisSize: MainAxisSize.min,      
-        children:  <Widget>[
-        Transform(
-          transform: Matrix4.translationValues(
-            0.0,
-            _translateButton.value * 2,
-            0.0,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Transform(
+            transform: Matrix4.translationValues(
+              0.0,
+              _translateButton.value * 2,
+              0.0,
+            ),
+            child: order(),
           ),
-          child:  order(),
-        ),
-        Transform(
-          transform: Matrix4.translationValues(
-            0.0,
-            _translateButton.value * 1,
-            0.0,
+          Transform(
+            transform: Matrix4.translationValues(
+              0.0,
+              _translateButton.value * 1,
+              0.0,
+            ),
+            child: login(),
           ),
-          child: login(),
-        ),
-        toggle(),
-      ]
-    );
+          toggle(),
+        ]);
   }
 }
 
@@ -401,14 +398,19 @@ class LoginView extends State<LoginDialog> {
   bool online = true;
 
   void checkForm() async {
-    SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
-    await download(id: _idController.text, password: _passwordController.text, parse: false);
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    await download(
+        id: _idController.text,
+        password: _passwordController.text,
+        parse: false);
 
-    _credentialsCorrect = json.decode(sharedPreferences.getString(Keys.cafetoria))['error'] == null;
+    _credentialsCorrect =
+        json.decode(sharedPreferences.getString(Keys.cafetoria))['error'] ==
+            null;
     if (_formKey.currentState.validate()) {
       sharedPreferences.setString(Keys.cafetoriaUsername, _idController.text);
-      sharedPreferences.setString(Keys.cafetoriaPassword, _passwordController.text);
+      sharedPreferences.setString(
+          Keys.cafetoriaPassword, _passwordController.text);
       sharedPreferences.commit();
       Navigator.pop(context);
     } else {
@@ -459,105 +461,82 @@ class LoginView extends State<LoginDialog> {
         margin: EdgeInsets.all(10.0),
         child: Column(
           children: <Widget>[
-            (!online ?
-              Padding(
-                padding: EdgeInsets.only(top: 10.0),
-                child: Center(
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        AppLocalizations
-                            .of(context)
-                            .goOnlineToLogin),
-                      FlatButton(
-                        color: Theme
-                            .of(context)
-                            .accentColor,
-                        child: Text(AppLocalizations
-                            .of(context)
-                            .retry),
-                        onPressed: () async {
-                          
-                          prepareLogin();
-                        },
-                      )
-                    ],
-                  ),
-                ),
-              )
-              : Form(
-                key: _formKey,
-                child: Column(
-                  children: <Widget>[
-                    TextFormField(
-                      controller: _idController,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return AppLocalizations
-                              .of(context)
-                              .fieldCantBeEmpty;
-                        }
-                        if (!_credentialsCorrect) {
-                          return AppLocalizations
-                              .of(context)
-                              .credentialsNotCorrect;
-                        }
-                      },
-                      decoration: InputDecoration(
-                          hintText: AppLocalizations
-                              .of(context)
-                              .username),
-                      onFieldSubmitted: (value) {
-                        FocusScope.of(context)
-                            .requestFocus(_focus);
-                      },
-                    ),
-                    TextFormField(
-                      controller: _passwordController,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return AppLocalizations
-                              .of(context)
-                              .fieldCantBeEmpty;
-                        }
-                        if (!_credentialsCorrect) {
-                          return AppLocalizations
-                              .of(context)
-                              .credentialsNotCorrect;
-                        }
-                      },
-                      decoration: InputDecoration(
-                          hintText: AppLocalizations
-                              .of(context)
-                              .password),
-                      onFieldSubmitted: (value) {
-                        checkForm();
-                      },
-                      obscureText: true,
-                      focusNode: _focus,
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 20.0),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: RaisedButton(
-                          color: Theme
-                              .of(context)
-                              .accentColor,
-                          onPressed: () {
-                            checkForm();
-                          },
-                          child: Text(
-                              AppLocalizations
-                                  .of(context)
-                                  .login),
-                        ),
+            (!online
+                ? Padding(
+                    padding: EdgeInsets.only(top: 10.0),
+                    child: Center(
+                      child: Column(
+                        children: <Widget>[
+                          Text(AppLocalizations.of(context).goOnlineToLogin),
+                          FlatButton(
+                            color: Theme.of(context).accentColor,
+                            child: Text(AppLocalizations.of(context).retry),
+                            onPressed: () async {
+                              prepareLogin();
+                            },
+                          )
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ) 
-            )
+                  )
+                : Form(
+                    key: _formKey,
+                    child: Column(
+                      children: <Widget>[
+                        TextFormField(
+                          controller: _idController,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return AppLocalizations.of(context)
+                                  .fieldCantBeEmpty;
+                            }
+                            if (!_credentialsCorrect) {
+                              return AppLocalizations.of(context)
+                                  .credentialsNotCorrect;
+                            }
+                          },
+                          decoration: InputDecoration(
+                              hintText: AppLocalizations.of(context).username),
+                          onFieldSubmitted: (value) {
+                            FocusScope.of(context).requestFocus(_focus);
+                          },
+                        ),
+                        TextFormField(
+                          controller: _passwordController,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return AppLocalizations.of(context)
+                                  .fieldCantBeEmpty;
+                            }
+                            if (!_credentialsCorrect) {
+                              return AppLocalizations.of(context)
+                                  .credentialsNotCorrect;
+                            }
+                          },
+                          decoration: InputDecoration(
+                              hintText: AppLocalizations.of(context).password),
+                          onFieldSubmitted: (value) {
+                            checkForm();
+                          },
+                          obscureText: true,
+                          focusNode: _focus,
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 20.0),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: RaisedButton(
+                              color: Theme.of(context).accentColor,
+                              onPressed: () {
+                                checkForm();
+                              },
+                              child: Text(AppLocalizations.of(context).login),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ))
           ],
         ),
       ),

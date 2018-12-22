@@ -53,54 +53,48 @@ class ReplacementPlanView extends State<ReplacementPlanPage> {
   Widget build(BuildContext context) {
     List<ReplacementPlanDay> data = getReplacementPlan();
     return new Scaffold(
-      body: Stack(
-        children: <Widget>[
-          Column(
-            children: <Widget>[ReplacementPlanDayList(days: data)],
-          ),
-          Positioned(
+      body: Stack(children: <Widget>[
+        Column(
+          children: <Widget>[ReplacementPlanDayList(days: data)],
+        ),
+        Positioned(
             bottom: 16.0,
             right: 16.0,
             child: Container(
               child: GradeFab(
                 onSelectPressed: (Function(String grade) selected) {
                   showDialog<String>(
-                    context: context,
-                    barrierDismissible: true,
-                    builder: (BuildContext context1) {
-                      return SimpleDialog(
-                        title: Text(AppLocalizations.of(context)
-                            .pleaseSelect),
-                        children: _grades.map((_grade) {
-                          return SimpleDialogOption(
-                            onPressed: () {
-                              print(_grade);
-                              selected(_grade);
-                              Navigator.of(context).pop();
-                              Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          BrotherSisterReplacementPlanPage(
-                                              grade: _grade)));
-                            },
-                            child: Text(_grade),
-                          );
-                        }).toList(),
-                      );
-                    }
-                  );
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (BuildContext context1) {
+                        return SimpleDialog(
+                          title:
+                              Text(AppLocalizations.of(context).pleaseSelect),
+                          children: _grades.map((_grade) {
+                            return SimpleDialogOption(
+                              onPressed: () {
+                                print(_grade);
+                                selected(_grade);
+                                Navigator.of(context).pop();
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        BrotherSisterReplacementPlanPage(
+                                            grade: _grade)));
+                              },
+                              child: Text(_grade),
+                            );
+                          }).toList(),
+                        );
+                      });
                 },
                 onSelected: (String grade) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => BrotherSisterReplacementPlanPage(grade: grade)
-                    )
-                  );
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>
+                          BrotherSisterReplacementPlanPage(grade: grade)));
                 },
               ),
-            )
-          ),
-        ]),
+            )),
+      ]),
     );
   }
 }
@@ -153,16 +147,10 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
       int weekday = DateTime.now().weekday;
       if (weekday <= 4) {
         if (UnitPlan.days[weekday].lessons.length > 0) {
-          if (DateTime.now().isAfter(DateTime(DateTime
-              .now()
-              .year,
-              DateTime
-                  .now()
-                  .month, DateTime
-                  .now()
-                  .day, 8)
+          if (DateTime.now().isAfter(DateTime(DateTime.now().year,
+                  DateTime.now().month, DateTime.now().day, 8)
               .add(Duration(
-              minutes: [
+                  minutes: [
             60,
             130,
             210,
@@ -183,12 +171,12 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
         DateTime.now().month,
         DateTime.now().day,
       ).add(Duration(days: (over) ? 1 : 0)).isAfter(DateTime(
-        (int.parse(widget.days[0].date.split('.')[2]) < 2000)
-            ? (int.parse(widget.days[0].date.split('.')[2]) + 2000)
-            : (int.parse(widget.days[0].date.split('.')[2])),
-        int.parse(widget.days[0].date.split('.')[1]),
-        int.parse(widget.days[0].date.split('.')[0]),
-      ))) day = 1;
+            (int.parse(widget.days[0].date.split('.')[2]) < 2000)
+                ? (int.parse(widget.days[0].date.split('.')[2]) + 2000)
+                : (int.parse(widget.days[0].date.split('.')[2])),
+            int.parse(widget.days[0].date.split('.')[1]),
+            int.parse(widget.days[0].date.split('.')[0]),
+          ))) day = 1;
 
       _tabController.animateTo(day);
     }
@@ -288,7 +276,10 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
                       // Show all changes in a list...
                       day.changes.map((change) {
                           return ReplacementPlanRow(
-                              changes: day.changes, change: change, isLast: day.changes.indexOf(change) == day.changes.length - 1);
+                              changes: day.changes,
+                              change: change,
+                              isLast: day.changes.indexOf(change) ==
+                                  day.changes.length - 1);
                         }).toList()
                       :
 
@@ -296,7 +287,8 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
                       [
                           Section(
                               title: AppLocalizations.of(context).myChanges,
-                              isLast: day.getUndefChanges().length == 0 && day.getOtherChanges().length == 0,
+                              isLast: day.getUndefChanges().length == 0 &&
+                                  day.getOtherChanges().length == 0,
                               children: day.getMyChanges().length > 0
                                   ? day.getMyChanges().map((change) {
                                       return ReplacementPlanRow(
@@ -304,16 +296,15 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
                                           change: change);
                                     }).toList()
                                   : <Widget>[
-                                Container(
-                                  margin: EdgeInsets.only(top: 10.0),
-                                  child: SizedBox(
-                                    width: double.infinity,
-                                    child: Center(
-                                      child: Text(
-                                          AppLocalizations
-                                              .of(context)
-                                              .noChanges),
-                                    ),
+                                      Container(
+                                        margin: EdgeInsets.only(top: 10.0),
+                                        child: SizedBox(
+                                          width: double.infinity,
+                                          child: Center(
+                                            child: Text(
+                                                AppLocalizations.of(context)
+                                                    .noChanges),
+                                          ),
                                         ),
                                       ),
                                     ]),
@@ -355,7 +346,8 @@ class Section extends StatefulWidget {
   final String title;
   final bool isLast;
 
-  Section({Key key, this.children, this.title, this.isLast = false}) : super(key: key);
+  Section({Key key, this.children, this.title, this.isLast = false})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -377,19 +369,18 @@ class SectionView extends State<Section> {
             ),
           ),
           Container(
-            padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(
-                  width: 1,
-                  color: Colors.grey,
+              padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                    width: 1,
+                    color: Colors.grey,
+                  ),
                 ),
               ),
-            ),
-            child: Column(
+              child: Column(
                 children: widget.children,
-            )
-          ),
+              )),
         ],
       ),
     );
@@ -397,7 +388,8 @@ class SectionView extends State<Section> {
 }
 
 class ReplacementPlanRow extends StatelessWidget {
-  const ReplacementPlanRow({Key key, this.change, this.changes, this.isLast = false})
+  const ReplacementPlanRow(
+      {Key key, this.change, this.changes, this.isLast = false})
       : super(key: key);
 
   final Change change;
@@ -541,7 +533,6 @@ class GradeFab extends StatefulWidget {
 
 class _GradeFabState extends State<GradeFab>
     with SingleTickerProviderStateMixin {
-
   static List<String> _grades = [
     '5a',
     '5b',
@@ -591,28 +582,30 @@ class _GradeFabState extends State<GradeFab>
           });
     _animateIcon =
         Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
-    _buttonColor = ColorTween(
-      begin: Theme.of(context).primaryColor,
-      end: getColorHexFromStr('#275600'),
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Interval(
-        0.00,
-        1.00,
-        curve: Curves.linear,
-      ),
-    ));
-    _translateButton = Tween<double>(
-      begin: _fabHeight,
-      end: 0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Interval(
-        0.0,
-        0.75,
-        curve: _curve,
-      ),
-    ));
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _buttonColor = ColorTween(
+        begin: Theme.of(context).primaryColor,
+        end: getColorHexFromStr('#275600'),
+      ).animate(CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(
+          0.00,
+          1.00,
+          curve: Curves.linear,
+        ),
+      ));
+      _translateButton = Tween<double>(
+        begin: _fabHeight,
+        end: 0,
+      ).animate(CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(
+          0.0,
+          0.75,
+          curve: _curve,
+        ),
+      ));
+    });
     super.initState();
   }
 
@@ -631,22 +624,20 @@ class _GradeFabState extends State<GradeFab>
     isOpened = !isOpened;
   }
 
-  void updatePrefs(String grade){
-    if (!grades.contains(grade)){
+  void updatePrefs(String grade) {
+    if (!grades.contains(grade)) {
       setState(() {
         if (grades.length == 0) {
           sharedPreferences.setString(Keys.lastGrades, grade);
           grades.add(grade);
-        }
-        else if (grades.length == 1) {
+        } else if (grades.length == 1) {
           sharedPreferences.setString(Keys.lastGrades, grades[0] + ':' + grade);
           grades.add(grade);
-        }
-        else {
+        } else {
           sharedPreferences.setString(Keys.lastGrades, grades[1] + ':' + grade);
           grades[0] = grades[1];
           grades[1] = grade;
-        }                  
+        }
       });
     }
   }
@@ -670,8 +661,10 @@ class _GradeFabState extends State<GradeFab>
       child: FloatingActionButton(
         backgroundColor: _buttonColor.value,
         onPressed: () {
-          if (grades.length > 0) animate();
-          else widget.onSelectPressed(updatePrefs);
+          if (grades.length > 0)
+            animate();
+          else
+            widget.onSelectPressed(updatePrefs);
         },
         tooltip: 'Grade',
         child: AnimatedIcon(
@@ -688,7 +681,7 @@ class _GradeFabState extends State<GradeFab>
     if (sharedPreferences == null) return Container();
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
-      children:  <Widget>[
+      children: <Widget>[
         Transform(
           transform: Matrix4.translationValues(
             0.0,
@@ -698,46 +691,51 @@ class _GradeFabState extends State<GradeFab>
           child: select(),
         ),
         toggle(),
-      ]..insertAll(1, grades.map((grade) {
-        return Transform(
-          transform: Matrix4.translationValues(
-            0.0,
-            _translateButton.value * (grades.length - grades.indexOf(grade)),
-            0.0,
-          ),
-          child: Container(
-            child: FloatingActionButton(
-              mini: true,
-              onPressed: () {
-                animate();
-                List<String> prefValue = (sharedPreferences.getString(Keys.lastGrades) ?? '').split(':');
-                if (prefValue.length > 0) if (prefValue[0].length == 0) prefValue = [];
-                if (!prefValue.contains(grade)){
-                  setState(() {
-                    if (prefValue.length == 0) {
-                      sharedPreferences.setString(Keys.lastGrades, grade);
-                      grades[1] = grade;
-                    }
-                    else if (prefValue.length == 1) {
-                      sharedPreferences.setString(Keys.lastGrades, prefValue[0] + ':' + grade);
-                      grades[1] = grade;
-                    }
-                    else {
-                      sharedPreferences.setString(Keys.lastGrades, prefValue[1] + ':' + grade);
-                      grades[0] = grades[1];
-                      grades[1] = grade;
-                    }                  
-                  });
-                }
-                widget.onSelected(grade);
-              },
-              tooltip: grade,
-              child: Text(grade, style: TextStyle(color: Colors.white)),
-            ),
-          )
-        );
-      }).toList(),
-      ),
+      ]..insertAll(
+          1,
+          grades.map((grade) {
+            return Transform(
+                transform: Matrix4.translationValues(
+                  0.0,
+                  _translateButton.value *
+                      (grades.length - grades.indexOf(grade)),
+                  0.0,
+                ),
+                child: Container(
+                  child: FloatingActionButton(
+                    mini: true,
+                    onPressed: () {
+                      animate();
+                      List<String> prefValue =
+                          (sharedPreferences.getString(Keys.lastGrades) ?? '')
+                              .split(':');
+                      if (prefValue.length > 0) if (prefValue[0].length == 0)
+                        prefValue = [];
+                      if (!prefValue.contains(grade)) {
+                        setState(() {
+                          if (prefValue.length == 0) {
+                            sharedPreferences.setString(Keys.lastGrades, grade);
+                            grades[1] = grade;
+                          } else if (prefValue.length == 1) {
+                            sharedPreferences.setString(
+                                Keys.lastGrades, prefValue[0] + ':' + grade);
+                            grades[1] = grade;
+                          } else {
+                            sharedPreferences.setString(
+                                Keys.lastGrades, prefValue[1] + ':' + grade);
+                            grades[0] = grades[1];
+                            grades[1] = grade;
+                          }
+                        });
+                      }
+                      widget.onSelected(grade);
+                    },
+                    tooltip: grade,
+                    child: Text(grade, style: TextStyle(color: Colors.white)),
+                  ),
+                ));
+          }).toList(),
+        ),
     );
   }
 }
