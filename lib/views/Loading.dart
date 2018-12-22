@@ -38,7 +38,7 @@ class LoadingPageState extends State<LoadingPage> {
     return Scaffold(
       body: Center(
         child: SizedBox(
-          child: new CircularProgressIndicator(strokeWidth: 5.0),
+          child: Image(image: AssetImage('assets/images/ginkgobewegt.gif')),
           height: 75.0,
           width: 75.0,
         ),
