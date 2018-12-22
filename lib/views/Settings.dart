@@ -65,6 +65,9 @@ class SettingsPageView extends State<SettingsPage> {
       _pages = [
         AppLocalizations.of(context).unitPlan,
         AppLocalizations.of(context).replacementPlan,
+        AppLocalizations.of(context).calendar,
+        AppLocalizations.of(context).cafetoria,
+        AppLocalizations.of(context).workGroups,
         AppLocalizations.of(context).courses
       ];
       _page = _pages[sharedPreferences.getInt(Keys.initialPage) ?? 0];

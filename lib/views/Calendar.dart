@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
-    show CalendarCarousel;
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart';
+import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
+    show CalendarCarousel;
 
+import '../Localizations.dart';
 import '../data/Calendar.dart';
 import '../models/Calendar.dart';
-import '../Localizations.dart';
 
 class CalendarPage extends StatefulWidget {
   @override
@@ -92,24 +92,28 @@ class CalendarDayListState extends State<CalendarDayList> {
     return CalendarCarousel(
       onDayPressed: (DateTime date, List<Event> events) {
         this.setState(() => _currentDate = date);
-        showDialog<String>(
-            context: context,
-            barrierDismissible: true,
-            builder: (BuildContext context1) {
-              return SimpleDialog(
-                  title: Text(AppLocalizations.of(context).dates +
-                      ' - ' +
-                      events[0].date.day.toString() +
-                      '.' +
-                      events[0].date.month.toString() +
-                      '.' +
-                      events[0].date.year.toString()),
-                  children: events.map((event) {
-                    return SimpleDialogOption(
-                      child: Text(event.title),
-                    );
-                  }).toList());
-            });
+        if (events.length > 0) {
+          showDialog<String>(
+              context: context,
+              barrierDismissible: true,
+              builder: (BuildContext context1) {
+                return SimpleDialog(
+                    title: Text(AppLocalizations
+                        .of(context)
+                        .dates +
+                        ' - ' +
+                        events[0].date.day.toString() +
+                        '.' +
+                        events[0].date.month.toString() +
+                        '.' +
+                        events[0].date.year.toString()),
+                    children: events.map((event) {
+                      return SimpleDialogOption(
+                        child: Text(event.title),
+                      );
+                    }).toList());
+              });
+        }
       },
       selectedDateTime: _currentDate,
       markedDatesMap: _markedDateMap,

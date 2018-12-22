@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:onesignal/onesignal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../Keys.dart';
 import '../Localizations.dart';
 import '../data/UnitPlan.dart';
+import 'Cafetoria.dart';
+import 'Calendar.dart';
 import 'Courses.dart';
 import 'ReplacementPlan.dart';
-import 'Cafetoria.dart';
 import 'Settings.dart';
 import 'UnitPlan.dart';
 import 'WorkGroups.dart';
@@ -143,8 +144,10 @@ class HomePageState extends State<HomePage> {
   }
 
   _getDrawerItemWidget(int pos, List<Page> pages) {
-    if (pos < pages.length) return pages[pos].page;
-    else return Text('Error');
+    if (pos < pages.length)
+      return pages[pos].page;
+    else
+      return Text('Error');
   }
 
   _onSelectItem(int index) {
@@ -155,15 +158,35 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     List<Page> pages = [
-      Page(AppLocalizations.of(context).unitPlan, Icons.event_note, UnitPlanPage()),
-      Page(AppLocalizations.of(context).replacementPlan, Icons.format_list_numbered, ReplacementPlanPage()),
-      Page(AppLocalizations.of(context).cafetoria, Icons.fastfood, CafetoriaPage()),
-      Page(AppLocalizations.of(context).workGroups, MdiIcons.soccer, WorkGroupsPage()),
+      Page(AppLocalizations
+          .of(context)
+          .unitPlan, Icons.event_note,
+          UnitPlanPage()),
+      Page(AppLocalizations
+          .of(context)
+          .replacementPlan,
+          Icons.format_list_numbered, ReplacementPlanPage()),
+      Page(AppLocalizations
+          .of(context)
+          .calendar, Icons.calendar_today,
+          CalendarPage()),
+      Page(AppLocalizations
+          .of(context)
+          .cafetoria, Icons.fastfood,
+          CafetoriaPage()),
+      Page(AppLocalizations
+          .of(context)
+          .workGroups, MdiIcons.soccer,
+          WorkGroupsPage()),
       Page(AppLocalizations.of(context).courses, Icons.person, CoursesPage()),
-      Page(AppLocalizations.of(context).settings, Icons.settings, SettingsPage()),
+      Page(AppLocalizations
+          .of(context)
+          .settings, Icons.settings,
+          SettingsPage()),
     ];
 
-    List<DrawerItem> drawerItems = pages.map((Page page) => DrawerItem(page.name, page.icon)).toList();
+    List<DrawerItem> drawerItems =
+    pages.map((Page page) => DrawerItem(page.name, page.icon)).toList();
 
     var drawerOptions = <Widget>[];
     for (var i = 0; i < drawerItems.length; i++) {
