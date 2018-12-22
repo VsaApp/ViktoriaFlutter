@@ -21,6 +21,14 @@ class DrawerItem {
   DrawerItem(this.title, this.icon);
 }
 
+class Page {
+  IconData icon;
+  String name;
+  Widget page;
+
+  Page(this.name, this.icon, this.page);
+}
+
 class ShortCutDialog extends StatefulWidget {
   final List<DrawerItem> items;
   final Function selectItem;
@@ -134,23 +142,9 @@ class HomePageState extends State<HomePage> {
     });
   }
 
-  _getDrawerItemWidget(int pos) {
-    switch (pos) {
-      case 0:
-        return UnitPlanPage();
-      case 1:
-        return ReplacementPlanPage();
-      case 2:
-        return CoursesPage();
-      case 3:
-        return CafetoriaPage();
-      case 4:
-        return WorkGroupsPage();
-      case 5:
-        return SettingsPage();
-      default:
-        return Text('Error');
-    }
+  _getDrawerItemWidget(int pos, List<Page> pages) {
+    if (pos < pages.length) return pages[pos].page;
+    else return Text('Error');
   }
 
   _onSelectItem(int index) {
@@ -160,15 +154,17 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<DrawerItem> drawerItems = [
-      DrawerItem(AppLocalizations.of(context).unitPlan, Icons.event_note),
-      DrawerItem(AppLocalizations.of(context).replacementPlan,
-          Icons.format_list_numbered),
-      DrawerItem(AppLocalizations.of(context).courses, Icons.person),
-      DrawerItem(AppLocalizations.of(context).cafetoria, Icons.fastfood),
-      DrawerItem(AppLocalizations.of(context).workGroups, MdiIcons.soccer),
-      DrawerItem(AppLocalizations.of(context).settings, Icons.settings),
+    List<Page> pages = [
+      Page(AppLocalizations.of(context).unitPlan, Icons.event_note, UnitPlanPage()),
+      Page(AppLocalizations.of(context).replacementPlan, Icons.format_list_numbered, ReplacementPlanPage()),
+      Page(AppLocalizations.of(context).cafetoria, Icons.fastfood, CafetoriaPage()),
+      Page(AppLocalizations.of(context).workGroups, MdiIcons.soccer, WorkGroupsPage()),
+      Page(AppLocalizations.of(context).courses, Icons.person, CoursesPage()),
+      Page(AppLocalizations.of(context).settings, Icons.settings, SettingsPage()),
     ];
+
+    List<DrawerItem> drawerItems = pages.map((Page page) => DrawerItem(page.name, page.icon)).toList();
+
     var drawerOptions = <Widget>[];
     for (var i = 0; i < drawerItems.length; i++) {
       var d = drawerItems[i];
@@ -249,7 +245,7 @@ class HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: _getDrawerItemWidget(_selectedDrawerIndex),
+      body: _getDrawerItemWidget(_selectedDrawerIndex, pages),
     );
   }
 }
