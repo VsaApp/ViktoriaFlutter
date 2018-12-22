@@ -33,7 +33,7 @@ class CourseEditView extends State<CourseEdit> {
       setState(() {
         sharedPreferences = instance;
         _exams =
-            sharedPreferences.getBool(Keys.exams + widget.subject.lesson) ??
+            sharedPreferences.getBool(Keys.exams + widget.subject.lesson.toUpperCase()) ??
                 true;
       });
     });
@@ -55,7 +55,7 @@ class CourseEditView extends State<CourseEdit> {
             setState(() {
               widget.blocks.forEach((block) {
                 sharedPreferences.setBool(
-                    Keys.exams + widget.subject.lesson, value);
+                    Keys.exams + widget.subject.lesson.toUpperCase(), value);
               });
               sharedPreferences.commit();
               ReplacementPlan.update(sharedPreferences);
@@ -171,7 +171,7 @@ class CourseRowView extends State<CourseRow> {
     course = '';
     blocks = [];
     _exams = widget.sharedPreferences
-        .getBool(Keys.exams + widget.subjects[0].lesson) ??
+        .getBool(Keys.exams + widget.subjects[0].lesson.toUpperCase()) ??
         true;
 
     widget.subjects.forEach((subject) {

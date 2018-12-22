@@ -135,7 +135,7 @@ class Change {
             if (course == subject.course) {
               if (changed.info.toLowerCase().contains('klausur')) {
                 if (!(sharedPreferences
-                    .getBool(Keys.exams + subject.lesson) ??
+                    .getBool(Keys.exams + subject.lesson.toUpperCase()) ??
                     true)) {
                   isMy = 0;
                   return;
@@ -179,7 +179,7 @@ class Change {
                     if (lesson.subjects[selected] == subject) {
                       selectedSubjects++;
                       bool exams = sharedPreferences
-                          .getBool(Keys.exams + subject.lesson) ??
+                          .getBool(Keys.exams + subject.lesson.toUpperCase()) ??
                           true;
                       writing = exams;
                     }

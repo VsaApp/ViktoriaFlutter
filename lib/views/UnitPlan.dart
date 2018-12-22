@@ -210,7 +210,8 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                                                         .subjects
                                                         .indexOf(
                                                         subject)]
-                                                        .lesson)
+                                                        .lesson
+                                                        .toUpperCase())
                                                 .length >
                                                 0);
                                             if (!_selected &&
@@ -276,7 +277,7 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                                 AppLocalizations.of(context).lunchBreak &&
                             !nothingSelected) {
                           sharedPreferences.setBool(
-                              Keys.exams + lesson.subjects[_selected].lesson,
+                              Keys.exams + lesson.subjects[_selected].lesson.toUpperCase(),
                               true);
                           sharedPreferences.commit();
                           showDialog<String>(

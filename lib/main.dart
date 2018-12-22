@@ -13,6 +13,14 @@ void main() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String _initialRoute = '/';
 
+  // Set must writing courses...
+  sharedPreferences.setBool(Keys.exams + 'E', true);
+  sharedPreferences.setBool(Keys.exams + 'M', true);
+  sharedPreferences.setBool(Keys.exams + 'D', true);
+  sharedPreferences.setBool(Keys.exams + 'L', true);
+  sharedPreferences.setBool(Keys.exams + 'S', true);
+  sharedPreferences.setBool(Keys.exams + 'F', true);
+
   if (sharedPreferences.get(Keys.sortReplacementPlan) == null ||
       sharedPreferences.get(Keys.showReplacementPlanInUnitPlan) == null ||
       sharedPreferences.get(Keys.getReplacementPlanNotifications) == null) {
