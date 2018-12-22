@@ -320,6 +320,7 @@ class _ActionFabState extends State<ActionFab>
   Widget order() {
     return Container(
       child: FloatingActionButton(
+        heroTag: 'order',
         mini: true,
         onPressed: () {
           animate();
@@ -334,6 +335,7 @@ class _ActionFabState extends State<ActionFab>
   Widget login() {
     return Container(
       child: FloatingActionButton(
+        heroTag: 'login',
         mini: true,
         onPressed: () {
           animate();
@@ -348,6 +350,7 @@ class _ActionFabState extends State<ActionFab>
   Widget toggle() {
     return Container(
       child: FloatingActionButton.extended(
+          heroTag: 'toggle',
           backgroundColor: _buttonColor.value,
           onPressed: animate,
           tooltip: 'Saldo',

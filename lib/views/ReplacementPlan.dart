@@ -583,28 +583,30 @@ class _GradeFabState extends State<GradeFab>
     _animateIcon =
         Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _buttonColor = ColorTween(
-        begin: Theme.of(context).primaryColor,
-        end: getColorHexFromStr('#275600'),
-      ).animate(CurvedAnimation(
-        parent: _animationController,
-        curve: Interval(
-          0.00,
-          1.00,
-          curve: Curves.linear,
-        ),
-      ));
-      _translateButton = Tween<double>(
-        begin: _fabHeight,
-        end: 0,
-      ).animate(CurvedAnimation(
-        parent: _animationController,
-        curve: Interval(
-          0.0,
-          0.75,
-          curve: _curve,
-        ),
-      ));
+      setState(() {
+        _buttonColor = ColorTween(
+          begin: Theme.of(context).primaryColor,
+          end: getColorHexFromStr('#275600'),
+        ).animate(CurvedAnimation(
+          parent: _animationController,
+          curve: Interval(
+            0.00,
+            1.00,
+            curve: Curves.linear,
+          ),
+        ));
+        _translateButton = Tween<double>(
+          begin: _fabHeight,
+          end: 0,
+        ).animate(CurvedAnimation(
+          parent: _animationController,
+          curve: Interval(
+            0.0,
+            0.75,
+            curve: _curve,
+          ),
+        ));
+      });
     });
     super.initState();
   }
@@ -645,6 +647,7 @@ class _GradeFabState extends State<GradeFab>
   Widget select() {
     return Container(
       child: FloatingActionButton(
+        heroTag: 'select',
         mini: true,
         onPressed: () {
           animate();
@@ -659,6 +662,7 @@ class _GradeFabState extends State<GradeFab>
   Widget toggle() {
     return Container(
       child: FloatingActionButton(
+        heroTag: 'main',
         backgroundColor: _buttonColor.value,
         onPressed: () {
           if (grades.length > 0)
@@ -678,7 +682,9 @@ class _GradeFabState extends State<GradeFab>
 
   @override
   Widget build(BuildContext context) {
-    if (sharedPreferences == null) return Container();
+    if (sharedPreferences == null ||
+        _translateButton == null ||
+        _buttonColor == null) return Container();
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
@@ -703,6 +709,7 @@ class _GradeFabState extends State<GradeFab>
                 ),
                 child: Container(
                   child: FloatingActionButton(
+                    heroTag: 'grade' + grade,
                     mini: true,
                     onPressed: () {
                       animate();
