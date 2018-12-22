@@ -3,9 +3,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Keys.dart';
 import 'ReplacementPlan.dart';
 
+// Describes the whole unitplan...
 class UnitPlan {
   static List<UnitPlanDay> days;
 
+  // Delete all changes in the unitplan...
   static void resetChanges() {
     days.forEach((day) =>
         day.lessons.forEach((lesson) =>
@@ -13,12 +15,14 @@ class UnitPlan {
                 .forEach((subject) => subject.changes = [].cast<Change>())));
   }
 
+  // Set all default selections...
   static void setAllSelections(SharedPreferences sharedPreferences) {
     days.forEach(
             (day) => day.setSelections(days.indexOf(day), sharedPreferences));
   }
 }
 
+// Describes a day of the unitplan...
 class UnitPlanDay {
   final String name;
   final List<dynamic> lessons;
@@ -36,6 +40,7 @@ class UnitPlanDay {
     );
   }
 
+  // Set the default selections...
   void setSelections(int day, SharedPreferences sharedPreferences) {
     for (int i = 0; i < lessons.length; i++) {
       lessons[i].setSelection(day, i, sharedPreferences);
@@ -43,6 +48,7 @@ class UnitPlanDay {
   }
 }
 
+// Describes a Lesson of a unitplan day...
 class UnitPlanLesson {
   final List<UnitPlanSubject> subjects;
 
@@ -54,6 +60,7 @@ class UnitPlanLesson {
     );
   }
 
+  // Set the default selection...
   void setSelection(int day, int unit, SharedPreferences sharedPreferences) {
     String prefKey = Keys.unitPlan +
         sharedPreferences.getString(Keys.grade) +
@@ -67,6 +74,7 @@ class UnitPlanLesson {
   }
 }
 
+// Describes a subject of a unitplan lesson...
 class UnitPlanSubject {
   final String teacher;
   final String lesson;

@@ -1,3 +1,4 @@
+// Describes the login information...
 class CafetoriaLogin {
   final String error;
 
@@ -10,6 +11,7 @@ class CafetoriaLogin {
   }
 }
 
+// Describes the whole Cafetoria data...
 class Cafetoria {
   final String error;
   final List<CafetoriaDay> days;
@@ -29,6 +31,7 @@ class Cafetoria {
   }
 }
 
+// Describes a day of the cafetoria...
 class CafetoriaDay {
   final String weekday;
   final String date;
@@ -48,6 +51,8 @@ class CafetoriaDay {
   }
 }
 
+
+// Desribes a menu of a day...
 class CafetoriaMenu {
   final String time;
   final String name;

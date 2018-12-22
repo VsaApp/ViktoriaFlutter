@@ -196,8 +196,7 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                                                   lesson.subjects
                                                       .indexOf(subject));
                                               Navigator.pop(context);
-                                              ReplacementPlan.updateFilter(day,
-                                                  lesson, sharedPreferences);
+                                              ReplacementPlan.update(sharedPreferences);
                                             });
                                             syncTags();
                                             bool _selected = (sharedPreferences

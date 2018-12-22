@@ -23,6 +23,7 @@ class BrotherSisterReplacementPlanView
 
   @override
   void initState() {
+    // Download the replacementplan temp...
     download(widget.grade, alreadyLoad: false).then((_) {
       load(widget.grade, temp: true, setOnlyColor: true, setFilter: false).then((d) {
         setState(() {
@@ -84,16 +85,20 @@ class BrotherSisterReplacementPlanDayListState
       child: Expanded(
         child: Scaffold(
           backgroundColor: Theme.of(context).primaryColor,
+
+          // Tab bar header...
           appBar: TabBar(
             indicatorColor: Theme.of(context).accentColor,
             indicatorWeight: 2.5,
             tabs: widget.days.map((day) {
               return Container(
                 padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
-                child: Text(day.weekday),
+                child: Text(day.weekday), // Show all weekday names
               );
             }).toList(),
           ),
+
+          // Tab bar views...
           body: TabBarView(
             children: widget.days.map((day) {
               return Container(
@@ -102,9 +107,12 @@ class BrotherSisterReplacementPlanDayListState
                 color: Colors.white,
                 padding: EdgeInsets.only(
                     right: 10.0, left: 10.0, bottom: 10.0, top: 0.0),
+
+                // List of replacementplan information and all changes...
                 child: ListView(
                   shrinkWrap: true,
                   children: <Widget>[
+                    // For date information...
                     Center(
                       child: Padding(
                         padding: EdgeInsets.only(top: 10.0),
@@ -133,6 +141,8 @@ class BrotherSisterReplacementPlanDayListState
                         ),
                       ),
                     ),
+
+                    // Updated information...
                     Center(
                         child: Container(
                       margin: EdgeInsets.only(bottom: 10.0),
@@ -161,7 +171,7 @@ class BrotherSisterReplacementPlanDayListState
                       ),
                     )),
                   ]..addAll(
-                        // Show all changes in a list...
+                      // Show all changes in a list...
                         day.changes.map((change) {
                       return ReplacementPlanRow(
                           changes: day.changes, change: change);

@@ -1,7 +1,9 @@
+// Describes a list of work groups days...
 class WorkGroups {
   static List<WorkGroupsDay> days;
 }
 
+// Describes a work group day...
 class WorkGroupsDay {
   final String weekday;
   final List<dynamic> data;
@@ -16,6 +18,7 @@ class WorkGroupsDay {
   }
 }
 
+// Describes a work group of a day...
 class WorkGroup {
   final String name;
   final String participants;
