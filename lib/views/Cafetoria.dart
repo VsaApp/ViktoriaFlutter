@@ -1,16 +1,15 @@
+import 'dart:io';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import 'dart:io';
 
 import '../Color.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
 import '../data/Cafetoria.dart';
 import '../models/Cafetoria.dart';
-
-import 'dart:convert';
 
 Function(String input) jsonDecode = json.decode;
 
@@ -37,44 +36,58 @@ class CafetoriaView extends State<CafetoriaPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      body: Stack(children: <Widget>[
-        (data == null)
-            ? Scaffold(
-                body: Center(
-                  child: SizedBox(
-                    child: new CircularProgressIndicator(strokeWidth: 5.0),
-                    height: 75.0,
-                    width: 75.0,
+      body: Stack(
+        children: <Widget>[
+          data == null
+              ? Scaffold(
+                  body: Center(
+                    child: SizedBox(
+                      child: new CircularProgressIndicator(strokeWidth: 5.0),
+                      height: 75.0,
+                      width: 75.0,
+                    ),
+                  ),
+                )
+              : Column(children: <Widget>[CafetoriaDayList(days: data.days)]),
+          data == null
+              ? Container()
+              : Positioned(
+                  bottom: 16.0,
+                  right: 16.0,
+                  child: Container(
+                    child: ActionFab(
+                        onLogin: () {
+                          showDialog<String>(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (BuildContext context1) {
+                              return SimpleDialog(
+                                title: Text(AppLocalizations.of(context)
+                                    .cafetoriaLogin),
+                                children: <Widget>[
+                                  LoginDialog(onFinished: () {
+                                    setState(() {
+                                      this.data = null;
+                                    });
+                                    download().then((data) {
+                                      setState(() {
+                                        this.data = data;
+                                      });
+                                    });
+                                  })
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        onOrder: () {
+                          launch('https://www.opc-asp.de/vs-aachen/');
+                        },
+                        saldo: (data == null) ? -1.0 : data.saldo),
                   ),
                 ),
-              )
-            : Column(children: <Widget>[CafetoriaDayList(days: data.days)]),
-        Positioned(
-            bottom: 16.0,
-            right: 16.0,
-            child: Container(
-              child: ActionFab(
-                  onLogin: () {
-                    showDialog<String>(
-                      context: context,
-                      barrierDismissible: true,
-                      builder: (BuildContext context1) {
-                        return SimpleDialog(
-                          title:
-                              Text(AppLocalizations.of(context).cafetoriaLogin),
-                          children: <Widget>[
-                            //LoginDialog()
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  onOrder: () {
-                    launch('https://www.opc-asp.de/vs-aachen/');
-                  },
-                  saldo: (data == null) ? -1.0 : data.saldo),
-            )),
-      ]),
+        ],
+      ),
     );
   }
 
@@ -181,7 +194,7 @@ class MenuRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: 10, bottom: 0, left: 20, right: 20),
+      padding: EdgeInsets.all(20),
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           return Row(
@@ -199,6 +212,7 @@ class MenuRow extends StatelessWidget {
                                     menu.name.substring(1)
                                 : menu.name.toUpperCase(),
                             style: TextStyle(
+                              fontWeight: FontWeight.bold,
                               color: Colors.black,
                             ),
                           ),
@@ -326,7 +340,6 @@ class _ActionFabState extends State<ActionFab>
           animate();
           widget.onOrder();
         },
-        tooltip: 'Order',
         child: Icon(Icons.payment, color: Colors.white),
       ),
     );
@@ -341,7 +354,6 @@ class _ActionFabState extends State<ActionFab>
           animate();
           widget.onLogin();
         },
-        tooltip: 'Login',
         child: Icon(Icons.vpn_key, color: Colors.white),
       ),
     );
@@ -350,12 +362,20 @@ class _ActionFabState extends State<ActionFab>
   Widget toggle() {
     return Container(
       child: FloatingActionButton.extended(
-          heroTag: 'toggle',
-          backgroundColor: _buttonColor.value,
-          onPressed: animate,
-          tooltip: 'Saldo',
-          icon: Icon(Icons.euro_symbol),
-          label: Text(widget.saldo == -1.0 ? 'Anmelden' : '${widget.saldo}€')),
+        heroTag: 'toggle',
+        backgroundColor: _buttonColor.value,
+        onPressed: animate,
+        icon: Icon(
+          Icons.euro_symbol,
+          color: Colors.white,
+        ),
+        label: Text(
+          widget.saldo == -1.0
+              ? AppLocalizations.of(context).login
+              : widget.saldo.toString(),
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
     );
   }
 
@@ -388,6 +408,8 @@ class _ActionFabState extends State<ActionFab>
 }
 
 class LoginDialog extends StatefulWidget {
+  final Function onFinished;
+  LoginDialog({Key key, this.onFinished}) : super(key: key);
   @override
   LoginView createState() => LoginView();
 }
@@ -402,20 +424,15 @@ class LoginView extends State<LoginDialog> {
 
   void checkForm() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    await download(
-        id: _idController.text,
-        password: _passwordController.text,
-        parse: false);
-
-    _credentialsCorrect =
-        json.decode(sharedPreferences.getString(Keys.cafetoria))['error'] ==
-            null;
+    _credentialsCorrect = await checkLogin(
+        id: _idController.text, password: _passwordController.text);
     if (_formKey.currentState.validate()) {
       sharedPreferences.setString(Keys.cafetoriaUsername, _idController.text);
       sharedPreferences.setString(
           Keys.cafetoriaPassword, _passwordController.text);
       sharedPreferences.commit();
       Navigator.pop(context);
+      widget.onFinished();
     } else {
       _passwordController.clear();
     }
@@ -459,89 +476,87 @@ class LoginView extends State<LoginDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        margin: EdgeInsets.all(10.0),
-        child: Column(
-          children: <Widget>[
-            (!online
-                ? Padding(
-                    padding: EdgeInsets.only(top: 10.0),
-                    child: Center(
-                      child: Column(
-                        children: <Widget>[
-                          Text(AppLocalizations.of(context).goOnlineToLogin),
-                          FlatButton(
-                            color: Theme.of(context).accentColor,
-                            child: Text(AppLocalizations.of(context).retry),
-                            onPressed: () async {
-                              prepareLogin();
-                            },
-                          )
-                        ],
-                      ),
-                    ),
-                  )
-                : Form(
-                    key: _formKey,
+    return Container(
+      margin: EdgeInsets.all(10.0),
+      child: Column(
+        children: <Widget>[
+          (!online
+              ? Padding(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: Center(
                     child: Column(
                       children: <Widget>[
-                        TextFormField(
-                          controller: _idController,
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return AppLocalizations.of(context)
-                                  .fieldCantBeEmpty;
-                            }
-                            if (!_credentialsCorrect) {
-                              return AppLocalizations.of(context)
-                                  .credentialsNotCorrect;
-                            }
+                        Text(AppLocalizations.of(context).goOnlineToLogin),
+                        FlatButton(
+                          color: Theme.of(context).accentColor,
+                          child: Text(AppLocalizations.of(context).retry),
+                          onPressed: () async {
+                            prepareLogin();
                           },
-                          decoration: InputDecoration(
-                              hintText: AppLocalizations.of(context).username),
-                          onFieldSubmitted: (value) {
-                            FocusScope.of(context).requestFocus(_focus);
-                          },
-                        ),
-                        TextFormField(
-                          controller: _passwordController,
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return AppLocalizations.of(context)
-                                  .fieldCantBeEmpty;
-                            }
-                            if (!_credentialsCorrect) {
-                              return AppLocalizations.of(context)
-                                  .credentialsNotCorrect;
-                            }
-                          },
-                          decoration: InputDecoration(
-                              hintText: AppLocalizations.of(context).password),
-                          onFieldSubmitted: (value) {
-                            checkForm();
-                          },
-                          obscureText: true,
-                          focusNode: _focus,
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 20.0),
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: RaisedButton(
-                              color: Theme.of(context).accentColor,
-                              onPressed: () {
-                                checkForm();
-                              },
-                              child: Text(AppLocalizations.of(context).login),
-                            ),
-                          ),
-                        ),
+                        )
                       ],
                     ),
-                  ))
-          ],
-        ),
+                  ),
+                )
+              : Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                        controller: _idController,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return AppLocalizations.of(context)
+                                .fieldCantBeEmpty;
+                          }
+                          if (!_credentialsCorrect) {
+                            return AppLocalizations.of(context)
+                                .credentialsNotCorrect;
+                          }
+                        },
+                        decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context).username),
+                        onFieldSubmitted: (value) {
+                          FocusScope.of(context).requestFocus(_focus);
+                        },
+                      ),
+                      TextFormField(
+                        controller: _passwordController,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return AppLocalizations.of(context)
+                                .fieldCantBeEmpty;
+                          }
+                          if (!_credentialsCorrect) {
+                            return AppLocalizations.of(context)
+                                .credentialsNotCorrect;
+                          }
+                        },
+                        decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context).password),
+                        onFieldSubmitted: (value) {
+                          checkForm();
+                        },
+                        obscureText: true,
+                        focusNode: _focus,
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 20.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: RaisedButton(
+                            color: Theme.of(context).accentColor,
+                            onPressed: () {
+                              checkForm();
+                            },
+                            child: Text(AppLocalizations.of(context).login),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ))
+        ],
       ),
     );
   }

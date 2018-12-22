@@ -1,3 +1,15 @@
+class CafetoriaLogin {
+  final String error;
+
+  CafetoriaLogin({this.error});
+
+  factory CafetoriaLogin.fromJson(Map<String, dynamic> json) {
+    return CafetoriaLogin(
+      error: json['error'] as String,
+    );
+  }
+}
+
 class Cafetoria {
   final String error;
   final List<CafetoriaDay> days;
@@ -7,10 +19,13 @@ class Cafetoria {
 
   factory Cafetoria.fromJson(Map<String, dynamic> json) {
     return Cafetoria(
-      error: json['error'] as String,
-      days: json['days'].toList().map((day) => CafetoriaDay.fromJson(day)).toList().cast<CafetoriaDay>(),
-      saldo: double.parse('${json['saldo'] ?? -1.0}')
-    );
+        error: json['error'] as String,
+        days: json['days']
+            .toList()
+            .map((day) => CafetoriaDay.fromJson(day))
+            .toList()
+            .cast<CafetoriaDay>(),
+        saldo: double.parse('${json['saldo'] ?? -1.0}'));
   }
 }
 
@@ -25,7 +40,10 @@ class CafetoriaDay {
     return CafetoriaDay(
       weekday: json['weekday'] as String,
       date: json['date'] as String,
-      menues: json['menus'].map((day) => CafetoriaMenu.fromJson(day)).toList().cast<CafetoriaMenu>(),
+      menues: json['menues']
+          .map((day) => CafetoriaMenu.fromJson(day))
+          .toList()
+          .cast<CafetoriaMenu>(),
     );
   }
 }
@@ -39,10 +57,8 @@ class CafetoriaMenu {
 
   factory CafetoriaMenu.fromJson(Map<String, dynamic> json) {
     return CafetoriaMenu(
-      time: json['time'] as String,
-      name: json['name'] as String,
-      price: double.parse('${json['price'] ?? 0.0}')
-    );
+        time: json['time'] as String,
+        name: json['name'] as String,
+        price: double.parse('${json['price'] ?? 0.0}'));
   }
-
 }
