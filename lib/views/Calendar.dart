@@ -38,9 +38,6 @@ class CalendarView extends State<CalendarPage> {
           int.parse(b.start.date.split('.')[2]),
           int.parse(b.start.date.split('.')[1]),
           int.parse(b.start.date.split('.')[0]));
-      print(d1.toString());
-      print(d2.toString());
-      print('');
       return d1.isAfter(d2) ? 1 : -1;
     });
     return Column(children: <Widget>[CalendarDayList(events: events)]);
