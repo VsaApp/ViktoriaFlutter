@@ -160,14 +160,12 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                   shrinkWrap: true,
                   children: day.lessons.map((lesson) {
                     // Check which subject is selected
-                    int _selected = sharedPreferences.getInt(Keys.unitPlan +
-                        _grade +
-                        '-' +
-                        (lesson.subjects[0].block == ''
-                            ? widget.days.indexOf(day).toString() +
-                                '-' +
-                                day.lessons.indexOf(lesson).toString()
-                            : lesson.subjects[0].block));
+                    int _selected = sharedPreferences.getInt(Keys.unitPlan(
+                      _grade,
+                      block: lesson.subjects[0].block,
+                      day: widget.days.indexOf(day),
+                      unit: day.lessons.indexOf(lesson)
+                    ));
                     bool nothingSelected = _selected == null;
                     if (nothingSelected) _selected = 0;
                     return GestureDetector(
@@ -189,24 +187,14 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                                             // Update unit plan
                                             setState(() {
                                               sharedPreferences.setInt(
-                                                  Keys.unitPlan +
-                                                      _grade +
-                                                      '-' +
-                                                      (lesson.subjects[0]
-                                                                  .block ==
-                                                              null
-                                                          ? widget.days
-                                                                  .indexOf(day)
-                                                                  .toString() +
-                                                              '-' +
-                                                              day.lessons
-                                                                  .indexOf(
-                                                                      lesson)
-                                                                  .toString()
-                                                          : lesson.subjects[0]
-                                                              .block),
-                                                  lesson.subjects
-                                                      .indexOf(subject));
+                                                Keys.unitPlan(
+                                                    _grade,
+                                                    block: lesson.subjects[0].block,
+                                                    day: widget.days.indexOf(day),
+                                                    unit: day.lessons.indexOf(lesson)
+                                                ),
+                                                lesson.subjects.indexOf(subject)
+                                              );
                                               Navigator.pop(context);
                                               ReplacementPlan.update(
                                                   sharedPreferences);
@@ -216,17 +204,10 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                                             bool _selected = (sharedPreferences
                                                     .getKeys()
                                                     .where((key) =>
-                                                        key ==
-                                                        Keys.exams +
-                                                            lesson
-                                                                .subjects[lesson
-                                                                    .subjects
-                                                                    .indexOf(
-                                                                        subject)]
+                                                        key == Keys.exams(lesson.subjects[lesson.subjects.indexOf(subject)]
                                                                 .lesson
                                                                 .toUpperCase())
-                                                    .length >
-                                                0);
+                                                            ).length > 0);
                                             if (!_selected &&
                                                 lesson
                                                         .subjects[lesson
@@ -289,9 +270,9 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                                 AppLocalizations.of(context).lunchBreak &&
                             !nothingSelected) {
                           sharedPreferences.setBool(
-                              Keys.exams +
+                              Keys.exams(
                                   lesson.subjects[_selected].lesson
-                                      .toUpperCase(),
+                                      .toUpperCase()),
                               true);
                           sharedPreferences.commit();
                           // Show writing option dialog

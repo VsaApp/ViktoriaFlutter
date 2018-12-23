@@ -1,3 +1,5 @@
+
+// Define all times of the lessons...
 List<String> get times {
   return [
     '08:00 - 09:00',

@@ -24,13 +24,13 @@ Future download() async {
     final response = await http.Client().get(_url);
 
     // Save loaded data...
-    sharedPreferences.setString(Keys.unitPlan + _grade, response.body);
+    sharedPreferences.setString(Keys.unitPlan(_grade), response.body);
     await sharedPreferences.commit();
   } catch (e) {
     print("Error in download: " + e.toString());
     // Set to default data...
-    if (sharedPreferences.getString(Keys.unitPlan + _grade) == null) {
-      sharedPreferences.setString(Keys.unitPlan + _grade, '[]');
+    if (sharedPreferences.getString(Keys.unitPlan(_grade)) == null) {
+      sharedPreferences.setString(Keys.unitPlan(_grade), '[]');
     }
   }
 
@@ -50,7 +50,7 @@ List<UnitPlanDay> getUnitPlan() {
 Future<List<UnitPlanDay>> fetchDays() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String _grade = sharedPreferences.getString(Keys.grade);
-  return parseDays(sharedPreferences.getString(Keys.unitPlan + _grade));
+  return parseDays(sharedPreferences.getString(Keys.unitPlan(_grade)));
 }
 
 // Returns parsed unit plan...
@@ -78,15 +78,9 @@ Future syncTags() async {
   // Set all tags...
   getUnitPlan().forEach((day) {
     day.lessons.forEach((lesson) {
-      String prefKey = sharedPreferences.getString(Keys.grade) +
-          '-' +
-          (lesson.subjects[0].block == ''
-              ? getUnitPlan().indexOf(day).toString() +
-                  '-' +
-                  day.lessons.indexOf(lesson).toString()
-              : lesson.subjects[0].block);
-      OneSignal.shared.sendTag(prefKey,
-          sharedPreferences.getInt(Keys.unitPlan + prefKey).toString());
+      String grade = sharedPreferences.getString(Keys.grade);
+      OneSignal.shared.sendTag(Keys.unitPlan(grade, block: lesson.subjects[0].block, day: getUnitPlan().indexOf(day), unit: day.lessons.indexOf(lesson)),
+          sharedPreferences.getInt(Keys.unitPlan(grade, block: lesson.subjects[0].block, day: getUnitPlan().indexOf(day), unit: day.lessons.indexOf(lesson))).toString());
     });
   });
 }

@@ -98,16 +98,15 @@ Future downloadDay(
     final response = await http.Client().get(_url);
 
     // Save the loaded data..
-    await sharedPreferences.setString(
-        Keys.replacementPlan + _grade + _day, response.body);
+    await sharedPreferences.setString(Keys.replacementPlan(_grade, _day), response.body);
     await sharedPreferences.commit();
   } catch (e) {
     print("Error in download: " + e.toString());
-    if (sharedPreferences.getString(Keys.replacementPlan + _grade + _day) ==
+    if (sharedPreferences.getString(Keys.replacementPlan(_grade, _day)) ==
         null) {
       // Set to default data...
       await sharedPreferences.setString(
-          Keys.replacementPlan + _grade + _day, '[]');
+          Keys.replacementPlan(_grade, _day), '[]');
       await sharedPreferences.commit();
     }
   }
@@ -122,8 +121,9 @@ List<ReplacementPlanDay> getReplacementPlan() {
 Future<List<ReplacementPlanDay>> fetchDays(String _grade) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   return parseDays(
-      sharedPreferences.getString(Keys.replacementPlan + _grade + "today"),
-      sharedPreferences.getString(Keys.replacementPlan + _grade + "tomorrow"));
+      sharedPreferences.getString(Keys.replacementPlan(_grade, 'today')),
+      sharedPreferences.getString(Keys.replacementPlan(_grade, 'tomorrow'))
+  );
 }
 
 // Returns parsed data in the replacement plan structure...

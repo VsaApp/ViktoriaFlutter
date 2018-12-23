@@ -451,7 +451,7 @@ class LoginView extends State<LoginDialog> {
         id: _idController.text, password: _passwordController.text);
     if (_formKey.currentState.validate()) {
       // Save correct credentials
-      sharedPreferences.setString(Keys.cafetoriaUsername, _idController.text);
+      sharedPreferences.setString(Keys.cafetoriaId, _idController.text);
       sharedPreferences.setString(
           Keys.cafetoriaPassword, _passwordController.text);
       sharedPreferences.commit();
@@ -547,7 +547,7 @@ class LoginView extends State<LoginDialog> {
                         },
                         decoration: InputDecoration(
                             hintText:
-                                AppLocalizations.of(context).cafetoriaUsername),
+                                AppLocalizations.of(context).cafetoriaId),
                         onFieldSubmitted: (value) {
                           FocusScope.of(context).requestFocus(_focus);
                         },

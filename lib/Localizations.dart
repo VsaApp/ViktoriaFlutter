@@ -11,6 +11,7 @@ class AppLocalizations {
   }
 
   static Map<String, Map<String, String>> _localizedValues = {
+    // List of all germans Strings...
     'de': {
       'title': 'Viktoria',
       'unitPlan': 'Stundenplan',
@@ -24,7 +25,7 @@ class AppLocalizations {
       'pupilPassword': 'Passwort der Homepage',
       'teacherUsername': 'Kürzel',
       'teacherPassword': 'Passwort',
-      'cafetoriaUsername': 'ID',
+      'cafetoriaId': 'ID',
       'cafetoriaPassword': 'Pin',
       'notImplementedYet': 'Diese Funktion gibt es bislang noch nicht',
       'credentialsNotCorrect': 'Nutzername oder Passwort falsch',
@@ -61,8 +62,7 @@ class AppLocalizations {
       'ok': 'OK',
       'showShortCutDialog': 'Schnellstartdialog anzeigen',
       'initialPage': 'Startseite',
-      'showReplacementPlanForBrotherSister':
-          'Vertretungsplan für Geschwisterkind anzeigen',
+      'showReplacementPlanForBrotherSister': 'Vertretungsplan für Geschwisterkind anzeigen',
       'noChanges': 'Keine Änderungen',
       'cafetoria': 'Cafetoria',
       'cafetoriaNoMenues': 'Es gibt keine Menüs für diesen Tag',
@@ -73,6 +73,7 @@ class AppLocalizations {
     },
   };
 
+  // All getter defined...
   String get cafetoria {
     return _localizedValues[locale.languageCode]['cafetoria'];
   }
@@ -187,8 +188,8 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]['teacherPassword'];
   }
 
-  String get cafetoriaUsername {
-    return _localizedValues[locale.languageCode]['cafetoriaUsername'];
+  String get cafetoriaId {
+    return _localizedValues[locale.languageCode]['cafetoriaId'];
   }
 
   String get cafetoriaPassword {

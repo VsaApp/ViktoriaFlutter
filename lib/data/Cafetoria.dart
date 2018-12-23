@@ -15,7 +15,7 @@ Future<Cafetoria> download({String id, String password, bool parse}) async {
     String _url = 'https://api.vsa.2bad2c0.de/cafetoria/login/' +
         ((id != null)
             ? id
-            : sharedPreferences.getString(Keys.cafetoriaUsername) ?? 'null') +
+            : sharedPreferences.getString(Keys.cafetoriaId) ?? 'null') +
         '/' +
         ((password != null)
             ? password

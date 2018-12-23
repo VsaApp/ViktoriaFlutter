@@ -141,9 +141,7 @@ class Change {
                 // It's the correct lesson...
                 if (course == subject.course) {
                   if (changed.info.toLowerCase().contains('klausur')) {
-                    if (!(sharedPreferences.getBool(
-                            Keys.exams + subject.lesson.toUpperCase()) ??
-                        true)) {
+                    if (!(sharedPreferences.getBool(Keys.exams(subject.lesson.toUpperCase())) ?? true)) {
                       isMy = 0;
                       return;
                     }
@@ -185,7 +183,7 @@ class Change {
                       selectedSubjects++;
                       // Check if user write exams in the course...
                       bool exams = sharedPreferences.getBool(
-                              Keys.exams + subject.lesson.toUpperCase()) ??
+                              Keys.exams(subject.lesson.toUpperCase())) ??
                           true;
                       writing = exams;
                     }
@@ -313,10 +311,5 @@ class Changed {
 int getSelectedSubject(SharedPreferences sharedPreferences,
     UnitPlanSubject subject, int day, int unit) {
   // If the subject block is set, get index for block, else get index for day + unit...
-  return sharedPreferences.getInt(Keys.unitPlan +
-      sharedPreferences.getString(Keys.grade) +
-      '-' +
-      ((subject.block == '')
-          ? (day.toString() + '-' + (unit).toString())
-          : (subject.block)));
+  return sharedPreferences.getInt(Keys.unitPlan(sharedPreferences.getString(Keys.grade), block: subject.block, day: day, unit: unit));
 }

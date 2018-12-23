@@ -9,17 +9,21 @@ import 'views/Home.dart';
 import 'views/Loading.dart';
 import 'views/Login.dart';
 
+// This is the first functions which is called in the app...
 void main() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
+  // Default init is the loading screen...
   String _initialRoute = '/';
 
   // Set must writing courses...
-  sharedPreferences.setBool(Keys.exams + 'E', true);
-  sharedPreferences.setBool(Keys.exams + 'M', true);
-  sharedPreferences.setBool(Keys.exams + 'D', true);
-  sharedPreferences.setBool(Keys.exams + 'L', true);
-  sharedPreferences.setBool(Keys.exams + 'S', true);
-  sharedPreferences.setBool(Keys.exams + 'F', true);
+  sharedPreferences.setBool(Keys.exams('E'), true);
+  sharedPreferences.setBool(Keys.exams('M'), true);
+  sharedPreferences.setBool(Keys.exams('D'), true);
+  sharedPreferences.setBool(Keys.exams('L'), true);
+  sharedPreferences.setBool(Keys.exams('S'), true);
+  sharedPreferences.setBool(Keys.exams('F'), true);
+  sharedPreferences.commit();
 
   // Set default options
   if (sharedPreferences.get(Keys.sortReplacementPlan) == null ||
@@ -38,8 +42,10 @@ void main() async {
     _initialRoute = '/login';
   }
 
+  // Start the app...
   runApp(MaterialApp(
     title: 'ViktoriaFlutter',
+    // Set fontfamily and main colors...
     theme: ThemeData(
         brightness: Brightness.light,
         primaryColor: getColorHexFromStr('#67a744'),
@@ -50,10 +56,12 @@ void main() async {
       GlobalMaterialLocalizations.delegate,
       GlobalWidgetsLocalizations.delegate,
     ],
+    // Our app only supports the german language...
     supportedLocales: [
       const Locale('de'),
     ],
     initialRoute: _initialRoute,
+    // Define three shortcuts for pages: loading, home and login...
     routes: <String, WidgetBuilder>{
       '/': (BuildContext context) => new LoadingPage(),
       '/home': (BuildContext context) => new HomePage(),

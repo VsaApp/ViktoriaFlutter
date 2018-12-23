@@ -60,12 +60,7 @@ class UnitPlanLesson {
 
   // Set the default selection...
   void setSelection(int day, int unit, SharedPreferences sharedPreferences) {
-    String prefKey = Keys.unitPlan +
-        sharedPreferences.getString(Keys.grade) +
-        '-' +
-        (subjects[0].block == ''
-            ? day.toString() + '-' + unit.toString()
-            : subjects[0].block);
+    String prefKey = Keys.unitPlan(sharedPreferences.getString(Keys.grade), block: subjects[0].block, day: day, unit: unit);
     if (subjects.length == 1 && sharedPreferences.getInt(prefKey) == null) {
       sharedPreferences.setInt(prefKey, 0);
     }

@@ -1,3 +1,4 @@
+// Define all subjects names...
 Map<String, String> subjects = {
   'CH': 'Chemie',
   'PH': 'Physik',

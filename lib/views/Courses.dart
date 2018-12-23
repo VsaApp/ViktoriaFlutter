@@ -34,7 +34,7 @@ class CourseEditView extends State<CourseEdit> {
       setState(() {
         sharedPreferences = instance;
         _exams = sharedPreferences
-                .getBool(Keys.exams + widget.subject.lesson.toUpperCase()) ??
+                .getBool(Keys.exams(widget.subject.lesson.toUpperCase())) ??
             true;
       });
     });
@@ -57,7 +57,7 @@ class CourseEditView extends State<CourseEdit> {
             setState(() {
               // Save change
               sharedPreferences.setBool(
-                  Keys.exams + widget.subject.lesson.toUpperCase(), value);
+                  Keys.exams(widget.subject.lesson.toUpperCase()), value);
               sharedPreferences.commit();
               ReplacementPlan.update(sharedPreferences);
               setState(() {
@@ -104,15 +104,13 @@ class CoursesView extends State<CoursesPage> {
     // Get all selected subjects...
     getUnitPlan().forEach((day) => day.lessons.forEach((lesson) {
           if (lesson.subjects.length > 0) {
-            int selected = sharedPreferences.getInt(Keys.unitPlan +
-                    sharedPreferences.getString(Keys.grade) +
-                    '-' +
-                    ((lesson.subjects[0].block == '')
-                        ? (getUnitPlan().indexOf(day).toString() +
-                            '-' +
-                            (day.lessons.indexOf(lesson)).toString())
-                        : (lesson.subjects[0].block))) ??
-                lesson.subjects.length;
+            int selected = sharedPreferences.getInt(Keys.unitPlan(
+                sharedPreferences.getString(Keys.grade), 
+                block: lesson.subjects[0].block, 
+                day: getUnitPlan().indexOf(day), 
+                unit: day.lessons.indexOf(lesson)
+              )
+            ) ?? lesson.subjects.length;
             if (selected < lesson.subjects.length)
               selectedSubjects.add(lesson.subjects[selected]);
           }
@@ -175,7 +173,7 @@ class CourseRowView extends State<CourseRow> {
     course = '';
     blocks = [];
     _exams = widget.sharedPreferences
-            .getBool(Keys.exams + widget.subjects[0].lesson.toUpperCase()) ??
+            .getBool(Keys.exams(widget.subjects[0].lesson.toUpperCase())) ??
         true;
 
     // Create list of blocks
