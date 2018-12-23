@@ -213,20 +213,28 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                                             });
                                             // Synchronise tags for notifications
                                             syncTags();
-                                            bool _selected = (sharedPreferences
-                                                    .getKeys()
-                                                    .where((key) =>
-                                                        key ==
-                                                        Keys.exams +
-                                                            lesson
-                                                                .subjects[lesson
-                                                                    .subjects
-                                                                    .indexOf(
-                                                                        subject)]
-                                                                .lesson
-                                                                .toUpperCase())
-                                                    .length >
-                                                0);
+
+                                            bool _selected = sharedPreferences
+                                                .getKeys()
+                                                .contains(Keys.exams +
+                                                    lesson
+                                                        .subjects[lesson
+                                                            .subjects
+                                                            .indexOf(subject)]
+                                                        .lesson
+                                                        .toUpperCase());
+                                            if (!_selected) {
+                                              sharedPreferences.setBool(
+                                                  Keys.exams +
+                                                      lesson
+                                                          .subjects[lesson
+                                                              .subjects
+                                                              .indexOf(subject)]
+                                                          .lesson
+                                                          .toUpperCase(),
+                                                  true);
+                                              sharedPreferences.commit();
+                                            }
                                             if (!_selected &&
                                                 lesson
                                                         .subjects[lesson
@@ -260,8 +268,8 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                                                     ],
                                                     onExamChange: (_) {
                                                       setState(() {
-                                                        UnitPlan.setAllSelections(
-                                                            sharedPreferences);
+                                                        /*UnitPlan.setAllSelections(
+                                                            sharedPreferences);*/
                                                       });
                                                     },
                                                   );
@@ -288,12 +296,16 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                             lesson.subjects[_selected].lesson !=
                                 AppLocalizations.of(context).lunchBreak &&
                             !nothingSelected) {
-                          sharedPreferences.setBool(
-                              Keys.exams +
-                                  lesson.subjects[_selected].lesson
-                                      .toUpperCase(),
-                              true);
-                          sharedPreferences.commit();
+                          if (!sharedPreferences.getKeys().contains(Keys.exams +
+                              lesson.subjects[_selected].lesson
+                                  .toUpperCase())) {
+                            sharedPreferences.setBool(
+                                Keys.exams +
+                                    lesson.subjects[_selected].lesson
+                                        .toUpperCase(),
+                                true);
+                            sharedPreferences.commit();
+                          }
                           // Show writing option dialog
                           showDialog<String>(
                             context: context,

@@ -12,7 +12,9 @@ class ReplacementPlan {
   // Updates the changes filter...
   static void update(SharedPreferences sharedPreferences) {
     UnitPlan.resetChanges();
-    days.forEach((day) => day.insertInUnitPlan(sharedPreferences));
+    if (days != null) {
+      days.forEach((day) => day.insertInUnitPlan(sharedPreferences));
+    }
   }
 }
 
