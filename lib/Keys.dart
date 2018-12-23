@@ -101,4 +101,9 @@ class Keys {
   static String get calendar {
     return 'calendar';
   }
+
+  // Saves if a category is expanded or not...
+  static String categoryExpanded(String name) {
+    return 'categoryExpanded-$name';
+  }
 }
