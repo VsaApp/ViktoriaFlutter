@@ -12,9 +12,7 @@ class ReplacementPlan {
   // Updates the changes filter...
   static void update(SharedPreferences sharedPreferences) {
     UnitPlan.resetChanges();
-    if (days != null) {
-      days.forEach((day) => day.insertInUnitPlan(sharedPreferences));
-    }
+    days.forEach((day) => day.insertInUnitPlan(sharedPreferences));
   }
 }
 
@@ -130,10 +128,11 @@ class Change {
           if (lesson.subjects.length > 0) {
             // Get the selected index...
             int selected = getSelectedSubject(
-                sharedPreferences,
-                lesson.subjects[0],
-                UnitPlan.days.indexOf(day),
-                day.lessons.indexOf(lesson));
+                    sharedPreferences,
+                    lesson.subjects[0],
+                    UnitPlan.days.indexOf(day),
+                    day.lessons.indexOf(lesson)) ??
+                0;
 
             // When there is a subject with the right index and this subject has the correct course, set change to myChange...
             if (selected < lesson.subjects.length) {

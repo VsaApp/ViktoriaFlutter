@@ -36,8 +36,6 @@ class CourseEditView extends State<CourseEdit> {
         _exams = sharedPreferences
                 .getBool(Keys.exams + widget.subject.lesson.toUpperCase()) ??
             true;
-        print(_exams);
-        print(widget.subject.lesson.toUpperCase());
       });
     });
     super.initState();
@@ -61,16 +59,13 @@ class CourseEditView extends State<CourseEdit> {
               sharedPreferences.setBool(
                   Keys.exams + widget.subject.lesson.toUpperCase(), value);
               sharedPreferences.commit();
-              print(sharedPreferences
-                  .getBool(Keys.exams + widget.subject.lesson.toUpperCase()));
-              print(widget.subject.lesson.toUpperCase());
-              //ReplacementPlan.update(sharedPreferences);
+              ReplacementPlan.update(sharedPreferences);
               setState(() {
                 _exams = value;
               });
-              /*if (widget.onExamChange != null) {
+              if (widget.onExamChange != null) {
                 widget.onExamChange(_exams);
-              }*/
+              }
             });
           },
           title: Text(AppLocalizations.of(context).writeExams),
