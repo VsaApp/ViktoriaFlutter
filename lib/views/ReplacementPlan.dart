@@ -219,6 +219,7 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
                 height: double.infinity,
                 color: Colors.white,
                 child: ListView(
+                  padding: EdgeInsets.only(bottom: 70),
                   shrinkWrap: true,
                   children: <Widget>[
                     // For date information
@@ -285,9 +286,8 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
                       day.changes.map((change) {
                           return ReplacementPlanRow(
                               changes: day.changes,
-                              change: change,
-                              isLast: day.changes.indexOf(change) ==
-                                  day.changes.length - 1);
+                              change: change
+                          );
                         }).toList()
                       :
                       // Show the changes in three categories...
@@ -408,12 +408,11 @@ class SectionView extends State<Section> {
 
 class ReplacementPlanRow extends StatelessWidget {
   const ReplacementPlanRow(
-      {Key key, this.change, this.changes, this.isLast = false})
+      {Key key, this.change, this.changes})
       : super(key: key);
 
   final Change change;
   final List<dynamic> changes;
-  final bool isLast;
 
   @override
   Widget build(BuildContext context) {
@@ -428,7 +427,7 @@ class ReplacementPlanRow extends StatelessWidget {
           // Add padding if unit not shown
           top: showUnit ? (changes.indexOf(change) == 0 ? 10 : 20) : 5,
           // Add padding if row is last row
-          bottom: isLast ? 100.0 : 0,
+          bottom: 0,
           left: 10,
           right: 10),
       child: LayoutBuilder(

@@ -157,6 +157,7 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                 color: Colors.white,
                 // List of subjects
                 child: ListView(
+                  padding: EdgeInsets.all(10),
                   shrinkWrap: true,
                   children: day.lessons.map((lesson) {
                     // Check which subject is selected

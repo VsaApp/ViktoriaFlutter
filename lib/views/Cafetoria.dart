@@ -30,7 +30,6 @@ class CafetoriaView extends State<CafetoriaPage> {
         this.data = data;
       });
     });
-
     super.initState();
   }
 
@@ -51,7 +50,12 @@ class CafetoriaView extends State<CafetoriaPage> {
                     ),
                   ),
                 )
-              : Column(children: <Widget>[CafetoriaDayList(days: data.days)]),
+              : ListView(
+                  padding: EdgeInsets.only(bottom: 70),
+                  shrinkWrap: true,
+                  children: data.days.map((day) => DayCard(day: day)).toList(),
+                ),
+
           data == null
               ?
               // And disable FAB while loading
@@ -109,90 +113,32 @@ class CafetoriaView extends State<CafetoriaPage> {
   }
 }
 
-class CafetoriaDayList extends StatefulWidget {
-  final List<CafetoriaDay> days;
+class DayCard extends StatelessWidget {
+  const DayCard({Key key, this.day}) : super(key: key);
 
-  CafetoriaDayList({Key key, this.days}) : super(key: key);
-
-  @override
-  CafetoriaDayListState createState() => CafetoriaDayListState();
-}
-
-class CafetoriaDayListState extends State<CafetoriaDayList>
-    with SingleTickerProviderStateMixin {
-  SharedPreferences sharedPreferences;
-  TabController _tabController;
-
-  @override
-  void initState() {
-    SharedPreferences.getInstance().then((instance) {
-      setState(() {
-        sharedPreferences = instance;
-      });
-    });
-    // Select the current weekday (if weekend then the days is monday)
-    _tabController = new TabController(vsync: this, length: widget.days.length);
-    int weekday = DateTime.now().weekday - 1;
-    if (weekday > 4) weekday = 0;
-    _tabController.animateTo(weekday);
-
-    super.initState();
-  }
+  final CafetoriaDay day;
 
   @override
   Widget build(BuildContext context) {
-    if (sharedPreferences == null) {
-      return Container();
-    }
-    return DefaultTabController(
-      length: widget.days.length,
-      child: Expanded(
-        child: Scaffold(
-          backgroundColor: Theme.of(context).primaryColor,
-          // Tab bar header...
-          appBar: TabBar(
-            controller: _tabController,
-            indicatorColor: Theme.of(context).accentColor,
-            indicatorWeight: 2.5,
-            tabs: widget.days.map((day) {
-              return Container(
-                padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
-                child:
-                    Text(day.weekday.substring(0, 2)), // Show all weekday names
-              );
-            }).toList(),
-          ),
-          // Tab bar views...
-          body: TabBarView(
-            controller: _tabController,
-            children: widget.days.map((day) {
-              List<MenuRow> rows =
-                  day.menues.map((menu) => MenuRow(menu: menu)).toList();
-              return Container(
-                width: double.infinity,
-                height: double.infinity,
-                color: Colors.white,
-                // List of menues for one day
-                child: ListView(
-                  shrinkWrap: true,
-                  children: (rows.length > 0)
-                      ?
-                      // Show the menues
-                      rows
-                      :
-                      // No menues for this day
-                      <Widget>[
-                          Center(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 10.0),
-                              child: Text(AppLocalizations.of(context)
-                                  .cafetoriaNoMenues),
-                            ),
-                          ),
-                        ],
-                ),
-              );
-            }).toList(),
+    String menues = '';
+    day.menues.forEach((menu) => menues += (menu.price > 0) ? '${menu.name} (${menu.price}€)\n\n' : '${menu.name}\n\n');
+    menues = menues.trim();
+    if (menues.length == 0) menues = AppLocalizations.of(context).cafetoriaNoMenues;
+    return Container(
+      padding: EdgeInsets.only(top: 5),
+      child: Card(
+        child: Padding(
+          padding: EdgeInsets.only(bottom: 5),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.restaurant_menu, color: Theme.of(context).accentColor),
+                title: Text(day.weekday),
+                subtitle: Text(menues),
+                onTap: () => launch('https://www.opc-asp.de/vs-aachen/'),
+              ),
+            ],
           ),
         ),
       ),

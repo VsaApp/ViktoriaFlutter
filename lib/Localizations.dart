@@ -65,7 +65,7 @@ class AppLocalizations {
       'showReplacementPlanForBrotherSister': 'Vertretungsplan für Geschwisterkind anzeigen',
       'noChanges': 'Keine Änderungen',
       'cafetoria': 'Cafetoria',
-      'cafetoriaNoMenues': 'Es gibt keine Menüs für diesen Tag',
+      'cafetoriaNoMenues': 'Keine Menüs vorhanden',
       'cafetoriaLogin': 'Keyfobdaten eingeben',
       'workGroups': 'AGs',
       'calendar': 'Kalender',
