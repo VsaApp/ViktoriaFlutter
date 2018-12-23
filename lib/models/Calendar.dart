@@ -31,8 +31,8 @@ class CalendarEventDate {
 
   factory CalendarEventDate.fromJson(Map<String, dynamic> json) {
     return CalendarEventDate(
-      date: json['date'] as String,
-      time: json['time'] as String,
+      date: json['date'] as String ?? '',
+      time: json['time'] as String ?? '',
     );
   }
 }
