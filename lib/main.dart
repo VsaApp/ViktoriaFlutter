@@ -21,6 +21,7 @@ void main() async {
   sharedPreferences.setBool(Keys.exams + 'S', true);
   sharedPreferences.setBool(Keys.exams + 'F', true);
 
+  // Set default options
   if (sharedPreferences.get(Keys.sortReplacementPlan) == null ||
       sharedPreferences.get(Keys.showReplacementPlanInUnitPlan) == null ||
       sharedPreferences.get(Keys.getReplacementPlanNotifications) == null) {
@@ -29,6 +30,7 @@ void main() async {
     sharedPreferences.setBool(Keys.getReplacementPlanNotifications, true);
   }
 
+  // Check if logged in
   if (sharedPreferences.get(Keys.grade) == null ||
       sharedPreferences.get(Keys.username) == null ||
       sharedPreferences.get(Keys.password) == null ||

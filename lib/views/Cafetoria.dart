@@ -24,6 +24,7 @@ class CafetoriaView extends State<CafetoriaPage> {
 
   @override
   void initState() {
+    // Download data
     download().then((data) {
       setState(() {
         this.data = data;
@@ -39,7 +40,9 @@ class CafetoriaView extends State<CafetoriaPage> {
       body: Stack(
         children: <Widget>[
           data == null
-              ? Scaffold(
+              ?
+              // Show loader
+              Scaffold(
                   body: Center(
                     child: SizedBox(
                       child: new CircularProgressIndicator(strokeWidth: 5.0),
@@ -50,7 +53,9 @@ class CafetoriaView extends State<CafetoriaPage> {
                 )
               : Column(children: <Widget>[CafetoriaDayList(days: data.days)]),
           data == null
-              ? Container()
+              ?
+              // And disable FAB while loading
+              Container()
               : Positioned(
                   bottom: 16.0,
                   right: 16.0,
@@ -125,6 +130,7 @@ class CafetoriaDayListState extends State<CafetoriaDayList>
         sharedPreferences = instance;
       });
     });
+    // Select the current weekday (if weekend then the days is monday)
     _tabController = new TabController(vsync: this, length: widget.days.length);
     int weekday = DateTime.now().weekday - 1;
     if (weekday > 4) weekday = 0;
@@ -143,6 +149,7 @@ class CafetoriaDayListState extends State<CafetoriaDayList>
       child: Expanded(
         child: Scaffold(
           backgroundColor: Theme.of(context).primaryColor,
+          // Tab bar header...
           appBar: TabBar(
             controller: _tabController,
             indicatorColor: Theme.of(context).accentColor,
@@ -150,10 +157,12 @@ class CafetoriaDayListState extends State<CafetoriaDayList>
             tabs: widget.days.map((day) {
               return Container(
                 padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
-                child: Text(day.weekday.substring(0, 2)),
+                child:
+                    Text(day.weekday.substring(0, 2)), // Show all weekday names
               );
             }).toList(),
           ),
+          // Tab bar views...
           body: TabBarView(
             controller: _tabController,
             children: widget.days.map((day) {
@@ -163,11 +172,16 @@ class CafetoriaDayListState extends State<CafetoriaDayList>
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.white,
+                // List of menues for one day
                 child: ListView(
                   shrinkWrap: true,
                   children: (rows.length > 0)
-                      ? rows
-                      : <Widget>[
+                      ?
+                      // Show the menues
+                      rows
+                      :
+                      // No menues for this day
+                      <Widget>[
                           Center(
                             child: Padding(
                               padding: EdgeInsets.only(top: 10.0),
@@ -204,6 +218,7 @@ class MenuRow extends StatelessWidget {
                   children: <Widget>[
                     Column(
                       children: <Widget>[
+                        // Menu name
                         Container(
                           width: constraints.maxWidth * 0.80,
                           child: Text(
@@ -217,6 +232,7 @@ class MenuRow extends StatelessWidget {
                             ),
                           ),
                         ),
+                        // Menu time
                         (menu.time.length > 0)
                             ? Container(
                                 width: constraints.maxWidth * 0.80,
@@ -231,6 +247,7 @@ class MenuRow extends StatelessWidget {
                     ),
                     Column(
                       children: <Widget>[
+                        // Menu price
                         Container(
                           padding: EdgeInsets.only(
                               left: constraints.maxWidth * 0.03),
@@ -289,6 +306,7 @@ class _ActionFabState extends State<ActionFab>
           ..addListener(() {
             setState(() {});
           });
+    // Create animations
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _buttonColor = ColorTween(
         begin: Theme.of(context).primaryColor,
@@ -331,6 +349,7 @@ class _ActionFabState extends State<ActionFab>
     isOpened = !isOpened;
   }
 
+  // Smaller order FAB
   Widget order() {
     return Container(
       child: FloatingActionButton(
@@ -345,6 +364,7 @@ class _ActionFabState extends State<ActionFab>
     );
   }
 
+  // Smaller login FAB
   Widget login() {
     return Container(
       child: FloatingActionButton(
@@ -359,6 +379,7 @@ class _ActionFabState extends State<ActionFab>
     );
   }
 
+  // Toggle FAB
   Widget toggle() {
     return Container(
       child: FloatingActionButton.extended(
@@ -382,6 +403,7 @@ class _ActionFabState extends State<ActionFab>
   @override
   Widget build(BuildContext context) {
     if (sharedPreferences == null) return Container();
+    // List of FABs
     return Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
@@ -422,16 +444,19 @@ class LoginView extends State<LoginDialog> {
   final _passwordController = TextEditingController();
   bool online = true;
 
+  // Check the login
   void checkForm() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     _credentialsCorrect = await checkLogin(
         id: _idController.text, password: _passwordController.text);
     if (_formKey.currentState.validate()) {
+      // Save correct credentials
       sharedPreferences.setString(Keys.cafetoriaUsername, _idController.text);
       sharedPreferences.setString(
           Keys.cafetoriaPassword, _passwordController.text);
       sharedPreferences.commit();
       Navigator.pop(context);
+      // Update UI
       widget.onFinished();
     } else {
       _passwordController.clear();
@@ -481,7 +506,9 @@ class LoginView extends State<LoginDialog> {
       child: Column(
         children: <Widget>[
           (!online
-              ? Padding(
+              ?
+              // Offline information
+              Padding(
                   padding: EdgeInsets.only(top: 10.0),
                   child: Center(
                     child: Column(
@@ -491,6 +518,7 @@ class LoginView extends State<LoginDialog> {
                           color: Theme.of(context).accentColor,
                           child: Text(AppLocalizations.of(context).retry),
                           onPressed: () async {
+                            // Retry
                             prepareLogin();
                           },
                         )
@@ -498,10 +526,13 @@ class LoginView extends State<LoginDialog> {
                     ),
                   ),
                 )
-              : Form(
+              :
+              // Show form
+              Form(
                   key: _formKey,
                   child: Column(
                     children: <Widget>[
+                      // ID input
                       TextFormField(
                         controller: _idController,
                         validator: (value) {
@@ -521,6 +552,7 @@ class LoginView extends State<LoginDialog> {
                           FocusScope.of(context).requestFocus(_focus);
                         },
                       ),
+                      // Pin input
                       TextFormField(
                         controller: _passwordController,
                         validator: (value) {
@@ -542,6 +574,7 @@ class LoginView extends State<LoginDialog> {
                         obscureText: true,
                         focusNode: _focus,
                       ),
+                      // Login button
                       Container(
                         margin: EdgeInsets.only(top: 20.0),
                         child: SizedBox(

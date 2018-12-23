@@ -18,6 +18,7 @@ class LoadingPageState extends State<LoadingPage> {
   @override
   void initState() {
     downloadAll().then((_) {
+      // After download show app
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         Navigator.of(context).pushReplacementNamed('/home');
       });
@@ -25,6 +26,7 @@ class LoadingPageState extends State<LoadingPage> {
     super.initState();
   }
 
+  // Download all data
   Future downloadAll() async {
     await UnitPlan.download();
     await ReplacementPlan.download(
@@ -38,6 +40,7 @@ class LoadingPageState extends State<LoadingPage> {
     return Scaffold(
       body: Center(
         child: SizedBox(
+          // Funny loader
           child: Image(image: AssetImage('assets/images/ginkgobewegt.gif')),
           height: 75.0,
           width: 75.0,

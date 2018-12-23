@@ -15,6 +15,7 @@ import 'Settings.dart';
 import 'UnitPlan.dart';
 import 'WorkGroups.dart';
 
+// Define drawer item
 class DrawerItem {
   String title;
   IconData icon;
@@ -22,6 +23,7 @@ class DrawerItem {
   DrawerItem(this.title, this.icon);
 }
 
+// Define page
 class Page {
   IconData icon;
   String name;
@@ -62,10 +64,12 @@ class ShortCutDialogState extends State<ShortCutDialog> {
     if (sharedPreferences == null) {
       return Container();
     }
+    // Show the shortcut dialog
     return SimpleDialog(
         title: Text(AppLocalizations.of(context).whatDoFirst),
         children: <Widget>[
           Column(
+              // List of clickable chips
               children: widget.items.map((item) {
             return GestureDetector(
               onTap: () {
@@ -86,6 +90,7 @@ class ShortCutDialogState extends State<ShortCutDialog> {
               ),
             );
           }).toList()),
+          // Short cut option
           CheckboxListTile(
             value: _showDialog,
             onChanged: (value) {
@@ -118,22 +123,28 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     loadData();
+    // Update replacement plan if new message received
     OneSignal.shared.setNotificationReceivedHandler((osNotification) {
       DateTime now = DateTime.now();
       String lastUpdate = sharedPreferences.getString(Keys.lastUpdate);
+      // Check if last update is longer than one minute ago
       if (lastUpdate == null ||
           now.isAfter(DateTime.parse(lastUpdate).add(Duration(minutes: 1)))) {
+        // Reload app
         sharedPreferences.setString(Keys.lastUpdate, now.toIso8601String());
         Navigator.of(context).pushReplacementNamed('/');
       }
     });
+    // Initialize onesignal
     OneSignal.shared.init('1d7b8ef7-9c9d-4843-a833-8a1e9999818c');
     OneSignal.shared
         .setInFocusDisplayType(OSNotificationDisplayType.notification);
+    // Synchronise tags for notifications
     syncTags();
     super.initState();
   }
 
+  // Load saved data
   void loadData() async {
     sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
@@ -143,6 +154,7 @@ class HomePageState extends State<HomePage> {
     });
   }
 
+  // Return the widget of the page
   _getDrawerItemWidget(int pos, List<Page> pages) {
     if (pos < pages.length)
       return pages[pos].page;
@@ -150,6 +162,7 @@ class HomePageState extends State<HomePage> {
       return Text('Error');
   }
 
+  // Change page
   _onSelectItem(int index) {
     setState(() => _selectedDrawerIndex = index);
     Navigator.of(context).pop();
@@ -157,37 +170,28 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // List of pages
     List<Page> pages = [
-      Page(AppLocalizations
-          .of(context)
-          .unitPlan, Icons.event_note,
+      Page(AppLocalizations.of(context).unitPlan, Icons.event_note,
           UnitPlanPage()),
-      Page(AppLocalizations
-          .of(context)
-          .replacementPlan,
+      Page(AppLocalizations.of(context).replacementPlan,
           Icons.format_list_numbered, ReplacementPlanPage()),
-      Page(AppLocalizations
-          .of(context)
-          .calendar, Icons.calendar_today,
+      Page(AppLocalizations.of(context).calendar, Icons.calendar_today,
           CalendarPage()),
-      Page(AppLocalizations
-          .of(context)
-          .cafetoria, Icons.fastfood,
+      Page(AppLocalizations.of(context).cafetoria, Icons.fastfood,
           CafetoriaPage()),
-      Page(AppLocalizations
-          .of(context)
-          .workGroups, MdiIcons.soccer,
+      Page(AppLocalizations.of(context).workGroups, MdiIcons.soccer,
           WorkGroupsPage()),
       Page(AppLocalizations.of(context).courses, Icons.person, CoursesPage()),
-      Page(AppLocalizations
-          .of(context)
-          .settings, Icons.settings,
+      Page(AppLocalizations.of(context).settings, Icons.settings,
           SettingsPage()),
     ];
 
+    // Map pages to drawer items
     List<DrawerItem> drawerItems =
-    pages.map((Page page) => DrawerItem(page.name, page.icon)).toList();
+        pages.map((Page page) => DrawerItem(page.name, page.icon)).toList();
 
+    // Create list of widget options
     var drawerOptions = <Widget>[];
     for (var i = 0; i < drawerItems.length; i++) {
       var d = drawerItems[i];
@@ -203,6 +207,7 @@ class HomePageState extends State<HomePage> {
         onTap: () => _onSelectItem(i),
       ));
     }
+    // Only show the dialog only at the opening
     if (!_dialogShown) {
       _dialogShown = true;
 
@@ -219,7 +224,9 @@ class HomePageState extends State<HomePage> {
               return false;
             }).length >
             0;
+        // Check if user selected anything in the unit plan (setup)
         if (selectedSubjects) {
+          // Check if short cut dialog enabled
           if (_showDialog) {
             showDialog<String>(
                 context: context,
@@ -237,6 +244,7 @@ class HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
+        // Current page's title
         title: Text(drawerItems[_selectedDrawerIndex].title),
         elevation: 0.0,
       ),
@@ -247,12 +255,14 @@ class HomePageState extends State<HomePage> {
             DrawerHeader(
               child: Column(
                 children: <Widget>[
+                  // Logo
                   Container(
                     height: 100.0,
                     child: SvgPicture.asset(
                       'assets/images/logo_white.svg',
                     ),
                   ),
+                  // GrAde
                   Text(
                     grade,
                     style: TextStyle(
@@ -264,10 +274,12 @@ class HomePageState extends State<HomePage> {
               ),
               decoration: BoxDecoration(color: Theme.of(context).primaryColor),
             ),
+            // Drawer options
             Column(children: drawerOptions)
           ],
         ),
       ),
+      // Current page
       body: _getDrawerItemWidget(_selectedDrawerIndex, pages),
     );
   }

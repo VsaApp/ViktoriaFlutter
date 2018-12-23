@@ -25,7 +25,8 @@ class BrotherSisterReplacementPlanView
   void initState() {
     // Download the replacementplan temp...
     download(widget.grade, alreadyLoad: false).then((_) {
-      load(widget.grade, temp: true, setOnlyColor: true, setFilter: false).then((d) {
+      load(widget.grade, temp: true, setOnlyColor: true, setFilter: false)
+          .then((d) {
         setState(() {
           days = d;
           days.forEach((ReplacementPlanDay day) => day.setColors());
@@ -85,7 +86,6 @@ class BrotherSisterReplacementPlanDayListState
       child: Expanded(
         child: Scaffold(
           backgroundColor: Theme.of(context).primaryColor,
-
           // Tab bar header...
           appBar: TabBar(
             indicatorColor: Theme.of(context).accentColor,
@@ -97,7 +97,6 @@ class BrotherSisterReplacementPlanDayListState
               );
             }).toList(),
           ),
-
           // Tab bar views...
           body: TabBarView(
             children: widget.days.map((day) {
@@ -107,7 +106,6 @@ class BrotherSisterReplacementPlanDayListState
                 color: Colors.white,
                 padding: EdgeInsets.only(
                     right: 10.0, left: 10.0, bottom: 10.0, top: 0.0),
-
                 // List of replacementplan information and all changes...
                 child: ListView(
                   shrinkWrap: true,
@@ -171,7 +169,7 @@ class BrotherSisterReplacementPlanDayListState
                       ),
                     )),
                   ]..addAll(
-                      // Show all changes in a list...
+                        // Show all changes in a list...
                         day.changes.map((change) {
                       return ReplacementPlanRow(
                           changes: day.changes, change: change);

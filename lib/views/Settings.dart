@@ -49,6 +49,7 @@ class SettingsPageView extends State<SettingsPage> {
     super.initState();
   }
 
+  // Load saved settings
   void loadSettings() async {
     sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
@@ -65,15 +66,9 @@ class SettingsPageView extends State<SettingsPage> {
       _pages = [
         AppLocalizations.of(context).unitPlan,
         AppLocalizations.of(context).replacementPlan,
-        AppLocalizations
-            .of(context)
-            .calendar,
-        AppLocalizations
-            .of(context)
-            .cafetoria,
-        AppLocalizations
-            .of(context)
-            .workGroups,
+        AppLocalizations.of(context).calendar,
+        AppLocalizations.of(context).cafetoria,
+        AppLocalizations.of(context).workGroups,
         AppLocalizations.of(context).courses
       ];
       _page = _pages[sharedPreferences.getInt(Keys.initialPage) ?? 0];
@@ -93,6 +88,7 @@ class SettingsPageView extends State<SettingsPage> {
         children: <Widget>[
           Section(title: AppLocalizations.of(context).appSettings, children: <
               Widget>[
+            // Sort replacement plan option
             CheckboxListTile(
               value: _sortReplacementPlan,
               onChanged: (bool value) {
@@ -105,6 +101,7 @@ class SettingsPageView extends State<SettingsPage> {
               title: new Text(AppLocalizations.of(context).sortReplacementPlan),
               controlAffinity: ListTileControlAffinity.trailing,
             ),
+            // Show replacement plan in unit plan option
             CheckboxListTile(
               value: _showReplacementPlanInUnitPlan,
               onChanged: (bool value) {
@@ -118,6 +115,7 @@ class SettingsPageView extends State<SettingsPage> {
               title: new Text(
                   AppLocalizations.of(context).showReplacementPlanInUnitPlan),
             ),
+            // Get replacementplan notifications option
             CheckboxListTile(
               value: _getReplacementPlanNotifications,
               onChanged: (bool value) {
@@ -126,12 +124,14 @@ class SettingsPageView extends State<SettingsPage> {
                       Keys.getReplacementPlanNotifications, value);
                   sharedPreferences.commit();
                   _getReplacementPlanNotifications = value;
+                  // Synchronise tags for notifications
                   syncTags();
                 });
               },
               title: new Text(
                   AppLocalizations.of(context).getReplacementPlanNotifications),
             ),
+            // Show short cut dialog option
             CheckboxListTile(
               value: _showShortCutDialog,
               onChanged: (bool value) {
@@ -157,6 +157,7 @@ class SettingsPageView extends State<SettingsPage> {
                       ),
                     ),
                   ),
+                  // Initial page selector
                   SizedBox(
                     width: double.infinity,
                     child: DropdownButtonHideUnderline(
@@ -189,7 +190,9 @@ class SettingsPageView extends State<SettingsPage> {
             children: <Widget>[
               (sharedPreferences.getBool(Keys.isTeacher)
                   ? Container()
-                  : Padding(
+                  :
+                  // Grade selector
+                  Padding(
                       padding: EdgeInsets.only(left: 15.0, right: 22.5),
                       child: SizedBox(
                         width: double.infinity,
@@ -207,6 +210,7 @@ class SettingsPageView extends State<SettingsPage> {
                               setState(() {
                                 sharedPreferences.setString(Keys.grade, grade);
                                 sharedPreferences.commit().then((_) {
+                                  // Reload app
                                   syncTags();
                                   Navigator.of(context)
                                       .pushReplacementNamed('/');
@@ -217,6 +221,7 @@ class SettingsPageView extends State<SettingsPage> {
                         ),
                       ),
                     )),
+              // Logout button
               Container(
                 margin: EdgeInsets.only(top: 20.0),
                 child: SizedBox(
@@ -230,6 +235,7 @@ class SettingsPageView extends State<SettingsPage> {
                       sharedPreferences.remove(Keys.grade);
                       sharedPreferences.remove(Keys.isTeacher);
                       sharedPreferences.commit().then((_) {
+                        // Reload app
                         syncTags();
                         Navigator.of(context).pushReplacementNamed('/login');
                       });

@@ -34,6 +34,7 @@ Map<String, String> subjects = {
   'PJ': 'Projektkurs'
 };
 
+// Get a subject by short or long name
 String getSubject(String name) {
   if (subjects.containsKey(name.toUpperCase())) {
     return subjects[name.toUpperCase()];

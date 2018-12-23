@@ -1,7 +1,9 @@
+// Describes a list of calendar events...
 class Calendar {
   static List<CalendarEvent> days;
 }
 
+// Describes a calendar event...
 class CalendarEvent {
   final String name;
   final String info;
@@ -20,6 +22,7 @@ class CalendarEvent {
   }
 }
 
+// Describes a date of an event...
 class CalendarEventDate {
   final String date;
   final String time;

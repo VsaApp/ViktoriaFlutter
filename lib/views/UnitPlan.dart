@@ -39,6 +39,7 @@ class UnitPlanView extends State<UnitPlanPage> {
       checkOnline.then((online) {
         _offlineShown = true;
         if (!online) {
+          // Show offline information
           Scaffold.of(context).showSnackBar(
             SnackBar(
               content: Text(AppLocalizations.of(context).oldDataIsShown),
@@ -78,9 +79,11 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
         _grade = sharedPreferences.getString(Keys.grade);
       });
     });
+    // Select correct tab
     _tabController = new TabController(vsync: this, length: widget.days.length);
     int weekday = DateTime.now().weekday - 1;
     bool over = false;
+    // If weekend select Monday
     if (weekday > 4) {
       weekday = 0;
     } else if (widget.days[weekday].lessons.length > 0) {
@@ -106,6 +109,7 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
     if (over) {
       weekday++;
     }
+    // If weekend select Monday
     if (weekday > 4) {
       weekday = 0;
     }
@@ -129,6 +133,7 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
       child: Expanded(
         child: Scaffold(
           backgroundColor: Theme.of(context).primaryColor,
+          // Tab bar views
           appBar: TabBar(
             controller: _tabController,
             indicatorColor: Theme.of(context).accentColor,
@@ -136,20 +141,25 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
             tabs: widget.days.map((day) {
               return Container(
                 padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
-                child: Text(day.name.substring(0, 2).toUpperCase()),
+                child: Text(day.name
+                    .substring(0, 2)
+                    .toUpperCase()), // Show all weekday names
               );
             }).toList(),
           ),
           body: TabBarView(
             controller: _tabController,
+            // List of days
             children: widget.days.map((day) {
               return Container(
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.white,
+                // List of subjects
                 child: ListView(
                   shrinkWrap: true,
                   children: day.lessons.map((lesson) {
+                    // Check which subject is selected
                     int _selected = sharedPreferences.getInt(Keys.unitPlan +
                         _grade +
                         '-' +
@@ -163,6 +173,7 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                     return GestureDetector(
                       onTap: () {
                         if (lesson.subjects.length > 1) {
+                          // Show subject select dialog
                           showDialog<String>(
                               context: context,
                               barrierDismissible: true,
@@ -175,6 +186,7 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                                       .map((subject) {
                                         return SimpleDialogOption(
                                           onPressed: () {
+                                            // Update unit plan
                                             setState(() {
                                               sharedPreferences.setInt(
                                                   Keys.unitPlan +
@@ -196,38 +208,40 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                                                   lesson.subjects
                                                       .indexOf(subject));
                                               Navigator.pop(context);
-                                              ReplacementPlan.update(sharedPreferences);
+                                              ReplacementPlan.update(
+                                                  sharedPreferences);
                                             });
+                                            // Synchronise tags for notifications
                                             syncTags();
                                             bool _selected = (sharedPreferences
-                                                .getKeys()
-                                                .where((key) =>
-                                            key ==
-                                                Keys.exams +
-                                                    lesson
-                                                        .subjects[lesson
-                                                        .subjects
-                                                        .indexOf(
-                                                        subject)]
-                                                        .lesson
-                                                        .toUpperCase())
-                                                .length >
+                                                    .getKeys()
+                                                    .where((key) =>
+                                                        key ==
+                                                        Keys.exams +
+                                                            lesson
+                                                                .subjects[lesson
+                                                                    .subjects
+                                                                    .indexOf(
+                                                                        subject)]
+                                                                .lesson
+                                                                .toUpperCase())
+                                                    .length >
                                                 0);
                                             if (!_selected &&
                                                 lesson
-                                                    .subjects[lesson
-                                                    .subjects
-                                                    .indexOf(subject)]
-                                                    .block !=
+                                                        .subjects[lesson
+                                                            .subjects
+                                                            .indexOf(subject)]
+                                                        .block !=
                                                     null &&
                                                 lesson
-                                                    .subjects[lesson
-                                                    .subjects
-                                                    .indexOf(subject)]
-                                                    .lesson !=
-                                                    AppLocalizations
-                                                        .of(context)
+                                                        .subjects[lesson
+                                                            .subjects
+                                                            .indexOf(subject)]
+                                                        .lesson !=
+                                                    AppLocalizations.of(context)
                                                         .freeLesson) {
+                                              // Show writing option dialog
                                               showDialog<String>(
                                                 context: context1,
                                                 barrierDismissible: true,
@@ -235,19 +249,18 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                                                     (BuildContext context2) {
                                                   return CourseEdit(
                                                     subject: lesson.subjects[
-                                                    lesson.subjects
-                                                        .indexOf(subject)],
+                                                        lesson.subjects
+                                                            .indexOf(subject)],
                                                     blocks: [
                                                       lesson
                                                           .subjects[lesson
-                                                          .subjects
-                                                          .indexOf(subject)]
+                                                              .subjects
+                                                              .indexOf(subject)]
                                                           .block
                                                     ],
                                                     onExamChange: (_) {
                                                       setState(() {
-                                                        UnitPlan
-                                                            .setAllSelections(
+                                                        UnitPlan.setAllSelections(
                                                             sharedPreferences);
                                                       });
                                                     },
@@ -276,9 +289,12 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                                 AppLocalizations.of(context).lunchBreak &&
                             !nothingSelected) {
                           sharedPreferences.setBool(
-                              Keys.exams + lesson.subjects[_selected].lesson.toUpperCase(),
+                              Keys.exams +
+                                  lesson.subjects[_selected].lesson
+                                      .toUpperCase(),
                               true);
                           sharedPreferences.commit();
+                          // Show writing option dialog
                           showDialog<String>(
                             context: context,
                             barrierDismissible: true,
@@ -298,7 +314,9 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                         }
                       },
                       child: (nothingSelected
-                          ? UnitPlanRow(
+                          ?
+                          // Show select lesson information
+                          UnitPlanRow(
                               subject: UnitPlanSubject(
                                   teacher: '',
                                   lesson:
@@ -310,21 +328,25 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                           : (lesson.subjects[_selected].changes.length == 0 ||
                                   !sharedPreferences.getBool(
                                       Keys.showReplacementPlanInUnitPlan)
-                              ? UnitPlanRow(
+                              ?
+                              // Show normal subject
+                              UnitPlanRow(
                                   subject: lesson.subjects[_selected],
                                   unit: day.lessons.indexOf(lesson),
                                 )
-                          : Column(
-                        children: lesson.subjects[_selected].changes
-                            .map((change) {
-                          return ReplacementPlanRow(
-                              change: change,
-                              changes: lesson
-                                  .subjects[_selected].changes);
-                        })
-                            .toList()
-                            .cast<Widget>(),
-                      ))),
+                              :
+                              // Show list of changes
+                              Column(
+                                  children: lesson.subjects[_selected].changes
+                                      .map((change) {
+                                        return ReplacementPlanRow(
+                                            change: change,
+                                            changes: lesson
+                                                .subjects[_selected].changes);
+                                      })
+                                      .toList()
+                                      .cast<Widget>(),
+                                ))),
                     );
                   }).toList(),
                 ),
@@ -358,6 +380,7 @@ class UnitPlanRow extends StatelessWidget {
           return Row(
             children: <Widget>[
               Container(
+                // Add padding if unit shown
                 width: (showUnit) ? constraints.maxWidth * 0.1 : 0,
                 child: Text(
                   ((unit != 5 && showUnit) ? (unit + 1).toString() : ''),
@@ -368,10 +391,13 @@ class UnitPlanRow extends StatelessWidget {
               ),
               Column(
                 children: <Widget>[
+                  // Subject name
                   Container(
                     width: constraints.maxWidth * 0.75,
                     child: (unit != 5
-                        ? Text(
+                        ?
+                        // Normal name
+                        Text(
                             getSubject(subject.lesson),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -379,7 +405,9 @@ class UnitPlanRow extends StatelessWidget {
                               color: Theme.of(context).primaryColor,
                             ),
                           )
-                        : Center(
+                        :
+                        // Lunch break
+                        Center(
                             child: Text(
                               getSubject(subject.lesson),
                               style: TextStyle(
@@ -388,6 +416,7 @@ class UnitPlanRow extends StatelessWidget {
                             ),
                           )),
                   ),
+                  // Unit time
                   Container(
                     width: constraints.maxWidth * 0.75,
                     child: Text(
@@ -401,13 +430,17 @@ class UnitPlanRow extends StatelessWidget {
               ),
               Column(
                 children: <Widget>[
+                  // Teacher name
                   Container(
+                    // Add padding if unit not shown
                     width: (showUnit)
                         ? constraints.maxWidth * 0.15
                         : constraints.maxWidth * 0.25,
                     child: Text(subject.teacher),
                   ),
+                  // Room
                   Container(
+                    // Add padding if unit not shown
                     width: (showUnit)
                         ? constraints.maxWidth * 0.15
                         : constraints.maxWidth * 0.25,

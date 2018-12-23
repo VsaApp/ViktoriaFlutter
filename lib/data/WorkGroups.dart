@@ -17,7 +17,6 @@ Future download() async {
         new Random().nextInt(99999999).toString();
     print(_url);
     final response = await http.Client().get(_url);
-
     // Save loaded data...
     sharedPreferences.setString(Keys.workGroups, response.body);
     await sharedPreferences.commit();

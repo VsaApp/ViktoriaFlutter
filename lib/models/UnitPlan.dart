@@ -3,26 +3,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Keys.dart';
 import 'ReplacementPlan.dart';
 
-// Describes the whole unitplan...
+// Describes the whole unit plan...
 class UnitPlan {
   static List<UnitPlanDay> days;
 
-  // Delete all changes in the unitplan...
+  // Delete all changes in the unit plan...
   static void resetChanges() {
-    days.forEach((day) =>
-        day.lessons.forEach((lesson) =>
-            lesson.subjects
-                .forEach((subject) => subject.changes = [].cast<Change>())));
+    days.forEach((day) => day.lessons.forEach((lesson) => lesson.subjects
+        .forEach((subject) => subject.changes = [].cast<Change>())));
   }
 
   // Set all default selections...
   static void setAllSelections(SharedPreferences sharedPreferences) {
     days.forEach(
-            (day) => day.setSelections(days.indexOf(day), sharedPreferences));
+        (day) => day.setSelections(days.indexOf(day), sharedPreferences));
   }
 }
 
-// Describes a day of the unitplan...
+// Describes a day of the unit plan...
 class UnitPlanDay {
   final String name;
   final List<dynamic> lessons;
@@ -48,7 +46,7 @@ class UnitPlanDay {
   }
 }
 
-// Describes a Lesson of a unitplan day...
+// Describes a Lesson of a unit plan day...
 class UnitPlanLesson {
   final List<UnitPlanSubject> subjects;
 
@@ -74,7 +72,7 @@ class UnitPlanLesson {
   }
 }
 
-// Describes a subject of a unitplan lesson...
+// Describes a subject of a unit plan lesson...
 class UnitPlanSubject {
   final String teacher;
   final String lesson;

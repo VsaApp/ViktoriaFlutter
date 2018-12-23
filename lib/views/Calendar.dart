@@ -35,8 +35,10 @@ class CalendarDayListState extends State<CalendarDayList> {
 
   @override
   void initState() {
+    // Map events
     widget.events.forEach((event) {
       if (event.start.date != event.end.date && event.end.date != null) {
+        // Event is longer than one day
         final start = DateTime(
             int.parse(event.start.date.split('.')[2]),
             int.parse(event.start.date.split('.')[1]),
@@ -46,6 +48,7 @@ class CalendarDayListState extends State<CalendarDayList> {
             int.parse(event.end.date.split('.')[1]),
             int.parse(event.end.date.split('.')[0]));
         for (int i = 0; i < end.difference(start).inDays + 1; i++) {
+          // Added event for every day
           var date = start;
           date = date.add(Duration(days: i));
           addEvent(CalendarEvent(
@@ -61,12 +64,14 @@ class CalendarDayListState extends State<CalendarDayList> {
               end: event.end));
         }
       } else {
+        // Event is only on one day
         addEvent(event);
       }
     });
     super.initState();
   }
 
+  // Add an event to the list of the marked events
   void addEvent(CalendarEvent event) {
     _markedDateMap.add(
       DateTime(
@@ -93,20 +98,20 @@ class CalendarDayListState extends State<CalendarDayList> {
       onDayPressed: (DateTime date, List<Event> events) {
         this.setState(() => _currentDate = date);
         if (events.length > 0) {
+          // Show information about the events on the clicked date
           showDialog<String>(
               context: context,
               barrierDismissible: true,
               builder: (BuildContext context1) {
                 return SimpleDialog(
-                    title: Text(AppLocalizations
-                        .of(context)
-                        .dates +
+                    title: Text(AppLocalizations.of(context).dates +
                         ' - ' +
                         events[0].date.day.toString() +
                         '.' +
                         events[0].date.month.toString() +
                         '.' +
                         events[0].date.year.toString()),
+                    // List of event names
                     children: events.map((event) {
                       return SimpleDialogOption(
                         child: Text(event.title),

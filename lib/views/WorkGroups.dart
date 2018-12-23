@@ -30,6 +30,7 @@ class WorkGroupsDayListState extends State<WorkGroupsDayList>
 
   @override
   void initState() {
+    // Select correct tab
     _tabController = new TabController(vsync: this, length: widget.days.length);
     int weekday = DateTime.now().weekday - 1;
     if (weekday > 4) {
@@ -59,12 +60,16 @@ class WorkGroupsDayListState extends State<WorkGroupsDayList>
             tabs: widget.days.map((day) {
               return Container(
                 padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
-                child: Text(day.weekday.substring(0, 2).toUpperCase()),
+                child: Text(day.weekday
+                    .substring(0, 2)
+                    .toUpperCase()), // Show all weekday names
               );
             }).toList(),
           ),
+          // Tab bar views
           body: TabBarView(
             controller: _tabController,
+            // List of days
             children: widget.days.map((day) {
               return Container(
                 width: double.infinity,
@@ -72,6 +77,7 @@ class WorkGroupsDayListState extends State<WorkGroupsDayList>
                 color: Colors.white,
                 child: ListView(
                   shrinkWrap: true,
+                  // List of work groups
                   children: day.data.map((workgroup) {
                     return Container(
                       padding: EdgeInsets.all(10.0),
@@ -82,6 +88,7 @@ class WorkGroupsDayListState extends State<WorkGroupsDayList>
                             children: <Widget>[
                               Column(
                                 children: <Widget>[
+                                  // Work group name
                                   Container(
                                     width: constraints.maxWidth * 0.75,
                                     child: Text(
@@ -93,6 +100,7 @@ class WorkGroupsDayListState extends State<WorkGroupsDayList>
                                       ),
                                     ),
                                   ),
+                                  // Work group meet time
                                   Container(
                                     width: constraints.maxWidth * 0.75,
                                     child: Text(
@@ -106,6 +114,7 @@ class WorkGroupsDayListState extends State<WorkGroupsDayList>
                               ),
                               Column(
                                 children: <Widget>[
+                                  // Work groups participants
                                   Container(
                                     width: constraints.maxWidth * 0.25,
                                     child: Text(
@@ -113,6 +122,7 @@ class WorkGroupsDayListState extends State<WorkGroupsDayList>
                                       textAlign: TextAlign.end,
                                     ),
                                   ),
+                                  // Work group place
                                   Container(
                                     width: constraints.maxWidth * 0.25,
                                     child: Text(

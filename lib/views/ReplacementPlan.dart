@@ -57,12 +57,14 @@ class ReplacementPlanView extends State<ReplacementPlanPage> {
         Column(
           children: <Widget>[ReplacementPlanDayList(days: data)],
         ),
+        // FAB
         Positioned(
             bottom: 16.0,
             right: 16.0,
             child: Container(
               child: GradeFab(
                 onSelectPressed: (Function(String grade) selected) {
+                  // Select a grade to show the replacement plan of
                   showDialog<String>(
                       context: context,
                       barrierDismissible: true,
@@ -88,6 +90,7 @@ class ReplacementPlanView extends State<ReplacementPlanPage> {
                       });
                 },
                 onSelected: (String grade) {
+                  // Show replacement plan for another grade
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) =>
                           BrotherSisterReplacementPlanPage(grade: grade)));
@@ -140,6 +143,7 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
         sharedPreferences = instance;
       });
     });
+    // Select the correct tab
     _tabController = new TabController(vsync: this, length: widget.days.length);
     int day = 0;
     if (widget.days.length > 1) {
@@ -205,9 +209,11 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
               );
             }).toList(),
           ),
+          // Tab bar views
           body: TabBarView(
             controller: _tabController,
             children: widget.days.map((day) {
+              // List of replacement plan days
               return Container(
                 width: double.infinity,
                 height: double.infinity,
@@ -215,6 +221,7 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
                 child: ListView(
                   shrinkWrap: true,
                   children: <Widget>[
+                    // For date information
                     Center(
                       child: Padding(
                         padding: EdgeInsets.only(top: 10.0),
@@ -243,6 +250,7 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
                         ),
                       ),
                     ),
+                    // Update date iformation
                     Center(
                         child: Container(
                       margin: EdgeInsets.only(bottom: 10.0),
@@ -282,34 +290,40 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
                                   day.changes.length - 1);
                         }).toList()
                       :
-
                       // Show the changes in three categories...
                       [
                           Section(
-                              title: AppLocalizations.of(context).myChanges,
-                              isLast: day.getUndefChanges().length == 0 &&
-                                  day.getOtherChanges().length == 0,
-                              children: day.getMyChanges().length > 0
-                                  ? day.getMyChanges().map((change) {
-                                      return ReplacementPlanRow(
-                                          changes: day.getMyChanges(),
-                                          change: change);
-                                    }).toList()
-                                  : <Widget>[
-                                      Container(
-                                        margin: EdgeInsets.only(top: 10.0),
-                                        child: SizedBox(
-                                          width: double.infinity,
-                                          child: Center(
-                                            child: Text(
-                                                AppLocalizations.of(context)
-                                                    .noChanges),
-                                          ),
+                            title: AppLocalizations.of(context).myChanges,
+                            isLast: day.getUndefChanges().length == 0 &&
+                                day.getOtherChanges().length == 0,
+                            children: day.getMyChanges().length > 0
+                                ?
+                                // Show my changes
+                                day.getMyChanges().map((change) {
+                                    return ReplacementPlanRow(
+                                        changes: day.getMyChanges(),
+                                        change: change);
+                                  }).toList()
+                                :
+                                // Show no changes information
+                                <Widget>[
+                                    Container(
+                                      margin: EdgeInsets.only(top: 10.0),
+                                      child: SizedBox(
+                                        width: double.infinity,
+                                        child: Center(
+                                          child: Text(
+                                              AppLocalizations.of(context)
+                                                  .noChanges),
                                         ),
                                       ),
-                                    ]),
+                                    ),
+                                  ],
+                          ),
                           day.getUndefChanges().length > 0
-                              ? Section(
+                              ?
+                              // Show non-filtered changes
+                              Section(
                                   isLast: day.getOtherChanges().length == 0,
                                   title:
                                       AppLocalizations.of(context).undefChanges,
@@ -320,7 +334,9 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
                                   }).toList())
                               : Container(),
                           day.getOtherChanges().length > 0
-                              ? Section(
+                              ?
+                              // Show not my changes
+                              Section(
                                   isLast: true,
                                   title:
                                       AppLocalizations.of(context).otherChanges,
@@ -362,12 +378,14 @@ class SectionView extends State<Section> {
       margin: EdgeInsets.all(10.0),
       child: Column(
         children: <Widget>[
+          // Title
           Text(
             widget.title,
             style: TextStyle(
               color: Colors.grey,
             ),
           ),
+          // Border
           Container(
               padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
               decoration: BoxDecoration(
@@ -378,6 +396,7 @@ class SectionView extends State<Section> {
                   ),
                 ),
               ),
+              // List of items
               child: Column(
                 children: widget.children,
               )),
@@ -406,7 +425,9 @@ class ReplacementPlanRow extends StatelessWidget {
       showUnit = false;
     return Container(
       padding: EdgeInsets.only(
+          // Add padding if unit not shown
           top: showUnit ? (changes.indexOf(change) == 0 ? 10 : 20) : 5,
+          // Add padding if row is last row
           bottom: isLast ? 100.0 : 0,
           left: 10,
           right: 10),
@@ -415,6 +436,7 @@ class ReplacementPlanRow extends StatelessWidget {
           return Row(
             children: <Widget>[
               Column(children: <Widget>[
+                // Show unit of change
                 Container(
                   width: constraints.maxWidth * 0.07,
                   child: Text(
@@ -433,14 +455,19 @@ class ReplacementPlanRow extends StatelessWidget {
                     left: BorderSide(
                         width: 2,
                         color: (change.color == null)
-                            ? Theme.of(context).primaryColor
-                            : change.color),
+                            ?
+                            // Default color
+                            Theme.of(context).primaryColor
+                            :
+                            // Changed color
+                            change.color),
                   ),
                 ),
                 child: Row(
                   children: <Widget>[
                     Column(
                       children: <Widget>[
+                        // Original subject
                         Container(
                           width: constraints.maxWidth * 0.60,
                           child: Text(
@@ -452,6 +479,7 @@ class ReplacementPlanRow extends StatelessWidget {
                             ),
                           ),
                         ),
+                        // Information
                         Container(
                             width: constraints.maxWidth * 0.60,
                             child: Text(
@@ -464,6 +492,7 @@ class ReplacementPlanRow extends StatelessWidget {
                     ),
                     Column(
                       children: <Widget>[
+                        // Original room
                         Container(
                           width: constraints.maxWidth * 0.15,
                           child: Text(
@@ -473,6 +502,7 @@ class ReplacementPlanRow extends StatelessWidget {
                             ),
                           ),
                         ),
+                        // Changed room
                         Container(
                           width: constraints.maxWidth * 0.15,
                           child: Text(
@@ -488,6 +518,7 @@ class ReplacementPlanRow extends StatelessWidget {
                     ),
                     Column(
                       children: <Widget>[
+                        // Original teacher
                         Container(
                           width: constraints.maxWidth * 0.15,
                           child: Text(
@@ -497,6 +528,7 @@ class ReplacementPlanRow extends StatelessWidget {
                             ),
                           ),
                         ),
+                        // Changed teacher
                         Container(
                             width: constraints.maxWidth * 0.15,
                             child: Text(
@@ -582,6 +614,7 @@ class _GradeFabState extends State<GradeFab>
           });
     _animateIcon =
         Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
+    // Create animations
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       setState(() {
         _buttonColor = ColorTween(
@@ -626,6 +659,7 @@ class _GradeFabState extends State<GradeFab>
     isOpened = !isOpened;
   }
 
+  // Update last selected grades
   void updatePrefs(String grade) {
     if (!grades.contains(grade)) {
       setState(() {
@@ -644,6 +678,7 @@ class _GradeFabState extends State<GradeFab>
     }
   }
 
+  // Smaller select FAB
   Widget select() {
     return Container(
       child: FloatingActionButton(
@@ -659,6 +694,7 @@ class _GradeFabState extends State<GradeFab>
     );
   }
 
+  // Toggle FAB
   Widget toggle() {
     return Container(
       child: FloatingActionButton(
@@ -708,6 +744,7 @@ class _GradeFabState extends State<GradeFab>
                   0.0,
                 ),
                 child: Container(
+                  // Create FAB for every grade
                   child: FloatingActionButton(
                     heroTag: 'grade' + grade,
                     mini: true,

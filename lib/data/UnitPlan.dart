@@ -9,9 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Keys.dart';
 import '../models/UnitPlan.dart';
 
-// Download the unitplan...
+// Download the unit plan...
 Future download() async {
-
   // Get the selected grade...
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String _grade = sharedPreferences.getString(Keys.grade);
@@ -38,23 +37,23 @@ Future download() async {
   // Parse data...
   UnitPlan.days = await fetchDays();
 
-  // Set default selections... 
+  // Set default selections...
   UnitPlan.setAllSelections(sharedPreferences);
 }
 
-// Returns the static unitplan...
+// Returns the static unit plan...
 List<UnitPlanDay> getUnitPlan() {
   return UnitPlan.days;
 }
 
-// Get unitplan from preferences...
+// Get unit plan from preferences...
 Future<List<UnitPlanDay>> fetchDays() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String _grade = sharedPreferences.getString(Keys.grade);
   return parseDays(sharedPreferences.getString(Keys.unitPlan + _grade));
 }
 
-// Returns parsed unitplan...
+// Returns parsed unit plan...
 List<UnitPlanDay> parseDays(String responseBody) {
   final parsed = json.decode(responseBody).cast<String, dynamic>()['data'];
   return parsed.map<UnitPlanDay>((json) => UnitPlanDay.fromJson(json)).toList();
@@ -83,8 +82,8 @@ Future syncTags() async {
           '-' +
           (lesson.subjects[0].block == ''
               ? getUnitPlan().indexOf(day).toString() +
-              '-' +
-              day.lessons.indexOf(lesson).toString()
+                  '-' +
+                  day.lessons.indexOf(lesson).toString()
               : lesson.subjects[0].block);
       OneSignal.shared.sendTag(prefKey,
           sharedPreferences.getInt(Keys.unitPlan + prefKey).toString());

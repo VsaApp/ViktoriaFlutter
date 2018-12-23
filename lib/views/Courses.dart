@@ -50,14 +50,14 @@ class CourseEditView extends State<CourseEdit> {
       title: Text(
           getSubject(widget.subject.lesson) + ' ' + widget.subject.teacher),
       children: <Widget>[
+        // Writing option
         CheckboxListTile(
           value: _exams,
           onChanged: (bool value) {
             setState(() {
-              widget.blocks.forEach((block) {
-                sharedPreferences.setBool(
-                    Keys.exams + widget.subject.lesson.toUpperCase(), value);
-              });
+              // Save change
+              sharedPreferences.setBool(
+                  Keys.exams + widget.subject.lesson.toUpperCase(), value);
               sharedPreferences.commit();
               ReplacementPlan.update(sharedPreferences);
               setState(() {
@@ -120,6 +120,7 @@ class CoursesView extends State<CoursesPage> {
 
     Map<String, List<UnitPlanSubject>> courses = {};
 
+    // Add to subjects to map
     selectedSubjects.forEach((subject) {
       if (subject.lesson != AppLocalizations.of(context).lunchBreak &&
           subject.lesson != AppLocalizations.of(context).freeLesson) {
@@ -134,13 +135,17 @@ class CoursesView extends State<CoursesPage> {
     return ListView(
         shrinkWrap: true,
         children: (courses.keys.toList().length > 0)
-            ? courses.keys
+            ?
+            // List of courses
+            courses.keys
                 .toList()
                 .map((key) => CourseRow(
                     subjects: courses[key].toList(),
                     sharedPreferences: sharedPreferences))
                 .toList()
-            : <Widget>[
+            :
+            // No subjects are selected in the unit plan
+            <Widget>[
                 Center(child: Text(AppLocalizations.of(context).noCourses))
               ]);
   }
@@ -173,6 +178,7 @@ class CourseRowView extends State<CourseRow> {
             .getBool(Keys.exams + widget.subjects[0].lesson.toUpperCase()) ??
         true;
 
+    // Create list of blocks
     widget.subjects.forEach((subject) {
       if (course.length == 0) course = subject.course;
       if (!blocks.contains(subject.block)) blocks.add(subject.block);
@@ -197,6 +203,7 @@ class CourseRowView extends State<CourseRow> {
                   children: <Widget>[
                     Column(
                       children: <Widget>[
+                        // Course subject name
                         Container(
                           width: constraints.maxWidth * 0.70,
                           child: Text(
@@ -208,6 +215,7 @@ class CourseRowView extends State<CourseRow> {
                             ),
                           ),
                         ),
+                        // Course teacher
                         Container(
                             width: constraints.maxWidth * 0.70,
                             child: Text(
@@ -220,6 +228,7 @@ class CourseRowView extends State<CourseRow> {
                     ),
                     Column(
                       children: <Widget>[
+                        // Course name
                         Container(
                           width: constraints.maxWidth * 0.20,
                           child: Text(
@@ -229,6 +238,7 @@ class CourseRowView extends State<CourseRow> {
                             ),
                           ),
                         ),
+                        // Writing selected
                         Container(
                           width: constraints.maxWidth * 0.20,
                           child: Text(
@@ -244,6 +254,7 @@ class CourseRowView extends State<CourseRow> {
                     ),
                     Column(
                       children: <Widget>[
+                        // Edit button
                         Container(
                           width: constraints.maxWidth * 0.10,
                           child: IconButton(

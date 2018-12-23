@@ -49,6 +49,7 @@ class LoginView extends State<LoginPage> {
   final _teacherUsernameController = TextEditingController();
   final _teacherPasswordController = TextEditingController();
 
+  // Check if credentials entered are correct
   void checkPupilForm() async {
     String _username =
         sha256.convert(utf8.encode(_pupilUsernameController.text)).toString();
@@ -61,6 +62,7 @@ class LoginView extends State<LoginPage> {
         '/');
     _pupilCredentialsCorrect = json.decode(response.body)['status'];
     if (_pupilFormKey.currentState.validate()) {
+      // Save correct credentials
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
       sharedPreferences.setString(Keys.username, _pupilUsernameController.text);
@@ -68,12 +70,14 @@ class LoginView extends State<LoginPage> {
       sharedPreferences.setString(Keys.grade, _grade);
       sharedPreferences.setBool(Keys.isTeacher, false);
       sharedPreferences.commit();
+      // Show app
       Navigator.pushReplacementNamed(context, '/');
     } else {
       _pupilPasswordController.clear();
     }
   }
 
+  // Check if credentials entered are correct
   void checkTeacherForm() async {
     String _username = _teacherUsernameController.text.toUpperCase();
     String _password = _teacherPasswordController.text;
@@ -81,6 +85,7 @@ class LoginView extends State<LoginPage> {
         .get('https://api.vsa.2bad2c0.de/unitplan/' + _username + '.json');
     _teacherCredentialsCorrect = response.statusCode != 404;
     if (_teacherFormKey.currentState.validate()) {
+      // Save correct credentials
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
       sharedPreferences.setString(Keys.username, _username);
@@ -88,6 +93,7 @@ class LoginView extends State<LoginPage> {
       sharedPreferences.setString(Keys.grade, _username);
       sharedPreferences.setBool(Keys.isTeacher, true);
       sharedPreferences.commit();
+      // Show app
       Navigator.pushReplacementNamed(context, '/');
     } else {
       _teacherPasswordController.clear();
@@ -117,6 +123,7 @@ class LoginView extends State<LoginPage> {
         _type = (online ? '' : 'offline');
       });
       if (_type == '') {
+        // Show type select dialog
         showDialog<String>(
             context: context,
             barrierDismissible: false,
@@ -126,6 +133,7 @@ class LoginView extends State<LoginPage> {
                 children: <Widget>[
                   SimpleDialogOption(
                     onPressed: () {
+                      // Selected pupil
                       Navigator.pop(context);
                       setState(() {
                         _type = 'pupil';
@@ -135,6 +143,7 @@ class LoginView extends State<LoginPage> {
                   ),
                   SimpleDialogOption(
                     onPressed: () {
+                      // Selected teacher
                       Navigator.pop(context);
                       setState(() {
                         _type = 'teacher';
@@ -168,6 +177,7 @@ class LoginView extends State<LoginPage> {
         margin: EdgeInsets.all(10.0),
         child: ListView(
           children: <Widget>[
+            // Logo
             Container(
               height: 125.0,
               margin: EdgeInsets.only(bottom: 5.0),
@@ -175,6 +185,7 @@ class LoginView extends State<LoginPage> {
                 'assets/images/logo.svg',
               ),
             ),
+            // App name
             Center(
               child: Text(
                 AppLocalizations.of(context).title,
@@ -184,7 +195,9 @@ class LoginView extends State<LoginPage> {
             (_type == ''
                 ? Container()
                 : (_type == 'offline'
-                    ? Padding(
+                    ?
+                    // Show offline info
+                    Padding(
                         padding: EdgeInsets.only(top: 10.0),
                         child: Center(
                           child: Column(
@@ -195,9 +208,6 @@ class LoginView extends State<LoginPage> {
                                 color: Theme.of(context).accentColor,
                                 child: Text(AppLocalizations.of(context).retry),
                                 onPressed: () async {
-                                  /*while (Navigator.of(context).canPop()) {
-                                    Navigator.of(context).pop();
-                                  }*/
                                   prepareLogin();
                                 },
                               )
@@ -206,10 +216,13 @@ class LoginView extends State<LoginPage> {
                         ),
                       )
                     : (_type == 'pupil'
-                        ? Form(
+                        ?
+                        // Show pupil login
+                        Form(
                             key: _pupilFormKey,
                             child: Column(
                               children: <Widget>[
+                                // Grade selector
                                 SizedBox(
                                   width: double.infinity,
                                   child: DropdownButtonHideUnderline(
@@ -230,6 +243,7 @@ class LoginView extends State<LoginPage> {
                                     ),
                                   ),
                                 ),
+                                // Username input
                                 TextFormField(
                                   controller: _pupilUsernameController,
                                   validator: (value) {
@@ -250,6 +264,7 @@ class LoginView extends State<LoginPage> {
                                         .requestFocus(_pupilFocus);
                                   },
                                 ),
+                                // Password input
                                 TextFormField(
                                   controller: _pupilPasswordController,
                                   validator: (value) {
@@ -271,6 +286,7 @@ class LoginView extends State<LoginPage> {
                                   obscureText: true,
                                   focusNode: _pupilFocus,
                                 ),
+                                // Login button
                                 Container(
                                   margin: EdgeInsets.only(top: 20.0),
                                   child: SizedBox(
@@ -288,10 +304,13 @@ class LoginView extends State<LoginPage> {
                               ],
                             ),
                           )
-                        : Form(
+                        :
+                        // Show teacher login
+                        Form(
                             key: _teacherFormKey,
                             child: Column(
                               children: <Widget>[
+                                // Username input
                                 TextFormField(
                                   controller: _teacherUsernameController,
                                   validator: (value) {
@@ -312,6 +331,7 @@ class LoginView extends State<LoginPage> {
                                         .requestFocus(_teacherFocus);
                                   },
                                 ),
+                                // Password input
                                 TextFormField(
                                   controller: _teacherPasswordController,
                                   validator: (value) {
@@ -333,6 +353,7 @@ class LoginView extends State<LoginPage> {
                                   obscureText: true,
                                   focusNode: _teacherFocus,
                                 ),
+                                // Login button
                                 Container(
                                   margin: EdgeInsets.only(top: 20.0),
                                   child: SizedBox(

@@ -6,11 +6,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Keys.dart';
 import '../models/Cafetoria.dart';
+
 // Download cafetoria data from the api...
 Future<Cafetoria> download({String id, String password, bool parse}) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   try {
-    // When id and password is not set, load login data from preferences...
+    // If id and password is not set, load login data from preferences...
     String _url = 'https://api.vsa.2bad2c0.de/cafetoria/login/' +
         ((id != null)
             ? id
