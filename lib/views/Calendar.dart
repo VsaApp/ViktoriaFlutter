@@ -77,13 +77,12 @@ class CalendarDayListState extends State<CalendarDayList> {
                         color: Theme.of(context).accentColor),
                     title: Text(event.name),
                     subtitle: Container(
-                      margin: EdgeInsets.only(top: 10),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
                             margin: EdgeInsets.only(bottom: 10),
-                            child: Text(event.info != '' ? event.info : '-'),
+                            child: event.info != '' ? Text(event.info) : Container(),
                           ),
                           Text((event.start.date) +
                               (event.start.time != ''
@@ -97,7 +96,7 @@ class CalendarDayListState extends State<CalendarDayList> {
                                   (event.end.time != ''
                                       ? ' (' + (event.end.time) + ' Uhr)'
                                       : ''))
-                              : Text('-')
+                              : Container()
                         ],
                       ),
                     ),
