@@ -241,8 +241,8 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                                                     ],
                                                     onExamChange: (_) {
                                                       setState(() {
-                                                        UnitPlan.setAllSelections(
-                                                            sharedPreferences);
+                                                        /*UnitPlan.setAllSelections(
+                                                            sharedPreferences);*/
                                                       });
                                                     },
                                                   );
@@ -269,12 +269,10 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                             lesson.subjects[_selected].lesson !=
                                 AppLocalizations.of(context).lunchBreak &&
                             !nothingSelected) {
-                          sharedPreferences.setBool(
-                              Keys.exams(
-                                  lesson.subjects[_selected].lesson
-                                      .toUpperCase()),
-                              true);
-                          sharedPreferences.commit();
+                          if (sharedPreferences.getBool(Keys.exams(lesson.subjects[_selected].lesson.toUpperCase())) == null){
+                            sharedPreferences.setBool(Keys.exams(lesson.subjects[_selected].lesson.toUpperCase()), true);
+                            sharedPreferences.commit();
+                          }
                           // Show writing option dialog
                           showDialog<String>(
                             context: context,
