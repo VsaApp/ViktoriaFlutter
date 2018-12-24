@@ -162,11 +162,10 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                   children: day.lessons.map((lesson) {
                     // Check which subject is selected
                     int _selected = sharedPreferences.getInt(Keys.unitPlan(
-                      _grade,
-                      block: lesson.subjects[0].block,
-                      day: widget.days.indexOf(day),
-                      unit: day.lessons.indexOf(lesson)
-                    ));
+                        _grade,
+                        block: lesson.subjects[0].block,
+                        day: widget.days.indexOf(day),
+                        unit: day.lessons.indexOf(lesson)));
                     bool nothingSelected = _selected == null;
                     if (nothingSelected) _selected = 0;
                     return GestureDetector(
@@ -188,14 +187,15 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                                             // Update unit plan
                                             setState(() {
                                               sharedPreferences.setInt(
-                                                Keys.unitPlan(
-                                                    _grade,
-                                                    block: lesson.subjects[0].block,
-                                                    day: widget.days.indexOf(day),
-                                                    unit: day.lessons.indexOf(lesson)
-                                                ),
-                                                lesson.subjects.indexOf(subject)
-                                              );
+                                                  Keys.unitPlan(_grade,
+                                                      block: lesson
+                                                          .subjects[0].block,
+                                                      day: widget.days
+                                                          .indexOf(day),
+                                                      unit: day.lessons
+                                                          .indexOf(lesson)),
+                                                  lesson.subjects
+                                                      .indexOf(subject));
                                               Navigator.pop(context);
                                               ReplacementPlan.update(
                                                   sharedPreferences);
@@ -205,10 +205,16 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                                             bool _selected = (sharedPreferences
                                                     .getKeys()
                                                     .where((key) =>
-                                                        key == Keys.exams(lesson.subjects[lesson.subjects.indexOf(subject)]
-                                                                .lesson
-                                                                .toUpperCase())
-                                                            ).length > 0);
+                                                        key ==
+                                                        Keys.exams(lesson
+                                                            .subjects[lesson
+                                                                .subjects
+                                                                .indexOf(
+                                                                    subject)]
+                                                            .lesson
+                                                            .toUpperCase()))
+                                                    .length >
+                                                0);
                                             if (!_selected &&
                                                 lesson
                                                         .subjects[lesson
@@ -270,8 +276,14 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                             lesson.subjects[_selected].lesson !=
                                 AppLocalizations.of(context).lunchBreak &&
                             !nothingSelected) {
-                          if (sharedPreferences.getBool(Keys.exams(lesson.subjects[_selected].lesson.toUpperCase())) == null){
-                            sharedPreferences.setBool(Keys.exams(lesson.subjects[_selected].lesson.toUpperCase()), true);
+                          if (sharedPreferences.getBool(Keys.exams(lesson
+                                  .subjects[_selected].lesson
+                                  .toUpperCase())) ==
+                              null) {
+                            sharedPreferences.setBool(
+                                Keys.exams(lesson.subjects[_selected].lesson
+                                    .toUpperCase()),
+                                true);
                             sharedPreferences.commit();
                           }
                           // Show writing option dialog
@@ -316,16 +328,23 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                                 )
                               :
                               // Show list of changes
-                              Column(
-                                  children: lesson.subjects[_selected].changes
-                                      .map((change) {
-                                        return ReplacementPlanRow(
-                                            change: change,
-                                            changes: lesson
-                                                .subjects[_selected].changes);
-                                      })
-                                      .toList()
-                                      .cast<Widget>(),
+                              Card(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(bottom: 10),
+                                    child: Column(
+                                      children:
+                                          lesson.subjects[_selected].changes
+                                              .map((change) {
+                                                return ReplacementPlanRow(
+                                                    change: change,
+                                                    changes: lesson
+                                                        .subjects[_selected]
+                                                        .changes);
+                                              })
+                                              .toList()
+                                              .cast<Widget>(),
+                                    ),
+                                  ),
                                 ))),
                     );
                   }).toList(),
