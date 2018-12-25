@@ -7,6 +7,7 @@ import '../Keys.dart';
 import '../Localizations.dart';
 import '../Subjects.dart';
 import '../Times.dart';
+import '../Rooms.dart';
 import '../data/UnitPlan.dart';
 import '../models/ReplacementPlan.dart';
 import '../models/UnitPlan.dart';
@@ -258,6 +259,7 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                                             }
                                           },
                                           child: UnitPlanRow(
+                                              weekday: widget.days.indexOf(day),
                                               subject: subject,
                                               unit: day.lessons.indexOf(lesson),
                                               showUnit: false),
@@ -309,6 +311,7 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                           ?
                           // Show select lesson information
                           UnitPlanRow(
+                              weekday: widget.days.indexOf(day),
                               subject: UnitPlanSubject(
                                   teacher: '',
                                   lesson:
@@ -323,6 +326,7 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
                               ?
                               // Show normal subject
                               UnitPlanRow(
+                                  weekday: widget.days.indexOf(day),
                                   subject: lesson.subjects[_selected],
                                   unit: day.lessons.indexOf(lesson),
                                 )
@@ -358,20 +362,42 @@ class UnitPlanDayListState extends State<UnitPlanDayList>
   }
 }
 
-class UnitPlanRow extends StatelessWidget {
-  const UnitPlanRow({
-    Key key,
-    this.subject,
-    this.unit,
-    this.showUnit = true,
-  }) : super(key: key);
-
+class UnitPlanRow extends StatefulWidget {
   final UnitPlanSubject subject;
   final int unit;
   final bool showUnit;
+  final int weekday;
+
+  UnitPlanRow({
+    Key key,
+    @required this.subject,
+    @required this.unit,
+    @required this.weekday,
+    this.showUnit = true,
+  }) : super(key: key);
+
+  @override
+  UnitPlanRowView createState() => UnitPlanRowView();
+}
+
+class UnitPlanRowView extends State<UnitPlanRow> {
+  SharedPreferences sharedPreferences;
+
+  @override
+  void initState() {
+    SharedPreferences.getInstance().then((instance) {
+      setState(() {
+        sharedPreferences = instance;
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (sharedPreferences == null) {
+      return Container();
+    }
     return Container(
       padding: EdgeInsets.all(10.0),
       child: LayoutBuilder(
@@ -380,9 +406,11 @@ class UnitPlanRow extends StatelessWidget {
             children: <Widget>[
               Container(
                 // Add padding if unit shown
-                width: (showUnit) ? constraints.maxWidth * 0.1 : 0,
+                width: (widget.showUnit) ? constraints.maxWidth * 0.1 : 0,
                 child: Text(
-                  ((unit != 5 && showUnit) ? (unit + 1).toString() : ''),
+                  ((widget.unit != 5 && widget.showUnit)
+                      ? (widget.unit + 1).toString()
+                      : ''),
                   style: TextStyle(
                     color: Colors.black54,
                   ),
@@ -393,11 +421,11 @@ class UnitPlanRow extends StatelessWidget {
                   // Subject name
                   Container(
                     width: constraints.maxWidth * 0.75,
-                    child: (unit != 5
+                    child: (widget.unit != 5
                         ?
                         // Normal name
                         Text(
-                            getSubject(subject.lesson),
+                            getSubject(widget.subject.lesson),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 15.0,
@@ -408,7 +436,7 @@ class UnitPlanRow extends StatelessWidget {
                         // Lunch break
                         Center(
                             child: Text(
-                              getSubject(subject.lesson),
+                              getSubject(widget.subject.lesson),
                               style: TextStyle(
                                 fontSize: 15.0,
                               ),
@@ -419,7 +447,7 @@ class UnitPlanRow extends StatelessWidget {
                   Container(
                     width: constraints.maxWidth * 0.75,
                     child: Text(
-                      (unit != 5 ? times[unit] : ''),
+                      (widget.unit != 5 ? times[widget.unit] : ''),
                       style: TextStyle(
                         color: Colors.black54,
                       ),
@@ -432,18 +460,23 @@ class UnitPlanRow extends StatelessWidget {
                   // Teacher name
                   Container(
                     // Add padding if unit not shown
-                    width: (showUnit)
+                    width: (widget.showUnit)
                         ? constraints.maxWidth * 0.15
                         : constraints.maxWidth * 0.25,
-                    child: Text(subject.teacher),
+                    child: Text(widget.subject.teacher),
                   ),
                   // Room
                   Container(
                     // Add padding if unit not shown
-                    width: (showUnit)
+                    width: (widget.showUnit)
                         ? constraints.maxWidth * 0.15
                         : constraints.maxWidth * 0.25,
-                    child: Text(subject.room),
+                    child: Text(getRoom(
+                        sharedPreferences,
+                        widget.weekday,
+                        widget.unit,
+                        widget.subject.lesson,
+                        widget.subject.room)),
                   ),
                 ],
               ),

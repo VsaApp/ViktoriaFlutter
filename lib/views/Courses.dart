@@ -4,7 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
 import '../Subjects.dart';
-import '../data/UnitPlan.dart';
+import '../Rooms.dart';
+import '../data/UnitPlan.dart' as UnitPlan;
 import '../models/ReplacementPlan.dart';
 import '../models/UnitPlan.dart';
 
@@ -27,6 +28,7 @@ class CourseEdit extends StatefulWidget {
 class CourseEditView extends State<CourseEdit> {
   SharedPreferences sharedPreferences;
   bool _exams = false;
+  List<dynamic> subjects = [];
 
   @override
   void initState() {
@@ -36,6 +38,23 @@ class CourseEditView extends State<CourseEdit> {
         _exams = sharedPreferences
                 .getBool(Keys.exams(widget.subject.lesson.toUpperCase())) ??
             true;
+      });
+      List<UnitPlanDay> days = UnitPlan.getUnitPlan();
+      days.forEach((day) {
+        day.lessons.forEach((lesson) {
+          int _selected = sharedPreferences.getInt(Keys.unitPlan(
+              sharedPreferences.getString(Keys.grade),
+              block: lesson.subjects[0].block,
+              day: days.indexOf(day),
+              unit: day.lessons.indexOf(lesson)));
+          if (lesson.subjects[_selected].lesson == widget.subject.lesson) {
+            subjects.add({
+              'weekday': days.indexOf(day),
+              'unit': day.lessons.indexOf(lesson),
+              'subject': lesson.subjects[_selected]
+            });
+          }
+        });
       });
     });
     super.initState();
@@ -70,6 +89,70 @@ class CourseEditView extends State<CourseEdit> {
           },
           title: Text(AppLocalizations.of(context).writeExams),
         ),
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(10),
+          child: Column(
+            children: subjects.map((subject) {
+              TextEditingController _controller = TextEditingController(
+                  text: getRoom(
+                      sharedPreferences,
+                      subject['weekday'],
+                      subject['unit'],
+                      subject['subject'].lesson,
+                      subject['subject'].room));
+              return Container(
+                width: double.infinity,
+                margin: EdgeInsets.only(bottom: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text([
+                          'Montag',
+                          'Dienstag',
+                          'Mittwoch',
+                          'Donnerstag',
+                          'Freitag'
+                        ][subject['weekday']] +
+                        ' ' +
+                        (subject['unit'] + 1).toString() +
+                        '. Stunde:'),
+                    TextField(
+                      controller: _controller,
+                      decoration: InputDecoration(
+                        hintText: subject['subject'].room,
+                        contentPadding: EdgeInsets.only(
+                          top: 5,
+                          bottom: 5,
+                        ),
+                      ),
+                      onChanged: (value) {
+                        setRoom(sharedPreferences, subject['weekday'],
+                            subject['unit'], subject['subject'].lesson, value);
+                      },
+                    )
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.only(
+            left: 10.0,
+            right: 10.0,
+          ),
+          child: SizedBox(
+            width: double.infinity,
+            child: RaisedButton(
+              color: Theme.of(context).accentColor,
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(AppLocalizations.of(context).ok),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -102,15 +185,14 @@ class CoursesView extends State<CoursesPage> {
     List<UnitPlanSubject> selectedSubjects = [];
 
     // Get all selected subjects...
-    getUnitPlan().forEach((day) => day.lessons.forEach((lesson) {
+    UnitPlan.getUnitPlan().forEach((day) => day.lessons.forEach((lesson) {
           if (lesson.subjects.length > 0) {
             int selected = sharedPreferences.getInt(Keys.unitPlan(
-                sharedPreferences.getString(Keys.grade), 
-                block: lesson.subjects[0].block, 
-                day: getUnitPlan().indexOf(day), 
-                unit: day.lessons.indexOf(lesson)
-              )
-            ) ?? lesson.subjects.length;
+                    sharedPreferences.getString(Keys.grade),
+                    block: lesson.subjects[0].block,
+                    day: UnitPlan.getUnitPlan().indexOf(day),
+                    unit: day.lessons.indexOf(lesson))) ??
+                lesson.subjects.length;
             if (selected < lesson.subjects.length)
               selectedSubjects.add(lesson.subjects[selected]);
           }

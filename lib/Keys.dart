@@ -64,11 +64,12 @@ class Keys {
   // unitPLan-GRADE-BLOCK / uitplan-GRADE-DAY-UNIT saves the selected index...
   static String unitPlan(String grade, {String block, int day, int unit}) {
     // If nothing is set, returns the key for saving the json string...
-    if(block == null && day == null) {
+    if (block == null && day == null) {
       return 'unitPlan-$grade';
-    }
-    else {
-      return (block != '') ? 'unitPlan-$grade-$block' : 'unitPlan-$grade-$day-$unit';
+    } else {
+      return (block != '')
+          ? 'unitPlan-$grade-$block'
+          : 'unitPlan-$grade-$day-$unit';
     }
   }
 
@@ -105,5 +106,9 @@ class Keys {
   // Saves if a category is expanded or not...
   static String categoryExpanded(String name) {
     return 'categoryExpanded-$name';
+  }
+
+  static String room(int weekday, int unit, String subject) {
+    return 'room-' + weekday.toString() + '-' + unit.toString() + '-' + subject;
   }
 }

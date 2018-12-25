@@ -285,9 +285,7 @@ class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
                       // Show all changes in a list...
                       day.changes.map((change) {
                           return ReplacementPlanRow(
-                              changes: day.changes,
-                              change: change
-                          );
+                              changes: day.changes, change: change);
                         }).toList()
                       :
                       // Show the changes in three categories...
@@ -372,7 +370,6 @@ class Section extends StatefulWidget {
 }
 
 class SectionView extends State<Section> {
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -382,8 +379,8 @@ class SectionView extends State<Section> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             ListTile(
-                title: Text(widget.title),
-              ),
+              title: Text(widget.title),
+            ),
             Container(
                 padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
                 decoration: BoxDecoration(
@@ -406,8 +403,7 @@ class SectionView extends State<Section> {
 }
 
 class ReplacementPlanRow extends StatelessWidget {
-  const ReplacementPlanRow(
-      {Key key, this.change, this.changes})
+  const ReplacementPlanRow({Key key, this.change, this.changes})
       : super(key: key);
 
   final Change change;
