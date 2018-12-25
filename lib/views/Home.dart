@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:onesignal/onesignal.dart';
@@ -119,6 +120,7 @@ class HomePageState extends State<HomePage> {
   static String grade = '';
   bool _dialogShown = false;
   bool _showDialog = true;
+  static const platform = const MethodChannel('viktoriaflutter');
 
   @override
   void initState() {
@@ -133,6 +135,12 @@ class HomePageState extends State<HomePage> {
         // Reload app
         sharedPreferences.setString(Keys.lastUpdate, now.toIso8601String());
         Navigator.of(context).pushReplacementNamed('/');
+      }
+    });
+    OneSignal.shared.setNotificationOpenedHandler((osNotification) {
+      platform.invokeMethod('clearNotifications');
+      if (osNotification.notification.payload.body.contains('Stunde')) {
+        setState(() => _selectedDrawerIndex = 1);
       }
     });
     // Initialize onesignal
