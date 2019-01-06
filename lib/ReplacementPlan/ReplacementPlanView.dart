@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Color.dart';
-import './BrotherSisterReplacementPlan.dart';
+import '../BrotherSisterReplacementPlan/BrotherSisterReplacementPlanView.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
 import '../Subjects.dart';
-import '../data/ReplacementPlan.dart';
-import '../models/ReplacementPlan.dart';
-import '../models/UnitPlan.dart';
+import '../ReplacementPlan/ReplacementPlanData.dart';
+import '../ReplacementPlan/ReplacementPlanModel.dart';
+import '../UnitPlan/UnitPlanModel.dart';
 
 class ReplacementPlanPage extends StatefulWidget {
   @override

@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Keys.dart';
-import '../models/ReplacementPlan.dart';
+import 'ReplacementPlanModel.dart';
 
 // Download all days of the replacement plan...
 Future download(String _grade, {bool alreadyLoad}) async {

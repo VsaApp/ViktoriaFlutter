@@ -5,9 +5,9 @@ import '../Keys.dart';
 import '../Localizations.dart';
 import '../Subjects.dart';
 import '../Rooms.dart';
-import '../data/UnitPlan.dart' as UnitPlan;
-import '../models/ReplacementPlan.dart';
-import '../models/UnitPlan.dart';
+import '../UnitPlan/UnitPlanData.dart' as UnitPlan;
+import '../ReplacementPlan/ReplacementPlanModel.dart';
+import '../UnitPlan/UnitPlanModel.dart';
 
 class CourseEdit extends StatefulWidget {
   final UnitPlanSubject subject;

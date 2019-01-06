@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../data/Calendar.dart';
-import '../models/Calendar.dart';
+import 'CalendarData.dart';
+import 'CalendarModel.dart';
 
 class CalendarPage extends StatefulWidget {
   @override

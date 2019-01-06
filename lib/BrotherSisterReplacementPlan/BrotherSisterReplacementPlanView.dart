@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import './ReplacementPlan.dart';
+import '../ReplacementPlan/ReplacementPlanView.dart';
 import '../Localizations.dart';
-import '../data/ReplacementPlan.dart';
-import '../models/ReplacementPlan.dart';
+import '../ReplacementPlan/ReplacementPlanData.dart';
+import '../ReplacementPlan/ReplacementPlanModel.dart';
 
 class BrotherSisterReplacementPlanPage extends StatefulWidget {
   final String grade;

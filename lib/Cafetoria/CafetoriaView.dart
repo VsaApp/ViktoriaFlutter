@@ -8,8 +8,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../Color.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
-import '../data/Cafetoria.dart';
-import '../models/Cafetoria.dart';
+import 'CafetoriaData.dart';
+import 'CafetoriaModel.dart';
 
 Function(String input) jsonDecode = json.decode;
 

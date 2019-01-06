@@ -3,8 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Keys.dart';
 import '../Localizations.dart';
-import '../data/UnitPlan.dart';
-import 'ReplacementPlan.dart';
+import '../UnitPlan/UnitPlanData.dart';
+import '../ReplacementPlan/ReplacementPlanView.dart';
 
 class SettingsPage extends StatefulWidget {
   @override

@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Keys.dart';
-import '../models/Calendar.dart';
+import 'CalendarModel.dart';
 
 // Download calendar data...
 Future download() async {

@@ -5,9 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'Color.dart';
 import 'Keys.dart';
 import 'Localizations.dart';
-import 'views/Home.dart';
-import 'views/Loading.dart';
-import 'views/Login.dart';
+import 'Home/HomeView.dart';
+import 'Loading/LoadingView.dart';
+import 'Login/LoginView.dart';
 
 // This is the first functions which is called in the app...
 void main() async {
@@ -52,20 +52,20 @@ void main() async {
         accentColor: getColorHexFromStr('#5bc638'),
         fontFamily: 'Ubuntu'),
     localizationsDelegates: [
-      const AppLocalizationsDelegate(),
+      AppLocalizationsDelegate(),
       GlobalMaterialLocalizations.delegate,
       GlobalWidgetsLocalizations.delegate,
     ],
     // Our app only supports the german language...
     supportedLocales: [
-      const Locale('de'),
+      Locale('de'),
     ],
     initialRoute: _initialRoute,
     // Define three shortcuts for pages: loading, home and login...
     routes: <String, WidgetBuilder>{
-      '/': (BuildContext context) => new LoadingPage(),
-      '/home': (BuildContext context) => new HomePage(),
-      '/login': (BuildContext context) => new LoginPage()
+      '/': (BuildContext context) => LoadingPage(),
+      '/home': (BuildContext context) => HomePage(),
+      '/login': (BuildContext context) => LoginPage()
     },
   ));
 }

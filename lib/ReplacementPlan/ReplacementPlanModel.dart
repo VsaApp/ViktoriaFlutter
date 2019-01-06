@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Keys.dart';
 import '../Subjects.dart';
-import 'UnitPlan.dart';
+import '../UnitPlan/UnitPlanModel.dart';
 
 // Describes the replacement plan
 class ReplacementPlan {

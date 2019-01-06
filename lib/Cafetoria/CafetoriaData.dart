@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Keys.dart';
-import '../models/Cafetoria.dart';
+import 'CafetoriaModel.dart';
 
 // Download cafetoria data from the api...
 Future<Cafetoria> download({String id, String password, bool parse}) async {

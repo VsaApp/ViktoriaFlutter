@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../data/WorkGroups.dart';
-import '../models/WorkGroups.dart';
+import 'WorkGroupsData.dart';
+import 'WorkGroupsModel.dart';
 
 class WorkGroupsPage extends StatefulWidget {
   @override

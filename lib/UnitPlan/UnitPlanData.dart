@@ -7,7 +7,7 @@ import 'package:onesignal/onesignal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Keys.dart';
-import '../models/UnitPlan.dart';
+import './UnitPlanModel.dart';
 
 // Download the unit plan...
 Future download() async {

@@ -7,14 +7,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Keys.dart';
 import '../Localizations.dart';
-import '../data/UnitPlan.dart';
-import 'Cafetoria.dart';
-import 'Calendar.dart';
-import 'Courses.dart';
-import 'ReplacementPlan.dart';
-import 'Settings.dart';
-import 'UnitPlan.dart';
-import 'WorkGroups.dart';
+import '../UnitPlan/UnitPlanData.dart';
+import '../Cafetoria/CafetoriaView.dart';
+import '../Calendar/CalendarView.dart';
+import '../Courses/CoursesView.dart';
+import '../ReplacementPlan/ReplacementPlanView.dart';
+import '../Settings/SettingsView.dart';
+import '../UnitPlan/UnitPlanView.dart';
+import '../WorkGroups/WorkGroupsView.dart';
 
 // Define drawer item
 class DrawerItem {

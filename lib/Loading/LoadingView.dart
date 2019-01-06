@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Keys.dart';
-import '../data/ReplacementPlan.dart' as ReplacementPlan;
-import '../data/UnitPlan.dart' as UnitPlan;
-import '../data/WorkGroups.dart' as WorkGroups;
-import '../data/Calendar.dart' as Calendar;
+import '../ReplacementPlan/ReplacementPlanData.dart' as ReplacementPlan;
+import '../UnitPlan/UnitPlanData.dart' as UnitPlan;
+import '../WorkGroups/WorkGroupsData.dart' as WorkGroups;
+import '../Calendar/CalendarData.dart' as Calendar;
 
 class LoadingPage extends StatefulWidget {
   @override

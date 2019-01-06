@@ -8,11 +8,11 @@ import '../Localizations.dart';
 import '../Subjects.dart';
 import '../Times.dart';
 import '../Rooms.dart';
-import '../data/UnitPlan.dart';
-import '../models/ReplacementPlan.dart';
-import '../models/UnitPlan.dart';
-import 'Courses.dart';
-import 'ReplacementPlan.dart';
+import '../UnitPlan/UnitPlanData.dart';
+import '../ReplacementPlan/ReplacementPlanModel.dart';
+import 'UnitPlanModel.dart';
+import '../Courses/CoursesView.dart';
+import '../ReplacementPlan/ReplacementPlanView.dart';
 
 class UnitPlanPage extends StatefulWidget {
   @override
