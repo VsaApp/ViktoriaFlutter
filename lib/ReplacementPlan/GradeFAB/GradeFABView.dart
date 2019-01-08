@@ -3,7 +3,6 @@ import 'GradeFABWidget.dart';
 import '../../Keys.dart';
 
 class GradeFabView extends GradeFabState {
-
   AnimationController animationController;
   Animation<Color> buttonColor;
   Animation<double> animateIcon;
@@ -127,42 +126,47 @@ class GradeFabView extends GradeFabState {
                 transform: Matrix4.translationValues(
                   0.0,
                   translateButton.value *
-                      (GradeFabState.grades.length - GradeFabState.grades.indexOf(grade)),
+                      (GradeFabState.grades.length -
+                          GradeFabState.grades.indexOf(grade)),
                   0.0,
                 ),
                 child: Container(
                   // Create FAB for every grade
-                  child: FloatingActionButton(
-                    heroTag: 'grade' + grade,
-                    mini: true,
-                    onPressed: () {
-                      animate();
-                      List<String> prefValue =
-                          (sharedPreferences.getString(Keys.lastGrades) ?? '')
-                              .split(':');
-                      if (prefValue.length > 0) if (prefValue[0].length == 0)
-                        prefValue = [];
-                      if (!prefValue.contains(grade)) {
-                        setState(() {
-                          if (prefValue.length == 0) {
-                            sharedPreferences.setString(Keys.lastGrades, grade);
-                            GradeFabState.grades[1] = grade;
-                          } else if (prefValue.length == 1) {
-                            sharedPreferences.setString(
-                                Keys.lastGrades, prefValue[0] + ':' + grade);
-                            GradeFabState.grades[1] = grade;
-                          } else {
-                            sharedPreferences.setString(
-                                Keys.lastGrades, prefValue[1] + ':' + grade);
-                            GradeFabState.grades[0] = GradeFabState.grades[1];
-                            GradeFabState.grades[1] = grade;
-                          }
-                        });
-                      }
-                      widget.onSelected(grade);
-                    },
-                    tooltip: grade,
-                    child: Text(grade, style: TextStyle(color: Colors.white)),
+                  child: Hero(
+                    tag: 'replacementplan-' + grade,
+                    child: FloatingActionButton(
+                      heroTag: 'grade' + grade,
+                      mini: true,
+                      onPressed: () {
+                        animate();
+                        List<String> prefValue =
+                            (sharedPreferences.getString(Keys.lastGrades) ?? '')
+                                .split(':');
+                        if (prefValue.length > 0) if (prefValue[0].length == 0)
+                          prefValue = [];
+                        if (!prefValue.contains(grade)) {
+                          setState(() {
+                            if (prefValue.length == 0) {
+                              sharedPreferences.setString(
+                                  Keys.lastGrades, grade);
+                              GradeFabState.grades[1] = grade;
+                            } else if (prefValue.length == 1) {
+                              sharedPreferences.setString(
+                                  Keys.lastGrades, prefValue[0] + ':' + grade);
+                              GradeFabState.grades[1] = grade;
+                            } else {
+                              sharedPreferences.setString(
+                                  Keys.lastGrades, prefValue[1] + ':' + grade);
+                              GradeFabState.grades[0] = GradeFabState.grades[1];
+                              GradeFabState.grades[1] = grade;
+                            }
+                          });
+                        }
+                        widget.onSelected(grade);
+                      },
+                      tooltip: grade,
+                      child: Text(grade, style: TextStyle(color: Colors.white)),
+                    ),
                   ),
                 ));
           }).toList(),

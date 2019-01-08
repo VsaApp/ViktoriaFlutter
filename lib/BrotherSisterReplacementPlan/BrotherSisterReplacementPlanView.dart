@@ -16,8 +16,11 @@ class BrotherSisterReplacementPlanPageView extends BrotherSisterReplacementPlanP
         title: Text(widget.grade),
         elevation: 0.0,
       ),
-      body: Column(
+      body: Hero(
+        tag: 'replacementplan-' + widget.grade,
+        child: Column(
           children: <Widget>[BrotherSisterReplacementPlanDayList(days: days)]),
+      ),
     );
   }
 }
