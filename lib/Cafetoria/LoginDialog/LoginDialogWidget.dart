@@ -38,7 +38,7 @@ abstract class LoginDialogState extends State<LoginDialog> {
         return true;
       }
       return false;
-    } on SocketException catch () {
+    } on SocketException catch (_) {
       return false;
     }
   }  
