@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../Keys.dart';
 import '../Subjects.dart';
 import '../UnitPlan/UnitPlanModel.dart';
@@ -314,3 +313,4 @@ int getSelectedSubject(SharedPreferences sharedPreferences,
   // If the subject block is set, get index for block, else get index for day + unit...
   return sharedPreferences.getInt(Keys.unitPlan(sharedPreferences.getString(Keys.grade), block: subject.block, day: day, unit: unit));
 }
+

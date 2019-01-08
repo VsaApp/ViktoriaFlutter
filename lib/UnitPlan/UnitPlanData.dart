@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-
 import 'package:http/http.dart' as http;
 import 'package:onesignal/onesignal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../Keys.dart';
 import './UnitPlanModel.dart';
 

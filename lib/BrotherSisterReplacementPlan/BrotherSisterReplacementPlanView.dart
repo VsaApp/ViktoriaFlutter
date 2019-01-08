@@ -1,41 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../ReplacementPlan/ReplacementPlanView.dart';
+import '../ReplacementPlan/ReplacementPlanRow/ReplacementPlanRowWidget.dart';
 import '../Localizations.dart';
-import '../ReplacementPlan/ReplacementPlanData.dart';
 import '../ReplacementPlan/ReplacementPlanModel.dart';
+import 'BrotherSisterReplacementPlanPage.dart';
 
-class BrotherSisterReplacementPlanPage extends StatefulWidget {
-  final String grade;
-
-  BrotherSisterReplacementPlanPage({Key key, @required this.grade})
-      : super(key: key);
-
-  @override
-  BrotherSisterReplacementPlanView createState() =>
-      BrotherSisterReplacementPlanView();
-}
-
-class BrotherSisterReplacementPlanView
-    extends State<BrotherSisterReplacementPlanPage> {
-  List<ReplacementPlanDay> days;
-
-  @override
-  void initState() {
-    // Download the replacementplan temp...
-    download(widget.grade, alreadyLoad: false).then((_) {
-      load(widget.grade, temp: true, setOnlyColor: true, setFilter: false)
-          .then((d) {
-        setState(() {
-          days = d;
-          days.forEach((ReplacementPlanDay day) => day.setColors());
-        });
-      });
-    });
-    super.initState();
-  }
-
+class BrotherSisterReplacementPlanPageView extends BrotherSisterReplacementPlanPageState {
   @override
   Widget build(BuildContext context) {
     if (days == null) {

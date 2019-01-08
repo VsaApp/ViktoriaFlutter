@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'Color.dart';
 import 'Keys.dart';
 import 'Localizations.dart';
-import 'Home/HomeView.dart';
-import 'Loading/LoadingView.dart';
-import 'Login/LoginView.dart';
+import 'Home/HomePage.dart';
+import 'Loading/LoadingPage.dart';
+import 'Login/LoginPage.dart';
 
 // This is the first functions which is called in the app...
 void main() async {
@@ -48,8 +46,8 @@ void main() async {
     // Set fontfamily and main colors...
     theme: ThemeData(
         brightness: Brightness.light,
-        primaryColor: getColorHexFromStr('#67a744'),
-        accentColor: getColorHexFromStr('#5bc638'),
+        primaryColor: Color(0xFF67A744),
+        accentColor: Color(0xFF5BC638),
         fontFamily: 'Ubuntu'),
     localizationsDelegates: [
       AppLocalizationsDelegate(),

@@ -1,80 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../Keys.dart';
+import 'SettingsPage.dart';
+import '../SectionWidget.dart';
 import '../Localizations.dart';
+import '../Keys.dart';
 import '../UnitPlan/UnitPlanData.dart';
-import '../ReplacementPlan/ReplacementPlanView.dart';
 
-class SettingsPage extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return SettingsPageView();
-  }
-}
-
-class SettingsPageView extends State<SettingsPage> {
-  SharedPreferences sharedPreferences;
-  static List<String> _grades = [
-    '5a',
-    '5b',
-    '5c',
-    '6a',
-    '6b',
-    '6c',
-    '7a',
-    '7b',
-    '7c',
-    '8a',
-    '8b',
-    '8c',
-    '9a',
-    '9b',
-    '9c',
-    'EF',
-    'Q1',
-    'Q2'
-  ];
-  String _grade = _grades[0];
-  List<String> _pages = [];
-  String _page = '';
-  bool _sortReplacementPlan = true;
-  bool _showReplacementPlanInUnitPlan = true;
-  bool _getReplacementPlanNotifications = true;
-  bool _showShortCutDialog = true;
-
-  @override
-  void initState() {
-    loadSettings();
-    super.initState();
-  }
-
-  // Load saved settings
-  void loadSettings() async {
-    sharedPreferences = await SharedPreferences.getInstance();
-    setState(() {
-      _grade = sharedPreferences.get(Keys.grade) ?? '';
-      _sortReplacementPlan =
-          sharedPreferences.getBool(Keys.sortReplacementPlan) ?? true;
-      _showReplacementPlanInUnitPlan =
-          sharedPreferences.getBool(Keys.showReplacementPlanInUnitPlan) ?? true;
-      _getReplacementPlanNotifications =
-          sharedPreferences.getBool(Keys.getReplacementPlanNotifications) ??
-              true;
-      _showShortCutDialog =
-          sharedPreferences.getBool(Keys.showShortCutDialog) ?? true;
-      _pages = [
-        AppLocalizations.of(context).unitPlan,
-        AppLocalizations.of(context).replacementPlan,
-        AppLocalizations.of(context).calendar,
-        AppLocalizations.of(context).cafetoria,
-        AppLocalizations.of(context).workGroups,
-        AppLocalizations.of(context).courses
-      ];
-      _page = _pages[sharedPreferences.getInt(Keys.initialPage) ?? 0];
-    });
-  }
-
+class SettingsPageView extends SettingsPageState {
   @override
   Widget build(BuildContext context) {
     if (sharedPreferences == null) {
@@ -90,12 +21,12 @@ class SettingsPageView extends State<SettingsPage> {
               Widget>[
             // Sort replacement plan option
             CheckboxListTile(
-              value: _sortReplacementPlan,
+              value: sortReplacementPlan,
               onChanged: (bool value) {
                 setState(() {
                   sharedPreferences.setBool(Keys.sortReplacementPlan, value);
                   sharedPreferences.commit();
-                  _sortReplacementPlan = value;
+                  sortReplacementPlan = value;
                 });
               },
               title: new Text(AppLocalizations.of(context).sortReplacementPlan),
@@ -103,13 +34,13 @@ class SettingsPageView extends State<SettingsPage> {
             ),
             // Show replacement plan in unit plan option
             CheckboxListTile(
-              value: _showReplacementPlanInUnitPlan,
+              value: showReplacementPlanInUnitPlan,
               onChanged: (bool value) {
                 setState(() {
                   sharedPreferences.setBool(
                       Keys.showReplacementPlanInUnitPlan, value);
                   sharedPreferences.commit();
-                  _showReplacementPlanInUnitPlan = value;
+                  showReplacementPlanInUnitPlan = value;
                 });
               },
               title: new Text(
@@ -117,13 +48,13 @@ class SettingsPageView extends State<SettingsPage> {
             ),
             // Get replacementplan notifications option
             CheckboxListTile(
-              value: _getReplacementPlanNotifications,
+              value: getReplacementPlanNotifications,
               onChanged: (bool value) {
                 setState(() {
                   sharedPreferences.setBool(
                       Keys.getReplacementPlanNotifications, value);
                   sharedPreferences.commit();
-                  _getReplacementPlanNotifications = value;
+                  getReplacementPlanNotifications = value;
                   // Synchronise tags for notifications
                   syncTags();
                 });
@@ -133,12 +64,12 @@ class SettingsPageView extends State<SettingsPage> {
             ),
             // Show short cut dialog option
             CheckboxListTile(
-              value: _showShortCutDialog,
+              value: showShortCutDialog,
               onChanged: (bool value) {
                 setState(() {
                   sharedPreferences.setBool(Keys.showShortCutDialog, value);
                   sharedPreferences.commit();
-                  _showShortCutDialog = value;
+                  showShortCutDialog = value;
                 });
               },
               title: new Text(AppLocalizations.of(context).showShortCutDialog),
@@ -163,18 +94,18 @@ class SettingsPageView extends State<SettingsPage> {
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
                         isDense: true,
-                        items: _pages.map((String value) {
+                        items: pages.map((String value) {
                           return new DropdownMenuItem<String>(
                             value: value,
                             child: new Text(value),
                           );
                         }).toList(),
-                        value: _page,
+                        value: page,
                         onChanged: (page) async {
                           setState(() {
-                            _page = page;
+                            page = page;
                             sharedPreferences.setInt(
-                                Keys.initialPage, _pages.indexOf(page));
+                                Keys.initialPage, pages.indexOf(page));
                             sharedPreferences.commit();
                           });
                         },
@@ -199,13 +130,13 @@ class SettingsPageView extends State<SettingsPage> {
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
                             isDense: true,
-                            items: _grades.map((String value) {
+                            items: SettingsPageState.grades.map((String value) {
                               return new DropdownMenuItem<String>(
                                 value: value,
                                 child: new Text(value),
                               );
                             }).toList(),
-                            value: _grade,
+                            value: grade,
                             onChanged: (grade) async {
                               setState(() {
                                 sharedPreferences.setString(Keys.grade, grade);
