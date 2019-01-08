@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'CafetoriaData.dart';
@@ -23,17 +22,5 @@ abstract class CafetoriaPageState extends State<CafetoriaPage> {
       });
     });
     super.initState();
-  }
-
-  Future<bool> get checkOnline async {
-    try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        return true;
-      }
-      return false;
-    } on SocketException catch (_) {
-      return false;
-    }
   }
 }

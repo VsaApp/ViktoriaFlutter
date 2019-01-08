@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-import 'package:http/http.dart' as http;
 import 'package:onesignal/onesignal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Keys.dart';
+import '../Network.dart';
 import './UnitPlanModel.dart';
 
 // Download the unit plan...
@@ -12,25 +12,8 @@ Future download() async {
   // Get the selected grade...
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String _grade = sharedPreferences.getString(Keys.grade);
-  try {
-    // Get the url...
-    String _url = 'https://api.vsa.2bad2c0.de/unitplan/' +
-        _grade +
-        '.json?v=' +
-        new Random().nextInt(99999999).toString();
-    print(_url);
-    final response = await http.Client().get(_url);
-
-    // Save loaded data...
-    sharedPreferences.setString(Keys.unitPlan(_grade), response.body);
-    await sharedPreferences.commit();
-  } catch (e) {
-    print("Error in download: " + e.toString());
-    // Set to default data...
-    if (sharedPreferences.getString(Keys.unitPlan(_grade)) == null) {
-      sharedPreferences.setString(Keys.unitPlan(_grade), '[]');
-    }
-  }
+  String url = 'https://api.vsa.2bad2c0.de/unitplan/' + _grade + '.json?v=' + new Random().nextInt(99999999).toString(); 
+  await fetchDataAndSave(url, Keys.unitPlan(_grade), '[]');
 
   // Parse data...
   UnitPlan.days = await fetchDays();

@@ -1,24 +1,36 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'UnitPlanView.dart';
+import '../Network.dart';
+import '../Localizations.dart';
+import 'UnitPlanDayList/UnitPlanDayListWidget.dart';
+import 'UnitPlanData.dart';
 
 class UnitPlanPage extends StatefulWidget {
   @override
   UnitPlanView createState() => UnitPlanView();
 }
 
-abstract class UnitPlanState extends State<UnitPlanPage> {
+class UnitPlanView extends State<UnitPlanPage> {
   bool offlineShown = false;
-
-  Future<bool> get checkOnline async {
-    try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        return true;
-      }
-      return false;
-    } on SocketException catch (_) {
-      return false;
+  
+  @override
+  Widget build(BuildContext context) {
+    if (!offlineShown) {
+      checkOnline.then((online) {
+        offlineShown = true;
+        if (!online) {
+          // Show offline information
+          Scaffold.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(context).oldDataIsShown),
+              action: SnackBarAction(
+                label: AppLocalizations.of(context).ok,
+                onPressed: () {},
+              ),
+            ),
+          );
+        }
+      });
     }
+    return Column(children: <Widget>[UnitPlanDayList(days: getUnitPlan())]);
   }
 }

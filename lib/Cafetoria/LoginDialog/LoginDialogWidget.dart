@@ -1,6 +1,6 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'LoginDialogView.dart';
+import '../../Network.dart';
 
 class LoginDialog extends StatefulWidget {
   final Function onFinished;
@@ -29,17 +29,5 @@ abstract class LoginDialogState extends State<LoginDialog> {
         this.online = online;
       });
     });
-  }
-
-  Future<bool> get checkOnline async {
-    try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        return true;
-      }
-      return false;
-    } on SocketException catch (_) {
-      return false;
-    }
   }  
 }

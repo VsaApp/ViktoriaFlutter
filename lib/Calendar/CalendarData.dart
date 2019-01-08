@@ -1,30 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Keys.dart';
+import '../Network.dart';
 import 'CalendarModel.dart';
 
 // Download calendar data...
 Future download() async {
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  try {
-    // Get url...
-    String _url = 'https://api.vsa.2bad2c0.de/calendar/calendar.json?v=' +
-        new Random().nextInt(99999999).toString();
-    print(_url);
-    final response = await http.Client().get(_url);
-    // Save loaded data...
-    sharedPreferences.setString(Keys.calendar, response.body);
-    await sharedPreferences.commit();
-  } catch (e) {
-    print("Error in download: " + e.toString());
-    if (sharedPreferences.getString(Keys.calendar) == null) {
-      // Set default data...
-      sharedPreferences.setString(Keys.calendar, '{}');
-    }
-  }
+  String url = 'https://api.vsa.2bad2c0.de/calendar/calendar.json?v=' + new Random().nextInt(99999999).toString();
+  fetchDataAndSave(url, Keys.calendar, '{}');
 
   // Parse loaded data...
   Calendar.days = await fetchEvents();

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -93,18 +92,6 @@ abstract class LoginPageState extends State<LoginPage> {
       Navigator.pushReplacementNamed(context, '/');
     } else {
       teacherPasswordController.clear();
-    }
-  }
- 
-  Future<bool> get checkOnline async {
-    try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        return true;
-      }
-      return false;
-    } on SocketException catch (_) {
-      return false;
     }
   }
 }

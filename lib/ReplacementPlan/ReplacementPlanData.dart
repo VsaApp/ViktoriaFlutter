@@ -1,16 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Keys.dart';
+import '../Network.dart';
 import 'ReplacementPlanModel.dart';
 
 // Download all days of the replacement plan...
 Future download(String _grade, {bool alreadyLoad}) async {
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  await downloadDay(sharedPreferences, _grade, "today");
-  await downloadDay(sharedPreferences, _grade, "tomorrow");
+  await downloadDay(_grade, 'today');
+  await downloadDay(_grade, 'tomorrow');
 
   if (alreadyLoad ?? true) load(_grade);
 }
@@ -82,32 +81,9 @@ Future<List<ReplacementPlanDay>> load(String _grade,
 }
 
 // Download one day...
-Future downloadDay(
-    SharedPreferences sharedPreferences, String _grade, String _day) async {
-  try {
-    // Get url...
-    String _url = 'https://api.vsa.2bad2c0.de/replacementplan/' +
-        _day +
-        '/' +
-        _grade +
-        '.json?v=' +
-        new Random().nextInt(99999999).toString();
-    print(_url);
-    final response = await http.Client().get(_url);
-
-    // Save the loaded data..
-    await sharedPreferences.setString(Keys.replacementPlan(_grade, _day), response.body);
-    await sharedPreferences.commit();
-  } catch (e) {
-    print("Error in download: " + e.toString());
-    if (sharedPreferences.getString(Keys.replacementPlan(_grade, _day)) ==
-        null) {
-      // Set to default data...
-      await sharedPreferences.setString(
-          Keys.replacementPlan(_grade, _day), '[]');
-      await sharedPreferences.commit();
-    }
-  }
+Future downloadDay(String _grade, String _day) async {
+  String url = 'https://api.vsa.2bad2c0.de/replacementplan/' + _day + '/' + _grade + '.json?v=' + new Random().nextInt(99999999).toString(); 
+  fetchDataAndSave(url, Keys.replacementPlan(_grade, _day), '[]');
 }
 
 // Returns the static replacement plan...
