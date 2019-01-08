@@ -11,7 +11,11 @@ class DayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String menues = '';
-    day.menues.forEach((menu) => menues += (menu.price > 0) ? '${menu.name} (${menu.price}€)\n\n' : '${menu.name}\n\n');
+    day.menues.forEach((menu) => menues += (
+            menu.name +
+            (menu.price > 0 ? ' (${menu.price}€)' : '') +
+            (menu.time != '' ? '\n${menu.time}' : '') + '\n\n'
+        ));
     menues = menues.trim();
     if (menues.length == 0) menues = AppLocalizations.of(context).cafetoriaNoMenues;
     return Container(
@@ -24,7 +28,10 @@ class DayCard extends StatelessWidget {
             children: <Widget>[
               ListTile(
                 leading: Icon(Icons.restaurant_menu, color: Theme.of(context).accentColor),
-                title: Text(day.weekday),
+                title: Padding(
+                  padding: EdgeInsets.only(bottom: 5),
+                  child: Text(day.weekday),
+                ),
                 subtitle: Text(menues),
                 onTap: () => launch('https://www.opc-asp.de/vs-aachen/'),
               ),
