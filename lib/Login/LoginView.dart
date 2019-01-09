@@ -132,7 +132,7 @@ class LoginPageView extends LoginPageState {
                                       value: grade,
                                       onChanged: (grade) {
                                         setState(() {
-                                          grade = grade;
+                                          this.grade = grade;
                                         });
                                       },
                                     ),
