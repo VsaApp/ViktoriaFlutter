@@ -11,6 +11,7 @@ import '../ReplacementPlan/ReplacementPlanPage.dart';
 import '../Settings/SettingsPage.dart';
 import '../UnitPlan/UnitPlanPage.dart';
 import '../WorkGroups/WorkGroupsView.dart';
+import '../Messageboard/MessageboardView.dart';
 import 'HomePage.dart';
 import 'ShortCutDialog/ShortCutDialogWidget.dart';
 
@@ -23,6 +24,8 @@ class HomePageView extends HomePageState {
           UnitPlanPage()),
       Page(AppLocalizations.of(context).replacementPlan,
           Icons.format_list_numbered, ReplacementPlanPage()),
+      Page(AppLocalizations.of(context).messageboard, Icons.message,
+          MessageboardPage()),
       Page(AppLocalizations.of(context).calendar, Icons.calendar_today,
           CalendarPage()),
       Page(AppLocalizations.of(context).cafetoria, Icons.fastfood,

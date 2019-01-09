@@ -42,15 +42,17 @@ List<UnitPlanDay> parseDays(String responseBody) {
 
 // Sync the onesignal tags...
 Future syncTags() async {
-  Map<String, dynamic> tags = await OneSignal.shared.getTags();
+  if (!(await checkOnline)) return;
 
-  // First delete all tags...
-  tags.forEach((key, value) {
+  // First delete all unitPLan tags...
+  Map<String, dynamic> tagsToRemove = await OneSignal.shared.getTags();
+  tagsToRemove.removeWhere((key, value) => !key.startsWith('unitPlan'));
+  tagsToRemove.forEach((key, value) {
     OneSignal.shared.deleteTag(key);
   });
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
   // Only set tags when the user activated notifications...
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   if (!(sharedPreferences.getBool(Keys.getReplacementPlanNotifications) ??
       true)) {
     return;

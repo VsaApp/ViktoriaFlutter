@@ -18,6 +18,7 @@ dependencies:
   flutter_svg: ^0.7.0+1
   onesignal: ^1.0.3
   url_launcher: ^4.0.3
+  fluttertoast: ^2.2.3
   material_design_icons_flutter: 3.0.3289
 
 dev_dependencies:

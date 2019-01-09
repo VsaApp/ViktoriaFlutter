@@ -5,6 +5,7 @@ import '../ReplacementPlan/ReplacementPlanData.dart' as ReplacementPlan;
 import '../UnitPlan/UnitPlanData.dart' as UnitPlan;
 import '../WorkGroups/WorkGroupsData.dart' as WorkGroups;
 import '../Calendar/CalendarData.dart' as Calendar;
+import '../Messageboard/MessageboardData.dart' as Messageboard;
 import 'LoadingView.dart';
 
 class LoadingPage extends StatefulWidget {
@@ -31,5 +32,6 @@ abstract class LoadingPageState extends State<LoadingPage> {
         (await SharedPreferences.getInstance()).getString(Keys.grade));
     await WorkGroups.download();
     await Calendar.download();
+    await Messageboard.download();
   }
 }

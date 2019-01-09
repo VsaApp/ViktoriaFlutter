@@ -69,13 +69,163 @@ class AppLocalizations {
       'cafetoriaLogin': 'Keyfobdaten eingeben',
       'workGroups': 'AGs',
       'calendar': 'Kalender',
-      'dates': 'Termine'
+      'dates': 'Termine',
+      'messageboard': 'Schwarzes Brett',
+      'feed': 'Feed',
+      'groups': 'Gruppen',
+      'max3Groups': 'Du hast bereits 3 Gruppen ohne Bestätigung erstellt!',
+      'noLoggedInGroup': 'Du bist noch in keiner Gruppe angemeldet!',
+      'blockedInfo': ' (Blockiert)',
+      'follow': 'Folgen',
+      'doNotFollow': 'Entfolgen',
+      'onlyOnline': 'Du kannst dies nur online tun!',
+      'groupWaiting': 'Warte auf Bestätigung',
+      'feedUpdated': 'Feed aktualisiert!',
+      'noGroups': 'Du folgst noch keinen Gruppen!',
+      'noPosts': 'Es gibt noch keine Posts für dich!',
+      'groupInfo': 'Gruppeninformation',
+      'noPostsAnymore': 'Es gibt keine weitern Posts!',
+      'noPostsInGroup': 'Hier gibt es noch keine Posts!',
+      'passwordChanged': 'Das Passwort wurde geändert!',
+      'postGroup': 'Gruppe auswählen in der der Post gesendet werden soll',
+      'postText': 'Post Text',
+      'postTitle': 'Post Titel',
+      'addPost': 'Post schreiben!',
+      'errorAddingGroup': 'Fehler beim Gruppe hinzufügen!',
+      'addGroup': 'Gruppe erstellen',
+      'groupName': 'Gruppen Name',
+      'groupPassword': 'Gruppen Passwort',
+      'addGroupInfo': 'Die Grupepe kannst erstmal nur du sehen, bis sie von den App-Entwicklern bestätigt wurde. Dies könnte etwas Zeit in anspruch nehmen.',
+      'noSlash': '\'/\' ist nicht erlaubt',
+      'groupAlreadyExist': 'Name ist schon vergeben',
+      'passwordNotCorrect': 'Passwort falsch',
+      'noGroupsToShow': 'Es gibt aktuell noch keine Gruppen!\nDu kannst aber der erste sein der eine erstellt. Einfach unten rechts auf das Plus und dann auf das Gruppenzeichen klicken und schon kannst du eine Gruppe erstellen!',
     },
   };
 
   // All getter defined...
+  String get messageboard {
+    return _localizedValues[locale.languageCode]['messageboard'];
+  }
+
+  String get groupWaiting {
+    return _localizedValues[locale.languageCode]['groupWaiting'];
+  }
+
+  String get groupName {
+    return _localizedValues[locale.languageCode]['groupName'];
+  }
+
+  String get groupPassword {
+    return _localizedValues[locale.languageCode]['groupPassword'];
+  }
+
+  String get passwordNotCorrect {
+    return _localizedValues[locale.languageCode]['passwordNotCorrect'];
+  }
+
+  String get postText {
+    return _localizedValues[locale.languageCode]['postText'];
+  }
+
+  String get postTitle {
+    return _localizedValues[locale.languageCode]['postTitle'];
+  }
+
+  String get errorAddingGroup {
+    return _localizedValues[locale.languageCode]['errorAddingGroup'];
+  }
+
+  String get addGroup {
+    return _localizedValues[locale.languageCode]['addGroup'];
+  }
+
+  String get addGroupInfo {
+    return _localizedValues[locale.languageCode]['addGroupInfo'];
+  }
+
+  String get noSlash {
+    return _localizedValues[locale.languageCode]['noSlash'];
+  }
+
+  String get groupAlreadyExist {
+    return _localizedValues[locale.languageCode]['groupAlreadyExist'];
+  }
+
+  String get feedUpdated {
+    return _localizedValues[locale.languageCode]['feedUpdated'];
+  }
+
+  String get noGroups {
+    return _localizedValues[locale.languageCode]['noGroups'];
+  }
+
+  String get noPosts {
+    return _localizedValues[locale.languageCode]['noPosts'];
+  }
+
+  String get max3Groups {
+    return _localizedValues[locale.languageCode]['max3Groups'];
+  }
+
+  String get noPostsAnymore {
+    return _localizedValues[locale.languageCode]['noPostsAnymore'];
+  }
+
+  String get groupInfo {
+    return _localizedValues[locale.languageCode]['groupInfo'];
+  }
+
+  String get passwordChanged {
+    return _localizedValues[locale.languageCode]['passwordChanged'];
+  }
+
+  String get noPostsInGroup {
+    return _localizedValues[locale.languageCode]['noPostsInGroup'];
+  }
+
+  String get addPost {
+    return _localizedValues[locale.languageCode]['addPost'];
+  }
+
+  String get postGroup {
+    return _localizedValues[locale.languageCode]['postGroup'];
+  }
+
+  String get noLoggedInGroup {
+    return _localizedValues[locale.languageCode]['noLoggedInGroup'];
+  }
+
   String get cafetoria {
     return _localizedValues[locale.languageCode]['cafetoria'];
+  }
+
+  String get feed {
+    return _localizedValues[locale.languageCode]['feed'];
+  }
+
+  String get groups {
+    return _localizedValues[locale.languageCode]['groups'];
+  }
+
+  String get noGroupsToShow {
+    return _localizedValues[locale.languageCode]['noGroupsToShow'];
+  }
+
+  String get blockedInfo {
+    return _localizedValues[locale.languageCode]['blockedInfo'];
+  }
+
+  String get follow {
+    return _localizedValues[locale.languageCode]['follow'];
+  }
+
+  String get doNotFollow {
+    return _localizedValues[locale.languageCode]['doNotFollow'];
+  }
+
+  String get onlyOnline {
+    return _localizedValues[locale.languageCode]['onlyOnline'];
   }
 
   String get cafetoriaNoMenues {
