@@ -14,7 +14,7 @@ String urlGroupAdd = 'https://api.vsa.2bad2c0.de/messageboard/groups/add?v=' + n
 String urlGroupInfo = 'https://api.vsa.2bad2c0.de/messageboard/groups/info/'; // + GROUPNAME
 String urlGroupLogin = 'https://api.vsa.2bad2c0.de/messageboard/groups/login'; // + GROUPNAME/PASSWORD
 String urlGroupUpdate = 'https://api.vsa.2bad2c0.de/messageboard/groups/update'; // + GROUPNAME/PASSWORD
-String urlGroupPosts = 'https://api.vsa.2bad2c0.de/messageboard/posts/list'; // + GROUPNAME/PASSWORD
+String urlGroupPosts = 'https://api.vsa.2bad2c0.de/messageboard/posts/list'; // + GROUPNAME/START/END
 String urlPostAdd = 'https://api.vsa.2bad2c0.de/messageboard/posts/add'; // + GROUPNAME/PASSWORD
 String urlFeed = 'https://api.vsa.2bad2c0.de/messageboard/feed';
 

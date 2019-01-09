@@ -405,7 +405,7 @@ class Post {
     return Post(
       title: json['title'] as String,
       text: json['text'] as String,
-      date: json['time'] as String,
+      date: DateTime.parse(json['time'] as String).add(Duration(hours: 1)).toIso8601String(),
       id: json['follower'] as int,
       username: json['username'] as String,
     );
