@@ -9,7 +9,7 @@ import 'CalendarModel.dart';
 // Download calendar data...
 Future download() async {
   String url = 'https://api.vsa.2bad2c0.de/calendar/calendar.json?v=' + new Random().nextInt(99999999).toString();
-  fetchDataAndSave(url, Keys.calendar, '{}');
+  await fetchDataAndSave(url, Keys.calendar, '{}');
 
   // Parse loaded data...
   Calendar.days = await fetchEvents();

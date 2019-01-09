@@ -7,11 +7,11 @@ import '../Network.dart';
 import 'ReplacementPlanModel.dart';
 
 // Download all days of the replacement plan...
-Future download(String _grade, {bool alreadyLoad}) async {
+Future download(String _grade, {bool alreadyLoad = true}) async {
   await downloadDay(_grade, 'today');
   await downloadDay(_grade, 'tomorrow');
 
-  if (alreadyLoad ?? true) load(_grade);
+  if (alreadyLoad) load(_grade);
 }
 
 /* Load the replacement plan in the structure...
@@ -83,7 +83,7 @@ Future<List<ReplacementPlanDay>> load(String _grade,
 // Download one day...
 Future downloadDay(String _grade, String _day) async {
   String url = 'https://api.vsa.2bad2c0.de/replacementplan/' + _day + '/' + _grade + '.json?v=' + new Random().nextInt(99999999).toString(); 
-  fetchDataAndSave(url, Keys.replacementPlan(_grade, _day), '[]');
+  await fetchDataAndSave(url, Keys.replacementPlan(_grade, _day), '[]');
 }
 
 // Returns the static replacement plan...
