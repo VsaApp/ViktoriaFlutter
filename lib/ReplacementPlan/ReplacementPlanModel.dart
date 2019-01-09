@@ -123,61 +123,49 @@ class Change {
         .indexOf(weekday);
 
     // Filter all changes with a set course...
-    if (course.length > 0) {
-      UnitPlan.days.forEach((day) => day.lessons.forEach((lesson) {
-            if (lesson.subjects.length > 0) {
-              // Get the selected index...
-              int selected = getSelectedSubject(
-                      sharedPreferences,
-                      lesson.subjects[0],
-                      UnitPlan.days.indexOf(day),
-                      day.lessons.indexOf(lesson)) ??
-                  0;
+    UnitPlan.days.forEach((day) => day.lessons.forEach((lesson) {
+          if (lesson.subjects.length > 0) {
+            // Get the selected index...
+            int selected = getSelectedSubject(
+                    sharedPreferences,
+                    lesson.subjects[0],
+                    UnitPlan.days.indexOf(day),
+                    day.lessons.indexOf(lesson)) ??
+                0;
 
-              // When there is a subject with the right index and this subject has the correct course, set change to myChange...
-              if (selected < lesson.subjects.length) {
-                UnitPlanSubject subject = lesson.subjects[selected];
-                // Subject is the same and teacher is same or not available
-                if (this.lesson == subject.lesson &&
-                    (teacher == "" || teacher == subject.teacher)) {
-                  // It's the correct lesson...
-                  if (course == subject.course) {
-                    // Change is exam
-                    if (changed.info.toLowerCase().contains('klausur')) {
-                      // The subject is selected as not writing
-                      if (!(sharedPreferences.getBool(Keys.exams(subject.lesson.toUpperCase())) ?? true)) {
-                        isMy = 0;
-                        return;
-                      }
+            // When there is a subject with the right index and this subject has the correct course, set change to myChange...
+            if (selected < lesson.subjects.length) {
+              UnitPlanSubject subject = lesson.subjects[selected];
+              if (this.lesson == subject.lesson &&
+                  (teacher.length == 0 || teacher == subject.teacher)) {
+                // It's the correct lesson...
+                if (course == subject.course) {
+                  if (changed.info.toLowerCase().contains('klausur')) {
+                    if (!(sharedPreferences.getBool(Keys.exams(subject.lesson.toUpperCase())) ?? true)) {
+                      isMy = 0;
+                      return;
                     }
-                    isMy = 1;
-                  } else {
-                    // Courses are not the same
-                    isMy = 0;
                   }
+                  isMy = 1;
+                  return;
+                } else if (course.length > 0) {
+                  isMy = 0;
+                  return;
                 }
               }
             }
+          }
         }));
-      if (isMy != -1) {
-        return;
-      }
-    }
 
     // Filter all exams...
     if (changed.info.toLowerCase().contains('klausur')) {
       int countSubjects = 0;
       int selectedSubjects = 0;
-      bool writing = sharedPreferences.getBool(Keys.exams(lesson.toUpperCase())) ?? true;
+      bool writing = false;
 
-      if (!writing) {
-        isMy = 0;
-        return;
-      }  
       // Search all subjects with the correct name and teacher...
       UnitPlan.days.forEach((day) =>
           day.lessons.forEach((lesson) => lesson.subjects.forEach((subject) {
-                // Change subject and change teacher are the same as in the current lesson
                 if (subject.lesson == this.lesson &&
                     subject.teacher == this.teacher) {
                   // Get selected index...
@@ -187,22 +175,28 @@ class Change {
                   // Count the possible subjects...
                   countSubjects++;
                   if (selected == null) {
-                    isMy = -1;
+                    isMy = 0;
                     return;
                   }
-                  // Count selected subjects...
-                  if (lesson.subjects[selected] == subject) {
-                    selectedSubjects++;
+                  if (selected < lesson.subjects.length) {
+                    if (lesson.subjects[selected] == subject) {
+                      selectedSubjects++;
+                      // Check if user write exams in the course...
+                      bool exams = sharedPreferences.getBool(
+                              Keys.exams(subject.lesson.toUpperCase())) ??
+                          true;
+                      writing = exams;
+                    }
                   }
                 }
               })));
       // If max one of the subjects is not installed, set this change to myChange...
-      if (selectedSubjects >= countSubjects - 1) {
+      if ((selectedSubjects >= countSubjects - 1) && writing) {
         isMy = 1;
         // Add this change to the subjects in the unit plan...
         UnitPlan.days[day].lessons[unit].subjects
             .forEach((subject) => subject.changes.add(this));
-      } else if (selectedSubjects == 0) isMy = 0;
+      } else if (selectedSubjects == 0 || !writing) isMy = 0;
       return;
     }
 
@@ -212,63 +206,84 @@ class Change {
     List<UnitPlanSubject> possibleSubjects = [];
     UnitPlanSubject nSubject;
 
-    // Add all subjects with the correct lesson
-    List<UnitPlanSubject> sameLessons = nLesson.subjects
+    // Check all subjects in the normal lesson...
+    for (int i = 0; i < nLesson.subjects.length; i++) {
+      UnitPlanSubject subject = nLesson.subjects[i];
+      // There is only one Subject with the correct name...
+      if (getSubject(subject.lesson) == getSubject(lesson)) {
+        if (nLesson.subjects
+                .where((j) => getSubject(j.lesson) == getSubject(lesson))
+                .toList()
+                .length ==
+            1) {
+          nSubject = subject;
+          break;
+        } else
+          possibleSubjects.addAll(nLesson.subjects
               .where((j) => getSubject(j.lesson) == getSubject(lesson))
-              .toList();
-
-    // Add all subjects with the correct room
-    List<UnitPlanSubject> sameRooms = nLesson.subjects
-              .where((j) => j.room == room)
-              .toList();
-
-    // Add all subjects with the correct teacher
-    List<UnitPlanSubject> sameTeachers = nLesson.subjects
-              .where((j) => j.teacher == teacher)
-              .toList();
-    
-    if (sameLessons.length == 1) {
-      nSubject = sameLessons[0];
+              .toList());
+      }
+      // There is only one Subject with the correct room...
+      if (subject.room == room) {
+        if (nLesson.subjects.where((j) => j.room == room).toList().length ==
+            1) {
+          nSubject = subject;
+          break;
+        } else
+          possibleSubjects
+              .addAll(nLesson.subjects.where((j) => j.room == room).toList());
+      }
+      // There is only one Subject with the correct teacher...
+      if (subject.teacher == teacher) {
+        if (nLesson.subjects
+                .where((j) => j.teacher == teacher)
+                .toList()
+                .length ==
+            1) {
+          nSubject = subject;
+          break;
+        } else
+          possibleSubjects.addAll(
+              nLesson.subjects.where((j) => j.teacher == teacher).toList());
+      }
     }
-    if (sameRooms.length == 1) {
-      nSubject = sameRooms[0];
-    }
-    if (sameTeachers.length == 1) {
-      nSubject = sameTeachers[0];
-    }
-    
-    possibleSubjects.addAll(sameLessons);
-    possibleSubjects.addAll(sameRooms);
-    possibleSubjects.addAll(sameTeachers);
+    // Set change default to undef...
+    isMy = -1;
 
     // If a normal subject found, set change to myChange and insert in untiplan...
     if (nSubject != null) {
       // Get selected
       int selected = getSelectedSubject(sharedPreferences, nSubject, day, unit);
-      if (selected != null) {
-        // If the normal Subject is the selected subject, the subject is my subject...
-        if (UnitPlan.days[day].lessons[unit].subjects[selected] == nSubject) {
-          isMy = 1;
-        } else
-          isMy = 0;
-
-        // Add the change to the normal subject...
-        nSubject.changes.add(this);
-
-        // Add new information to this change...
-        normalSubject = nSubject;
-        room = nSubject.room;
-        teacher = nSubject.teacher;
+      if (selected == null) {
+        isMy = 0;
+        return;
       }
+      // If the normal Subject is the selected subject, the subject is my subject...
+      if (UnitPlan.days[day].lessons[unit].subjects[selected] == nSubject) {
+        isMy = 1;
+      } else
+        isMy = 0;
+
+      // Add the change to the normal subject...
+      nSubject.changes.add(this);
+
+      // Add new information to this change...
+      normalSubject = nSubject;
+      room = nSubject.room;
+      teacher = nSubject.teacher;
     }
     // If there is more than one possibilty and no one is selected, it's sure that it isn't my change...
     else if (possibleSubjects.length > 0) {
-      int selected = getSelectedSubject(sharedPreferences, possibleSubjects[0], day, unit);
-      if (selected != null) {
-        // If the normal Subject is the selected subject, the subject is my subject...
-        if (!possibleSubjects.contains(UnitPlan.days[day].lessons[unit].subjects[selected])) {
-          isMy = 0;
-        }
+      int selected =
+          getSelectedSubject(sharedPreferences, possibleSubjects[0], day, unit);
+      if (selected == null) {
+        isMy = 0;
+        return;
+      }
+      // If the normal Subject is the selected subject, the subject is my subject...
+      if (!possibleSubjects
+          .contains(UnitPlan.days[day].lessons[unit].subjects[selected])) {
+        isMy = 0;
       }
     }
   }
@@ -298,4 +313,5 @@ int getSelectedSubject(SharedPreferences sharedPreferences,
   // If the subject block is set, get index for block, else get index for day + unit...
   return sharedPreferences.getInt(Keys.unitPlan(sharedPreferences.getString(Keys.grade), block: subject.block, day: day, unit: unit));
 }
+
 
