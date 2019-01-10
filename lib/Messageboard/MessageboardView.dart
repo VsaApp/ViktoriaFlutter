@@ -224,7 +224,7 @@ class GroupsView extends State<GroupsPage> {
                                 }
                               ) : Container(),
                               FlatButton(
-                                child: (group.status == 'activated') ? (Icon((!Messageboard.notifications.contains(group)) ? Icons.notifications_active : Icons.notifications_off, color: Theme.of(context).accentColor)) : Text(group.status == 'waiting' ? AppLocalizations.of(context).groupWaiting : AppLocalizations.of(context).ok),
+                                child: (group.status == 'activated') ? (Icon((!Messageboard.notifications.contains(group)) ? Icons.notifications_off : Icons.notifications_active, color: Theme.of(context).accentColor)) : Text(group.status == 'waiting' ? AppLocalizations.of(context).groupWaiting : AppLocalizations.of(context).ok),
                                 onPressed: () {
                                   if (group.status == 'activated') {
                                     checkOnline.then((online) {
@@ -756,7 +756,7 @@ class GroupView extends State<GroupPage> {
                               }
                             ),
                             FlatButton(
-                              child: Icon((!Messageboard.notifications.contains(group)) ? Icons.notifications_active : Icons.notifications_off, color: Theme.of(context).accentColor),
+                              child: Icon((!Messageboard.notifications.contains(group)) ? Icons.notifications_off : Icons.notifications_active, color: Theme.of(context).accentColor),
                               onPressed: () {
                                 checkOnline.then((online) {
                                   if (online) setState(() => Messageboard.toggleNotificationGroup(group.name));
