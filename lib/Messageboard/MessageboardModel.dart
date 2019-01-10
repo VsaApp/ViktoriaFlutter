@@ -407,7 +407,7 @@ class Post {
       text: json['text'] as String,
       date: DateTime.parse(json['time'] as String).add(Duration(hours: 1)).toIso8601String(),
       id: json['follower'] as int,
-      username: json['username'] as String,
+      username: json['username'] as String ?? '',
     );
   }
 }
