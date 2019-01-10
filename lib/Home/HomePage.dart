@@ -53,8 +53,10 @@ abstract class HomePageState extends State<HomePage> {
     });
     OneSignal.shared.setNotificationOpenedHandler((osNotification) {
       platform.invokeMethod('clearNotifications');
-      if (osNotification.notification.payload.body.contains('Stunde')) {
+      if (osNotification.notification.payload.additionalData['type'] == 'replacementplan') {
         setState(() => selectedDrawerIndex = 1);
+      } else if (osNotification.notification.payload.additionalData['type'] == 'messageboard') {
+        setState(() => selectedDrawerIndex = 2);
       }
     });
     // Initialize onesignal
