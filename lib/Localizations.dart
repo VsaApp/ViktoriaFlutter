@@ -100,6 +100,7 @@ class AppLocalizations {
       'groupAlreadyExist': 'Name ist schon vergeben',
       'passwordNotCorrect': 'Passwort falsch',
       'noGroupsToShow': 'Es gibt aktuell noch keine Gruppen!\nDu kannst aber der erste sein der eine erstellt. Einfach unten rechts auf das Plus und dann auf das Gruppenzeichen klicken und schon kannst du eine Gruppe erstellen!',
+      'nowADeveloper': 'Du bist jetzt ein Entwickler!'
     },
   };
 
@@ -445,6 +446,10 @@ class AppLocalizations {
 
   String get dates {
     return _localizedValues[locale.languageCode]['dates'];
+  }
+
+  String get nowADeveloper {
+    return _localizedValues[locale.languageCode]['nowADeveloper'];
   }
 }
 

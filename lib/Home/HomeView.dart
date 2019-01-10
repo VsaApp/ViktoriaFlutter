@@ -106,13 +106,16 @@ class HomePageView extends HomePageState {
               child: Column(
                 children: <Widget>[
                   // Logo
-                  Container(
-                    height: 100.0,
-                    child: SvgPicture.asset(
-                      'assets/images/logo_white.svg',
+                  GestureDetector(
+                    onTap: logoClick,
+                    child: Container(
+                      height: 100.0,
+                      child: SvgPicture.asset(
+                        'assets/images/logo_white.svg',
+                      ),
                     ),
                   ),
-                  // GrAde
+                  // Grade
                   Text(
                     HomePageState.grade,
                     style: TextStyle(

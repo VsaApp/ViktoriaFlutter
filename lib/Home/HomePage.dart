@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onesignal/onesignal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../Keys.dart';
+import '../Localizations.dart';
 import '../UnitPlan/UnitPlanData.dart';
 import 'HomeView.dart';
 
@@ -34,6 +36,7 @@ abstract class HomePageState extends State<HomePage> {
   static String grade = '';
   bool dialogShown = false;
   bool showDialog1 = true;
+  int logoClickCount = 0;
   static const platform = const MethodChannel('viktoriaflutter');
 
   @override
@@ -76,6 +79,21 @@ abstract class HomePageState extends State<HomePage> {
       showDialog1 = sharedPreferences.getBool(Keys.showShortCutDialog) ?? true;
       selectedDrawerIndex = sharedPreferences.getInt(Keys.initialPage) ?? 0;
     });
+  }
+
+  void logoClick() {
+    logoClickCount++;
+    if (logoClickCount >= 7) {
+      Fluttertoast.showToast(
+        msg: AppLocalizations.of(context).nowADeveloper,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Color(0xAA333333),
+        textColor: Colors.white
+      );
+      logoClickCount = 0;
+      OneSignal.shared.sendTag('dev', true);
+    }
   }
 
   // Return the widget of the page

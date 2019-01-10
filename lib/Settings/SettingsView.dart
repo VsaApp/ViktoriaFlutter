@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onesignal/onesignal.dart';
 import 'SettingsPage.dart';
 import '../SectionWidget.dart';
 import '../Localizations.dart';
@@ -165,6 +166,7 @@ class SettingsPageView extends SettingsPageState {
                       sharedPreferences.remove(Keys.password);
                       sharedPreferences.remove(Keys.grade);
                       sharedPreferences.remove(Keys.isTeacher);
+                      OneSignal.shared.deleteTag('dev');
                       sharedPreferences.commit().then((_) {
                         // Reload app
                         syncTags();
