@@ -223,6 +223,7 @@ class GroupsView extends State<GroupsPage> {
                                   });
                                 }
                               ) : Container(),
+                              (Messageboard.following.contains(group)) ?
                               FlatButton(
                                 child: (group.status == 'activated') ? (Icon((!Messageboard.notifications.contains(group)) ? Icons.notifications_off : Icons.notifications_active, color: Theme.of(context).accentColor)) : Text(group.status == 'waiting' ? AppLocalizations.of(context).groupWaiting : AppLocalizations.of(context).ok),
                                 onPressed: () {
@@ -246,7 +247,7 @@ class GroupsView extends State<GroupsPage> {
                                     setState(() => Messageboard.confirmBolckedGroup(group.name));
                                   }
                                 }
-                              ),
+                              ) : Container(),
                             ],
                           ),
                         ),
@@ -755,6 +756,7 @@ class GroupView extends State<GroupPage> {
                                 });
                               }
                             ),
+                            (Messageboard.following.contains(group)) ?
                             FlatButton(
                               child: Icon((!Messageboard.notifications.contains(group)) ? Icons.notifications_off : Icons.notifications_active, color: Theme.of(context).accentColor),
                               onPressed: () {
@@ -773,7 +775,7 @@ class GroupView extends State<GroupPage> {
                                   }
                                 });
                               },
-                            ),
+                            ) : Container(),
                           ],
                         ),
                       ),
