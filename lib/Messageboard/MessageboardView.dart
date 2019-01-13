@@ -625,9 +625,17 @@ class GroupPage extends StatefulWidget {
 class GroupView extends State<GroupPage> {
   ScrollController _scrollController;
   TextEditingController editingController;
+  TextEditingController currentPasswordController;
+  TextEditingController newPasswordController;
+  TextEditingController repeatNewPasswordController;
   SharedPreferences sharedPreferences;
-  Group group;
-  bool editMode = false;
+  Map<String, IconData> appBarIcons = {};
+  Function() updatedListener;
+  final _formKey = GlobalKey<FormState>();
+  final _newPasswordFocus = FocusNode();
+  final _repeatNewPasswordFocus = FocusNode();
+  bool _credentialsCorrect = true;
+  bool _passwordsAreEqual = true;
 
   @override
   void initState() {
@@ -636,57 +644,320 @@ class GroupView extends State<GroupPage> {
         sharedPreferences = instance;
       });
     });
-    _scrollController = ScrollController();
-    editingController = TextEditingController();
-    editingController.text = widget.group.info;
 
+    updatedListener = () => setState(() => null);
+    widget.group.updatedListeners.add(updatedListener);
+
+    _scrollController = ScrollController();
     super.initState();
   }
 
   @override
+  void dispose() {
+    widget.group.updatedListeners.remove(updatedListener);
+    super.dispose();
+  }
+
+  /// An App bar item was selected
+  /// This is only possible if the user is logged in int the current group
+  void _selectedItem(String action){
+    if (action == AppLocalizations.of(context).addPost) writePost();
+    else if (action == AppLocalizations.of(context).editGroupInfo) editGroupInfo();
+    else if (action == AppLocalizations.of(context).editGroupPassword) editGroupPassword();
+    else if (action == AppLocalizations.of(context).removeGroup) deleteGroup();
+  }
+
+  /// Check the login
+  void checkEditPassword() async {
+    String group = widget.group.name;
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    _passwordsAreEqual = newPasswordController.text == repeatNewPasswordController.text;
+    String _password = sha256.convert(utf8.encode(currentPasswordController.text)).toString();
+    _credentialsCorrect = await api.checkLogin(username: group, password: _password);
+    if (_formKey.currentState.validate()) {
+      // Save correct credentials
+      String _newPassword = sha256.convert(utf8.encode(newPasswordController.text)).toString();
+      widget.group.update(sharedPreferences, newPassword: _newPassword).then((updated) {
+        if (!updated) {
+          Fluttertoast.showToast(
+            msg: AppLocalizations.of(context).errorEditGroup,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM, // also possible "TOP" and "CENTER"
+            backgroundColor: Colors.black87,
+            textColor: Colors.white
+          );
+          Navigator.of(context).pop();
+        }
+        else {
+          Navigator.of(context).pop();
+        }
+      });
+      sharedPreferences.setString(Keys.groupEditPassword(group), _newPassword);
+      sharedPreferences.commit();
+    } else {
+      currentPasswordController.clear();
+    }
+  }
+
+  /// Edit group password
+  void editGroupPassword() {
+    currentPasswordController = TextEditingController();
+    newPasswordController = TextEditingController();
+    repeatNewPasswordController = TextEditingController();
+    // Show edit group info dialog...
+    showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: Text(AppLocalizations.of(context).editGroupPassword),
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(left: 10, right: 10),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    // Pin input
+                    TextFormField(
+                      controller: currentPasswordController,
+                      validator: (value) {
+                        if (!_credentialsCorrect) {
+                          return AppLocalizations.of(context)
+                              .passwordNotCorrect;
+                        }
+                      },
+                      decoration: InputDecoration(
+                          hintText:
+                              AppLocalizations.of(context).currentPassword),
+                      onFieldSubmitted: (value) {
+                        FocusScope.of(context).requestFocus(_newPasswordFocus);
+                      },
+                      obscureText: true,
+                    ),
+                    TextFormField(
+                      controller: newPasswordController,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return AppLocalizations.of(context)
+                              .fieldCantBeEmpty;
+                        }
+                      },
+                      decoration: InputDecoration(
+                          hintText:
+                              AppLocalizations.of(context).newPassword),
+                      onFieldSubmitted: (value) {
+                        FocusScope.of(context).requestFocus(_repeatNewPasswordFocus);
+                      },
+                      obscureText: true,
+                      focusNode: _newPasswordFocus,
+                    ),
+                    TextFormField(
+                      controller: repeatNewPasswordController,
+                      validator: (value) {
+                        if (!_passwordsAreEqual) {
+                          return AppLocalizations.of(context)
+                              .passwordNotEqual;
+                        }
+                      },
+                      decoration: InputDecoration(
+                          hintText:
+                              AppLocalizations.of(context).repeatNewPassword),
+                      onFieldSubmitted: (value) {
+                        checkEditPassword();
+                      },
+                      obscureText: true,
+                      focusNode: _repeatNewPasswordFocus,
+                    ),
+                    // Login button
+                    Container(
+                      margin: EdgeInsets.only(top: 20.0),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: RaisedButton(
+                          color: Theme.of(context).accentColor,
+                          onPressed: () {
+                            checkEditPassword();
+                          },
+                          child: Text(AppLocalizations.of(context).login),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            )
+          ],
+        );
+      },
+    );
+  }
+
+
+  /// Edit group info
+  void editGroupInfo() {
+    // Check group password...
+    getCorrectPassword((String password) {
+      editingController = TextEditingController();
+      editingController.text = widget.group.info;
+      // Show edit group info dialog...
+      showDialog<void>(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            title: Text(AppLocalizations.of(context).editGroupInfo),
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(left: 10, right: 10),
+                child: TextField(
+                  controller: editingController,
+                  maxLines: 10,
+                  maxLength: 400,
+                )
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 10, right: 10),
+                child: FlatButton(
+                  child: Text(AppLocalizations.of(context).ok),
+                  onPressed: () {
+                    if (editingController.text != widget.group.info) {
+                      widget.group.update(sharedPreferences, newInfo: editingController.text).then((updated) {
+                        if (!updated) {
+                          Fluttertoast.showToast(
+                            msg: AppLocalizations.of(context).errorEditGroup,
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM, // also possible "TOP" and "CENTER"
+                            backgroundColor: Colors.black87,
+                            textColor: Colors.white
+                          );
+                          Navigator.of(context).pop();
+                        }
+                        else {
+                          Navigator.of(context).pop();
+                        }
+                      });
+                    }
+                  },
+                )
+              )
+            ],
+          );
+        },
+      );
+    });
+  }
+
+  /// Delete the current group
+  void deleteGroup() {
+    confirmDeleteGroup(() {
+      // Check group password...
+      getCorrectPassword((String password) {
+        // Remove group...
+        Messageboard.removeGroup(widget.group, password,
+          onRemoved: () {
+            Fluttertoast.showToast(
+                msg: AppLocalizations.of(context).removedGroup.replaceAll('%s', widget.group.name),
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM, // also possible "TOP" and "CENTER"
+                backgroundColor: Colors.black87,
+                textColor: Colors.white
+            );
+            Navigator.of(context).pop();
+          },
+          onFailed: () => print("Failed to remove group!")
+        );
+      });
+    });
+  }
+
+  /// Gets the correct group password
+  void getCorrectPassword(Function(String password) finished) async {
+    bool correctLogin = await api.checkLogin(username: widget.group.name, password: sharedPreferences.getString(Keys.groupEditPassword(widget.group.name)));
+    if (!correctLogin) {
+      showDialog<String>(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context1) {
+          return SimpleDialog(
+            title: Text(AppLocalizations.of(context).passwordChanged),
+            children: <Widget>[
+              LoginDialog(group: widget.group.name, onFinished: () {
+                finished(sharedPreferences.getString(Keys.groupEditPassword(widget.group.name)));
+              }),
+            ],
+          );
+        },
+      );
+    }
+    else finished(sharedPreferences.getString(Keys.groupEditPassword(widget.group.name)));
+  }
+
+  /// Asks user if he really wants to delete the group
+  void confirmDeleteGroup(Function() onDeleteGroup){
+    showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context).removeGroup),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(AppLocalizations.of(context).confirmDeleteGroup)
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(AppLocalizations.of(context).no),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text(AppLocalizations.of(context).yes),
+              onPressed: () {
+                Navigator.of(context).pop();
+                onDeleteGroup();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Write a new post...
+  void writePost(){
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => WritePostPage(group: widget.group.name, onFinished: () {
+      setState(() => null);
+    })));
+  }
+
+  @override
   Widget build(BuildContext context) {
+    appBarIcons = {
+      AppLocalizations.of(context).addPost: Icons.add,
+      AppLocalizations.of(context).editGroupInfo: Icons.edit,
+      AppLocalizations.of(context).editGroupPassword: Icons.vpn_key,
+      AppLocalizations.of(context).removeGroup: Icons.delete
+    };
+
     Group group = widget.group;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(title: Text(AppLocalizations.of(context).groupInfo), actions: <Widget>[
-          editMode ? 
-            IconButton(
-              icon: Icon(Icons.close, color: Colors.white),
-              onPressed: () => setState(() => editMode = !editMode),
-            ) : Container(),
-          Messageboard.loggedIn.contains(group) ?
-            IconButton(
-              icon: Icon(!editMode ? Icons.edit : Icons.check, color: Colors.white),
-              onPressed: () => setState(() {
-                if (editMode) {
-                  if (editingController.text != group.info) {
-                    group.update(sharedPreferences, newInfo: editingController.text).then((updated) {
-                      if (!updated) {
-                        showDialog<String>(
-                          context: context,
-                          barrierDismissible: true,
-                          builder: (BuildContext context1) {
-                            return SimpleDialog(
-                              title: Text(AppLocalizations.of(context)
-                                  .passwordChanged),
-                              children: <Widget>[
-                                LoginDialog(group: group.name, onFinished: () => setState(() => group.update(sharedPreferences, newInfo: editingController.text))),
-                              ],
-                            );
-                          },
-                        );
-                      }
-                      else {
-                        setState(() => null);
-                      }
-                    });
-                  }
-                }
-                editMode = !editMode;
-              } ),
-            )
-            :
-            Container()
+        Messageboard.loggedIn.map((group) => group.name).contains(group.name) ?
+          PopupMenuButton<String>(
+            onSelected: _selectedItem,
+            itemBuilder: (BuildContext context) {
+              return appBarIcons.keys.map((String name) => PopupMenuItem<String>(
+                value: name,
+                child: Text(name),
+              )).toList();
+            },
+          ) : Container(),
         ]
       ),
       body: Builder(
@@ -705,21 +976,15 @@ class GroupView extends State<GroupPage> {
                     children: <Widget>[
                       ListTile(
                         title: Text(group.name),
-                        subtitle: editMode ? 
-                          TextField(
-                            controller: editingController,
-                            maxLines: 10,
-                            maxLength: 400,
-                          ) : 
-                          Text(group.info)
+                        subtitle: Text(group.info)
                       ),
                       ButtonTheme.bar( // make buttons use the appropriate styles for cards
                         child: ButtonBar(
                           children: <Widget>[
                             FlatButton(
-                              child: Text((!Messageboard.loggedIn.contains(group)) ? AppLocalizations.of(context).login : AppLocalizations.of(context).logout),
+                              child: Text((!Messageboard.loggedIn.map((group) => group.name).contains(group.name)) ? AppLocalizations.of(context).login : AppLocalizations.of(context).logout),
                               onPressed: () {
-                                if (!Messageboard.loggedIn.contains(group)){
+                                if (!Messageboard.loggedIn.map((group) => group.name).contains(group.name)){
                                   showDialog<String>(
                                     context: context,
                                     barrierDismissible: true,
@@ -738,7 +1003,7 @@ class GroupView extends State<GroupPage> {
                               } 
                             ),
                             FlatButton(
-                              child: Text((!Messageboard.following.contains(group)) ? AppLocalizations.of(context).follow : AppLocalizations.of(context).doNotFollow),
+                              child: Text((!Messageboard.following.map((group) => group.name).contains(group.name)) ? AppLocalizations.of(context).follow : AppLocalizations.of(context).doNotFollow),
                               onPressed: () {
                                 checkOnline.then((online) {
                                   if (online) setState(() => Messageboard.toggleFollowingGroup(group.name));
@@ -756,9 +1021,9 @@ class GroupView extends State<GroupPage> {
                                 });
                               }
                             ),
-                            (Messageboard.following.contains(group)) ?
+                            (Messageboard.following.map((group) => group.name).contains(group.name)) ?
                             FlatButton(
-                              child: Icon((!Messageboard.notifications.contains(group)) ? Icons.notifications_off : Icons.notifications_active, color: Theme.of(context).accentColor),
+                              child: Icon((!Messageboard.notifications.map((group) => group.name).contains(group.name)) ? Icons.notifications_off : Icons.notifications_active, color: Theme.of(context).accentColor),
                               onPressed: () {
                                 checkOnline.then((online) {
                                   if (online) setState(() => Messageboard.toggleNotificationGroup(group.name));
@@ -791,6 +1056,7 @@ class GroupView extends State<GroupPage> {
     );  
   }
 }
+
 
 class PostsList extends StatefulWidget {
   final Group group;
@@ -900,8 +1166,9 @@ class PostsListView extends State<PostsList> {
 
 class WritePostPage extends StatefulWidget {
   final Function() onFinished;
+  final String group;
 
-  WritePostPage({this.onFinished});
+  WritePostPage({this.onFinished, this.group});
 
   @override
   WritePostView createState() => WritePostView();
@@ -924,7 +1191,7 @@ class WritePostView extends State<WritePostPage> {
       String username = _group;
       String title = _titleController.text;
       String text = _textController.text;
-      Messageboard.addPost(username, title, text,
+      Messageboard.addPost(username, title, text, updateGroup: widget.group != null,
         onAdded: () {
           widget.onFinished();
           Navigator.pop(context);
@@ -958,6 +1225,8 @@ class WritePostView extends State<WritePostPage> {
   @override
   void initState() {
     super.initState();
+
+    if (widget.group != null) _group = widget.group;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       prepareLogin();
@@ -1014,6 +1283,7 @@ class WritePostView extends State<WritePostPage> {
                         children: <Widget>[
                           Center(child: Text(AppLocalizations.of(context).postGroup)),
                           // Group selector
+                          widget.group == null ?
                           Padding(
                             padding: EdgeInsets.only(top: 10, bottom: 20),
                             child: SizedBox(
@@ -1036,7 +1306,7 @@ class WritePostView extends State<WritePostPage> {
                                 ),
                               ),
                             ),
-                          ),
+                          ) : Container(),
                           TextFormField(
                             controller: _titleController,
                             validator: (value) {

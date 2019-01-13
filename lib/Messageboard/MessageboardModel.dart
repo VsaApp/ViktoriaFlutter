@@ -146,23 +146,50 @@ class Messageboard {
     else {
       if (onFailed != null) onFailed(-101);
     }
-    
   }
 
-    /// Add a Post to ta group...
-  static void addPost(String username, String title, String text, {Function() onAdded, Function() onFailed}) {    
+  /// Add a group to the waiting list...
+  /// 
+  /// onFailed is called when the adding process is failed (M). 
+  static void removeGroup(Group group, String password, {Function() onRemoved, Function() onFailed}) {    
+    // Remove group in preferences...
+    toogleLoginGroup(group.name, login: false);
+    toggleFollowingGroup(group.name, activate: false);
+    if (group.status == 'waiting') {
+      List<String> currentWaitingGroups = sharedPreferences.getStringList(Keys.waitingGroups) ?? [];
+      if (currentWaitingGroups.contains(group.name)){
+        sharedPreferences.setStringList(Keys.waitingGroups, currentWaitingGroups..remove(group.name));
+      }
+    }
+    // Remve group from the api...
+    data.removeGroup(username: group.name, password: password).then((successfully) {
+      if (successfully) {
+        // Remove login data for this group...
+        sharedPreferences.remove(Keys.groupEditPassword(group.name));
+        // Update groups list...
+        data.downloadGroups().then((_) {
+          feed.update().then((_){
+            if (onRemoved != null) onRemoved();
+          });
+        });
+      }
+      else if (onFailed != null) onFailed();
+    });
+  }
+
+  /// Add a Post to ta group...
+  static void addPost(String username, String title, String text, {Function() onAdded, Function() onFailed, bool updateGroup = false}) {    
     // Add group to the api...
-    data.addPost(username: username, password: sharedPreferences.getString(Keys.groupEditPassword(username)), title: title, text: text).then((successfully) {
+    data.addPost(username: username, password: sharedPreferences.getString(Keys.groupEditPassword(username)), title: title, text: text).then((successfully) async {
       if (successfully) {
         // Update feed...
-        feed.update().then((_) {
-          if (onAdded != null) onAdded();
-        });
+        await feed.update();
+        if (updateGroup) await allGroups.where((group) => group.name == username).toList()[0].reloadPosts();
+        if (onAdded != null) onAdded();
       }
       else if (onFailed != null) onFailed();
     });    
   }
-
 
   /// Switchs a group from the waiting list to the activated list...
   static void confirmWaitingGroup(String username) {    
@@ -301,22 +328,13 @@ class Group {
   String status;
   int follower;
   Function(String status) statusListener;
-  String _postStatus = 'undefined';
   int currentUpdateProcesses = 0;
   List<Post> posts = [];
   bool loadComplete = false;
   bool isAdding = false;
+  bool isUpdating = false;
   List<Function()> addedListeners = [];
-
-  /// Set the loading status and call the listener...
-  set postStatus(String status) {
-    _postStatus = status;
-    if (statusListener != null) statusListener(status);
-  }
-
-  get postStatus {
-    return _postStatus;
-  }
+  List<Function()> updatedListeners = [];
 
   Group({this.name, this.password, this.info, this.status, this.follower});
 
@@ -328,10 +346,19 @@ class Group {
   /// Updates the object and the group on the api...
   Future<bool> update(SharedPreferences sharedPreferences, {String newInfo, String newPassword}) async {
     info = newInfo ?? info;
-    password = newPassword ?? password;
-    bool updated = await data.updateGroup(username: name, password: sharedPreferences.getString(Keys.groupEditPassword(name)), newInfo: info, newPassword: newPassword ?? sharedPreferences.getString(Keys.groupEditPassword(name)));
-    await data.downloadGroups();
+    password = newPassword ?? sharedPreferences.getString(Keys.groupEditPassword(name));
+    bool updated = await data.updateGroup(username: name, password: sharedPreferences.getString(Keys.groupEditPassword(name)), newInfo: info, newPassword: password);
+    if (newInfo != null) {
+      await data.downloadGroups();
+      updatedListeners.forEach((updatedListener) => updatedListener());
+    }
     return updated;
+  }
+
+  /// Reloads all posts...
+  Future reloadPosts() async {
+    await data.downloadPosts(this, start: 0, end: 10);
+    addedListeners.forEach((addedListener) => addedListener());
   }
 
   /// Loads the next posts of this group...

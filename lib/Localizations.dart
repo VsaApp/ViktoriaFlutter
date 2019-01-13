@@ -90,7 +90,8 @@ class AppLocalizations {
       'postGroup': 'Gruppe auswählen in der der Post gesendet werden soll',
       'postText': 'Post Text',
       'postTitle': 'Post Titel',
-      'addPost': 'Post schreiben!',
+      'addPost': 'Post schreiben',
+      'removeGroup': 'Gruppe löschen',
       'errorAddingGroup': 'Fehler beim Gruppe hinzufügen!',
       'addGroup': 'Gruppe erstellen',
       'groupName': 'Gruppen Name',
@@ -99,14 +100,73 @@ class AppLocalizations {
       'noSlash': '\'/\' ist nicht erlaubt',
       'groupAlreadyExist': 'Name ist schon vergeben',
       'passwordNotCorrect': 'Passwort falsch',
+      'confirmDeleteGroup': 'Wollen sie wirklich die Gruppe Löschen?',
+      'removedGroup': 'Gruppe \'%s\' gelöscht!',
+      'editGroupInfo': 'Info bearbeiten',
+      'editGroupPassword': 'Passwort bearbeiten',
+      'errorEditGroup': 'Fehler beim bearbeiten der Gruppe!',
+      'currentPassword': 'Aktuelles Passwort',
+      'newPassword': 'Neues Passwort',
+      'repeatNewPassword': 'Neues Passwort wiederholen',
+      'passwordNotEqual': 'Die Passwörter sind unterschiedlich!',
       'noGroupsToShow': 'Es gibt aktuell noch keine Gruppen!\nDu kannst aber der erste sein der eine erstellt. Einfach unten rechts auf das Plus und dann auf das Gruppenzeichen klicken und schon kannst du eine Gruppe erstellen!',
-      'nowADeveloper': 'Du bist jetzt ein Entwickler!'
+      'nowADeveloper': 'Du bist jetzt ein Entwickler!',
+      'yes': 'Ja',
+      'no': 'Nein'
     },
   };
 
   // All getter defined...
   String get messageboard {
     return _localizedValues[locale.languageCode]['messageboard'];
+  }
+
+  String get passwordNotEqual {
+    return _localizedValues[locale.languageCode]['passwordNotEqual'];
+  }
+
+  String get currentPassword {
+    return _localizedValues[locale.languageCode]['currentPassword'];
+  }
+
+  String get newPassword {
+    return _localizedValues[locale.languageCode]['newPassword'];
+  }
+
+  String get repeatNewPassword {
+    return _localizedValues[locale.languageCode]['repeatNewPassword'];
+  }
+
+  String get errorEditGroup {
+    return _localizedValues[locale.languageCode]['errorEditGroup'];
+  }
+
+  String get editGroupInfo {
+    return _localizedValues[locale.languageCode]['editGroupInfo'];
+  }
+
+  String get editGroupPassword {
+    return _localizedValues[locale.languageCode]['editGroupPassword'];
+  }
+
+  String get removedGroup {
+    return _localizedValues[locale.languageCode]['removedGroup'];
+  }
+
+  String get yes {
+    return _localizedValues[locale.languageCode]['yes'];
+  }
+
+  String get no {
+    return _localizedValues[locale.languageCode]['no'];
+  }
+
+    String get confirmDeleteGroup {
+    return _localizedValues[locale.languageCode]['confirmDeleteGroup'];
+  }
+
+  String get removeGroup{
+    return _localizedValues[locale.languageCode]['removeGroup'];
   }
 
   String get groupWaiting {
