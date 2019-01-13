@@ -101,7 +101,7 @@ class AppLocalizations {
       'groupAlreadyExist': 'Name ist schon vergeben',
       'passwordNotCorrect': 'Passwort falsch',
       'confirmDeleteGroup': 'Wollen sie wirklich die Gruppe Löschen?',
-      'removedGroup': 'Gruppe \'%s\' gelöscht!',
+      'removedGroup': 'Gruppe \'%s\' wurde gelöscht!',
       'editGroupInfo': 'Info bearbeiten',
       'editGroupPassword': 'Passwort bearbeiten',
       'errorEditGroup': 'Fehler beim bearbeiten der Gruppe!',
