@@ -1249,110 +1249,112 @@ class WritePostView extends State<WritePostPage> {
       appBar: AppBar(title: Text(AppLocalizations.of(context).addPost)),
       body: Hero(
         tag: 'hero-addPost',
-        child: Container(
-          color: Colors.white,
-          margin: EdgeInsets.all(10.0),
-          child: showWidgets? Column(
-            children: <Widget>[
-              (!online
-                  ?
-                  // Offline information
-                  Padding(
-                      padding: EdgeInsets.only(top: 10.0),
-                      child: Center(
+        child: SingleChildScrollView(
+          child: Container(
+            color: Colors.white,
+            margin: EdgeInsets.all(10.0),
+            child: showWidgets? Column(
+              children: <Widget>[
+                (!online
+                    ?
+                    // Offline information
+                    Padding(
+                        padding: EdgeInsets.only(top: 10.0),
+                        child: Center(
+                          child: Column(
+                            children: <Widget>[
+                              Text(AppLocalizations.of(context).goOnlineToLogin),
+                              FlatButton(
+                                color: Theme.of(context).accentColor,
+                                child: Text(AppLocalizations.of(context).retry),
+                                onPressed: () async {
+                                  // Retry
+                                  prepareLogin();
+                                },
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    :
+                    // Show form
+                    Form(
+                        key: _formKey,
                         child: Column(
                           children: <Widget>[
-                            Text(AppLocalizations.of(context).goOnlineToLogin),
-                            FlatButton(
-                              color: Theme.of(context).accentColor,
-                              child: Text(AppLocalizations.of(context).retry),
-                              onPressed: () async {
-                                // Retry
-                                prepareLogin();
+                            Center(child: Text(AppLocalizations.of(context).postGroup)),
+                            // Group selector
+                            widget.group == null ?
+                            Padding(
+                              padding: EdgeInsets.only(top: 10, bottom: 20),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    isDense: true,
+                                    items: Messageboard.loggedIn.map((Group group) {
+                                      return DropdownMenuItem<String>(
+                                        value: group.name,
+                                        child: Text(group.name),
+                                      );
+                                    }).toList(),
+                                    value: _group,
+                                    onChanged: (group) {
+                                      setState(() {
+                                        _group = group;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ) : Container(),
+                            TextFormField(
+                              controller: _titleController,
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return AppLocalizations.of(context).postTitle;
+                                }
                               },
-                            )
-                          ],
-                        ),
-                      ),
-                    )
-                  :
-                  // Show form
-                  Form(
-                      key: _formKey,
-                      child: Column(
-                        children: <Widget>[
-                          Center(child: Text(AppLocalizations.of(context).postGroup)),
-                          // Group selector
-                          widget.group == null ?
-                          Padding(
-                            padding: EdgeInsets.only(top: 10, bottom: 20),
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                                  isDense: true,
-                                  items: Messageboard.loggedIn.map((Group group) {
-                                    return DropdownMenuItem<String>(
-                                      value: group.name,
-                                      child: Text(group.name),
-                                    );
-                                  }).toList(),
-                                  value: _group,
-                                  onChanged: (group) {
-                                    setState(() {
-                                      _group = group;
-                                    });
+                              decoration: InputDecoration(hintText: AppLocalizations.of(context).postTitle),
+                              onFieldSubmitted: (value) {
+                                FocusScope.of(context).requestFocus(_textFocus);
+                              },
+                              autofocus: true,
+                            ),
+                            TextFormField(
+                              maxLines: 10,
+                              controller: _textController,
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return AppLocalizations.of(context).postText;
+                                }
+                              },
+                              decoration: InputDecoration(hintText: AppLocalizations.of(context).postText),
+                              onFieldSubmitted: (value) {
+                                checkForm();
+                              },
+                              focusNode: _textFocus,
+                            ),
+                            // Login button
+                            Container(
+                              margin: EdgeInsets.only(top: 20.0),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: RaisedButton(
+                                  color: Theme.of(context).accentColor,
+                                  onPressed: () {
+                                    checkForm();
                                   },
+                                  child: Text(AppLocalizations.of(context).addPost)
                                 ),
                               ),
                             ),
-                          ) : Container(),
-                          TextFormField(
-                            controller: _titleController,
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return AppLocalizations.of(context).postTitle;
-                              }
-                            },
-                            decoration: InputDecoration(hintText: AppLocalizations.of(context).postTitle),
-                            onFieldSubmitted: (value) {
-                              FocusScope.of(context).requestFocus(_textFocus);
-                            },
-                            autofocus: true,
-                          ),
-                          TextFormField(
-                            maxLines: 10,
-                            controller: _textController,
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return AppLocalizations.of(context).postText;
-                              }
-                            },
-                            decoration: InputDecoration(hintText: AppLocalizations.of(context).postText),
-                            onFieldSubmitted: (value) {
-                              checkForm();
-                            },
-                            focusNode: _textFocus,
-                          ),
-                          // Login button
-                          Container(
-                            margin: EdgeInsets.only(top: 20.0),
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: RaisedButton(
-                                color: Theme.of(context).accentColor,
-                                onPressed: () {
-                                  checkForm();
-                                },
-                                child: Text(AppLocalizations.of(context).addPost)
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ))
-            ],
-          ) : Container(),
+                          ],
+                        ),
+                      ))
+              ],
+            ) : Container(),
+          ),
         ),
       ),
     );
@@ -1443,125 +1445,127 @@ class AddGroupView extends State<AddGroupPage> {
       appBar: AppBar(title: Text(AppLocalizations.of(context).addGroup)),
       body: Hero(
         tag: 'hero-addGroupPage',
-        child: Container(
-          color: Colors.white,
-          margin: EdgeInsets.all(10.0),
-          child: showWidgets? Column(
-            children: <Widget>[
-              Center(child: Text(AppLocalizations.of(context).addGroupInfo)),
-              (!online
-                  ?
-                  // Offline information
-                  Padding(
-                      padding: EdgeInsets.only(top: 10.0),
-                      child: Center(
+        child: SingleChildScrollView(
+          child: Container(
+            color: Colors.white,
+            margin: EdgeInsets.all(10.0),
+            child: showWidgets? Column(
+              children: <Widget>[
+                Center(child: Text(AppLocalizations.of(context).addGroupInfo)),
+                (!online
+                    ?
+                    // Offline information
+                    Padding(
+                        padding: EdgeInsets.only(top: 10.0),
+                        child: Center(
+                          child: Column(
+                            children: <Widget>[
+                              Text(AppLocalizations.of(context).goOnlineToLogin),
+                              FlatButton(
+                                color: Theme.of(context).accentColor,
+                                child: Text(AppLocalizations.of(context).retry),
+                                onPressed: () async {
+                                  // Retry
+                                  prepareLogin();
+                                },
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    :
+                    // Show form
+                    Form(
+                        key: _formKey,
                         child: Column(
                           children: <Widget>[
-                            Text(AppLocalizations.of(context).goOnlineToLogin),
-                            FlatButton(
-                              color: Theme.of(context).accentColor,
-                              child: Text(AppLocalizations.of(context).retry),
-                              onPressed: () async {
-                                // Retry
-                                prepareLogin();
+                            TextFormField(
+                              maxLength: 25,
+                              controller: _usernameController,
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return AppLocalizations.of(context)
+                                      .fieldCantBeEmpty;
+                                }
+                                if (value.contains('/')) {
+                                  return AppLocalizations.of(context)
+                                      .noSlash;
+                                }
+                                if (Messageboard.allGroups.map((i) => i.name.toUpperCase()).toList().contains(value.toUpperCase())) {
+                                  return AppLocalizations.of(context).groupAlreadyExist;
+                                }
                               },
-                            )
-                          ],
-                        ),
-                      ),
-                    )
-                  :
-                  // Show form
-                  Form(
-                      key: _formKey,
-                      child: Column(
-                        children: <Widget>[
-                          TextFormField(
-                            maxLength: 25,
-                            controller: _usernameController,
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return AppLocalizations.of(context)
-                                    .fieldCantBeEmpty;
-                              }
-                              if (value.contains('/')) {
-                                return AppLocalizations.of(context)
-                                    .noSlash;
-                              }
-                              if (Messageboard.allGroups.map((i) => i.name.toUpperCase()).toList().contains(value.toUpperCase())) {
-                                return AppLocalizations.of(context).groupAlreadyExist;
-                              }
-                            },
-                            decoration: InputDecoration(hintText: AppLocalizations.of(context).groupName),
-                            onFieldSubmitted: (value) {
-                              FocusScope.of(context)
-                                          .requestFocus(_passwordFocus);
-                            },
-                            autofocus: true,
-                          ),
-                          TextFormField(
-                            controller: _passwordController,
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return AppLocalizations.of(context)
-                                    .fieldCantBeEmpty;
-                              }
-                              if (value.contains('/')) {
-                                return AppLocalizations.of(context)
-                                    .noSlash;
-                              }
-                            },
-                            decoration: InputDecoration(hintText: AppLocalizations.of(context).groupPassword),
-                            onFieldSubmitted: (value) {
-                              FocusScope.of(context)
-                                          .requestFocus(_infoFocus);
-                            },
-                            obscureText: true,
-                            focusNode: _passwordFocus,
-                          ),
+                              decoration: InputDecoration(hintText: AppLocalizations.of(context).groupName),
+                              onFieldSubmitted: (value) {
+                                FocusScope.of(context)
+                                            .requestFocus(_passwordFocus);
+                              },
+                              autofocus: true,
+                            ),
+                            TextFormField(
+                              controller: _passwordController,
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return AppLocalizations.of(context)
+                                      .fieldCantBeEmpty;
+                                }
+                                if (value.contains('/')) {
+                                  return AppLocalizations.of(context)
+                                      .noSlash;
+                                }
+                              },
+                              decoration: InputDecoration(hintText: AppLocalizations.of(context).groupPassword),
+                              onFieldSubmitted: (value) {
+                                FocusScope.of(context)
+                                            .requestFocus(_infoFocus);
+                              },
+                              obscureText: true,
+                              focusNode: _passwordFocus,
+                            ),
 
-                          // Pin input
-                          TextFormField(
-                            maxLines: 10,
-                            maxLength: 400,
-                            controller: _infoController,
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return AppLocalizations.of(context)
-                                    .fieldCantBeEmpty;
-                              }
-                              if (value.contains('/')) {
-                                return AppLocalizations.of(context)
-                                    .noSlash;
-                              }
-                            },
-                            decoration: InputDecoration(
-                                hintText:
-                                    AppLocalizations.of(context).groupInfo),
-                            onFieldSubmitted: (value) {
-                              checkForm();
-                            },
-                            focusNode: _infoFocus,
-                          ),
-                          // Login button
-                          Container(
-                            margin: EdgeInsets.only(top: 20.0),
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: RaisedButton(
-                                color: Theme.of(context).accentColor,
-                                onPressed: () {
-                                  checkForm();
-                                },
-                                child: Text(AppLocalizations.of(context).addGroup)
+                            // Pin input
+                            TextFormField(
+                              maxLines: 10,
+                              maxLength: 400,
+                              controller: _infoController,
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return AppLocalizations.of(context)
+                                      .fieldCantBeEmpty;
+                                }
+                                if (value.contains('/')) {
+                                  return AppLocalizations.of(context)
+                                      .noSlash;
+                                }
+                              },
+                              decoration: InputDecoration(
+                                  hintText:
+                                      AppLocalizations.of(context).groupInfo),
+                              onFieldSubmitted: (value) {
+                                checkForm();
+                              },
+                              focusNode: _infoFocus,
+                            ),
+                            // Login button
+                            Container(
+                              margin: EdgeInsets.only(top: 20.0),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: RaisedButton(
+                                  color: Theme.of(context).accentColor,
+                                  onPressed: () {
+                                    checkForm();
+                                  },
+                                  child: Text(AppLocalizations.of(context).addGroup)
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ))
-            ],
-          ) : Container(),
+                          ],
+                        ),
+                      ))
+              ],
+            ) : Container(),
+          ),
         ),
       ),
     );

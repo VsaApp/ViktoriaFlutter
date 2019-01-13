@@ -147,11 +147,8 @@ Future downloadPosts(Group group, {int start, int end, bool addPosts = false}) a
 Future<bool> updateGroup({String username, String password, String newInfo, String newPassword}) async {
   try {
     String _url = '$urlGroupUpdate/$username/$password';
-    print('url: ' + _url);
-    print('password: ' + newPassword);
     final response = await post(_url, body: {'username': username, 'password': newPassword, 'info': newInfo});
     final parsed = json.decode(response);
-    print(MessageboardError.fromJson(parsed).error);
     return MessageboardError.fromJson(parsed).error == null;
   } catch (e) {
     print("Error in download: " + e.toString());
