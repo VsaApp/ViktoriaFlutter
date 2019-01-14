@@ -32,7 +32,7 @@ abstract class CourseEditState extends State<CourseEdit> {
       setState(() {
         sharedPreferences = instance;
         exams = sharedPreferences
-                .getBool(Keys.exams(widget.subject.lesson.toUpperCase())) ??
+                .getBool(Keys.exams(sharedPreferences.getString(Keys.grade), widget.subject.lesson.toUpperCase())) ??
             true;
       });
       List<UnitPlanDay> days = UnitPlan.getUnitPlan();

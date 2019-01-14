@@ -15,12 +15,13 @@ void main() async {
   String _initialRoute = '/';
 
   // Set must writing courses...
-  sharedPreferences.setBool(Keys.exams('E'), true);
-  sharedPreferences.setBool(Keys.exams('M'), true);
-  sharedPreferences.setBool(Keys.exams('D'), true);
-  sharedPreferences.setBool(Keys.exams('L'), true);
-  sharedPreferences.setBool(Keys.exams('S'), true);
-  sharedPreferences.setBool(Keys.exams('F'), true);
+  String grade = sharedPreferences.getString(Keys.grade) ?? '';
+  sharedPreferences.setBool(Keys.exams(grade, 'E'), true);
+  sharedPreferences.setBool(Keys.exams(grade, 'M'), true);
+  sharedPreferences.setBool(Keys.exams(grade, 'D'), true);
+  sharedPreferences.setBool(Keys.exams(grade, 'L'), true);
+  sharedPreferences.setBool(Keys.exams(grade, 'S'), true);
+  sharedPreferences.setBool(Keys.exams(grade, 'F'), true);
   sharedPreferences.commit();
 
   // Set default options

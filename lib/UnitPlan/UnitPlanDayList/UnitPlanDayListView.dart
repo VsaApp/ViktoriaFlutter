@@ -93,7 +93,7 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                                     .getKeys()
                                                     .where((key) =>
                                                         key ==
-                                                        Keys.exams(lesson
+                                                        Keys.exams(sharedPreferences.getString(Keys.grade), lesson
                                                             .subjects[lesson
                                                                 .subjects
                                                                 .indexOf(
@@ -164,12 +164,12 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                             lesson.subjects[_selected].lesson !=
                                 AppLocalizations.of(context).lunchBreak &&
                             !nothingSelected) {
-                          if (sharedPreferences.getBool(Keys.exams(lesson
+                          if (sharedPreferences.getBool(Keys.exams(sharedPreferences.getString(Keys.grade), lesson
                                   .subjects[_selected].lesson
                                   .toUpperCase())) ==
                               null) {
                             sharedPreferences.setBool(
-                                Keys.exams(lesson.subjects[_selected].lesson
+                                Keys.exams(sharedPreferences.getString(Keys.grade), lesson.subjects[_selected].lesson
                                     .toUpperCase()),
                                 true);
                             sharedPreferences.commit();

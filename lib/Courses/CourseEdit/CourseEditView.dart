@@ -5,6 +5,7 @@ import '../../Keys.dart';
 import '../../Rooms.dart';
 import '../../Localizations.dart';
 import '../../ReplacementPlan/ReplacementPlanModel.dart';
+import '../../UnitPlan/UnitPlanData.dart';
 
 class CourseEditView extends CourseEditState {
   @override
@@ -23,12 +24,13 @@ class CourseEditView extends CourseEditState {
             setState(() {
               // Save change
               sharedPreferences.setBool(
-                  Keys.exams(widget.subject.lesson.toUpperCase()), value);
+                  Keys.exams(sharedPreferences.getString(Keys.grade),
+                      widget.subject.lesson.toUpperCase()),
+                  value);
               sharedPreferences.commit();
+              syncTags();
               ReplacementPlan.update(sharedPreferences);
-              setState(() {
-                exams = value;
-              });
+              exams = value;
               if (widget.onExamChange != null) {
                 widget.onExamChange(exams);
               }
@@ -94,6 +96,17 @@ class CourseEditView extends CourseEditState {
             child: RaisedButton(
               color: Theme.of(context).accentColor,
               onPressed: () {
+                sharedPreferences.setBool(
+                    Keys.exams(sharedPreferences.getString(Keys.grade),
+                        widget.subject.lesson.toUpperCase()),
+                    exams);
+                sharedPreferences.commit();
+                syncTags();
+                ReplacementPlan.update(sharedPreferences);
+                if (widget.onExamChange != null) {
+                  widget.onExamChange(exams);
+                }
+
                 Navigator.of(context).pop();
               },
               child: Text(AppLocalizations.of(context).ok),

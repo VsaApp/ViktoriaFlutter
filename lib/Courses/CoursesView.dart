@@ -88,7 +88,7 @@ class CourseRowView extends State<CourseRow> {
     course = '';
     blocks = [];
     _exams = widget.sharedPreferences
-            .getBool(Keys.exams(widget.subjects[0].lesson.toUpperCase())) ??
+            .getBool(Keys.exams(widget.sharedPreferences.getString(Keys.grade), widget.subjects[0].lesson.toUpperCase())) ??
         true;
 
     // Create list of blocks

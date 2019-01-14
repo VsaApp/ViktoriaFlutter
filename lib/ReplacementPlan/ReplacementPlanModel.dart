@@ -141,7 +141,7 @@ class Change {
                 // It's the correct lesson...
                 if (course == subject.course) {
                   if (changed.info.toLowerCase().contains('klausur')) {
-                    if (!(sharedPreferences.getBool(Keys.exams(subject.lesson.toUpperCase())) ?? true)) {
+                    if (!(sharedPreferences.getBool(Keys.exams(sharedPreferences.getString(Keys.grade), subject.lesson.toUpperCase())) ?? true)) {
                       isMy = 0;
                       return;
                     }
@@ -183,7 +183,7 @@ class Change {
                       selectedSubjects++;
                       // Check if user write exams in the course...
                       bool exams = sharedPreferences.getBool(
-                              Keys.exams(subject.lesson.toUpperCase())) ??
+                              Keys.exams(sharedPreferences.getString(Keys.grade), subject.lesson.toUpperCase())) ??
                           true;
                       writing = exams;
                     }

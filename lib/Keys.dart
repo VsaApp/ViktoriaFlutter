@@ -79,8 +79,8 @@ class Keys {
   }
 
   // exams-SUBJECTNAME saves if user writing exams in this course...
-  static String exams(String subject) {
-    return 'exams-$subject';
+  static String exams(String grade, String subject) {
+    return 'exams-$grade-$subject';
   }
 
   // Saves if the shortcut dialog should be shown...

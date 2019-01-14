@@ -12,7 +12,10 @@ Future download() async {
   // Get the selected grade...
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String _grade = sharedPreferences.getString(Keys.grade);
-  String url = 'https://api.vsa.2bad2c0.de/unitplan/' + _grade + '.json?v=' + new Random().nextInt(99999999).toString(); 
+  String url = 'https://api.vsa.2bad2c0.de/unitplan/' +
+      _grade +
+      '.json?v=' +
+      new Random().nextInt(99999999).toString();
   await fetchDataAndSave(url, Keys.unitPlan(_grade), '[]');
 
   // Parse data...
@@ -44,15 +47,44 @@ List<UnitPlanDay> parseDays(String responseBody) {
 Future syncTags() async {
   if (!(await checkOnline)) return;
 
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  String grade = sharedPreferences.getString(Keys.grade);
+
   // First delete all unitPLan tags...
   Map<String, dynamic> tagsToRemove = await OneSignal.shared.getTags();
-  tagsToRemove.removeWhere((key, value) => !key.startsWith('unitPlan'));
+  tagsToRemove.removeWhere(
+      (key, value) => !key.startsWith('unitPlan') && !key.startsWith('exams'));
   tagsToRemove.forEach((key, value) {
     OneSignal.shared.deleteTag(key);
   });
 
+  OneSignal.shared.sendTag('grade', grade);
+
+  List<String> subjects = [];
+  getUnitPlan().forEach((day) {
+    day.lessons.forEach((lesson) {
+      int selected = sharedPreferences.getInt(Keys.unitPlan(grade,
+          block: lesson.subjects[0].block,
+          day: getUnitPlan().indexOf(day),
+          unit: day.lessons.indexOf(lesson)));
+      if (selected == null) {
+        return;
+      }
+      subjects.add(lesson.subjects[selected].lesson);
+    });
+  });
+
+  subjects = subjects.where((subject) {
+    return subject.length < 3;
+  }).toList();
+
+  subjects = subjects.toSet().toList();
+
+  subjects.forEach((subject) {
+    OneSignal.shared.sendTag(Keys.exams(grade, subject),
+        sharedPreferences.getBool(Keys.exams(grade, subject)) ?? false);
+  });
   // Only set tags when the user activated notifications...
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   if (!(sharedPreferences.getBool(Keys.getReplacementPlanNotifications) ??
       true)) {
     return;
@@ -61,9 +93,17 @@ Future syncTags() async {
   // Set all tags...
   getUnitPlan().forEach((day) {
     day.lessons.forEach((lesson) {
-      String grade = sharedPreferences.getString(Keys.grade);
-      OneSignal.shared.sendTag(Keys.unitPlan(grade, block: lesson.subjects[0].block, day: getUnitPlan().indexOf(day), unit: day.lessons.indexOf(lesson)),
-          sharedPreferences.getInt(Keys.unitPlan(grade, block: lesson.subjects[0].block, day: getUnitPlan().indexOf(day), unit: day.lessons.indexOf(lesson))).toString());
+      OneSignal.shared.sendTag(
+          Keys.unitPlan(grade,
+              block: lesson.subjects[0].block,
+              day: getUnitPlan().indexOf(day),
+              unit: day.lessons.indexOf(lesson)),
+          sharedPreferences
+              .getInt(Keys.unitPlan(grade,
+                  block: lesson.subjects[0].block,
+                  day: getUnitPlan().indexOf(day),
+                  unit: day.lessons.indexOf(lesson)))
+              .toString());
     });
   });
 }

@@ -167,9 +167,9 @@ class SettingsPageView extends SettingsPageState {
                       sharedPreferences.remove(Keys.grade);
                       sharedPreferences.remove(Keys.isTeacher);
                       OneSignal.shared.deleteTag('dev');
-                      sharedPreferences.commit().then((_) {
+                      sharedPreferences.commit().then((_) async {
                         // Reload app
-                        syncTags();
+                        OneSignal.shared.deleteTags((await OneSignal.shared.getTags()).keys.toList());
                         Navigator.of(context).pushReplacementNamed('/login');
                       });
                     },
