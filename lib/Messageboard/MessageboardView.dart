@@ -157,6 +157,12 @@ class MessageboardViewsState extends State<MessageboardViews>
   }
 }
 
+/// Shows the list of all visible groups
+/// 
+/// First the user sees the blocked groups (when he creates them before), then the user sees the waiting groups 
+/// and at least all activated groups
+/// 
+/// TODO: Sort them to following / not following and newesst on top
 class GroupsPage extends StatefulWidget {
   final List<Group> groups;
 
@@ -263,6 +269,9 @@ class GroupsView extends State<GroupsPage> {
   }
 }
 
+/// Shows the feed (All posts for the following groups sortet by data)
+/// 
+/// The list adds step by step the posts when scrlled to the end of it.
 class FeedPage extends StatefulWidget {
   FeedPage({Key key})
       : super(key: key);
@@ -353,7 +362,15 @@ class FeedView extends State<FeedPage> {
         ]
         :
         (
-          <Widget>[]..addAll(posts.map((post) => PostCard(post: post)).toList())..add(
+          <Widget>[]..addAll(posts.map((post) {
+            return GestureDetector(
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => PostPage(post: post))),
+              child: Hero(
+                tag: 'hero-' + post.id, 
+                child: PostCard(post: post)
+              )
+            );
+          }).toList())..add(
           Center(
             child: (!Messageboard.feed.loadComplete) ?
             ( !isAdding ? 
@@ -391,10 +408,18 @@ class FeedView extends State<FeedPage> {
   }
 }
 
+/// Shows a card for one post
+/// 
+/// The card hast a title, text, username and time
 class PostCard extends StatefulWidget {
+  /// Sets the post for the card
   final Post post;
 
-  PostCard({Key key, this.post})
+  /// If [shortVersion] is true, the max length of the text is set to 500 characters.
+  /// (Default sets to true)
+  final bool shortVersion;
+
+  PostCard({Key key, this.post, this.shortVersion = true})
       : super(key: key);
 
   @override
@@ -407,6 +432,8 @@ class PostCardView extends State<PostCard> {
 
   @override
   Widget build(BuildContext context) {
+    String text = widget.post.text;
+    if (widget.shortVersion && text.length > 500) text = text.substring(0, 500) + '...';
     return Container(
       margin: EdgeInsets.all(10.0),
       child: Card(
@@ -451,8 +478,12 @@ class PostCardView extends State<PostCard> {
   }
 }
 
+/// The GradeFab has the options to add a group and write a post
 class GradeFab extends StatefulWidget {
+  /// Is called when the add post button is pressed
   final Function() onAddGroup;
+
+  /// Is called when the write post button is pressed
   final Function() onWritePost;
 
   GradeFab({this.onAddGroup, this.onWritePost});
@@ -612,7 +643,11 @@ class _GradeFabState extends State<GradeFab>
   }
 }
 
-
+/// This is the Page for one group.
+/// 
+/// Only in this view the user can sign in to the group.
+/// 
+/// When the user is logged in, he has the options to edit/delete the group and write a post for it 
 class GroupPage extends StatefulWidget {
   final Group group;
 
@@ -1057,9 +1092,16 @@ class GroupView extends State<GroupPage> {
   }
 }
 
-
+/// Is a list with all posts for one group.
+/// 
+/// The list won't load all posts on one time, it's only load the next 10 posts when the user scrolled to the end of the list 
+/// until it loads all posts of the group.
 class PostsList extends StatefulWidget {
+
+  /// Sets the group of the shown posts
   final Group group;
+
+  /// The [ScrollContainer] says when the user scrolled to the end of the list and the [PostsList] has to load the next posts
   final ScrollController scrollController;
 
   PostsList({Key key, this.group, this.scrollController})
@@ -1140,7 +1182,15 @@ class PostsListView extends State<PostsList> {
         ]
         :
         (
-          <Widget>[]..addAll(posts.map((post) => PostCard(post: post)).toList())..add(
+          <Widget>[]..addAll(posts.map((post) {
+            return GestureDetector(
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => PostPage(post: post, group: widget.group.name))),
+              child: Hero(
+                tag: 'hero-' + post.id, 
+                child: PostCard(post: post)
+              )
+            );
+          }).toList())..add(
           Center(
             child: (!widget.group.loadComplete) ?
             ( !widget.group.isAdding ? 
@@ -1164,8 +1214,305 @@ class PostsListView extends State<PostsList> {
   }
 }
 
+/// Shows the post on a new page with all the options a post has
+/// 
+/// If the user is logged in in the group, then there are three options.
+/// The user can visist the group page, edit the post and delete it.
+/// 
+/// But if the user is not logged in, then he only can visit the group page.
+/// 
+/// In Addition only in this view the user can see the whole message if the message is longer than 500 characters.
+class PostPage extends StatefulWidget {
+  final Post post;
+
+  /// When the post page is called by the group page, then the group is set because the posts hasen an own group
+  final String group;
+
+  PostPage({this.post, this.group});
+
+  @override
+  PostView createState() => PostView();
+}
+
+class PostView extends State<PostPage> {
+  ScrollController _scrollController;
+  TextEditingController editTitleController = TextEditingController();
+  TextEditingController editTextController = TextEditingController();
+  final _textFocus = FocusNode();
+  SharedPreferences sharedPreferences;
+  Map<String, IconData> appBarIcons = {};
+  Function() updatedListener;
+  final _formKey = GlobalKey<FormState>();
+  String username;
+  String password;
+
+  @override
+  void initState() {
+    SharedPreferences.getInstance().then((instance) {
+      setState(() {
+        sharedPreferences = instance;
+      });
+    });
+    username = widget.post.username == '' ? widget.group : widget.post.username;
+    updatedListener = () => setState(() => null);
+    widget.post.updatedListeners.add(updatedListener);
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    widget.post.updatedListeners.remove(updatedListener);
+    super.dispose();
+  }
+
+  /// An App bar item was selected
+  /// This is only possible if the user is logged in int the current group
+  void _selectedItem(String action){
+    if (action == AppLocalizations.of(context).group) openGroup();
+    else if (action == AppLocalizations.of(context).edit) editPost();
+    else if (action == AppLocalizations.of(context).deletePost) deletePost();
+  }
+
+  /// Checks if the new title and text of the post is not empty and then it update the post on the api
+  void checkEditForm() async {
+    if (_formKey.currentState.validate()) {
+      // Save correct credentials
+      String title = editTitleController.text;
+      String text = editTextController.text;
+      Navigator.pop(context);
+      widget.post.update(password, title, text,
+        username: username,
+        onUpdated: () {
+          setState(() => null);
+        },
+        onFailed: () => print("Error edit post!")
+      );
+    }
+  }
+
+  /// Edit post title and text
+  void editPost() {
+    // Check group password...
+    getCorrectPassword((String password) {
+      this.password = password;
+      editTitleController.text = widget.post.title;
+      editTextController.text = widget.post.text;
+      // Show edit group info dialog...
+      showDialog<void>(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            title: Text(AppLocalizations.of(context).edit),
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(left: 10, right: 10),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                        controller: editTitleController,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return AppLocalizations.of(context).fieldCantBeEmpty;
+                          }
+                        },
+                        decoration: InputDecoration(hintText: AppLocalizations.of(context).postTitle),
+                        onFieldSubmitted: (value) {
+                          FocusScope.of(context).requestFocus(_textFocus);
+                        },
+                        autofocus: true,
+                      ),
+                      TextFormField(
+                        maxLines: 10,
+                        controller: editTextController,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return AppLocalizations.of(context).postText;
+                          }
+                        },
+                        decoration: InputDecoration(hintText: AppLocalizations.of(context).postText),
+                        onFieldSubmitted: (value) {
+                          checkEditForm();
+                        },
+                        focusNode: _textFocus,
+                      ),
+                      // Login button
+                      Container(
+                        margin: EdgeInsets.only(top: 20.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: RaisedButton(
+                            color: Theme.of(context).accentColor,
+                            onPressed: () {
+                              checkEditForm();
+                            },
+                            child: Text(AppLocalizations.of(context).ok)
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              )
+            ],
+          );
+        },
+      );
+    });
+  }
+
+  /// Deletes the current group
+  void deletePost() {
+    confirmDeletePost(() {
+      // Check group password...
+      getCorrectPassword((String password) {
+        // Remove group...
+        widget.post.delete(password, username: username,
+          onDeleted: () {
+            Fluttertoast.showToast(
+                msg: AppLocalizations.of(context).removedPost,
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM, // also possible "TOP" and "CENTER"
+                backgroundColor: Colors.black87,
+                textColor: Colors.white
+            );
+            Navigator.of(context).pop();
+          },
+          onFailed: () => print("Failed to delete post!")
+        );
+      });
+    });
+  }
+
+  /// Gets the correct group password
+  void getCorrectPassword(Function(String password) finished) async {
+    bool correctLogin = await api.checkLogin(username: username, password: sharedPreferences.getString(Keys.groupEditPassword(username)));
+    if (!correctLogin) {
+      showDialog<String>(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context1) {
+          return SimpleDialog(
+            title: Text(AppLocalizations.of(context).passwordChanged),
+            children: <Widget>[
+              LoginDialog(group: username, onFinished: () {
+                finished(sharedPreferences.getString(Keys.groupEditPassword(username)));
+              }),
+            ],
+          );
+        },
+      );
+    }
+    else finished(sharedPreferences.getString(Keys.groupEditPassword(username)));
+  }
+
+  /// Asks user if he really wants to delete the group
+  void confirmDeletePost(Function() onDeletePost){
+    showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context).deletePost),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(AppLocalizations.of(context).confirmDeletePost)
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(AppLocalizations.of(context).no),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text(AppLocalizations.of(context).yes),
+              onPressed: () {
+                Navigator.of(context).pop();
+                onDeletePost();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Write a new post...
+  void openGroup(){
+    if (widget.group != null) Navigator.of(context).pop();
+    else Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+      GroupPage(group: Messageboard.allGroups.where((group) => group.name == username).toList()[0]);
+    }));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    appBarIcons = {
+      AppLocalizations.of(context).group: Icons.group,
+      AppLocalizations.of(context).edit: Icons.edit,
+      AppLocalizations.of(context).deletePost: Icons.delete
+    };
+
+    Post post = widget.post;
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(title: Text(username), actions: <Widget>[
+        Messageboard.loggedIn.map((group) => group.name).contains(username) ?
+          PopupMenuButton<String>(
+            onSelected: _selectedItem,
+            itemBuilder: (BuildContext context) {
+              return appBarIcons.keys.map((String name) => PopupMenuItem<String>(
+                value: name,
+                child: Text(name),
+              )).toList();
+            },
+          ) : IconButton(
+            icon: Icon(Icons.group),
+            tooltip: 'Group',
+            onPressed: openGroup
+          )
+        ]
+      ),
+      body: Builder(
+        builder: (BuildContext context1) => ListView(
+          controller: _scrollController,
+          shrinkWrap: true,
+          children: <Widget>[ 
+            Container(
+              color: Colors.white,
+              padding: EdgeInsets.all(10.0),
+              alignment: Alignment.topLeft,
+              child: Hero(
+                tag: 'hero-' + post.id,
+                child: PostCard(post: post, shortVersion: false)
+              ),
+            ),
+          ]
+        )
+      ),
+    );  
+  }
+}
+
+
+/// The user can write a new post for one of the group where he is logged in.
+/// 
+/// In top of the page the user can select the group and below he can set the title and information text of the group.
 class WritePostPage extends StatefulWidget {
+  /// Is called when the post is created on the api and the feed is already updated
   final Function() onFinished;
+
+  /// Only sets when the user creates a post for a specific group.
+  /// This is used when a user clicked add post in the page of one group [GroupPage]
+  /// 
+  /// When the group is set the posts for this group will be reloaded, ohterwise only the feed will be reloaded.
   final String group;
 
   WritePostPage({this.onFinished, this.group});
@@ -1312,7 +1659,7 @@ class WritePostView extends State<WritePostPage> {
                               controller: _titleController,
                               validator: (value) {
                                 if (value.isEmpty) {
-                                  return AppLocalizations.of(context).postTitle;
+                                  return AppLocalizations.of(context).fieldCantBeEmpty;
                                 }
                               },
                               decoration: InputDecoration(hintText: AppLocalizations.of(context).postTitle),
@@ -1326,7 +1673,7 @@ class WritePostView extends State<WritePostPage> {
                               controller: _textController,
                               validator: (value) {
                                 if (value.isEmpty) {
-                                  return AppLocalizations.of(context).postText;
+                                  return AppLocalizations.of(context).fieldCantBeEmpty;
                                 }
                               },
                               decoration: InputDecoration(hintText: AppLocalizations.of(context).postText),
@@ -1361,7 +1708,12 @@ class WritePostView extends State<WritePostPage> {
   }
 }
 
+/// Page for create a new group.
+/// 
+/// The user gets a information with the adding group structure (E-Mail, etc.) and has to set the title and information of the group.
 class AddGroupPage extends StatefulWidget {
+
+  /// Is called when the group is created and the feed is updated
   final Function() onFinished;
 
   AddGroupPage({this.onFinished});
@@ -1572,11 +1924,14 @@ class AddGroupView extends State<AddGroupPage> {
   }
 }
 
-
-
+/// Shows a dialog where the user has to set the password of a group
 class LoginDialog extends StatefulWidget {
+  /// Called when the correct password is set
   final Function onFinished;
+
+  /// Sets the group
   final String group;
+
   LoginDialog({Key key, this.group, this.onFinished}) : super(key: key);
   @override
   LoginView createState() => LoginView();

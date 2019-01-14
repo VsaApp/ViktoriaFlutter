@@ -17,6 +17,8 @@ String urlGroupUpdate = 'https://api.vsa.2bad2c0.de/messageboard/groups/update';
 String urlGroupDelete = 'https://api.vsa.2bad2c0.de/messageboard/groups/delete'; // + GROUPNAME/PASSWORD
 String urlGroupPosts = 'https://api.vsa.2bad2c0.de/messageboard/posts/list'; // + GROUPNAME/START/END
 String urlPostAdd = 'https://api.vsa.2bad2c0.de/messageboard/posts/add'; // + GROUPNAME/PASSWORD
+String urlPostUpdate = 'https://api.vsa.2bad2c0.de/messageboard/posts/update'; // + POSTID/PASSWORD
+String urlPostDelete = 'https://api.vsa.2bad2c0.de/messageboard/posts/delete'; // + POSTID/PASSWORD
 String urlFeed = 'https://api.vsa.2bad2c0.de/messageboard/feed';
 
 // Test jsons...
@@ -143,12 +145,40 @@ Future downloadPosts(Group group, {int start, int end, bool addPosts = false}) a
   if (loaded < end - start) group.loadComplete = true;
 }
 
-/// Check the login data of the keyfob...
+/// Update group data...
 Future<bool> updateGroup({String username, String password, String newInfo, String newPassword}) async {
   try {
     String _url = '$urlGroupUpdate/$username/$password';
     final response = await post(_url, body: {'username': username, 'password': newPassword, 'info': newInfo});
     final parsed = json.decode(response);
+    return MessageboardError.fromJson(parsed).error == null;
+  } catch (e) {
+    print("Error in download: " + e.toString());
+    return false;
+  }
+}
+
+/// Update post data...
+Future<bool> updatePost({String id, String password, String newTitle, String newText}) async {
+  try {
+    String _url = '$urlPostUpdate/$id/$password';
+    final response = await post(_url, body: {'title': newTitle, 'text': newText});
+    final parsed = json.decode(response);
+    print(_url);
+    print(MessageboardError.fromJson(parsed).error);
+    return MessageboardError.fromJson(parsed).error == null;
+  } catch (e) {
+    print("Error in download: " + e.toString());
+    return false;
+  }
+}
+
+/// Update post data...
+Future<bool> deletePost({String id, String password}) async {
+  try {
+    String _url = '$urlPostDelete/$id/$password';
+    final response = await http.Client().get(_url);
+    final parsed = json.decode(response.body);
     return MessageboardError.fromJson(parsed).error == null;
   } catch (e) {
     print("Error in download: " + e.toString());

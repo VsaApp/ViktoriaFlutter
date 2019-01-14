@@ -100,17 +100,21 @@ class AppLocalizations {
       'noSlash': '\'/\' ist nicht erlaubt',
       'groupAlreadyExist': 'Name ist schon vergeben',
       'passwordNotCorrect': 'Passwort falsch',
-      'confirmDeleteGroup': 'Wollen sie wirklich die Gruppe Löschen?',
+      'confirmDeleteGroup': 'Wollen sie wirklich die Gruppe löschen?',
+      'confirmDeletePost': 'Wollen sie wirklich den Post löschen?',
       'removedGroup': 'Gruppe \'%s\' wurde gelöscht!',
       'editGroupInfo': 'Info bearbeiten',
       'editGroupPassword': 'Passwort bearbeiten',
       'errorEditGroup': 'Fehler beim bearbeiten der Gruppe!',
       'currentPassword': 'Aktuelles Passwort',
       'newPassword': 'Neues Passwort',
+      'group': 'Gruppe',
+      'deletePost': 'Post löschen',
       'repeatNewPassword': 'Neues Passwort wiederholen',
       'passwordNotEqual': 'Die Passwörter sind unterschiedlich!',
       'noGroupsToShow': 'Es gibt aktuell noch keine Gruppen!\nDu kannst aber der erste sein der eine erstellt. Einfach unten rechts auf das Plus und dann auf das Gruppenzeichen klicken und schon kannst du eine Gruppe erstellen!',
       'nowADeveloper': 'Du bist jetzt ein Entwickler!',
+      'removedPost': 'Post gelöscht!',
       'yes': 'Ja',
       'no': 'Nein'
     },
@@ -119,6 +123,22 @@ class AppLocalizations {
   // All getter defined...
   String get messageboard {
     return _localizedValues[locale.languageCode]['messageboard'];
+  }
+
+  String get confirmDeletePost {
+    return _localizedValues[locale.languageCode]['confirmDeletePost'];
+  }
+
+  String get removedPost {
+    return _localizedValues[locale.languageCode]['removedPost'];
+  }
+
+  String get deletePost {
+    return _localizedValues[locale.languageCode]['deletePost'];
+  }
+
+  String get group {
+    return _localizedValues[locale.languageCode]['group'];
   }
 
   String get passwordNotEqual {
@@ -161,7 +181,7 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]['no'];
   }
 
-    String get confirmDeleteGroup {
+  String get confirmDeleteGroup {
     return _localizedValues[locale.languageCode]['confirmDeleteGroup'];
   }
 

@@ -405,13 +405,36 @@ class Feed {
 }
 
 class Post {
-  final String title;
-  final String text;
+  String title;
+  String text;
   final String date;
   final String username;
-  final int id;
+  final String id;
+  List<Function()> updatedListeners = [];
 
   Post({this.title, this.text, this.date, this.id, this.username});
+
+  Future<void> delete(String password, {Function() onDeleted, Function() onFailed, String username}) async {
+    bool deleted = await data.deletePost(id: id, password: password);
+    if (deleted){
+      await data.downloadFeed();
+      Messageboard.allGroups.where((group) => group.name == (this.username == '' ? username : this.username)).toList()[0].posts = [];
+      if (onDeleted != null) onDeleted();
+    }
+    else if (onFailed != null) onFailed();
+  }
+
+  Future<void> update(String password, String newTitle, String newText, {Function() onUpdated, Function() onFailed, String username}) async {
+    bool updated = await data.updatePost(id: id, password: password, newTitle: newTitle ?? this.title, newText: newText ?? this.text);
+    if (updated){
+      this.title = newTitle;
+      this.text = newText;
+      await data.downloadFeed();
+      await Messageboard.allGroups.where((group) => group.name == (this.username == '' ? username : this.username)).toList()[0].reloadPosts();
+      if (onUpdated != null) onUpdated();
+    }
+    else if (onFailed != null) onFailed();
+  }
 
   DateTime get dateTime{
     return DateTime.parse(date);
@@ -433,7 +456,7 @@ class Post {
       title: json['title'] as String,
       text: json['text'] as String,
       date: DateTime.parse(json['time'] as String).add(Duration(hours: 1)).toIso8601String(),
-      id: json['follower'] as int,
+      id: json['id'] as String,
       username: json['username'] as String ?? '',
     );
   }
