@@ -434,7 +434,7 @@ class Post {
     bool deleted = await data.deletePost(id: id, password: password);
     if (deleted){
       await data.downloadFeed();
-      Messageboard.allGroups.where((group) => group.name == (this.username == '' ? username : this.username)).toList()[0].posts = [];
+      Messageboard.allGroups.where((group) => group.name == (this.username == '' ? username : this.username)).toList()[0].reloadPosts();
       if (onDeleted != null) onDeleted();
     }
     else if (onFailed != null) onFailed();

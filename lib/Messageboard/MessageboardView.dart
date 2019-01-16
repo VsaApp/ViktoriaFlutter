@@ -433,7 +433,7 @@ class PostCardView extends State<PostCard> {
   @override
   Widget build(BuildContext context) {
     String text = widget.post.text;
-    if (widget.shortVersion && text.length > 500) text = text.substring(0, 500) + '...';
+    if (widget.shortVersion && text.length > 200) text = text.substring(0, 200) + '...';
     return Container(
       margin: EdgeInsets.all(10.0),
       child: Card(
@@ -442,7 +442,7 @@ class PostCardView extends State<PostCard> {
           children: <Widget>[
             ListTile(
                 title: Text(widget.post.title),
-                subtitle: Text(widget.post.text),
+                subtitle: Text(text),
               ),
             Padding(
               padding: EdgeInsets.only(left: 15, right: 10, bottom: 3),

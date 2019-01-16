@@ -21,12 +21,6 @@ String urlPostUpdate = 'https://api.vsa.2bad2c0.de/messageboard/posts/update'; /
 String urlPostDelete = 'https://api.vsa.2bad2c0.de/messageboard/posts/delete'; // + POSTID/PASSWORD
 String urlFeed = 'https://api.vsa.2bad2c0.de/messageboard/feed';
 
-// Test jsons...
-String groupList = '[{"username": "SV", "info": "Schülervertretung sorgt für eine besser Schule. Hier sehen sie alles neue!", "status" : "activated", "follower": 99}, {"username": "Zirkus", "info": "Schülerzirkus Configurani", "status" : "activated", "follower": 300}]';
-String confirmedGroupList = '[{"username": "SV", "info": "Schülervertretung sorgt für eine besser Schule. Hier sehen sie alles neue!", "status" : "activated", "follower": 99}, {"username": "Zirkus", "info": "Schülerzirkus Configurani", "status" : "activated", "follower": 300}, {"username": "test", "info": "test234", "status" : "activated", "follower": 0}]';
-//String feedTest = '[{"title": "Test", "text": "Dies ist ein Test", "date": "2018-11-05T10:48:00.000000Z", "id": "123456789", "username": "sv"}]';
-String feedBody = ' {"since": "2018-10-05T14:48:00.000Z", "groups": ["sv"]}';
-
 
 Future download() async {
   await downloadGroups();
