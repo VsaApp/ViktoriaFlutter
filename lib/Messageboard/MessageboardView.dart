@@ -147,7 +147,7 @@ class MessageboardViewsState extends State<MessageboardViews>
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.white,
-                child: GroupsPage(groups: Messageboard.publicGroups)
+                child: GroupsPage(groups: Messageboard.userGroupList)
               )
             ]
           ),
@@ -179,7 +179,7 @@ class GroupsView extends State<GroupsPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Group> allGroups = Messageboard.myBlockedGroups..addAll(Messageboard.waiting)..addAll(widget.groups);
+    List<Group> allGroups = widget.groups;
     return Container(
       child: allGroups.length == 0 ?
         Center(child: Text(AppLocalizations.of(context).noGroupsToShow)) :

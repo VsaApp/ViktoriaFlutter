@@ -15,6 +15,29 @@ class Messageboard {
   static String _status;
   static int currentUpdateProcesses = 0;
 
+  static List<Group> get userGroupList {
+    List<Group> groupList = [];
+
+    // Add all blocked, watiing and following groups...
+    groupList.addAll(myBlockedGroups);
+    groupList.addAll(waiting);
+
+    // Add al other public groups sorted by the follower count...
+    List<Group> followingGroups = following;
+    List<Group> otherGroups = publicGroups;
+    otherGroups.sort((Group group1, Group group2) {
+      if (followingGroups.contains(group1) ^ followingGroups.contains(group2)) {
+        return followingGroups.contains(group1) ? -1 : 1;
+      }
+      if (group1.follower == group2.follower) return 0;
+      return (group1.follower > group2.follower) ? -1 : 1;
+    });
+
+    groupList.addAll(otherGroups);
+
+    return groupList;
+  }
+
   static List<Group> get publicGroups {
     return allGroups.where((group) => group.status == 'activated').toList();
   }
