@@ -100,6 +100,16 @@ class Messageboard {
     return notifications;
   }
 
+  /// Get all groups which the user get notifiations...
+  static void syncTags() async {
+    // First delete all unitPLan tags...
+    Map<String, dynamic> allTags = await OneSignal.shared.getTags();
+    List<String> allGroupKeys = allGroups.map((Group group) => Keys.messageboardGroupTag(group.name)).toList();
+    allTags.keys.where((String tag) =>  !allGroupKeys.contains(tag)).forEach((String tag) {
+      OneSignal.shared.deleteTag(tag);
+    });
+  }
+
   /// Get all groups which the user is waiting for a confirmation...
   static List<Group> get waiting {    
     List<Group> waitingGroups = (sharedPreferences.getStringList(Keys.waitingGroups) ?? []).map((group) {
@@ -135,8 +145,7 @@ class Messageboard {
           sharedPreferences.setString(Keys.groupEditPassword(username), password);
           // Update groups list...
           data.downloadGroups().then((_) {
-            toggleFollowingGroup(username, activate: true);
-            toggleNotificationGroup(username, activate: true);
+            setFollowGroup(username, follow: true, notifications: true);
             if (onAdded != null) onAdded();
           });
         }
@@ -148,13 +157,11 @@ class Messageboard {
     }
   }
 
-  /// Add a group to the waiting list...
-  /// 
-  /// onFailed is called when the adding process is failed (M). 
+  /// Removes a group from the api and preferences...
   static void removeGroup(Group group, String password, {Function() onRemoved, Function() onFailed}) {    
     // Remove group in preferences...
     toogleLoginGroup(group.name, login: false);
-    toggleFollowingGroup(group.name, activate: false);
+    setFollowGroup(group.name, follow: false, notifications: false);
     if (group.status == 'waiting') {
       List<String> currentWaitingGroups = sharedPreferences.getStringList(Keys.waitingGroups) ?? [];
       if (currentWaitingGroups.contains(group.name)){
@@ -234,63 +241,52 @@ class Messageboard {
 
   }
 
-  /// Toggles the follow state of a group
-  /// 
-  /// bool activate sets the must value
-  static void toggleFollowingGroup(String group, {bool activate}) {
-    List<String> currentList = sharedPreferences.getStringList(Keys.feedGroups) ?? [];
-    bool updateFeed = false;
-    if (activate != null){
-      if (activate && !currentList.contains(group)) {
-        currentList.add(group);
-        updateFeed = true;
-      }
-      else if (!activate && currentList.contains(group)) {
-        currentList.remove(group);
-        updateFeed = true;
-      }
-    }
-    else if (currentList.contains(group)) {
-      currentList.remove(group);
-      toggleNotificationGroup(group, activate: false);
-      updateFeed = true;
-    }
-    else {
-      currentList.add(group);
-      toggleNotificationGroup(group, activate: true);
-      updateFeed = true;
-    }
-    sharedPreferences.setStringList(Keys.feedGroups, currentList.toList());
-    if (updateFeed) feed.update();
-  }
+  static setFollowGroup(String group, {bool follow = true, bool notifications = true}){
+    if (!follow) notifications = false;
 
-  /// Toggles the notifications state of a group
-  /// 
-  /// bool activate sets the must value
-  static void toggleNotificationGroup(String group, {bool activate}){
-    List<String> currentList = sharedPreferences.getStringList(Keys.notificationGroups) ?? [];
-    if (activate != null){
-      if (activate && !currentList.contains(group)) {
-        currentList.add(group);
-        OneSignal.shared.sendTag(Keys.messageboardGroupTag(group), true);
-      }
-      else if (!activate && currentList.contains(group)) {
-        currentList.remove(group);
-        if (following.contains(group)) OneSignal.shared.sendTag(Keys.messageboardGroupTag(group), true);
-        else OneSignal.shared.deleteTag(Keys.messageboardGroupTag(group));
-      }
+    // Save is sth is changed...
+    bool updateFeed = false;
+    bool changedSth = false;
+
+    // Get current lists...
+    List<String> currentFollowingList = sharedPreferences.getStringList(Keys.feedGroups) ?? [];
+    List<String> currentNotificationList = sharedPreferences.getStringList(Keys.notificationGroups) ?? [];
+
+    // Update following if it's a new state...
+    if (follow && !currentFollowingList.contains(group)) {
+      currentFollowingList.add(group);
+      notifications = true;
+      updateFeed = true;
+      changedSth = true;
     }
-    else if (currentList.contains(group)) {
-      currentList.remove(group);
-      if (following.contains(group)) OneSignal.shared.sendTag(Keys.messageboardGroupTag(group), true);
-      else OneSignal.shared.deleteTag(Keys.messageboardGroupTag(group));
+    else if (!follow && currentFollowingList.contains(group)) {
+      currentFollowingList.remove(group);
+      updateFeed = true;
+      changedSth = true;
     }
-    else {
-      currentList.add(group);
-      toggleFollowingGroup(group, activate: true);
-      OneSignal.shared.sendTag(Keys.messageboardGroupTag(group), true);
+    
+    // Update notifications if it's a new state...
+    if (notifications && !currentNotificationList.contains(group)) {
+      currentNotificationList.add(group);
+      changedSth = true;
     }
-    sharedPreferences.setStringList(Keys.notificationGroups, currentList.toList());
+    else if (!notifications && currentNotificationList.contains(group)) {
+      currentNotificationList.remove(group);
+      changedSth = true;
+    }
+
+    // Set new lists...
+    sharedPreferences.setStringList(Keys.feedGroups, currentFollowingList.toList());
+    sharedPreferences.setStringList(Keys.notificationGroups, currentNotificationList.toList());
+
+    // Update tags if required...
+    if (changedSth) {
+      if (!follow) OneSignal.shared.deleteTag(Keys.messageboardGroupTag(group));
+      else OneSignal.shared.sendTag(Keys.messageboardGroupTag(group), notifications);
+    }
+
+    // Update the feed if required...
+    if (updateFeed) feed.update();
   }
 
   /// Checks if any waiting group changed it's status...

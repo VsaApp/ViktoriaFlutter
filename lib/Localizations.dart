@@ -108,6 +108,7 @@ class AppLocalizations {
       'errorEditGroup': 'Fehler beim bearbeiten der Gruppe!',
       'currentPassword': 'Aktuelles Passwort',
       'newPassword': 'Neues Passwort',
+      'blockedAccepted': 'Gruppe wird ausgeblendet!',
       'group': 'Gruppe',
       'deletePost': 'Post löschen',
       'repeatNewPassword': 'Neues Passwort wiederholen',
@@ -131,6 +132,10 @@ class AppLocalizations {
 
   String get removedPost {
     return _localizedValues[locale.languageCode]['removedPost'];
+  }
+
+  String get blockedAccepted {
+    return _localizedValues[locale.languageCode]['blockedAccepted'];
   }
 
   String get deletePost {

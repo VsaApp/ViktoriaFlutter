@@ -191,7 +191,7 @@ class GroupsView extends State<GroupsPage> {
             Group group = allGroups[index];
             return GestureDetector(
               onTap: () {
-                if (group.status == 'activated') Navigator.of(context).push(MaterialPageRoute(builder: (_) => GroupPage(group: group)));
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => GroupPage(group: group)));
               },
               child: Container(
                 margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
@@ -213,7 +213,7 @@ class GroupsView extends State<GroupsPage> {
                                 child: Text((!Messageboard.following.contains(group)) ? AppLocalizations.of(context).follow : AppLocalizations.of(context).doNotFollow),
                                 onPressed: () {
                                   checkOnline.then((online) {
-                                    if (online) setState(() => Messageboard.toggleFollowingGroup(group.name));
+                                    if (online) setState(() => Messageboard.setFollowGroup(group.name, follow: !Messageboard.following.map((group) => group.name).contains(group.name), notifications: Messageboard.notifications.map((group) => group.name).contains(group.name)));
                                     else {
                                       Scaffold.of(context).showSnackBar(
                                         SnackBar(
@@ -235,7 +235,7 @@ class GroupsView extends State<GroupsPage> {
                                 onPressed: () {
                                   if (group.status == 'activated') {
                                     checkOnline.then((online) {
-                                      if (online) setState(() => Messageboard.toggleNotificationGroup(group.name));
+                                      if (online) setState(() => Messageboard.setFollowGroup(group.name, follow: Messageboard.following.map((group) => group.name).contains(group.name), notifications: !Messageboard.notifications.map((group) => group.name).contains(group.name)));
                                       else {
                                         Scaffold.of(context).showSnackBar(
                                           SnackBar(
@@ -980,10 +980,12 @@ class GroupView extends State<GroupPage> {
     };
 
     Group group = widget.group;
+    if (group.status == 'waiting') appBarIcons.remove(AppLocalizations.of(context).addPost);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(title: Text(AppLocalizations.of(context).groupInfo), actions: <Widget>[
-        Messageboard.loggedIn.map((group) => group.name).contains(group.name) ?
+        Messageboard.loggedIn.map((group) => group.name).contains(group.name) && group.status != 'blocked' ?
           PopupMenuButton<String>(
             onSelected: _selectedItem,
             itemBuilder: (BuildContext context) {
@@ -1010,12 +1012,12 @@ class GroupView extends State<GroupPage> {
                   child: Column(
                     children: <Widget>[
                       ListTile(
-                        title: Text(group.name),
+                        title: Text(group.name + (group.status != 'blocked' ? '' : AppLocalizations.of(context).blockedInfo), style: TextStyle(color: group.status != 'blocked' ? Colors.black : Colors.red)),
                         subtitle: Text(group.info)
                       ),
                       ButtonTheme.bar( // make buttons use the appropriate styles for cards
                         child: ButtonBar(
-                          children: <Widget>[
+                          children: (group.status == 'activated') ? <Widget>[
                             FlatButton(
                               child: Text((!Messageboard.loggedIn.map((group) => group.name).contains(group.name)) ? AppLocalizations.of(context).login : AppLocalizations.of(context).logout),
                               onPressed: () {
@@ -1041,7 +1043,7 @@ class GroupView extends State<GroupPage> {
                               child: Text((!Messageboard.following.map((group) => group.name).contains(group.name)) ? AppLocalizations.of(context).follow : AppLocalizations.of(context).doNotFollow),
                               onPressed: () {
                                 checkOnline.then((online) {
-                                  if (online) setState(() => Messageboard.toggleFollowingGroup(group.name));
+                                  if (online) setState(() => Messageboard.setFollowGroup(group.name, follow: !Messageboard.following.map((group) => group.name).contains(group.name), notifications: Messageboard.notifications.map((group) => group.name).contains(group.name)));
                                   else {
                                     Scaffold.of(context1).showSnackBar(
                                       SnackBar(
@@ -1061,7 +1063,7 @@ class GroupView extends State<GroupPage> {
                               child: Icon((!Messageboard.notifications.map((group) => group.name).contains(group.name)) ? Icons.notifications_off : Icons.notifications_active, color: Theme.of(context).accentColor),
                               onPressed: () {
                                 checkOnline.then((online) {
-                                  if (online) setState(() => Messageboard.toggleNotificationGroup(group.name));
+                                  if (online)setState(() => Messageboard.setFollowGroup(group.name, follow: Messageboard.following.map((group) => group.name).contains(group.name), notifications: !Messageboard.notifications.map((group) => group.name).contains(group.name)));
                                   else {
                                     Scaffold.of(context1).showSnackBar(
                                       SnackBar(
@@ -1076,10 +1078,29 @@ class GroupView extends State<GroupPage> {
                                 });
                               },
                             ) : Container(),
+                          ] : [
+                            FlatButton(
+                              child: Text(group.status == 'waiting' ? AppLocalizations.of(context).groupWaiting : AppLocalizations.of(context).ok),
+                              onPressed: () {
+                                if (group.status == 'blocked') {
+                                  setState(() {
+                                    Messageboard.confirmBolckedGroup(group.name);
+                                    Fluttertoast.showToast(
+                                        msg: AppLocalizations.of(context).blockedAccepted,
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM, // also possible "TOP" and "CENTER"
+                                        backgroundColor: Colors.black87,
+                                        textColor: Colors.white
+                                    );
+                                    Navigator.pop(context);
+                                  });
+                                }
+                              }
+                            ) 
                           ],
                         ),
                       ),
-                      Padding(child: PostsList(group: group, scrollController: _scrollController), padding: EdgeInsets.only(bottom: 20))
+                      group.status == 'activated' ? Padding(child: PostsList(group: group, scrollController: _scrollController), padding: EdgeInsets.only(bottom: 20)) : Container()
                     ],
                   ),
                 ),

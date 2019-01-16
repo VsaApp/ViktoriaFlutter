@@ -7,8 +7,7 @@ class LoadingPageView extends LoadingPageState {
     return Scaffold(
       body: Center(
         child: SizedBox(
-          // Funny loader
-          child: Image(image: AssetImage('assets/images/ginkgobewegt.gif')),
+          child: new CircularProgressIndicator(strokeWidth: 5.0),
           height: 75.0,
           width: 75.0,
         ),

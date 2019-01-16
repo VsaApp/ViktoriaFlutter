@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
 import '../UnitPlan/UnitPlanData.dart';
+import '../Messageboard/MessageboardModel.dart' as messageboard;
 import 'HomeView.dart';
 
 // Define drawer item
@@ -68,6 +69,7 @@ abstract class HomePageState extends State<HomePage> {
         .setInFocusDisplayType(OSNotificationDisplayType.notification);
     // Synchronise tags for notifications
     syncTags();
+    messageboard.Messageboard.syncTags();
     super.initState();
   }
 
