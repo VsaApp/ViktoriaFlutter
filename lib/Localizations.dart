@@ -115,6 +115,7 @@ class AppLocalizations {
       'passwordNotEqual': 'Die Passwörter sind unterschiedlich!',
       'noGroupsToShow': 'Es gibt aktuell noch keine Gruppen!\nDu kannst aber der erste sein der eine erstellt. Einfach unten rechts auf das Plus und dann auf das Gruppenzeichen klicken und schon kannst du eine Gruppe erstellen!',
       'nowADeveloper': 'Du bist jetzt ein Entwickler!',
+      'nowNoDeveloper': 'Du bist kein Entwickler mehr!',
       'removedPost': 'Post gelöscht!',
       'yes': 'Ja',
       'no': 'Nein'
@@ -535,6 +536,10 @@ class AppLocalizations {
 
   String get nowADeveloper {
     return _localizedValues[locale.languageCode]['nowADeveloper'];
+  }
+
+  String get nowNoDeveloper {
+    return _localizedValues[locale.languageCode]['nowNoDeveloper'];
   }
 }
 

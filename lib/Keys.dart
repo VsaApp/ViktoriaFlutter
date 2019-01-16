@@ -5,6 +5,10 @@ class Keys {
     return 'grade';
   }
 
+  static String get dev {
+    return 'dev';
+  }
+
   // Saves the two last selected grades...
   static String get lastGrades {
     return 'lastGrades';

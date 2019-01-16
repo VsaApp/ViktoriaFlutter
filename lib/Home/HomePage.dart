@@ -87,14 +87,16 @@ abstract class HomePageState extends State<HomePage> {
     logoClickCount++;
     if (logoClickCount >= 7) {
       Fluttertoast.showToast(
-        msg: AppLocalizations.of(context).nowADeveloper,
+        msg: (sharedPreferences.getBool(Keys.dev) ?? false) ? AppLocalizations.of(context).nowNoDeveloper : AppLocalizations.of(context).nowADeveloper,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Color(0xAA333333),
         textColor: Colors.white
       );
+      
       logoClickCount = 0;
-      OneSignal.shared.sendTag('dev', true);
+      sharedPreferences.setBool(Keys.dev, !(sharedPreferences.getBool(Keys.dev) ?? false));
+      OneSignal.shared.sendTag(Keys.dev, sharedPreferences.getBool(Keys.dev));
     }
   }
 
