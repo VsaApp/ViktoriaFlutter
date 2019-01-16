@@ -16,16 +16,15 @@ class Messageboard {
   static int currentUpdateProcesses = 0;
 
   static List<Group> get userGroupList {
-    List<Group> groupList = [];
-
-    // Add all blocked, watiing and following groups...
-    groupList.addAll(myBlockedGroups);
-    groupList.addAll(waiting);
 
     // Add al other public groups sorted by the follower count...
     List<Group> followingGroups = following;
+    List<Group> loggedinGroups = loggedIn;
     List<Group> otherGroups = publicGroups;
     otherGroups.sort((Group group1, Group group2) {
+      if (loggedinGroups.contains(group1) ^ loggedinGroups.contains(group2)) {
+        return loggedinGroups.contains(group1) ? -1 : 1;
+      }
       if (followingGroups.contains(group1) ^ followingGroups.contains(group2)) {
         return followingGroups.contains(group1) ? -1 : 1;
       }
@@ -33,9 +32,7 @@ class Messageboard {
       return (group1.follower > group2.follower) ? -1 : 1;
     });
 
-    groupList.addAll(otherGroups);
-
-    return groupList;
+    return otherGroups;
   }
 
   static List<Group> get publicGroups {
