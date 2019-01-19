@@ -1026,7 +1026,7 @@ class GroupView extends State<GroupPage> {
                   child: Column(
                     children: <Widget>[
                       ListTile(
-                        title: Text(group.name + (group.status != 'blocked' ? '' : AppLocalizations.of(context).blockedInfo), style: TextStyle(color: group.status != 'blocked' ? Colors.black : Colors.red)),
+                        title: Text(group.name + (group.status != 'blocked' ? ' (${group.follower})' : AppLocalizations.of(context).blockedInfo), style: TextStyle(color: group.status != 'blocked' ? Colors.black : Colors.red)),
                         subtitle: Text(group.info)
                       ),
                       ButtonTheme.bar( // make buttons use the appropriate styles for cards
@@ -1057,7 +1057,14 @@ class GroupView extends State<GroupPage> {
                               child: Text((!Messageboard.following.map((group) => group.name).contains(group.name)) ? AppLocalizations.of(context).follow : AppLocalizations.of(context).doNotFollow),
                               onPressed: () {
                                 checkOnline.then((online) {
-                                  if (online == 1) setState(() => Messageboard.setFollowGroup(group.name, follow: !Messageboard.following.map((group) => group.name).contains(group.name), notifications: Messageboard.notifications.map((group) => group.name).contains(group.name)));
+                                  if (online == 1) setState(() {
+                                    Messageboard.setFollowGroup(group.name, follow: !Messageboard.following.map((group) => group.name).contains(group.name), notifications: Messageboard.notifications.map((group) => group.name).contains(group.name));
+                                    if (Messageboard.following.map((group) => group.name).contains(group.name)) {
+                                      group.follower++;
+                                    } else {
+                                      group.follower--;
+                                    }
+                                  });
                                   else {
                                     Scaffold.of(context1).showSnackBar(
                                       SnackBar(
