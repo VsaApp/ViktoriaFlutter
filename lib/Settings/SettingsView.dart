@@ -143,7 +143,6 @@ class SettingsPageView extends SettingsPageState {
                                 sharedPreferences.setString(Keys.grade, grade);
                                 sharedPreferences.commit().then((_) {
                                   // Reload app
-                                  syncTags();
                                   Navigator.of(context)
                                       .pushReplacementNamed('/');
                                 });
