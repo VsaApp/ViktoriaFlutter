@@ -12,7 +12,7 @@ class LoginDialog extends StatefulWidget {
 }
 
 abstract class LoginDialogState extends State<LoginDialog> {
-  bool online = true;
+  int online = 1;
   
   @override
   void initState() {

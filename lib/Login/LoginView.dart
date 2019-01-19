@@ -6,6 +6,7 @@ import 'LoginPage.dart';
 
 class LoginPageView extends LoginPageState {
   String type = '';
+  int online;
 
   @override
   void dispose() {
@@ -27,7 +28,8 @@ class LoginPageView extends LoginPageState {
   void prepareLogin() {
     checkOnline.then((online) {
       setState(() {
-        type = (online ? '' : 'offline');
+        type = (online == 1 ? '' : 'offline');
+        this.online = online;
       });
       if (type == '') {
         // Show type select dialog
@@ -98,6 +100,8 @@ class LoginPageView extends LoginPageState {
                           child: Column(
                             children: <Widget>[
                               Text(
+                                  online == 0 ? 
+                                  AppLocalizations.of(context).failedToConnectToServer :
                                   AppLocalizations.of(context).goOnlineToLogin),
                               FlatButton(
                                 color: Theme.of(context).accentColor,

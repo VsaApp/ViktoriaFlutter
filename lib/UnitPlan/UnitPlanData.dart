@@ -45,7 +45,7 @@ List<UnitPlanDay> parseDays(String responseBody) {
 
 // Sync the onesignal tags...
 Future syncTags() async {
-  if (!(await checkOnline)) return;
+  if ((await checkOnline) == -1) return;
 
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String grade = sharedPreferences.getString(Keys.grade);

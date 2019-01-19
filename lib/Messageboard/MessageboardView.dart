@@ -32,6 +32,20 @@ class MessageboardView extends State<MessageboardPage> {
 
   @override
   Widget build(BuildContext context) {
+      checkOnline.then((online) {
+        if (online != 1) {
+          // Show offline information
+          Scaffold.of(context).showSnackBar(
+            SnackBar(
+              content: Text(online == -1 ? AppLocalizations.of(context).oldDataIsShown : AppLocalizations.of(context).serverIsOffline),
+              action: SnackBarAction(
+                label: AppLocalizations.of(context).ok,
+                onPressed: () {},
+              ),
+            ),
+          );
+        }
+      });
     return Scaffold(
       body: Stack(children: <Widget>[
         Column(
@@ -213,12 +227,12 @@ class GroupsView extends State<GroupsPage> {
                                 child: Text((!Messageboard.following.contains(group)) ? AppLocalizations.of(context).follow : AppLocalizations.of(context).doNotFollow),
                                 onPressed: () {
                                   checkOnline.then((online) {
-                                    if (online) setState(() => Messageboard.setFollowGroup(group.name, follow: !Messageboard.following.map((group) => group.name).contains(group.name), notifications: Messageboard.notifications.map((group) => group.name).contains(group.name)));
+                                    if (online == 1) setState(() => Messageboard.setFollowGroup(group.name, follow: !Messageboard.following.map((group) => group.name).contains(group.name), notifications: Messageboard.notifications.map((group) => group.name).contains(group.name)));
                                     else {
                                       Scaffold.of(context).showSnackBar(
                                         SnackBar(
                                           duration: Duration(seconds: 2),
-                                          content: Text(AppLocalizations.of(context).onlyOnline),
+                                          content: online == -1 ? Text(AppLocalizations.of(context).onlyOnline) : Text(AppLocalizations.of(context).failedToConnectToServer),
                                           action: SnackBarAction(
                                             label: AppLocalizations.of(context).ok,
                                             onPressed: () {},
@@ -235,12 +249,12 @@ class GroupsView extends State<GroupsPage> {
                                 onPressed: () {
                                   if (group.status == 'activated') {
                                     checkOnline.then((online) {
-                                      if (online) setState(() => Messageboard.setFollowGroup(group.name, follow: Messageboard.following.map((group) => group.name).contains(group.name), notifications: !Messageboard.notifications.map((group) => group.name).contains(group.name)));
+                                      if (online == 1) setState(() => Messageboard.setFollowGroup(group.name, follow: Messageboard.following.map((group) => group.name).contains(group.name), notifications: !Messageboard.notifications.map((group) => group.name).contains(group.name)));
                                       else {
                                         Scaffold.of(context).showSnackBar(
                                           SnackBar(
                                             duration: Duration(seconds: 2),
-                                            content: Text(AppLocalizations.of(context).onlyOnline),
+                                            content: Text(online == -1 ? AppLocalizations.of(context).onlyOnline : AppLocalizations.of(context).failedToConnectToServer),
                                             action: SnackBarAction(
                                               label: AppLocalizations.of(context).ok,
                                               onPressed: () {},
@@ -1043,11 +1057,11 @@ class GroupView extends State<GroupPage> {
                               child: Text((!Messageboard.following.map((group) => group.name).contains(group.name)) ? AppLocalizations.of(context).follow : AppLocalizations.of(context).doNotFollow),
                               onPressed: () {
                                 checkOnline.then((online) {
-                                  if (online) setState(() => Messageboard.setFollowGroup(group.name, follow: !Messageboard.following.map((group) => group.name).contains(group.name), notifications: Messageboard.notifications.map((group) => group.name).contains(group.name)));
+                                  if (online == 1) setState(() => Messageboard.setFollowGroup(group.name, follow: !Messageboard.following.map((group) => group.name).contains(group.name), notifications: Messageboard.notifications.map((group) => group.name).contains(group.name)));
                                   else {
                                     Scaffold.of(context1).showSnackBar(
                                       SnackBar(
-                                        content: Text(AppLocalizations.of(context).onlyOnline),
+                                        content: Text(online == -1 ? AppLocalizations.of(context).onlyOnline : AppLocalizations.of(context).failedToConnectToServer),
                                         action: SnackBarAction(
                                           label: AppLocalizations.of(context).ok,
                                           onPressed: () {},
@@ -1063,11 +1077,11 @@ class GroupView extends State<GroupPage> {
                               child: Icon((!Messageboard.notifications.map((group) => group.name).contains(group.name)) ? Icons.notifications_off : Icons.notifications_active, color: Theme.of(context).accentColor),
                               onPressed: () {
                                 checkOnline.then((online) {
-                                  if (online)setState(() => Messageboard.setFollowGroup(group.name, follow: Messageboard.following.map((group) => group.name).contains(group.name), notifications: !Messageboard.notifications.map((group) => group.name).contains(group.name)));
+                                  if (online == 1) setState(() => Messageboard.setFollowGroup(group.name, follow: Messageboard.following.map((group) => group.name).contains(group.name), notifications: !Messageboard.notifications.map((group) => group.name).contains(group.name)));
                                   else {
                                     Scaffold.of(context1).showSnackBar(
                                       SnackBar(
-                                        content: Text(AppLocalizations.of(context).onlyOnline),
+                                        content: Text(online == -1 ? AppLocalizations.of(context).onlyOnline : AppLocalizations.of(context).failedToConnectToServer),
                                         action: SnackBarAction(
                                           label: AppLocalizations.of(context).ok,
                                           onPressed: () {},
@@ -1548,7 +1562,7 @@ class WritePostView extends State<WritePostPage> {
   final _textFocus = FocusNode();
   final _titleController = TextEditingController();
   final _textController = TextEditingController();
-  bool online = true;
+  int online = 1;
   bool showWidgets = false;
   bool addingError;
 
@@ -1623,7 +1637,7 @@ class WritePostView extends State<WritePostPage> {
             margin: EdgeInsets.all(10.0),
             child: showWidgets? Column(
               children: <Widget>[
-                (!online
+                (online != 1
                     ?
                     // Offline information
                     Padding(
@@ -1631,7 +1645,7 @@ class WritePostView extends State<WritePostPage> {
                         child: Center(
                           child: Column(
                             children: <Widget>[
-                              Text(AppLocalizations.of(context).goOnlineToLogin),
+                              Text(online == -1 ? AppLocalizations.of(context).goOnlineToLogin : AppLocalizations.of(context).failedToConnectToServer),
                               FlatButton(
                                 color: Theme.of(context).accentColor,
                                 child: Text(AppLocalizations.of(context).retry),
@@ -1750,7 +1764,7 @@ class AddGroupView extends State<AddGroupPage> {
   final _usernameController = TextEditingController();
   final _infoController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool online = true;
+  int online = 1;
   bool showWidgets = false;
   bool addingError;
 
@@ -1825,7 +1839,7 @@ class AddGroupView extends State<AddGroupPage> {
             child: showWidgets? Column(
               children: <Widget>[
                 Center(child: Text(AppLocalizations.of(context).addGroupInfo)),
-                (!online
+                (online != 1
                     ?
                     // Offline information
                     Padding(
@@ -1833,7 +1847,7 @@ class AddGroupView extends State<AddGroupPage> {
                         child: Center(
                           child: Column(
                             children: <Widget>[
-                              Text(AppLocalizations.of(context).goOnlineToLogin),
+                              Text(online == -1 ? AppLocalizations.of(context).goOnlineToLogin : AppLocalizations.of(context).failedToConnectToServer),
                               FlatButton(
                                 color: Theme.of(context).accentColor,
                                 child: Text(AppLocalizations.of(context).retry),
@@ -1963,7 +1977,7 @@ class LoginView extends State<LoginDialog> {
   final _focus = FocusNode();
   bool _credentialsCorrect = true;
   final _passwordController = TextEditingController();
-  bool online = true;
+  int online = 1;
 
   /// Check the login
   void checkForm() async {
@@ -2013,7 +2027,7 @@ class LoginView extends State<LoginDialog> {
       margin: EdgeInsets.all(10.0),
       child: Column(
         children: <Widget>[
-          (!online
+          (online != 1
               ?
               // Offline information
               Padding(
@@ -2021,7 +2035,7 @@ class LoginView extends State<LoginDialog> {
                   child: Center(
                     child: Column(
                       children: <Widget>[
-                        Text(AppLocalizations.of(context).goOnlineToLogin),
+                        Text(online == -1 ? AppLocalizations.of(context).goOnlineToLogin : AppLocalizations.of(context).failedToConnectToServer),
                         FlatButton(
                           color: Theme.of(context).accentColor,
                           child: Text(AppLocalizations.of(context).retry),

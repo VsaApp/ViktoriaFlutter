@@ -10,18 +10,18 @@ class UnitPlanPage extends StatefulWidget {
 }
 
 class UnitPlanView extends State<UnitPlanPage> {
-  bool offlineShown = false;
+  static bool offlineShown = false;
   
   @override
   Widget build(BuildContext context) {
     if (!offlineShown) {
       checkOnline.then((online) {
         offlineShown = true;
-        if (!online) {
+        if (online != 1) {
           // Show offline information
           Scaffold.of(context).showSnackBar(
             SnackBar(
-              content: Text(AppLocalizations.of(context).oldDataIsShown),
+              content: Text(online == -1 ? AppLocalizations.of(context).oldDataIsShown : AppLocalizations.of(context).serverIsOffline),
               action: SnackBarAction(
                 label: AppLocalizations.of(context).ok,
                 onPressed: () {},

@@ -59,6 +59,8 @@ class AppLocalizations {
       'goOnlineToLogin': 'Du musst online sein um dich anzumelden',
       'retry': 'Erneut versuchen',
       'oldDataIsShown': 'Alte Daten werden angezeigt, weil du offline bist',
+      'serverIsOffline': 'Alte Daten werden angezeigt, weil der Server offline ist',
+      'failedToConnectToServer': 'Fehler beim verbinden zum Server',
       'ok': 'OK',
       'showShortCutDialog': 'Schnellstartdialog anzeigen',
       'initialPage': 'Startseite',
@@ -123,6 +125,14 @@ class AppLocalizations {
   };
 
   // All getter defined...
+  String get failedToConnectToServer {
+    return _localizedValues[locale.languageCode]['failedToConnectToServer'];
+  }
+
+  String get serverIsOffline {
+    return _localizedValues[locale.languageCode]['serverIsOffline'];
+  }
+
   String get messageboard {
     return _localizedValues[locale.languageCode]['messageboard'];
   }

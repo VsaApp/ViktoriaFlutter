@@ -32,7 +32,7 @@ Future downloadGroups() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   Messageboard.sharedPreferences = sharedPreferences;
   try {
-    final response = await http.Client().get(urlGroupList);
+    final response = await http.Client().get(urlGroupList).timeout(Duration(seconds: 2));
     // Save loaded data...
     sharedPreferences.setString(Keys.messageboardGroups, response.body);
     await sharedPreferences.commit();
@@ -116,12 +116,12 @@ Future downloadPosts(Group group, {int start, int end, bool addPosts = false}) a
   Messageboard.sharedPreferences = sharedPreferences;
   try {
     String url = '$urlGroupPosts/$name/$start/$end';
-    final response = await http.Client().get(url);
+    final response = await http.Client().get(url).timeout(Duration(seconds: 2));
     // Save loaded data...
     sharedPreferences.setString(Keys.messageboardPosts(name, start, end), response.body);
     await sharedPreferences.commit();
   } catch (e) {
-    print("Error in download: " + e.toString());
+    print("Error during downloading posts: " + e.toString());
     if (sharedPreferences.getString(Keys.messageboardPosts(name, start, end)) == null) {
       // Set default data...
       sharedPreferences.setString(Keys.messageboardPosts(name, start, end), '[]');
@@ -147,7 +147,7 @@ Future<bool> updateGroup({String username, String password, String newInfo, Stri
     final parsed = json.decode(response);
     return MessageboardError.fromJson(parsed).error == null;
   } catch (e) {
-    print("Error in download: " + e.toString());
+    print("Error during updating group: " + e.toString());
     return false;
   }
 }
@@ -162,7 +162,7 @@ Future<bool> updatePost({String id, String password, String newTitle, String new
     print(MessageboardError.fromJson(parsed).error);
     return MessageboardError.fromJson(parsed).error == null;
   } catch (e) {
-    print("Error in download: " + e.toString());
+    print("Error during updating post: " + e.toString());
     return false;
   }
 }
@@ -171,11 +171,11 @@ Future<bool> updatePost({String id, String password, String newTitle, String new
 Future<bool> deletePost({String id, String password}) async {
   try {
     String _url = '$urlPostDelete/$id/$password';
-    final response = await http.Client().get(_url);
+    final response = await http.Client().get(_url).timeout(Duration(seconds: 2));
     final parsed = json.decode(response.body);
     return MessageboardError.fromJson(parsed).error == null;
   } catch (e) {
-    print("Error in download: " + e.toString());
+    print("Error during deleting post: " + e.toString());
     return false;
   }
 }
@@ -185,11 +185,11 @@ Future<bool> removeGroup({String username, String password}) async {
   try {
     String _url = '$urlGroupDelete/$username/$password';
 
-    final response = await http.Client().get(_url);
+    final response = await http.Client().get(_url).timeout(Duration(seconds: 2));
     final parsed = json.decode(response.body);
     return MessageboardError.fromJson(parsed).error == null;
   } catch (e) {
-    print("Error in download: " + e.toString());
+    print("Error during remove group: " + e.toString());
     return false;
   }
 }
@@ -201,7 +201,7 @@ Future<bool> addGroup({String username, String password, String info}) async {
     final parsed = json.decode(response);
     return MessageboardError.fromJson(parsed).error == null;
   } catch (e) {
-    print("Error in download: " + e.toString());
+    print("Error during adding group: " + e.toString());
     return false;
   }
 }
@@ -219,7 +219,7 @@ Future<bool> addPost({String username, String password, String title, String tex
 
 Future<String> post(String url, {dynamic body}) async {
   HttpClient httpClient = new HttpClient();
-  HttpClientRequest request = await httpClient.postUrl(Uri.parse(url));
+  HttpClientRequest request = await httpClient.postUrl(Uri.parse(url)).timeout(Duration(seconds: 2));
   request.headers.set('content-type', 'application/json');
   request.add(utf8.encode(json.encode(body)));
   HttpClientResponse response = await request.close();
@@ -235,7 +235,7 @@ Future<bool> checkLogin({String username, String password}) async {
   try {
     String _url = '$urlGroupLogin/$username/$password';
 
-    final response = await http.Client().get(_url);
+    final response = await http.Client().get(_url).timeout(Duration(seconds: 2));
     final parsed = json.decode(response.body);
     return MessageboardError.fromJson(parsed).error == null;
   } catch (e) {

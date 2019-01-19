@@ -44,7 +44,7 @@ class LoginDialogView extends LoginDialogState {
       margin: EdgeInsets.all(10.0),
       child: Column(
         children: <Widget>[
-          (!online
+          (online != 1
               ?
               // Offline information
               Padding(
@@ -52,7 +52,7 @@ class LoginDialogView extends LoginDialogState {
                   child: Center(
                     child: Column(
                       children: <Widget>[
-                        Text(AppLocalizations.of(context).goOnlineToLogin),
+                        Text(online == -1 ? AppLocalizations.of(context).goOnlineToLogin : AppLocalizations.of(context).failedToConnectToServer),
                         FlatButton(
                           color: Theme.of(context).accentColor,
                           child: Text(AppLocalizations.of(context).retry),
