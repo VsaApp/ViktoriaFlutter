@@ -93,13 +93,17 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                                     .getKeys()
                                                     .where((key) =>
                                                         key ==
-                                                        Keys.exams(sharedPreferences.getString(Keys.grade), lesson
-                                                            .subjects[lesson
-                                                                .subjects
-                                                                .indexOf(
-                                                                    subject)]
-                                                            .lesson
-                                                            .toUpperCase()))
+                                                        Keys.exams(
+                                                            sharedPreferences
+                                                                .getString(
+                                                                    Keys.grade),
+                                                            lesson
+                                                                .subjects[lesson
+                                                                    .subjects
+                                                                    .indexOf(
+                                                                        subject)]
+                                                                .lesson
+                                                                .toUpperCase()))
                                                     .length >
                                                 0);
                                             if (!_selected &&
@@ -164,13 +168,16 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                             lesson.subjects[_selected].lesson !=
                                 AppLocalizations.of(context).lunchBreak &&
                             !nothingSelected) {
-                          if (sharedPreferences.getBool(Keys.exams(sharedPreferences.getString(Keys.grade), lesson
-                                  .subjects[_selected].lesson
-                                  .toUpperCase())) ==
+                          if (sharedPreferences.getBool(Keys.exams(
+                                  sharedPreferences.getString(Keys.grade),
+                                  lesson.subjects[_selected].lesson
+                                      .toUpperCase())) ==
                               null) {
                             sharedPreferences.setBool(
-                                Keys.exams(sharedPreferences.getString(Keys.grade), lesson.subjects[_selected].lesson
-                                    .toUpperCase()),
+                                Keys.exams(
+                                    sharedPreferences.getString(Keys.grade),
+                                    lesson.subjects[_selected].lesson
+                                        .toUpperCase()),
                                 true);
                             sharedPreferences.commit();
                           }
@@ -222,7 +229,22 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                   child: Padding(
                                     padding: EdgeInsets.only(bottom: 10),
                                     child: Column(
-                                      children:
+                                      children: [
+                                        (lesson.subjects[_selected].changes
+                                                    .where((change) =>
+                                                        change.isMy == -1)
+                                                    .length >
+                                                0
+                                            ? UnitPlanRow(
+                                                weekday:
+                                                    widget.days.indexOf(day),
+                                                subject:
+                                                    lesson.subjects[_selected],
+                                                unit:
+                                                    day.lessons.indexOf(lesson),
+                                              )
+                                            : Container())
+                                      ]..addAll(
                                           lesson.subjects[_selected].changes
                                               .map((change) {
                                                 return ReplacementPlanRow(
@@ -232,7 +254,7 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                                         .changes);
                                               })
                                               .toList()
-                                              .cast<Widget>(),
+                                              .cast<Widget>()),
                                     ),
                                   ),
                                 ))),

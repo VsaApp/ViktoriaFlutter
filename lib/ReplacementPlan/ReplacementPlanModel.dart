@@ -141,7 +141,10 @@ class Change {
                 // It's the correct lesson...
                 if (course == subject.course) {
                   if (changed.info.toLowerCase().contains('klausur')) {
-                    if (!(sharedPreferences.getBool(Keys.exams(sharedPreferences.getString(Keys.grade), subject.lesson.toUpperCase())) ?? true)) {
+                    if (!(sharedPreferences.getBool(Keys.exams(
+                            sharedPreferences.getString(Keys.grade),
+                            subject.lesson.toUpperCase())) ??
+                        true)) {
                       isMy = 0;
                       return;
                     }
@@ -159,44 +162,54 @@ class Change {
 
     // Filter all exams...
     if (changed.info.toLowerCase().contains('klausur')) {
-      int countSubjects = 0;
-      int selectedSubjects = 0;
-      bool writing = false;
-
-      // Search all subjects with the correct name and teacher...
-      UnitPlan.days.forEach((day) =>
-          day.lessons.forEach((lesson) => lesson.subjects.forEach((subject) {
-                if (subject.lesson == this.lesson &&
-                    subject.teacher == this.teacher) {
-                  // Get selected index...
-                  int selected = getSelectedSubject(sharedPreferences, subject,
-                      UnitPlan.days.indexOf(day), day.lessons.indexOf(lesson));
-
-                  // Count the possible subjects...
-                  countSubjects++;
-                  if (selected == null) {
-                    isMy = 0;
-                    return;
-                  }
-                  if (selected < lesson.subjects.length) {
-                    if (lesson.subjects[selected] == subject) {
-                      selectedSubjects++;
-                      // Check if user write exams in the course...
-                      bool exams = sharedPreferences.getBool(
-                              Keys.exams(sharedPreferences.getString(Keys.grade), subject.lesson.toUpperCase())) ??
-                          true;
-                      writing = exams;
-                    }
-                  }
-                }
-              })));
-      // If max one of the subjects is not installed, set this change to myChange...
-      if ((selectedSubjects >= countSubjects - 1) && writing) {
-        isMy = 1;
-        // Add this change to the subjects in the unit plan...
+      if (changed.info.toLowerCase().contains('nachschreiber')) {
+        isMy = -1;
         UnitPlan.days[day].lessons[unit].subjects
             .forEach((subject) => subject.changes.add(this));
-      } else if (selectedSubjects == 0 || !writing) isMy = 0;
+      } else {
+        int countSubjects = 0;
+        int selectedSubjects = 0;
+        bool writing = false;
+
+        // Search all subjects with the correct name and teacher...
+        UnitPlan.days.forEach((day) =>
+            day.lessons.forEach((lesson) => lesson.subjects.forEach((subject) {
+                  if (subject.lesson == this.lesson &&
+                      subject.teacher == this.teacher) {
+                    // Get selected index...
+                    int selected = getSelectedSubject(
+                        sharedPreferences,
+                        subject,
+                        UnitPlan.days.indexOf(day),
+                        day.lessons.indexOf(lesson));
+
+                    // Count the possible subjects...
+                    countSubjects++;
+                    if (selected == null) {
+                      isMy = 0;
+                      return;
+                    }
+                    if (selected < lesson.subjects.length) {
+                      if (lesson.subjects[selected] == subject) {
+                        selectedSubjects++;
+                        // Check if user write exams in the course...
+                        bool exams = sharedPreferences.getBool(Keys.exams(
+                                sharedPreferences.getString(Keys.grade),
+                                subject.lesson.toUpperCase())) ??
+                            true;
+                        writing = exams;
+                      }
+                    }
+                  }
+                })));
+        // If max one of the subjects is not installed, set this change to myChange...
+        if ((selectedSubjects >= countSubjects - 1) && writing) {
+          isMy = 1;
+          // Add this change to the subjects in the unit plan...
+          UnitPlan.days[day].lessons[unit].subjects
+              .forEach((subject) => subject.changes.add(this));
+        } else if (selectedSubjects == 0 || !writing) isMy = 0;
+      }
       return;
     }
 
@@ -311,7 +324,9 @@ class Changed {
 int getSelectedSubject(SharedPreferences sharedPreferences,
     UnitPlanSubject subject, int day, int unit) {
   // If the subject block is set, get index for block, else get index for day + unit...
-  return sharedPreferences.getInt(Keys.unitPlan(sharedPreferences.getString(Keys.grade), block: subject.block, day: day, unit: unit));
+  return sharedPreferences.getInt(Keys.unitPlan(
+      sharedPreferences.getString(Keys.grade),
+      block: subject.block,
+      day: day,
+      unit: unit));
 }
-
-
