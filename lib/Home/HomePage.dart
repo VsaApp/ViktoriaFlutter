@@ -69,10 +69,11 @@ abstract class HomePageState extends State<HomePage> {
     OneSignal.shared
         .setInFocusDisplayType(OSNotificationDisplayType.notification);
     // Synchronise tags for notifications
-    initTags().then((_) async {
+    deleteOldTags().then((_) async {
+      await initTags();
       await syncTags();
       messageboard.Messageboard.syncTags();
-    } );
+    });
     super.initState();
   }
 
