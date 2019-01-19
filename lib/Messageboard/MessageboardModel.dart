@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:onesignal/onesignal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Keys.dart';
+import '../Tags.dart' as Tags;
 import 'MessageboardData.dart' as data;
 
 
@@ -123,10 +124,10 @@ class Messageboard {
   /// Get all groups which the user get notifiations...
   static void syncTags() async {
     // First delete all unitPLan tags...
-    Map<String, dynamic> allTags = await OneSignal.shared.getTags();
+    Map<String, dynamic> allTags = await Tags.getTags();
     List<String> allGroupKeys = allGroups.map((Group group) => Keys.messageboardGroupTag(group.name)).toList();
-    allTags.keys.where((String tag) =>  !allGroupKeys.contains(tag)).forEach((String tag) {
-      OneSignal.shared.deleteTag(tag);
+    allTags.keys.where((String tag) =>  tag.startsWith('messageboard') && !allGroupKeys.contains(tag)).forEach((String tag) {
+      Tags.deleteTag(tag);
     });
   }
 
@@ -301,8 +302,8 @@ class Messageboard {
 
     // Update tags if required...
     if (changedSth) {
-      if (!follow) OneSignal.shared.deleteTag(Keys.messageboardGroupTag(group));
-      else OneSignal.shared.sendTag(Keys.messageboardGroupTag(group), notifications);
+      if (!follow) Tags.deleteTag(Keys.messageboardGroupTag(group));
+      else Tags.sendTag(Keys.messageboardGroupTag(group), notifications);
     }
 
     // Update the feed if required...

@@ -8,6 +8,7 @@ import '../Localizations.dart';
 import '../UnitPlan/UnitPlanData.dart';
 import '../Messageboard/MessageboardModel.dart' as messageboard;
 import 'HomeView.dart';
+import '../Tags.dart';
 
 // Define drawer item
 class DrawerItem {
@@ -68,8 +69,10 @@ abstract class HomePageState extends State<HomePage> {
     OneSignal.shared
         .setInFocusDisplayType(OSNotificationDisplayType.notification);
     // Synchronise tags for notifications
-    syncTags();
-    messageboard.Messageboard.syncTags();
+    initTags().then((_) async {
+      await syncTags();
+      messageboard.Messageboard.syncTags();
+    } );
     super.initState();
   }
 
@@ -96,7 +99,7 @@ abstract class HomePageState extends State<HomePage> {
       
       logoClickCount = 0;
       sharedPreferences.setBool(Keys.dev, !(sharedPreferences.getBool(Keys.dev) ?? false));
-      OneSignal.shared.sendTag(Keys.dev, sharedPreferences.getBool(Keys.dev));
+      sendTag(Keys.dev, sharedPreferences.getBool(Keys.dev));
     }
   }
 

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-import 'package:onesignal/onesignal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Keys.dart';
 import '../Network.dart';
@@ -43,81 +42,3 @@ List<UnitPlanDay> parseDays(String responseBody) {
   return parsed.map<UnitPlanDay>((json) => UnitPlanDay.fromJson(json)).toList();
 }
 
-// Sync the onesignal tags...
-Future syncTags() async {
-  if ((await checkOnline) == -1) return;
-
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  String grade = sharedPreferences.getString(Keys.grade);
-
-  // Get all unitplan and exams tags...
-  Map<String, dynamic> allTags = await OneSignal.shared.getTags();
-  allTags.removeWhere(
-      (key, value) => !key.startsWith('unitPlan') && !key.startsWith('exams'));
-
-  // Get all selected subjects...
-  List<String> subjects = [];
-  getUnitPlan().forEach((day) {
-    day.lessons.forEach((lesson) {
-      int selected = sharedPreferences.getInt(Keys.unitPlan(grade,
-          block: lesson.subjects[0].block,
-          day: getUnitPlan().indexOf(day),
-          unit: day.lessons.indexOf(lesson)));
-      if (selected == null) {
-        return;
-      }
-      subjects.add(lesson.subjects[selected].lesson);
-    });
-  });
-
-  // Remove all lunch times...
-  subjects = subjects.where((subject) {
-    return subject.length < 3;
-  }).toList();
-
-  // Remove double subjects...
-  subjects = subjects.toSet().toList();
-
-  // Get all new exams tags...
-  Map<String, dynamic> newTags = {};
-  subjects.forEach((subject) => newTags[Keys.exams(grade, subject)] = sharedPreferences.getBool(Keys.exams(grade, subject)) ?? true);
-
-  // Add grade...
-  newTags[Keys.grade] = sharedPreferences.getString(Keys.grade);
-
-  // Add dev...
-  newTags[Keys.dev] = sharedPreferences.getBool(Keys.dev) ?? false;
-  
-  // Only set tags when the user activated notifications...
-  if (sharedPreferences.getBool(Keys.getReplacementPlanNotifications) ??
-      true) {
-
-    // Set all new unitplan tags...
-    getUnitPlan().forEach((day) {
-      day.lessons.forEach((lesson) {
-        newTags[Keys.unitPlan(grade,
-                block: lesson.subjects[0].block,
-                day: getUnitPlan().indexOf(day),
-                unit: day.lessons.indexOf(lesson))] = sharedPreferences.getInt(Keys.unitPlan(grade,
-                    block: lesson.subjects[0].block,
-                    day: getUnitPlan().indexOf(day),
-                    unit: day.lessons.indexOf(lesson)))
-                .toString();
-      });
-    });
-  }
-
-  // Compare new and old tags...
-  Map<String, dynamic> tagsToUpdate = {};
-  List<String> tagsToRemove = [];
-  // Get all removed and changed tags...
-  allTags.forEach((key, value) {
-    if (!newTags.containsKey(key)) tagsToRemove.add(value);
-    else if (value != newTags[key]) tagsToUpdate[key] = newTags[key];
-  });
-  // Get all new tags...
-  newTags.keys.where((key) => !allTags.containsKey(key)).forEach((key) => tagsToUpdate[key] = newTags[key]);
-
-  OneSignal.shared.deleteTags(tagsToRemove);
-  OneSignal.shared.sendTags(tagsToUpdate);
-}

@@ -4,7 +4,7 @@ import 'SettingsPage.dart';
 import '../SectionWidget.dart';
 import '../Localizations.dart';
 import '../Keys.dart';
-import '../UnitPlan/UnitPlanData.dart';
+import '../Tags.dart';
 
 class SettingsPageView extends SettingsPageState {
   @override
@@ -166,10 +166,9 @@ class SettingsPageView extends SettingsPageState {
                       sharedPreferences.remove(Keys.password);
                       sharedPreferences.remove(Keys.grade);
                       sharedPreferences.remove(Keys.isTeacher);
-                      OneSignal.shared.deleteTag('dev');
                       sharedPreferences.commit().then((_) async {
                         // Reload app
-                        OneSignal.shared.deleteTags((await OneSignal.shared.getTags()).keys.toList());
+                        deleteTags((await getTags()).keys.toList());
                         Navigator.of(context).pushReplacementNamed('/login');
                       });
                     },

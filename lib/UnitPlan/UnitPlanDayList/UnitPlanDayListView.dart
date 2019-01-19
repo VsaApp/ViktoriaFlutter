@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'UnitPlanDayListWidget.dart';
 import '../../Keys.dart';
 import '../../Localizations.dart';
-import '../UnitPlanData.dart';
+import '../../Tags.dart';
 import '../UnitPlanModel.dart';
 import '../UnitPlanRow/UnitPlanRowWidget.dart';
 import '../../ReplacementPlan/ReplacementPlanModel.dart';

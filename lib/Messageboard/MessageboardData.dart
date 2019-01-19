@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Keys.dart';
+import '../Network.dart';
 import 'MessageboardModel.dart';
 
 String urlGroupList = 'https://api.vsa.2bad2c0.de/messageboard/groups/list?v=' + new Random().nextInt(99999999).toString();
@@ -32,7 +32,7 @@ Future downloadGroups() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   Messageboard.sharedPreferences = sharedPreferences;
   try {
-    final response = await http.Client().get(urlGroupList).timeout(Duration(seconds: 2));
+    final response = await http.Client().get(urlGroupList).timeout(maxTime);
     // Save loaded data...
     sharedPreferences.setString(Keys.messageboardGroups, response.body);
     await sharedPreferences.commit();
@@ -116,7 +116,7 @@ Future downloadPosts(Group group, {int start, int end, bool addPosts = false}) a
   Messageboard.sharedPreferences = sharedPreferences;
   try {
     String url = '$urlGroupPosts/$name/$start/$end';
-    final response = await http.Client().get(url).timeout(Duration(seconds: 2));
+    final response = await http.Client().get(url).timeout(maxTime);
     // Save loaded data...
     sharedPreferences.setString(Keys.messageboardPosts(name, start, end), response.body);
     await sharedPreferences.commit();
@@ -171,7 +171,7 @@ Future<bool> updatePost({String id, String password, String newTitle, String new
 Future<bool> deletePost({String id, String password}) async {
   try {
     String _url = '$urlPostDelete/$id/$password';
-    final response = await http.Client().get(_url).timeout(Duration(seconds: 2));
+    final response = await http.Client().get(_url).timeout(maxTime);
     final parsed = json.decode(response.body);
     return MessageboardError.fromJson(parsed).error == null;
   } catch (e) {
@@ -185,7 +185,7 @@ Future<bool> removeGroup({String username, String password}) async {
   try {
     String _url = '$urlGroupDelete/$username/$password';
 
-    final response = await http.Client().get(_url).timeout(Duration(seconds: 2));
+    final response = await http.Client().get(_url).timeout(maxTime);
     final parsed = json.decode(response.body);
     return MessageboardError.fromJson(parsed).error == null;
   } catch (e) {
@@ -217,25 +217,13 @@ Future<bool> addPost({String username, String password, String title, String tex
   }
 }
 
-Future<String> post(String url, {dynamic body}) async {
-  HttpClient httpClient = new HttpClient();
-  HttpClientRequest request = await httpClient.postUrl(Uri.parse(url)).timeout(Duration(seconds: 2));
-  request.headers.set('content-type', 'application/json');
-  request.add(utf8.encode(json.encode(body)));
-  HttpClientResponse response = await request.close();
-  // todo - you should check the response.statusCode
-  String reply = await response.transform(utf8.decoder).join();
-  httpClient.close();
-  return reply;
-}
-
 
 // Check the login data of the keyfob...
 Future<bool> checkLogin({String username, String password}) async {
   try {
     String _url = '$urlGroupLogin/$username/$password';
 
-    final response = await http.Client().get(_url).timeout(Duration(seconds: 2));
+    final response = await http.Client().get(_url).timeout(maxTime);
     final parsed = json.decode(response.body);
     return MessageboardError.fromJson(parsed).error == null;
   } catch (e) {

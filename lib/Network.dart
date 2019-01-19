@@ -1,6 +1,9 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
+Duration maxTime = Duration(seconds: 2);
 
 Future<bool> get checkServerConnection async {
   try {
@@ -17,11 +20,11 @@ Future<bool> get checkServerConnection async {
 /// Returns 1 if api.vsa.2bad2c0.de is online, 0 if google.com is online and -1 if everthing is offline
 Future<int> get checkOnline async {
   try {
-    final result1 = await InternetAddress.lookup('api.vsa.2bad2c0.de').timeout(Duration(seconds: 2));
+    final result1 = await InternetAddress.lookup('api.vsa.2bad2c0.de').timeout(maxTime);
     if (result1.isNotEmpty && result1[0].rawAddress.isNotEmpty) {
       return 1;
     }
-    final result2 = await InternetAddress.lookup('google.com').timeout(Duration(seconds: 2));
+    final result2 = await InternetAddress.lookup('google.com').timeout(maxTime);
     if (result2.isNotEmpty && result2[0].rawAddress.isNotEmpty) {
       return 0;
     }
@@ -35,7 +38,7 @@ Future<int> get checkOnline async {
 Future fetchDataAndSave(String url, String key, String defaultValue) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   try {
-    final response = await http.Client().get(url).timeout(Duration(seconds: 2));
+    final response = await http.Client().get(url).timeout(maxTime);
     sharedPreferences.setString(key, response.body);
     await sharedPreferences.commit();
   } catch (e) {
@@ -54,4 +57,16 @@ Future<String> fetchData(String url) async {
     print("Error in download: " + e.toString());
     return "";
   }
+}
+
+Future<String> post(String url, {dynamic body}) async {
+  HttpClient httpClient = new HttpClient();
+  HttpClientRequest request = await httpClient.postUrl(Uri.parse(url)).timeout(maxTime);
+  request.headers.set('content-type', 'application/json');
+  request.add(utf8.encode(json.encode(body)));
+  HttpClientResponse response = await request.close();
+  // todo - you should check the response.statusCode
+  String reply = await response.transform(utf8.decoder).join();
+  httpClient.close();
+  return reply;
 }

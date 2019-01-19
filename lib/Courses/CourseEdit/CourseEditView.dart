@@ -5,7 +5,7 @@ import '../../Keys.dart';
 import '../../Rooms.dart';
 import '../../Localizations.dart';
 import '../../ReplacementPlan/ReplacementPlanModel.dart';
-import '../../UnitPlan/UnitPlanData.dart';
+import '../../Tags.dart';
 
 class CourseEditView extends CourseEditState {
   @override
