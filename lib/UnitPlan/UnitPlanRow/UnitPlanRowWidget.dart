@@ -27,6 +27,7 @@ abstract class UnitPlanRowState extends State<UnitPlanRow> {
   @override
   void initState() {
     SharedPreferences.getInstance().then((instance) {
+      if (!mounted) return;
       setState(() {
         sharedPreferences = instance;
       });
