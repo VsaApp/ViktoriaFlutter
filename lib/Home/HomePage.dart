@@ -65,13 +65,11 @@ abstract class HomePageState extends State<HomePage> {
         }
         // If it's for the messageboard, update messageboard...
         else if (msg['data']['type'].toString() == 'replacementplan'.toString()) {
-          print('update');
           SharedPreferences.getInstance().then((sharedPreferences) async {
             String grade = sharedPreferences.getString(Keys.grade);
             await replacementplan.downloadDay(grade, msg['data']['day']);
             UnitPlan.resetChanges();
             await replacementplan.load(grade);
-            print("downloaded $mounted");
             if (appScaffold != null) {
               replacementplanUpdatedListeners.forEach((replacementplanUpdated) => replacementplanUpdated());
               Fluttertoast.showToast(

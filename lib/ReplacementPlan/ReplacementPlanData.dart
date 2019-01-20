@@ -58,9 +58,9 @@ Future<List<ReplacementPlanDay>> load(String _grade,
             int.parse(days[1].date.split('.')[0]),
             int.parse(days[1].time.split(':')[0]),
             int.parse(days[1].time.split(':')[1])))) {
-      days = [days[1]];
-    } else {
       days = [days[0]];
+    } else {
+      days = [days[1]];
     }
   }
 

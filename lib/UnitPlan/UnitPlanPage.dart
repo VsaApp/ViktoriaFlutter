@@ -16,7 +16,6 @@ class UnitPlanView extends State<UnitPlanPage> {
 
   @override
   void initState() {
-    print('Set Listener (Unitplan)');
     listener = () => setState(() => null);
     HomePageState.replacementplanUpdatedListeners.add(listener);
     super.initState();
@@ -24,7 +23,6 @@ class UnitPlanView extends State<UnitPlanPage> {
 
   @override
   void dispose() {
-    print('Reset Listener (Unitplan)');
     HomePageState.replacementplanUpdatedListeners.remove(listener);
     super.dispose();
   }
