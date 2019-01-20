@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../ReplacementPlanModel.dart';
 import 'ReplacementPlanDayListView.dart';
 import '../../UnitPlan/UnitPlanModel.dart';
+import '../../Localizations.dart';
 
 class ReplacementPlanDayList extends StatefulWidget {
   final List<ReplacementPlanDay> days;
@@ -64,7 +65,7 @@ abstract class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
             420,
             480,
             545
-          ][UnitPlan.days[weekday].lessons.length - 1])))) {
+          ][UnitPlan.days[weekday].getUserLesseonsCount(sharedPreferences, AppLocalizations.of(context).freeLesson) - 1])))) {
             over = true;
           }
         }

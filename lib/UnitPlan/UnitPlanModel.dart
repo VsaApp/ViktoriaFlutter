@@ -37,6 +37,18 @@ class UnitPlanDay {
     );
   }
 
+  int getUserLesseonsCount(SharedPreferences sharedPreferences, String freeLesson) {
+    for (int i = lessons.length - 1; i >= 0; i--){
+      UnitPlanLesson lesson = lessons[i]; 
+      int selected = sharedPreferences.getInt(Keys.unitPlan(sharedPreferences.getString(Keys.grade), block: lesson.subjects[0].block, day: UnitPlan.days.indexOf(this), unit: lessons.indexOf(lesson)));
+      // If nothing  or a subject (not lunchtime and free lesson) selected return the index...
+      if ((selected == null || lesson.subjects[selected].lesson != freeLesson) && i != 5 ) {
+        return i + 1;
+      }
+    }
+    return 0;
+  }
+
   // Set the default selections...
   void setSelections(int day, SharedPreferences sharedPreferences) {
     for (int i = 0; i < lessons.length; i++) {
