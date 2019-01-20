@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'ReplacementPlanView.dart';
+import '../Home/HomePage.dart';
+import 'ReplacementPlanData.dart';
+import '../UnitPlan/UnitPLanModel.dart';
+import '../Keys.dart';
+import '../Localizations.dart';
 
 class ReplacementPlanPage extends StatefulWidget {
   @override
@@ -9,6 +14,7 @@ class ReplacementPlanPage extends StatefulWidget {
 
 abstract class ReplacementPlanPageState extends State<ReplacementPlanPage> {
   SharedPreferences sharedPreferences;
+  Function() listener;
   static List<String> grades = [
     '5a',
     '5b',
@@ -37,6 +43,16 @@ abstract class ReplacementPlanPageState extends State<ReplacementPlanPage> {
         sharedPreferences = instance;
       });
     });
+    print('Set Listener (Replacementplan)');
+    listener = () => setState(() => null);
+    HomePageState.replacementplanUpdatedListeners.add(listener);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    HomePageState.replacementplanUpdatedListeners.remove(listener);
+    print('Reset Listener (Replacementplan)');
+    super.dispose();
   }
 }

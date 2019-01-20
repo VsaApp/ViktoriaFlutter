@@ -5,7 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
-import '../UnitPlan/UnitPlanData.dart';
+import '../Messageboard/MessageboardModel.dart';
+import '../UnitPlan/UnitPlanModel.dart';
+import '../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
 import '../Messageboard/MessageboardModel.dart' as messageboard;
 import 'HomeView.dart';
 import '../Tags.dart';
@@ -33,6 +35,7 @@ class HomePage extends StatefulWidget {
 }
 
 abstract class HomePageState extends State<HomePage> {
+  Scaffold appScaffold;
   int selectedDrawerIndex = 0;
   SharedPreferences sharedPreferences;
   static String grade = '';
@@ -40,20 +43,47 @@ abstract class HomePageState extends State<HomePage> {
   bool showDialog1 = true;
   int logoClickCount = 0;
   static const platform = const MethodChannel('viktoriaflutter');
+  static Function(String action, String type, String group) messageBoardUpdated;
+  static List<Function()> replacementplanUpdatedListeners = [];
 
   @override
   void initState() {
     loadData();
     // Update replacement plan if new message received
     OneSignal.shared.setNotificationReceivedHandler((osNotification) {
-      DateTime now = DateTime.now();
-      String lastUpdate = sharedPreferences.getString(Keys.lastUpdate);
-      // Check if last update is longer than one minute ago
-      if (lastUpdate == null ||
-          now.isAfter(DateTime.parse(lastUpdate).add(Duration(minutes: 1)))) {
-        // Reload app
-        sharedPreferences.setString(Keys.lastUpdate, now.toIso8601String());
-        Navigator.of(context).pushReplacementNamed('/');
+      Map<String, dynamic> msg = osNotification.payload.additionalData;
+      print("Received Notification: " + msg.toString());
+      // If it's a silent notification, update parts of the app...
+      if (msg['type'] == 'silent'){
+        // If it's for the messageboard, update messageboard...
+        if (msg['data']['type'].startsWith('messageboard')) {
+          if (messageBoardUpdated != null) messageBoardUpdated(msg['data']['action'], msg['data']['type'], msg['data']['group']);
+          else {
+            if (msg['data']['type'] == 'messageboard-post') Messageboard.postsChanged(msg['data']['group']);
+            else if (msg['data']['type'] == 'messageboard-group') Messageboard.groupsChanged(msg['data']['group']);
+          }
+        }
+        // If it's for the messageboard, update messageboard...
+        else if (msg['data']['type'].toString() == 'replacementplan'.toString()) {
+          print('update');
+          SharedPreferences.getInstance().then((sharedPreferences) async {
+            String grade = sharedPreferences.getString(Keys.grade);
+            await replacementplan.downloadDay(grade, msg['data']['day']);
+            UnitPlan.resetChanges();
+            await replacementplan.load(grade);
+            print("downloaded $mounted");
+            if (appScaffold != null) {
+              replacementplanUpdatedListeners.forEach((replacementplanUpdated) => replacementplanUpdated());
+              Fluttertoast.showToast(
+                msg: AppLocalizations.of(context).replacementPlanUpdated.replaceAll('%s', msg['data']['weekday']) ,
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                backgroundColor: Color(0xAA333333),
+                textColor: Colors.white
+              );
+            }
+          });
+        }
       }
     });
     OneSignal.shared.setNotificationOpenedHandler((osNotification) {

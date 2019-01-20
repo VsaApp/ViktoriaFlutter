@@ -121,6 +121,10 @@ class Messageboard {
     return notifications;
   }
 
+  static Future updateGroups() async {
+    await data.downloadGroups();
+  }
+
   /// Get all groups which the user get notifiations...
   static void syncTags() async {
     // First delete all unitPLan tags...
@@ -143,6 +147,17 @@ class Messageboard {
 
     /// Delete all deleted groups in the preferences...
     return waitingGroups;
+  }
+
+  static Future postsChanged(String group) async {
+      if (following.map((group) => group.name.toString()).contains(group.toString())) await feed.update();
+      await updateGroupPosts(group);
+  }
+
+  static Future groupsChanged(String group) async {
+      await Messageboard.updateGroups();
+      await Messageboard.feed.update();
+      await Messageboard.updateGroupPosts(group);
   }
 
   /// Add a group to the waiting list...
@@ -322,6 +337,11 @@ class Messageboard {
     });
   }
 
+  static Future updateGroupPosts(String group) async {
+    List<Group> groups = allGroups.where((group) => group.name.toString() == group.toString()).toList();
+    if (groups.length == 0) return;
+    if (groups[0].posts.length > 0) await groups[0].reloadPosts();
+  }
 }
 
 /// Describes the login information...

@@ -119,14 +119,24 @@ class AppLocalizations {
       'nowADeveloper': 'Du bist jetzt ein Entwickler!',
       'nowNoDeveloper': 'Du bist kein Entwickler mehr!',
       'removedPost': 'Post gelöscht!',
+      'updatedGroups': 'Gruppen aktualisiert!',
+      'replacementPlanUpdated': 'Neuer Vertretungsplan für %s',
       'yes': 'Ja',
       'no': 'Nein'
     },
   };
 
   // All getter defined...
+  String get replacementPlanUpdated {
+    return _localizedValues[locale.languageCode]['replacementPlanUpdated'];
+  }
+
   String get failedToConnectToServer {
     return _localizedValues[locale.languageCode]['failedToConnectToServer'];
+  }
+
+  String get updatedGroups {
+    return _localizedValues[locale.languageCode]['updatedGroups'];
   }
 
   String get serverIsOffline {

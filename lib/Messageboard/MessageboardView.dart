@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../Home/HomePage.dart';
 import '../Network.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
@@ -21,6 +22,25 @@ class MessageboardView extends State<MessageboardPage> {
 
   @override
   void initState() {
+    HomePageState.messageBoardUpdated = (String action, String type, String group) async {
+      if (type == 'messageboard-post') {
+        await Messageboard.postsChanged(group);
+        if (mounted) setState(() => null);
+      }
+      else if (type == 'messageboard-group') {
+        await Messageboard.groupsChanged(group);
+        if (mounted) {
+          setState(() => null);
+          Fluttertoast.showToast(
+            msg: AppLocalizations.of(context).updatedGroups,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM, // also possible "TOP" and "CENTER"
+            backgroundColor: Colors.black87,
+            textColor: Colors.white
+          );
+        }
+      }
+    };
     SharedPreferences.getInstance().then((instance) {
       setState(() {
         sharedPreferences = instance;
@@ -28,6 +48,13 @@ class MessageboardView extends State<MessageboardPage> {
     });
 
     super.initState();
+  }
+
+  @override
+  void dispose(){
+    HomePageState.messageBoardUpdated = null;
+
+    super.dispose();
   }
 
   @override
@@ -195,13 +222,13 @@ class GroupsView extends State<GroupsPage> {
   Widget build(BuildContext context) {
     List<Group> allGroups = Messageboard.myBlockedGroups..addAll(Messageboard.waiting)..addAll(widget.groups);
     return Container(
-      child: allGroups.length == 0 ?
-        Center(child: Text(AppLocalizations.of(context).noGroupsToShow)) :
-        ListView.builder(
+      child: ListView.builder(
           padding: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 70),
           shrinkWrap: true,
-          itemCount: allGroups.length,
+          itemCount: allGroups.length == 0 ? 1 : allGroups.length,
           itemBuilder: (context, index) {
+            if (allGroups.length == 0 ) return Center(child: Text(AppLocalizations.of(context).noGroupsToShow));
+            else {
             Group group = allGroups[index];
             return GestureDetector(
               onTap: () {
@@ -278,6 +305,7 @@ class GroupsView extends State<GroupsPage> {
               ),
             );
           }
+        }
       )
     );
   }

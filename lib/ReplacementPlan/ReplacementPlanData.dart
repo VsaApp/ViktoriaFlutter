@@ -68,8 +68,9 @@ Future<List<ReplacementPlanDay>> load(String _grade,
   if (setOnlyColor ?? false) setFilter = false;
 
   // Set the filter and insert the replacement plan in the unitplan or only set the colors...
-  if (setFilter ?? true)
+  if (setFilter ?? true) {
     days.forEach((day) => day.insertInUnitPlan(sharedPreferences));
+  }
   else if (setOnlyColor ?? false) days.forEach((day) => day.setColors());
 
   // Return or set the data in a static object...

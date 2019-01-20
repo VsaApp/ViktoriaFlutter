@@ -92,7 +92,7 @@ class HomePageView extends HomePageState {
       });
     }
 
-    return Scaffold(
+    appScaffold = Scaffold(
       appBar: AppBar(
         // Current page's title
         title: Text(drawerItems[selectedDrawerIndex].title),
@@ -135,5 +135,7 @@ class HomePageView extends HomePageState {
       // Current page
       body: getDrawerItemWidget(selectedDrawerIndex, pages),
     );
+    return appScaffold;
   }
+
 }
