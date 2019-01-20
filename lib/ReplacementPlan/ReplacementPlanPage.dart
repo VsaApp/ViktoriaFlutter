@@ -39,7 +39,6 @@ abstract class ReplacementPlanPageState extends State<ReplacementPlanPage> {
         sharedPreferences = instance;
       });
     });
-    print('Set Listener (Replacementplan)');
     listener = () => setState(() => null);
     HomePageState.replacementplanUpdatedListeners.add(listener);
     super.initState();
@@ -48,7 +47,6 @@ abstract class ReplacementPlanPageState extends State<ReplacementPlanPage> {
   @override
   void dispose() {
     HomePageState.replacementplanUpdatedListeners.remove(listener);
-    print('Reset Listener (Replacementplan)');
     super.dispose();
   }
 }
