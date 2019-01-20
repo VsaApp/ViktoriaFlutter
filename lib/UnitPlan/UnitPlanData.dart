@@ -11,10 +11,7 @@ Future download() async {
   // Get the selected grade...
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String _grade = sharedPreferences.getString(Keys.grade);
-  String url = 'https://api.vsa.2bad2c0.de/unitplan/' +
-      _grade +
-      '.json?v=' +
-      new Random().nextInt(99999999).toString();
+  String url = 'https://api.vsa.2bad2c0.de/unitplan/$_grade.json?v=${Random().nextInt(99999999)}';
   await fetchDataAndSave(url, Keys.unitPlan(_grade), '[]');
 
   // Parse data...

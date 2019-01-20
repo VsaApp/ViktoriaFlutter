@@ -43,6 +43,7 @@ abstract class CourseEditState extends State<CourseEdit> {
               block: lesson.subjects[0].block,
               day: days.indexOf(day),
               unit: day.lessons.indexOf(lesson)));
+          if (_selected == null) return;
           if (lesson.subjects[_selected].lesson == widget.subject.lesson) {
             subjects1.add({
               'weekday': days.indexOf(day),
