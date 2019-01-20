@@ -159,4 +159,8 @@ class Keys {
   static String messageboardGroupTag(String group) {
     return 'messageboard-${group.replaceAll(new RegExp(r' '), '-')}';
   }
+
+  static String get slidesVersion {
+    return 'slidesVersion';
+  }
 }

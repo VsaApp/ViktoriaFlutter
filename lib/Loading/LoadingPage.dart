@@ -16,10 +16,19 @@ class LoadingPage extends StatefulWidget {
 abstract class LoadingPageState extends State<LoadingPage> {
   @override
   void initState() {
-    downloadAll().then((_) {
-      // After download show app
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        Navigator.of(context).pushReplacementNamed('/home');
+    SharedPreferences.getInstance().then((instance) {
+      downloadAll().then((_) {
+        // After download show app
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          int storedVersion = instance.getInt(Keys.slidesVersion) ?? 0;
+          int currentVersion = 1;
+          if (currentVersion != storedVersion) {
+            instance.setInt(Keys.slidesVersion, currentVersion);
+            Navigator.of(context).pushReplacementNamed('/intro');
+          } else {
+            Navigator.of(context).pushReplacementNamed('/home');
+          }
+        });
       });
     });
     super.initState();

@@ -20,6 +20,7 @@ dependencies:
   url_launcher: ^4.0.3
   fluttertoast: ^2.2.3
   material_design_icons_flutter: 3.0.3289
+  intro_slider: ^1.1.4
 
 dev_dependencies:
   flutter_test:

@@ -123,7 +123,11 @@ class AppLocalizations {
       'replacementPlanUpdated': 'Neuer Vertretungsplan für %s',
       'goOnline': 'Du musst online sein beim ersten mal laden!',
       'yes': 'Ja',
-      'no': 'Nein'
+      'no': 'Nein',
+      'introUnitPlanTitle': 'Stundenplan',
+      'introUnitPlanDescription': 'Ein Blick in den Stundenplan zeigt dir eine vollständige Übersicht über deinen Tag mit allen Änderungen',
+      'introReplacementPlanTitle': 'Vertretungsplan',
+      'introReplacementPlanDescription': 'Alle Vertretungen werden auf deine Stundenplan Auswahl angepasst und für dich gefiltert'
     },
   };
 
@@ -565,6 +569,22 @@ class AppLocalizations {
 
   String get nowNoDeveloper {
     return _localizedValues[locale.languageCode]['nowNoDeveloper'];
+  }
+
+  String get introUnitPlanTitle {
+    return _localizedValues[locale.languageCode]['introUnitPlanTitle'];
+  }
+
+  String get introUnitPlanDescription {
+    return _localizedValues[locale.languageCode]['introUnitPlanDescription'];
+  }
+
+  String get introReplacementPlanTitle {
+    return _localizedValues[locale.languageCode]['introReplacementPlanTitle'];
+  }
+
+  String get introReplacementPlanDescription {
+    return _localizedValues[locale.languageCode]['introReplacementPlanDescription'];
   }
 }
 

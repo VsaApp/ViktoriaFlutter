@@ -6,6 +6,7 @@ import 'Localizations.dart';
 import 'Home/HomePage.dart';
 import 'Loading/LoadingPage.dart';
 import 'Login/LoginPage.dart';
+import 'Intro/IntroPage.dart';
 
 // This is the first functions which is called in the app...
 void main() async {
@@ -64,7 +65,8 @@ void main() async {
     routes: <String, WidgetBuilder>{
       '/': (BuildContext context) => LoadingPage(),
       '/home': (BuildContext context) => HomePage(),
-      '/login': (BuildContext context) => LoginPage()
+      '/login': (BuildContext context) => LoginPage(),
+      '/intro': (BuildContext context) => IntroPage()
     },
   ));
 }
