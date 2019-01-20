@@ -29,8 +29,7 @@ Future<int> get checkOnline async {
       return 0;
     }
     return -1;
-  } on SocketException catch (e) {
-    print ('Error during checking online: ' + e.toString());
+  } on SocketException catch (_) {
     return -1;
   }
 }

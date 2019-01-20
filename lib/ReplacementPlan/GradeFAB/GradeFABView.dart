@@ -113,7 +113,7 @@ class GradeFabView extends GradeFabState {
         Transform(
           transform: Matrix4.translationValues(
             0.0,
-            translateButton.value * (GradeFabState.grades.length + 1),
+            translateButton.value * (shownGrades.length + 1),
             0.0,
           ),
           child: select(),
@@ -126,8 +126,8 @@ class GradeFabView extends GradeFabState {
                 transform: Matrix4.translationValues(
                   0.0,
                   translateButton.value *
-                      (GradeFabState.grades.length -
-                          GradeFabState.grades.indexOf(grade)),
+                      (shownGrades.length -
+                          shownGrades.indexOf(grade)),
                   0.0,
                 ),
                 child: Container(

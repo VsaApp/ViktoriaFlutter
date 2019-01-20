@@ -121,6 +121,7 @@ class AppLocalizations {
       'removedPost': 'Post gelöscht!',
       'updatedGroups': 'Gruppen aktualisiert!',
       'replacementPlanUpdated': 'Neuer Vertretungsplan für %s',
+      'goOnline': 'Du musst online sein beim ersten mal laden!',
       'yes': 'Ja',
       'no': 'Nein'
     },
@@ -129,6 +130,10 @@ class AppLocalizations {
   // All getter defined...
   String get replacementPlanUpdated {
     return _localizedValues[locale.languageCode]['replacementPlanUpdated'];
+  }
+
+  String get goOnline {
+    return _localizedValues[locale.languageCode]['goOnline'];
   }
 
   String get failedToConnectToServer {

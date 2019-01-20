@@ -15,6 +15,7 @@ Future sendTag(String key, dynamic value) async {
 }
 
 Future initTags() async {
+  if ((await checkOnline) == -1) return;
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   sendTags({Keys.grade: sharedPreferences.getString(Keys.grade), Keys.dev: sharedPreferences.getBool(Keys.dev) ?? false});
 }
