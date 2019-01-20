@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Keys.dart';
 import '../Network.dart';
 import 'ReplacementPlanModel.dart';
+import '../UnitPlan/UnitPlanModel.dart';
 
 // Download all days of the replacement plan...
 Future download(String _grade, {bool alreadyLoad = true}) async {
@@ -19,7 +20,7 @@ Future download(String _grade, {bool alreadyLoad = true}) async {
     - setOnlyColor: set colors of changes and do not filter (Needs when the unitplan is not load for the correct grade)
 */
 Future<List<ReplacementPlanDay>> load(String _grade,
-    {bool temp, bool setOnlyColor, bool setFilter}) async {
+    {bool temp, bool setOnlyColor, bool setFilter, List<UnitPlanDay> forDays}) async {
   // Get data from preferences...
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   List<ReplacementPlanDay> days = await fetchDays(_grade);
@@ -69,7 +70,7 @@ Future<List<ReplacementPlanDay>> load(String _grade,
 
   // Set the filter and insert the replacement plan in the unitplan or only set the colors...
   if (setFilter ?? true) {
-    days.forEach((day) => day.insertInUnitPlan(sharedPreferences));
+    days.forEach((day) => day.insertInUnitPlan(sharedPreferences, forDays ?? UnitPlan.days));
   }
   else if (setOnlyColor ?? false) days.forEach((day) => day.setColors());
 

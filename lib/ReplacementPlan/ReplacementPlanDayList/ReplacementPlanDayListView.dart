@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'ReplacementPlanDayListWidget.dart';
 import '../../Localizations.dart';
-import '../../Keys.dart';
 import '../ReplacementPlanRow/ReplacementPlanRowWidget.dart';
 import '../../SectionWidget.dart';
 
@@ -97,8 +96,7 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
                         ),
                       ),
                     )),
-                  ]..addAll((!sharedPreferences
-                          .getBool(Keys.sortReplacementPlan))
+                  ]..addAll((!widget.sort)
                       ?
                       // Show all changes in a list...
                       day.changes.map((change) {

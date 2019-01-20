@@ -11,7 +11,7 @@ class ReplacementPlan {
   // Updates the changes filter...
   static void update(SharedPreferences sharedPreferences) {
     UnitPlan.resetChanges();
-    days.forEach((day) => day.insertInUnitPlan(sharedPreferences));
+    days.forEach((day) => day.insertInUnitPlan(sharedPreferences, UnitPlan.days));
   }
 }
 
@@ -54,9 +54,9 @@ class ReplacementPlanDay {
   }
 
   // Insert the replacement plan in the unit plan...
-  void insertInUnitPlan(SharedPreferences sharedPreferences) {
+  void insertInUnitPlan(SharedPreferences sharedPreferences, List<UnitPlanDay> unitPlanDays) {
     for (int i = 0; i < changes.length; i++)
-      changes[i].setFilter(sharedPreferences);
+      changes[i].setFilter(sharedPreferences, unitPlanDays);
   }
 
   // Set the category colors of the changes...
@@ -114,7 +114,7 @@ class Change {
   }
 
   // Fitler the change (MyChang / UndefChange / OtherChange)...
-  void setFilter(SharedPreferences sharedPreferences) {
+  void setFilter(SharedPreferences sharedPreferences, List<UnitPlanDay> unitPlanDays) {
     // Set the category of this change...
     setColor();
 
@@ -123,13 +123,13 @@ class Change {
         .indexOf(weekday);
 
     // Filter all changes with a set course...
-    UnitPlan.days.forEach((day) => day.lessons.forEach((lesson) {
+    unitPlanDays.forEach((day) => day.lessons.forEach((lesson) {
           if (lesson.subjects.length > 0) {
             // Get the selected index...
             int selected = getSelectedSubject(
                     sharedPreferences,
                     lesson.subjects[0],
-                    UnitPlan.days.indexOf(day),
+                    unitPlanDays.indexOf(day),
                     day.lessons.indexOf(lesson)) ??
                 0;
 
@@ -164,7 +164,7 @@ class Change {
     if (changed.info.toLowerCase().contains('klausur')) {
       if (changed.info.toLowerCase().contains('nachschreiber')) {
         isMy = -1;
-        UnitPlan.days[day].lessons[unit].subjects
+        unitPlanDays[day].lessons[unit].subjects
             .forEach((subject) => subject.changes.add(this));
       } else {
         int countSubjects = 0;
@@ -172,7 +172,7 @@ class Change {
         bool writing = false;
 
         // Search all subjects with the correct name and teacher...
-        UnitPlan.days.forEach((day) =>
+        unitPlanDays.forEach((day) =>
             day.lessons.forEach((lesson) => lesson.subjects.forEach((subject) {
                   if (subject.lesson == this.lesson &&
                       subject.teacher == this.teacher) {
@@ -180,7 +180,7 @@ class Change {
                     int selected = getSelectedSubject(
                         sharedPreferences,
                         subject,
-                        UnitPlan.days.indexOf(day),
+                        unitPlanDays.indexOf(day),
                         day.lessons.indexOf(lesson));
 
                     // Count the possible subjects...
@@ -206,7 +206,7 @@ class Change {
         if ((selectedSubjects >= countSubjects - 1) && writing) {
           isMy = 1;
           // Add this change to the subjects in the unit plan...
-          UnitPlan.days[day].lessons[unit].subjects
+          unitPlanDays[day].lessons[unit].subjects
               .forEach((subject) => subject.changes.add(this));
         } else if (selectedSubjects == 0 || !writing) isMy = 0;
       }
@@ -215,7 +215,7 @@ class Change {
 
     // Filter all other changes...
     // Get the normal lesson...
-    UnitPlanLesson nLesson = UnitPlan.days[day].lessons[unit];
+    UnitPlanLesson nLesson = unitPlanDays[day].lessons[unit];
     List<UnitPlanSubject> possibleSubjects = [];
     UnitPlanSubject nSubject;
 
@@ -272,7 +272,7 @@ class Change {
         return;
       }
       // If the normal Subject is the selected subject, the subject is my subject...
-      if (UnitPlan.days[day].lessons[unit].subjects[selected] == nSubject) {
+      if (unitPlanDays[day].lessons[unit].subjects[selected] == nSubject) {
         isMy = 1;
       } else
         isMy = 0;
@@ -295,7 +295,7 @@ class Change {
       }
       // If the normal Subject is the selected subject, the subject is my subject...
       if (!possibleSubjects
-          .contains(UnitPlan.days[day].lessons[unit].subjects[selected])) {
+          .contains(unitPlanDays[day].lessons[unit].subjects[selected])) {
         isMy = 0;
       }
     }

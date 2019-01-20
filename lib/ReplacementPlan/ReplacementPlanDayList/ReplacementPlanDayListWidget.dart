@@ -7,8 +7,9 @@ import '../../Localizations.dart';
 
 class ReplacementPlanDayList extends StatefulWidget {
   final List<ReplacementPlanDay> days;
+  final bool sort;
 
-  ReplacementPlanDayList({Key key, this.days}) : super(key: key);
+  ReplacementPlanDayList({Key key, this.days, this.sort}) : super(key: key);
 
   @override
   ReplacementPlanDayListView createState() => ReplacementPlanDayListView();

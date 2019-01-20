@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../BrotherSisterReplacementPlan/BrotherSisterReplacementPlanPage.dart';
 import '../Localizations.dart';
 import '../Network.dart';
+import '../Keys.dart';
 import '../ReplacementPlan/ReplacementPlanData.dart';
 import '../ReplacementPlan/ReplacementPlanModel.dart';
 import 'ReplacementPlanDayList/ReplacementPlanDayListWidget.dart';
@@ -12,10 +13,11 @@ class ReplacementPlanPageView extends ReplacementPlanPageState {
   @override
   Widget build(BuildContext context) {
     List<ReplacementPlanDay> data = getReplacementPlan();
+    if (sharedPreferences == null) return Container();
     return new Scaffold(
       body: Stack(children: <Widget>[
         Column(
-          children: <Widget>[ReplacementPlanDayList(days: data)],
+          children: <Widget>[ReplacementPlanDayList(days: data, sort: sharedPreferences.getBool(Keys.sortReplacementPlan))],
         ),
         // FAB
         Positioned(
