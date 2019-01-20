@@ -63,7 +63,7 @@ class ReplacementPlanRow extends StatelessWidget {
                     Column(
                       children: <Widget>[
                         // Original subject
-                        Container(
+                        (change.lesson.length > 0 || change.room.length > 0 || change.teacher.length > 0) ? Container(
                           width: constraints.maxWidth * 0.60,
                           child: Text(
                             getSubject(change.lesson),
@@ -73,7 +73,7 @@ class ReplacementPlanRow extends StatelessWidget {
                               color: Theme.of(context).primaryColor,
                             ),
                           ),
-                        ),
+                        ) : Container(),
                         // Information
                         Container(
                             width: constraints.maxWidth * 0.60,
@@ -88,7 +88,7 @@ class ReplacementPlanRow extends StatelessWidget {
                     Column(
                       children: <Widget>[
                         // Original room
-                        Container(
+                        (change.lesson.length > 0 || change.room.length > 0 || change.teacher.length > 0) ? Container(
                           width: constraints.maxWidth * 0.15,
                           child: Text(
                             change.room,
@@ -96,7 +96,7 @@ class ReplacementPlanRow extends StatelessWidget {
                               color: Theme.of(context).primaryColor,
                             ),
                           ),
-                        ),
+                        ) : Container(),
                         // Changed room
                         Container(
                           width: constraints.maxWidth * 0.15,
@@ -114,7 +114,7 @@ class ReplacementPlanRow extends StatelessWidget {
                     Column(
                       children: <Widget>[
                         // Original teacher
-                        Container(
+                        (change.lesson.length > 0 || change.room.length > 0 || change.teacher.length > 0) ? Container(
                           width: constraints.maxWidth * 0.15,
                           child: Text(
                             nTeacher,
@@ -122,7 +122,7 @@ class ReplacementPlanRow extends StatelessWidget {
                               color: Theme.of(context).primaryColor,
                             ),
                           ),
-                        ),
+                        ) : Container(),
                         // Changed teacher
                         Container(
                             width: constraints.maxWidth * 0.15,
