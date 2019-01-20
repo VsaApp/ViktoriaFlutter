@@ -49,6 +49,10 @@ abstract class HomePageState extends State<HomePage> {
   @override
   void initState() {
     loadData();
+    SharedPreferences.getInstance().then((sharedPreferences) {
+      // Default follow VsaApp in messageboard...
+      if (sharedPreferences.getStringList(Keys.feedGroups) == null) Messageboard.setFollowGroup('VsaApp');
+    });
     // Update replacement plan if new message received
     OneSignal.shared.setNotificationReceivedHandler((osNotification) {
       Map<String, dynamic> msg = osNotification.payload.additionalData;
