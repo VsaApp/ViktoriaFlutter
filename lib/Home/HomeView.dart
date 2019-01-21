@@ -65,8 +65,7 @@ class HomePageView extends HomePageState {
         SharedPreferences sharedPreferences =
             await SharedPreferences.getInstance();
         bool selectedSubjects = sharedPreferences.getKeys().where((key) {
-              if (key.startsWith(
-                  '${Keys.unitPlan}${sharedPreferences.getString(Keys.grade)}-')) {
+              if (key.startsWith('unitPlan-${sharedPreferences.getString(Keys.grade)}-')) {
                 if ('-'.allMatches(key).length == 3)
                   return key.split('-')[key.split('-').length - 1] != '5';
                 return true;
