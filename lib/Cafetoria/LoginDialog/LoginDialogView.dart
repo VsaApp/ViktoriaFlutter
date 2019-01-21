@@ -15,13 +15,11 @@ class LoginDialogView extends LoginDialogState {
   // Check the login
   void checkForm() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    credentialsCorrect = await checkLogin(
-        id: idController.text, password: passwordController.text);
+    credentialsCorrect = await checkLogin(id: idController.text, password: passwordController.text);
     if (formKey.currentState.validate()) {
       // Save correct credentials
       sharedPreferences.setString(Keys.cafetoriaId, idController.text);
-      sharedPreferences.setString(
-          Keys.cafetoriaPassword, passwordController.text);
+      sharedPreferences.setString(Keys.cafetoriaPassword, passwordController.text);
       sharedPreferences.commit();
       Navigator.pop(context);
       // Update UI

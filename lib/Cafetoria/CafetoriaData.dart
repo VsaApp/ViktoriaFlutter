@@ -23,7 +23,7 @@ Future<Cafetoria> download({String id, String password, bool parse}) async {
 Future<bool> checkLogin({String id, String password}) async {
   try {
     String url = 'https://api.vsa.2bad2c0.de/cafetoria/login/' + id + '/' + password + '/';
-    return json.decode(await fetchData(url)).error == null;
+    return json.decode(await fetchData(url))['error'] == null;
   } catch (e) {
     return false;
   }

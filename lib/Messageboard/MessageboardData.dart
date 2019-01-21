@@ -51,7 +51,8 @@ Future downloadGroups() async {
 
 // Download the user feed (Groups must be downloaded before!)...
 Future downloadFeed({int start = 0, int end = 10, bool addFeed = false}) async {
-  if (Messageboard.following.length == 0){
+  List<String> feedGroups = Messageboard.following.where((group) => group.status == 'activated').map((group) => group.name).toList();
+  if (feedGroups.length == 0){
     Messageboard.feed = Feed(posts: []);
     return;
   }
@@ -63,7 +64,6 @@ Future downloadFeed({int start = 0, int end = 10, bool addFeed = false}) async {
 
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   Messageboard.sharedPreferences = sharedPreferences;
-  List<String> feedGroups = Messageboard.following.map((group) => group.name).toList();
   try {
     final response = await post('$urlFeed/$start/$end', body: {"groups": feedGroups});
     // Save loaded data...

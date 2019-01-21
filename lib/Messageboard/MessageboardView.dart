@@ -101,7 +101,7 @@ class MessageboardView extends State<MessageboardPage> {
                 }
               },
               onWritePost: () {
-                if (Messageboard.loggedIn.length > 0){
+                if (Messageboard.loggedIn.where((group) => group.status == 'activated').length > 0){
                   Navigator.of(context).push(MaterialPageRoute(builder: (_) => WritePostPage(onFinished: () {
                     setState(() => null);
                   })));
@@ -380,9 +380,13 @@ class FeedView extends State<FeedPage> {
   }
 
   @override void dispose() {
-      Messageboard.statusListener = null;
-      super.dispose();
-    }
+    Messageboard.statusListener = null;
+    super.dispose();
+  }
+
+  get feedGroups {
+    return Messageboard.following.where((group) => group.status == 'activated').toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -390,7 +394,7 @@ class FeedView extends State<FeedPage> {
         <Widget>[
           !isUpdating ?
           Center(
-              child: (Messageboard.following.length == 0) ?
+              child: (feedGroups.length == 0) ?
                 Text(AppLocalizations.of(context).noGroups) :
                 Text(AppLocalizations.of(context).noPosts)
           ) :
@@ -1709,7 +1713,7 @@ class WritePostView extends State<WritePostPage> {
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton<String>(
                                     isDense: true,
-                                    items: Messageboard.loggedIn.map((Group group) {
+                                    items: Messageboard.loggedIn.where((group) => group.status == 'activated').map((Group group) {
                                       return DropdownMenuItem<String>(
                                         value: group.name,
                                         child: Text(group.name),

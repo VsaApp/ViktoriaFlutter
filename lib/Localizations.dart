@@ -86,7 +86,7 @@ class AppLocalizations {
       'noGroups': 'Du folgst noch keinen Gruppen!',
       'noPosts': 'Es gibt noch keine Posts für dich!',
       'groupInfo': 'Gruppeninformation',
-      'noPostsAnymore': 'Es gibt keine weitern Posts!',
+      'noPostsAnymore': 'Es gibt keine weiteren Posts!',
       'noPostsInGroup': 'Hier gibt es noch keine Posts!',
       'passwordChanged': 'Das Passwort wurde geändert!',
       'postGroup': 'Gruppe auswählen in der der Post gesendet werden soll',
