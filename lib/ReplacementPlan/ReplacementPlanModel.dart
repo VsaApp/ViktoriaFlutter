@@ -22,9 +22,10 @@ class ReplacementPlanDay {
   final String update;
   final String weekday;
   final List<dynamic> changes;
+  final List<dynamic> unparsed;
 
   ReplacementPlanDay(
-      {this.date, this.time, this.update, this.weekday, this.changes});
+      {this.date, this.time, this.update, this.weekday, this.changes, this.unparsed});
 
   factory ReplacementPlanDay.fromJson(Map<String, dynamic> json) {
     return ReplacementPlanDay(
@@ -32,9 +33,8 @@ class ReplacementPlanDay {
       time: json['updated']['time'] as String,
       update: json['updated']['date'] as String,
       weekday: json['for']['weekday'] as String,
-      changes: json['data']
-          .map((i) => Change.fromJson(i, (json['for']['weekday'] as String)))
-          .toList(),
+      changes: json['data'].map((i) => Change.fromJson(i, (json['for']['weekday'] as String))).toList(),
+      unparsed: json['unparsed'].map((i) => UnparsedChange.fromJson(i)).toList()
     );
   }
 
@@ -62,6 +62,23 @@ class ReplacementPlanDay {
   // Set the category colors of the changes...
   void setColors() {
     for (int i = 0; i < changes.length; i++) changes[i].setColor();
+  }
+}
+
+// Desrcibes a change which could not be parsed...
+class UnparsedChange {
+  final int unit;
+  final List<dynamic> original;
+  final List<dynamic> change;
+
+  UnparsedChange({this.unit, this.original, this.change});
+
+  factory UnparsedChange.fromJson(Map<String, dynamic> json) {
+    return UnparsedChange(
+      unit: int.parse(json['unit'] as String) - 1,
+      original: json['original'].map((line) => line.toString()).toList(),
+      change: json['change'].map((line) => line.toString()).toList()
+    );
   }
 }
 

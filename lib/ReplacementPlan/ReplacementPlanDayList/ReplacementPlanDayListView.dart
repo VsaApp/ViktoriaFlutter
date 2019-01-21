@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'ReplacementPlanDayListWidget.dart';
 import '../../Localizations.dart';
 import '../ReplacementPlanRow/ReplacementPlanRowWidget.dart';
+import '../ReplacementPlanRow/ReplacementPlanUnparsedRowWidget.dart';
 import '../../SectionWidget.dart';
 
 class ReplacementPlanDayListView extends ReplacementPlanDayListState {
@@ -96,7 +97,15 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
                         ),
                       ),
                     )),
-                  ]..addAll((!widget.sort)
+                  ]..add(day.unparsed.length > 0 ? Section(
+                            title: AppLocalizations.of(context).unparsed,
+                            // Show unparsed changes...
+                            children: day.unparsed.map((change) {
+                                    return ReplacementPlanUnparsedRow(
+                                        changes: day.unparsed,
+                                        change: change);
+                                  }).toList()
+                          ) : Container())..addAll((!widget.sort)
                       ?
                       // Show all changes in a list...
                       day.changes.map((change) {

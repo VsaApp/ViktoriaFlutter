@@ -122,6 +122,7 @@ class AppLocalizations {
       'updatedGroups': 'Gruppen aktualisiert!',
       'replacementPlanUpdated': 'Neuer Vertretungsplan für %s',
       'goOnline': 'Du musst online sein beim ersten mal laden!',
+      'unparsed': 'Nicht erkannt',
       'yes': 'Ja',
       'no': 'Nein',
       'introUnitPlanTitle': 'Stundenplan',
@@ -134,6 +135,10 @@ class AppLocalizations {
   // All getter defined...
   String get replacementPlanUpdated {
     return _localizedValues[locale.languageCode]['replacementPlanUpdated'];
+  }
+
+  String get unparsed {
+    return _localizedValues[locale.languageCode]['unparsed'];
   }
 
   String get goOnline {
