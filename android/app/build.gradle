@@ -41,7 +41,6 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 android {
     compileSdkVersion 27
 
-    buildToolsVersion "25.0.3"
 
     lintOptions {
         disable 'InvalidPackage'
