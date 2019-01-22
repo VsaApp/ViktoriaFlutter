@@ -122,7 +122,7 @@ Future syncTags() async {
   
   // Get all removed and changed tags...
   allTags.forEach((key, value) {
-    if (!newTags.containsKey(key)) tagsToRemove.add(value);
+    if (!newTags.containsKey(key)) tagsToRemove.add(key);
     else if (value.toString() != newTags[key].toString()) {
       tagsToUpdate[key] = newTags[key];
     }
