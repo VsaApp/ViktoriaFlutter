@@ -2,6 +2,7 @@ package de.lohl1kohl.viktoriaflutter;
 
 import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
+import android.content.Intent;
 
 import com.onesignal.NotificationExtenderService;
 import com.onesignal.OSNotificationReceivedResult;
@@ -11,6 +12,11 @@ import org.json.JSONException;
 import java.util.Arrays;
 
 public class NotificationService extends NotificationExtenderService {
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_STICKY;
+    }
 
     @Override
     protected boolean onNotificationProcessing(final OSNotificationReceivedResult receivedResult) {
