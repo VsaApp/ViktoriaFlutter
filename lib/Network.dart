@@ -50,10 +50,10 @@ Future fetchDataAndSave(String url, String key, String defaultValue) async {
 
 Future<String> fetchData(String url) async {
   try {
-    final response = await http.Client().get(url);
+    final response = await http.Client().get(url).timeout(maxTime);
     return response.body;
   } catch (e) {
-    print("Error in download: " + e.toString());
+    print("Error druing fetching date ($url): " + e.toString());
     return "";
   }
 }
@@ -63,9 +63,9 @@ Future<String> post(String url, {dynamic body}) async {
   HttpClientRequest request = await httpClient.postUrl(Uri.parse(url)).timeout(maxTime);
   request.headers.set('content-type', 'application/json');
   request.add(utf8.encode(json.encode(body)));
-  HttpClientResponse response = await request.close();
+  HttpClientResponse response = await request.close().timeout(maxTime);
   // todo - you should check the response.statusCode
-  String reply = await response.transform(utf8.decoder).join();
+  String reply = await response.transform(utf8.decoder).join().timeout(maxTime);
   httpClient.close();
   return reply;
 }

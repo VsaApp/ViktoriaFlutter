@@ -37,7 +37,7 @@ Future downloadGroups() async {
     sharedPreferences.setString(Keys.messageboardGroups, response.body);
     await sharedPreferences.commit();
   } catch (e) {
-    print("Error in download: " + e.toString());
+    print("Error in download groups: " + e.toString());
     if (sharedPreferences.getString(Keys.messageboardGroups) == null) {
       // Set default data...
       sharedPreferences.setString(Keys.messageboardGroups, '[]');
@@ -212,13 +212,13 @@ Future<bool> addPost({String username, String password, String title, String tex
     final parsed = json.decode(response);
     return MessageboardError.fromJson(parsed).error == null;
   } catch (e) {
-    print("Error in download: " + e.toString());
+    print("Error during adding post: " + e.toString());
     return false;
   }
 }
 
 
-// Check the login data of the keyfob...
+// Check the login data of the group...
 Future<bool> checkLogin({String username, String password}) async {
   try {
     String _url = '$urlGroupLogin/$username/$password';
@@ -227,7 +227,7 @@ Future<bool> checkLogin({String username, String password}) async {
     final parsed = json.decode(response.body);
     return MessageboardError.fromJson(parsed).error == null;
   } catch (e) {
-    print("Error in download: " + e.toString());
+    print("Error during checking group login: " + e.toString());
     return false;
   }
 }

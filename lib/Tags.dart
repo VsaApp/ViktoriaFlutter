@@ -1,17 +1,22 @@
+import 'dart:convert';
 
 import 'package:onesignal/onesignal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 import 'Network.dart';
 import 'Keys.dart';
 import 'UnitPlan/UnitPlanData.dart';
+import 'Messageboard/MessageboardModel.dart';
 
 Future<Map<String, dynamic>> getTags() async {
-  return await OneSignal.shared.getTags();
+  String id = await getPlayerId();
+  String url = 'https://api.vsa.2bad2c0.de/tags/$id';
+  return json.decode((await http.Client().get(url).timeout(maxTime)).body);
 }
 
 Future sendTag(String key, dynamic value) async {
-  OneSignal.shared.sendTag(key, value);
+  sendTags({key: value});
 }
 
 Future initTags() async {
@@ -21,15 +26,18 @@ Future initTags() async {
 }
 
 Future sendTags(Map<String, dynamic> tags) async {
-  OneSignal.shared.sendTags(tags);
+  String id = await getPlayerId();
+  await post('https://api.vsa.2bad2c0.de/tags/$id/add', body: tags);
 }
 
 Future deleteTag(String key) async {
-  OneSignal.shared.deleteTag(key);
+  deleteTags([key]);
 }
 
 Future deleteTags(List<String> tags) async {
-  OneSignal.shared.deleteTags(tags);
+  String id = await getPlayerId();
+  String url = 'https://api.vsa.2bad2c0.de/tags/$id/remove';
+  post(url, body: tags);
 }
 
 Future deleteOldTags() async {
@@ -41,6 +49,10 @@ Future deleteOldTags() async {
     }
   });
   if (tagsToDelete.length > 0) deleteTags(tagsToDelete);
+}
+
+Future getPlayerId() async {
+  return (await OneSignal.shared.getPermissionSubscriptionState()).subscriptionStatus.userId;
 }
  
 // Sync the onesignal tags...
@@ -100,9 +112,14 @@ Future syncTags() async {
     });
   }
 
+  // Add all messageboard tags...
+  List<Group> notifications = Messageboard.notifications;
+  Messageboard.following.forEach((group) => newTags[Keys.messageboardGroupTag(group.name)] = notifications.contains(group));
+
   // Compare new and old tags...
   Map<String, dynamic> tagsToUpdate = {};
   List<String> tagsToRemove = [];
+  
   // Get all removed and changed tags...
   allTags.forEach((key, value) {
     if (!newTags.containsKey(key)) tagsToRemove.add(value);
