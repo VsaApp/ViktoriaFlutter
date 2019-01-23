@@ -44,7 +44,7 @@ void main() async {
 
   // Start the app...
   runApp(MaterialApp(
-    title: 'ViktoriaFlutter',
+    title: 'VsaApp',
     // Set fontfamily and main colors...
     theme: ThemeData(
         brightness: Brightness.light,
