@@ -44,7 +44,7 @@ Future deleteOldTags() async {
   Map<String, dynamic> tags = await getTags();
   List<String> tagsToDelete = [];
   tags.forEach((tag, value) {
-    if (!(tag.startsWith('messageboard') || tag.startsWith('unitplan') || tag.startsWith('dev') || tag.startsWith('grade') || tag.startsWith('exam'))) {
+    if (!(tag.startsWith('messageboard') || tag.startsWith('unitPlan') || tag.startsWith('dev') || tag.startsWith('grade') || tag.startsWith('exam'))) {
       tagsToDelete.add(tag);
     }
   });
