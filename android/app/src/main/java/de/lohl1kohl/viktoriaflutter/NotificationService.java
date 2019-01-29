@@ -24,9 +24,10 @@ public class NotificationService extends NotificationExtenderService {
             if (!receivedResult.payload.additionalData.getString("type").equals("silent")) {
                 OverrideSettings overrideSettings = new OverrideSettings();
                 if (receivedResult.payload.additionalData.getString("type").equals("replacementplan")) {
+                    int changes = receivedResult.payload.body.length() - receivedResult.payload.body.replace("\n", "").length() + 1;
                     overrideSettings.extender = builder -> builder.setSmallIcon(R.mipmap.ic_launcher)
                             .setContentTitle(receivedResult.payload.title)
-                            .setContentText(String.valueOf(receivedResult.payload.body.length() - receivedResult.payload.body.replace("\n", "").length() + 1) + " Änderungen")
+                            .setContentText(changes > 1 ? String.valueOf(changes) + " Änderungen" : receivedResult.payload.body)
                             .setColor(Color.parseColor("#ff5bc638"))
                             .setStyle(new NotificationCompat.BigTextStyle().bigText(receivedResult.payload.body))
                             .setVibrate(new long[]{100, 100});
