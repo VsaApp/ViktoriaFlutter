@@ -37,8 +37,7 @@ void main() async {
   // Check if logged in
   if (sharedPreferences.get(Keys.grade) == null ||
       sharedPreferences.get(Keys.username) == null ||
-      sharedPreferences.get(Keys.password) == null ||
-      sharedPreferences.get(Keys.isTeacher) == null) {
+      sharedPreferences.get(Keys.password) == null) {
     _initialRoute = '/login';
   }
 

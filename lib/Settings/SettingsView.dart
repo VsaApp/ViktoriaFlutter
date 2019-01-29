@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:onesignal/onesignal.dart';
 import 'SettingsPage.dart';
 import '../SectionWidget.dart';
 import '../Localizations.dart';
@@ -120,9 +119,7 @@ class SettingsPageView extends SettingsPageState {
           Section(
             title: AppLocalizations.of(context).personalData,
             children: <Widget>[
-              (sharedPreferences.getBool(Keys.isTeacher)
-                  ? Container()
-                  :
+              
                   // Grade selector
                   Padding(
                       padding: EdgeInsets.only(left: 15.0, right: 22.5),
@@ -151,7 +148,7 @@ class SettingsPageView extends SettingsPageState {
                           ),
                         ),
                       ),
-                    )),
+                    ),
               // Logout button
               Container(
                 margin: EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
@@ -164,7 +161,6 @@ class SettingsPageView extends SettingsPageState {
                       sharedPreferences.remove(Keys.username);
                       sharedPreferences.remove(Keys.password);
                       sharedPreferences.remove(Keys.grade);
-                      sharedPreferences.remove(Keys.isTeacher);
                       sharedPreferences.commit().then((_) async {
                         // Reload app
                         deleteTags((await getTags()).keys.toList());

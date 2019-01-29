@@ -63,11 +63,6 @@ class Keys {
     return 'getReplacementPlanNotifications';
   }
 
-  // Saves if the user is login as teacher...
-  static String get isTeacher {
-    return 'isTeacher';
-  }
-
   // unitPlan-GRADE saves the untiplan json string...
   // unitPLan-GRADE-BLOCK / uitplan-GRADE-DAY-UNIT saves the selected index...
   static String unitPlan(String grade, {String block, int day, int unit}) {

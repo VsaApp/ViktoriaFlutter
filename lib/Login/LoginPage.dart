@@ -39,17 +39,15 @@ abstract class LoginPageState extends State<LoginPage> {
     'Q2'
   ];
   String grade = grades[0];
-  final pupilUsernameController = TextEditingController();
-  final pupilPasswordController = TextEditingController();
-  final teacherUsernameController = TextEditingController();
-  final teacherPasswordController = TextEditingController();
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
 
   // Check if credentials entered are correct
-  void checkPupilForm() async {
+  void checkForm() async {
     String _username =
-        sha256.convert(utf8.encode(pupilUsernameController.text)).toString();
+        sha256.convert(utf8.encode(usernameController.text)).toString();
     String _password =
-        sha256.convert(utf8.encode(pupilPasswordController.text)).toString();
+        sha256.convert(utf8.encode(passwordController.text)).toString();
     final response = await http.get('https://api.vsa.2bad2c0.de/login/' +
         _username +
         '/' +
@@ -60,38 +58,14 @@ abstract class LoginPageState extends State<LoginPage> {
       // Save correct credentials
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
-      sharedPreferences.setString(Keys.username, pupilUsernameController.text);
-      sharedPreferences.setString(Keys.password, pupilPasswordController.text);
+      sharedPreferences.setString(Keys.username, usernameController.text);
+      sharedPreferences.setString(Keys.password, passwordController.text);
       sharedPreferences.setString(Keys.grade, grade);
-      sharedPreferences.setBool(Keys.isTeacher, false);
       sharedPreferences.commit();
       // Show app
       Navigator.pushReplacementNamed(context, '/');
     } else {
-      pupilPasswordController.clear();
-    }
-  }
-
-  // Check if credentials entered are correct
-  void checkTeacherForm() async {
-    String _username = teacherUsernameController.text.toUpperCase();
-    String _password = teacherPasswordController.text;
-    final response = await http
-        .get('https://api.vsa.2bad2c0.de/unitplan/' + _username + '.json');
-    teacherCredentialsCorrect = response.statusCode != 404;
-    if (teacherFormKey.currentState.validate()) {
-      // Save correct credentials
-      SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
-      sharedPreferences.setString(Keys.username, _username);
-      sharedPreferences.setString(Keys.password, _password);
-      sharedPreferences.setString(Keys.grade, _username);
-      sharedPreferences.setBool(Keys.isTeacher, true);
-      sharedPreferences.commit();
-      // Show app
-      Navigator.pushReplacementNamed(context, '/');
-    } else {
-      teacherPasswordController.clear();
+      passwordController.clear();
     }
   }
 }

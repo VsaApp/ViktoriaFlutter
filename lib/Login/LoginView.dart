@@ -5,15 +5,12 @@ import '../Network.dart';
 import 'LoginPage.dart';
 
 class LoginPageView extends LoginPageState {
-  String type = '';
   int online;
 
   @override
   void dispose() {
-    pupilUsernameController.dispose();
-    pupilPasswordController.dispose();
-    teacherUsernameController.dispose();
-    teacherPasswordController.dispose();
+    usernameController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
@@ -28,42 +25,8 @@ class LoginPageView extends LoginPageState {
   void prepareLogin() {
     checkOnline.then((online) {
       setState(() {
-        type = (online == 1 ? '' : 'offline');
         this.online = online;
       });
-      if (type == '') {
-        // Show type select dialog
-        showDialog<String>(
-            context: context,
-            barrierDismissible: false,
-            builder: (BuildContext context1) {
-              return SimpleDialog(
-                title: Text(AppLocalizations.of(context).pleaseSelect),
-                children: <Widget>[
-                  SimpleDialogOption(
-                    onPressed: () {
-                      // Selected pupil
-                      Navigator.pop(context);
-                      setState(() {
-                        type = 'pupil';
-                      });
-                    },
-                    child: Text(AppLocalizations.of(context).pupil),
-                  ),
-                  SimpleDialogOption(
-                    onPressed: () {
-                      // Selected teacher
-                      Navigator.pop(context);
-                      setState(() {
-                        type = 'teacher';
-                      });
-                    },
-                    child: Text(AppLocalizations.of(context).teacher),
-                  ),
-                ],
-              );
-            });
-      }
     });
   }
 
@@ -89,9 +52,7 @@ class LoginPageView extends LoginPageState {
                 style: TextStyle(fontSize: 25),
               ),
             ),
-            (type == ''
-                ? Container()
-                : (type == 'offline'
+             (online !=1
                     ?
                     // Show offline info
                     Padding(
@@ -114,8 +75,7 @@ class LoginPageView extends LoginPageState {
                           ),
                         ),
                       )
-                    : (type == 'pupil'
-                        ?
+                    : 
                         // Show pupil login
                         Form(
                             key: pupilFormKey,
@@ -144,7 +104,7 @@ class LoginPageView extends LoginPageState {
                                 ),
                                 // Username input
                                 TextFormField(
-                                  controller: pupilUsernameController,
+                                  controller: usernameController,
                                   validator: (value) {
                                     if (value.isEmpty) {
                                       return AppLocalizations.of(context)
@@ -165,7 +125,7 @@ class LoginPageView extends LoginPageState {
                                 ),
                                 // Password input
                                 TextFormField(
-                                  controller: pupilPasswordController,
+                                  controller: passwordController,
                                   validator: (value) {
                                     if (value.isEmpty) {
                                       return AppLocalizations.of(context)
@@ -180,7 +140,7 @@ class LoginPageView extends LoginPageState {
                                       hintText: AppLocalizations.of(context)
                                           .pupilPassword),
                                   onFieldSubmitted: (value) {
-                                    checkPupilForm();
+                                    checkForm();
                                   },
                                   obscureText: true,
                                   focusNode: pupilFocus,
@@ -193,7 +153,7 @@ class LoginPageView extends LoginPageState {
                                     child: RaisedButton(
                                       color: Theme.of(context).accentColor,
                                       onPressed: () {
-                                        checkPupilForm();
+                                        checkForm();
                                       },
                                       child: Text(
                                           AppLocalizations.of(context).login),
@@ -203,73 +163,7 @@ class LoginPageView extends LoginPageState {
                               ],
                             ),
                           )
-                        :
-                        // Show teacher login
-                        Form(
-                            key: teacherFormKey,
-                            child: Column(
-                              children: <Widget>[
-                                // Username input
-                                TextFormField(
-                                  controller: teacherUsernameController,
-                                  validator: (value) {
-                                    if (value.isEmpty) {
-                                      return AppLocalizations.of(context)
-                                          .fieldCantBeEmpty;
-                                    }
-                                    if (!teacherCredentialsCorrect) {
-                                      return AppLocalizations.of(context)
-                                          .credentialsNotCorrect;
-                                    }
-                                  },
-                                  decoration: InputDecoration(
-                                      hintText: AppLocalizations.of(context)
-                                          .teacherUsername),
-                                  onFieldSubmitted: (value) {
-                                    FocusScope.of(context)
-                                        .requestFocus(teacherFocus);
-                                  },
-                                ),
-                                // Password input
-                                TextFormField(
-                                  controller: teacherPasswordController,
-                                  validator: (value) {
-                                    if (value.isEmpty) {
-                                      return AppLocalizations.of(context)
-                                          .fieldCantBeEmpty;
-                                    }
-                                    if (!teacherCredentialsCorrect) {
-                                      return AppLocalizations.of(context)
-                                          .credentialsNotCorrect;
-                                    }
-                                  },
-                                  decoration: InputDecoration(
-                                      hintText: AppLocalizations.of(context)
-                                          .teacherPassword),
-                                  onFieldSubmitted: (value) {
-                                    checkTeacherForm();
-                                  },
-                                  obscureText: true,
-                                  focusNode: teacherFocus,
-                                ),
-                                // Login button
-                                Container(
-                                  margin: EdgeInsets.only(top: 20.0),
-                                  child: SizedBox(
-                                    width: double.infinity,
-                                    child: RaisedButton(
-                                      color: Theme.of(context).accentColor,
-                                      onPressed: () {
-                                        checkTeacherForm();
-                                      },
-                                      child: Text(
-                                          AppLocalizations.of(context).login),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )))),
+                        ),
           ],
         ),
       ),
