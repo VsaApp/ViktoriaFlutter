@@ -4,7 +4,6 @@ import '../../Subjects.dart';
 import '../../Keys.dart';
 import '../../Rooms.dart';
 import '../../Localizations.dart';
-import '../../ReplacementPlan/ReplacementPlanModel.dart';
 import '../../Tags.dart';
 
 class CourseEditView extends CourseEditState {
@@ -29,7 +28,6 @@ class CourseEditView extends CourseEditState {
                   value);
               sharedPreferences.commit();
               syncTags();
-              ReplacementPlan.update(sharedPreferences);
               exams = value;
               if (widget.onExamChange != null) {
                 widget.onExamChange(exams);
@@ -102,7 +100,6 @@ class CourseEditView extends CourseEditState {
                     exams);
                 sharedPreferences.commit();
                 syncTags();
-                ReplacementPlan.update(sharedPreferences);
                 if (widget.onExamChange != null) {
                   widget.onExamChange(exams);
                 }

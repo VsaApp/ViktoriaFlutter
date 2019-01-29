@@ -203,7 +203,6 @@ class MessageboardViewsState extends State<MessageboardViews>
 /// First the user sees the blocked groups (when he creates them before), then the user sees the waiting groups 
 /// and at least all activated groups
 /// 
-/// TODO: Sort them to following / not following and newesst on top
 class GroupsPage extends StatefulWidget {
   final List<Group> groups;
 
@@ -544,7 +543,6 @@ class _GradeFabState extends State<GradeFab>
   bool isOpened = false;
   AnimationController _animationController;
   Animation<Color> _buttonColor;
-  Animation<double> _animateIcon;
   Animation<double> _translateButton;
   Curve _curve = Curves.easeOut;
   double _fabHeight = 50.0;
@@ -561,8 +559,6 @@ class _GradeFabState extends State<GradeFab>
           ..addListener(() {
             setState(() {});
           });
-    _animateIcon =
-        Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
     // Create animations
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       setState(() {

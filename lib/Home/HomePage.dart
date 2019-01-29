@@ -6,8 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
 import '../Messageboard/MessageboardModel.dart';
-import '../UnitPlan/UnitPlanModel.dart';
-import '../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
+import '../UnitPlan/UnitPlanData.dart' as unitplan;
 import '../Messageboard/MessageboardModel.dart' as messageboard;
 import 'HomeView.dart';
 import '../Tags.dart';
@@ -51,38 +50,44 @@ abstract class HomePageState extends State<HomePage> {
     loadData();
     SharedPreferences.getInstance().then((sharedPreferences) {
       // Default follow VsaApp in messageboard...
-      if (sharedPreferences.getStringList(Keys.feedGroups) == null) Messageboard.setFollowGroup('VsaApp');
+      if (sharedPreferences.getStringList(Keys.feedGroups) == null)
+        Messageboard.setFollowGroup('VsaApp');
     });
     // Update replacement plan if new message received
     OneSignal.shared.setNotificationReceivedHandler((osNotification) {
       Map<String, dynamic> msg = osNotification.payload.additionalData;
       print("Received Notification: " + msg.toString());
       // If it's a silent notification, update parts of the app...
-      if (msg['type'] == 'silent'){
+      if (msg['type'] == 'silent') {
         // If it's for the messageboard, update messageboard...
         if (msg['data']['type'].startsWith('messageboard')) {
-          if (messageBoardUpdated != null) messageBoardUpdated(msg['data']['action'], msg['data']['type'], msg['data']['group']);
+          if (messageBoardUpdated != null)
+            messageBoardUpdated(msg['data']['action'], msg['data']['type'],
+                msg['data']['group']);
           else {
-            if (msg['data']['type'] == 'messageboard-post') Messageboard.postsChanged(msg['data']['group']);
-            else if (msg['data']['type'] == 'messageboard-group') Messageboard.groupsChanged(msg['data']['group']);
+            if (msg['data']['type'] == 'messageboard-post')
+              Messageboard.postsChanged(msg['data']['group']);
+            else if (msg['data']['type'] == 'messageboard-group')
+              Messageboard.groupsChanged(msg['data']['group']);
           }
         }
         // If it's for the messageboard, update messageboard...
-        else if (msg['data']['type'].toString() == 'replacementplan'.toString()) {
+        else if (msg['data']['type'].toString() ==
+            'replacementplan'.toString()) {
           SharedPreferences.getInstance().then((sharedPreferences) async {
             String grade = sharedPreferences.getString(Keys.grade);
-            await replacementplan.downloadDay(grade, msg['data']['day']);
-            UnitPlan.resetChanges();
-            await replacementplan.load(grade);
+            await unitplan.download(grade: grade, setStatic: true);
             if (appScaffold != null) {
-              replacementplanUpdatedListeners.forEach((replacementplanUpdated) => replacementplanUpdated());
+              replacementplanUpdatedListeners.forEach(
+                  (replacementplanUpdated) => replacementplanUpdated());
               Fluttertoast.showToast(
-                msg: AppLocalizations.of(context).replacementPlanUpdated.replaceAll('%s', msg['data']['weekday']) ,
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-                backgroundColor: Color(0xAA333333),
-                textColor: Colors.white
-              );
+                  msg: AppLocalizations.of(context)
+                      .replacementPlanUpdated
+                      .replaceAll('%s', msg['data']['weekday']),
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  backgroundColor: Color(0xAA333333),
+                  textColor: Colors.white);
             }
           });
         }
@@ -90,9 +95,11 @@ abstract class HomePageState extends State<HomePage> {
     });
     OneSignal.shared.setNotificationOpenedHandler((osNotification) {
       platform.invokeMethod('clearNotifications');
-      if (osNotification.notification.payload.additionalData['type'] == 'replacementplan') {
+      if (osNotification.notification.payload.additionalData['type'] ==
+          'replacementplan') {
         setState(() => selectedDrawerIndex = 1);
-      } else if (osNotification.notification.payload.additionalData['type'] == 'messageboard') {
+      } else if (osNotification.notification.payload.additionalData['type'] ==
+          'messageboard') {
         setState(() => selectedDrawerIndex = 2);
       }
     });
@@ -123,15 +130,17 @@ abstract class HomePageState extends State<HomePage> {
     logoClickCount++;
     if (logoClickCount >= 7) {
       Fluttertoast.showToast(
-        msg: (sharedPreferences.getBool(Keys.dev) ?? false) ? AppLocalizations.of(context).nowNoDeveloper : AppLocalizations.of(context).nowADeveloper,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Color(0xAA333333),
-        textColor: Colors.white
-      );
-      
+          msg: (sharedPreferences.getBool(Keys.dev) ?? false)
+              ? AppLocalizations.of(context).nowNoDeveloper
+              : AppLocalizations.of(context).nowADeveloper,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Color(0xAA333333),
+          textColor: Colors.white);
+
       logoClickCount = 0;
-      sharedPreferences.setBool(Keys.dev, !(sharedPreferences.getBool(Keys.dev) ?? false));
+      sharedPreferences.setBool(
+          Keys.dev, !(sharedPreferences.getBool(Keys.dev) ?? false));
       sendTag(Keys.dev, sharedPreferences.getBool(Keys.dev));
     }
   }

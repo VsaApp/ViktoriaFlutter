@@ -1,29 +1,30 @@
 import 'package:flutter/material.dart';
 import '../ReplacementPlan/ReplacementPlanModel.dart';
 import 'BrotherSisterReplacementPlanView.dart';
-import '../ReplacementPlan/ReplacementPlanData.dart';
-import '../UnitPlan/UnitPlanData.dart' as unitPlan;
+import '../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
+import '../UnitPlan/UnitPlanData.dart' as unitplan;
 
 class BrotherSisterReplacementPlanPage extends StatefulWidget {
   final String grade;
 
-  BrotherSisterReplacementPlanPage({Key key, @required this.grade}): super(key: key);
+  BrotherSisterReplacementPlanPage({Key key, @required this.grade})
+      : super(key: key);
 
   @override
-  BrotherSisterReplacementPlanPageView createState() => BrotherSisterReplacementPlanPageView();
+  BrotherSisterReplacementPlanPageView createState() =>
+      BrotherSisterReplacementPlanPageView();
 }
 
-abstract class BrotherSisterReplacementPlanPageState extends State<BrotherSisterReplacementPlanPage> {
+abstract class BrotherSisterReplacementPlanPageState
+    extends State<BrotherSisterReplacementPlanPage> {
   List<ReplacementPlanDay> days;
 
   @override
   void initState() {
-    // Download the replacementplan temp...
-    download(widget.grade, alreadyLoad: false).then((_) async {
-      load(widget.grade, temp: true, forDays: (await unitPlan.download(grade: widget.grade, setStatic: false)))
-          .then((d) {
+    unitplan.download(grade: widget.grade, setStatic: false).then((days1) {
+      replacementplan.load(days1, true).then((days2) {
         setState(() {
-          days = d;
+          days = days2;
           days.forEach((ReplacementPlanDay day) => day.setColors());
         });
       });

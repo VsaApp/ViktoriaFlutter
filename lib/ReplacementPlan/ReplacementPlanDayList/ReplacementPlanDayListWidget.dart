@@ -58,8 +58,8 @@ abstract class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
                       DateTime.now().month, DateTime.now().day, 8)
                   .add(Duration(
                       minutes: [60, 130, 210, 280, 360, 420, 480, 545][
-                          UnitPlan.days[weekday].getUserLesseonsCount(
-                                  instance, AppLocalizations.of(context).freeLesson) -
+                          UnitPlan.days[weekday].getUserLesseonsCount(instance,
+                                  AppLocalizations.of(context).freeLesson) -
                               1])))) {
                 over = true;
               }

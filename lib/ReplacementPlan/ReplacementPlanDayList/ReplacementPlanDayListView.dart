@@ -55,15 +55,15 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
                                       .replacementplanFor),
                               TextSpan(
                                   text: '${day.weekday}',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold)),
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
                               TextSpan(
                                   text: AppLocalizations.of(context)
                                       .replacementplanThe),
                               TextSpan(
                                   text: '${day.date}',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold)),
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
                             ],
                           ),
                         ),
@@ -84,92 +84,101 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
                                     .replacementplanLastUpdated),
                             TextSpan(
                                 text: '${day.update}',
-                                style:
-                                    TextStyle(fontWeight: FontWeight.bold)),
+                                style: TextStyle(fontWeight: FontWeight.bold)),
                             TextSpan(
                                 text: AppLocalizations.of(context)
                                     .replacementplanAt),
                             TextSpan(
                                 text: '${day.time}',
-                                style:
-                                    TextStyle(fontWeight: FontWeight.bold)),
+                                style: TextStyle(fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
                     )),
-                  ]..add(day.unparsed.length > 0 ? Section(
+                  ]
+                    ..add(day.unparsed.length > 0
+                        ? Section(
                             title: AppLocalizations.of(context).unparsed,
                             // Show unparsed changes...
                             children: day.unparsed.map((change) {
-                                    return ReplacementPlanUnparsedRow(
-                                        changes: day.unparsed,
-                                        change: change);
-                                  }).toList()
-                          ) : Container())..addAll((!widget.sort)
-                      ?
-                      // Show all changes in a list...
-                      day.changes.map((change) {
-                          return ReplacementPlanRow(
-                              changes: day.changes, change: change);
-                        }).toList()
-                      :
-                      // Show the changes in three categories...
-                      [
-                          Section(
-                            title: AppLocalizations.of(context).myChanges,
-                            isLast: day.getUndefChanges().length == 0 &&
-                                day.getOtherChanges().length == 0,
-                            children: day.getMyChanges().length > 0
-                                ?
-                                // Show my changes
-                                day.getMyChanges().map((change) {
-                                    return ReplacementPlanRow(
-                                        changes: day.getMyChanges(),
-                                        change: change);
-                                  }).toList()
-                                :
-                                // Show no changes information
-                                <Widget>[
-                                    Container(
-                                      margin: EdgeInsets.only(top: 10.0),
-                                      child: SizedBox(
-                                        width: double.infinity,
-                                        child: Center(
-                                          child: Text(
-                                              AppLocalizations.of(context)
-                                                  .noChanges),
+                              return ReplacementPlanUnparsedRow(
+                                  changes: day.unparsed, change: change);
+                            }).toList())
+                        : Container())
+                    ..addAll((!widget.sort)
+                        ?
+                        // Show all changes in a list...
+                        [day.myChanges, day.undefinedChanges, day.otherChanges]
+                            .expand((x) => x)
+                            .toList()
+                            .map((change) {
+                            return ReplacementPlanRow(
+                                changes: [
+                                  day.myChanges,
+                                  day.undefinedChanges,
+                                  day.otherChanges
+                                ].expand((x) => x).toList(),
+                                change: change);
+                          }).toList()
+                        :
+                        // Show the changes in three categories...
+                        [
+                            Section(
+                              title: AppLocalizations.of(context).myChanges,
+                              isLast: day.undefinedChanges.length == 0 &&
+                                  day.otherChanges.length == 0,
+                              children: day.myChanges.length > 0
+                                  ?
+                                  // Show my changes
+                                  day.myChanges.map((change) {
+                                      return ReplacementPlanRow(
+                                          changes: day.myChanges,
+                                          change: change);
+                                    }).toList()
+                                  :
+                                  // Show no changes information
+                                  <Widget>[
+                                      Container(
+                                        margin: EdgeInsets.only(top: 10.0),
+                                        child: SizedBox(
+                                          width: double.infinity,
+                                          child: Center(
+                                            child: Text(
+                                                AppLocalizations.of(context)
+                                                    .noChanges),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                          ),
-                          day.getUndefChanges().length > 0
-                              ?
-                              // Show non-filtered changes
-                              Section(
-                                  isLast: day.getOtherChanges().length == 0,
-                                  title:
-                                      AppLocalizations.of(context).undefChanges,
-                                  children: day.getUndefChanges().map((change) {
-                                    return ReplacementPlanRow(
-                                        changes: day.getUndefChanges(),
-                                        change: change);
-                                  }).toList())
-                              : Container(),
-                          day.getOtherChanges().length > 0
-                              ?
-                              // Show not my changes
-                              Section(
-                                  isLast: true,
-                                  title:
-                                      AppLocalizations.of(context).otherChanges,
-                                  children: day.getOtherChanges().map((change) {
-                                    return ReplacementPlanRow(
-                                        changes: day.getOtherChanges(),
-                                        change: change);
-                                  }).toList())
-                              : Container(),
-                        ]),
+                                    ],
+                            ),
+                            day.undefinedChanges.length > 0
+                                ?
+                                // Show non-filtered changes
+                                Section(
+                                    isLast: day.otherChanges.length == 0,
+                                    title: AppLocalizations.of(context)
+                                        .undefChanges,
+                                    children:
+                                        day.undefinedChanges.map((change) {
+                                      return ReplacementPlanRow(
+                                          changes: day.undefinedChanges,
+                                          change: change);
+                                    }).toList())
+                                : Container(),
+                            day.otherChanges.length > 0
+                                ?
+                                // Show not my changes
+                                Section(
+                                    isLast: true,
+                                    title: AppLocalizations.of(context)
+                                        .otherChanges,
+                                    children: day.otherChanges.map((change) {
+                                      return ReplacementPlanRow(
+                                          changes: day.otherChanges,
+                                          change: change);
+                                    }).toList())
+                                : Container(),
+                          ]),
                 ),
               );
             }).toList(),

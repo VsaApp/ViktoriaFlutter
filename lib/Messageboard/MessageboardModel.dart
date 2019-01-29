@@ -1,11 +1,8 @@
 import 'dart:convert';
-
-import 'package:onesignal/onesignal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Keys.dart';
 import '../Tags.dart' as Tags;
 import 'MessageboardData.dart' as data;
-
 
 /// Defines the messageboard...
 class Messageboard {
@@ -17,7 +14,6 @@ class Messageboard {
   static int currentUpdateProcesses = 0;
 
   static List<Group> get userGroupList {
-
     // Add al other public groups sorted by the follower count...
     List<Group> followingGroups = following;
     List<Group> loggedinGroups = loggedIn;
@@ -45,13 +41,18 @@ class Messageboard {
   }
 
   static List<Group> get myBlockedGroups {
-    List<Group> blockedGroups = (sharedPreferences.getStringList(Keys.blockedGroups) ?? []).map((group) {
-      List<Group> g = allGroups.where((i) => i.name == group).toList();
+    List<Group> blockedGroups =
+        (sharedPreferences.getStringList(Keys.blockedGroups) ?? [])
+            .map((group) {
+              List<Group> g = allGroups.where((i) => i.name == group).toList();
 
-      // If the group exist, return the group...
-      if (g.length == 1) return g[0];
-      return null;
-    }).toList().where((group) => group != null).toList();
+              // If the group exist, return the group...
+              if (g.length == 1) return g[0];
+              return null;
+            })
+            .toList()
+            .where((group) => group != null)
+            .toList();
 
     /// Delete all deleted groups in the preferences...
     return blockedGroups;
@@ -70,54 +71,80 @@ class Messageboard {
   /// Get all logged in groups...
   static List<Group> get loggedIn {
     List<String> deletedGroups = [];
-    List<Group> groups = (sharedPreferences.getStringList(Keys.loggedInGroups) ?? []).map((group) {
-      List<Group> g = allGroups.where((i) => i.name == group).toList();
+    List<Group> groups =
+        (sharedPreferences.getStringList(Keys.loggedInGroups) ?? [])
+            .map((group) {
+              List<Group> g = allGroups.where((i) => i.name == group).toList();
 
-      // If the group exist, return the group...
-      if (g.length == 1) return g[0];
-      else deletedGroups.add(group);
-      return null;
-    }).where((group) => group != null).toList();
+              // If the group exist, return the group...
+              if (g.length == 1)
+                return g[0];
+              else
+                deletedGroups.add(group);
+              return null;
+            })
+            .where((group) => group != null)
+            .toList();
 
     // Delete all deleted groups in the preferences...
-    if (deletedGroups.length > 0) sharedPreferences.setStringList(Keys.loggedInGroups, groups.map((i) => i.name).toList());
-    
+    if (deletedGroups.length > 0)
+      sharedPreferences.setStringList(
+          Keys.loggedInGroups, groups.map((i) => i.name).toList());
+
     return groups;
   }
 
   /// Get all groups which the user follow...
-  static List<Group> get following{
+  static List<Group> get following {
     List<String> deletedGroups = [];
-    List<Group> following = (sharedPreferences.getStringList(Keys.feedGroups) ?? []).map((group) {
-      List<Group> g = allGroups.where((i) => i.name == group).toList();
+    List<Group> following =
+        (sharedPreferences.getStringList(Keys.feedGroups) ?? [])
+            .map((group) {
+              List<Group> g = allGroups.where((i) => i.name == group).toList();
 
-      // If the group exist, return the group...
-      if (g.length == 1) return g[0];
-      else deletedGroups.add(group);
-      return null;
-    }).toList().where((group) => group != null).toList();
+              // If the group exist, return the group...
+              if (g.length == 1)
+                return g[0];
+              else
+                deletedGroups.add(group);
+              return null;
+            })
+            .toList()
+            .where((group) => group != null)
+            .toList();
 
     // Delete all deleted groups in the preferences...
-    if (deletedGroups.length > 0) sharedPreferences.setStringList(Keys.feedGroups, following.map((i) => i.name).toList());
-    
+    if (deletedGroups.length > 0)
+      sharedPreferences.setStringList(
+          Keys.feedGroups, following.map((i) => i.name).toList());
+
     return following;
   }
 
   /// Get all groups which the user get notifiations...
-  static List<Group> get notifications{
+  static List<Group> get notifications {
     List<String> deletedGroups = [];
-    List<Group> notifications = (sharedPreferences.getStringList(Keys.notificationGroups) ?? []).map((group) {
-      List<Group> g = allGroups.where((i) => i.name == group).toList();
+    List<Group> notifications =
+        (sharedPreferences.getStringList(Keys.notificationGroups) ?? [])
+            .map((group) {
+              List<Group> g = allGroups.where((i) => i.name == group).toList();
 
-      // If the group exist, return the group...
-      if (g.length == 1) return g[0];
-      else deletedGroups.add(group);
-      return null;
-    }).toList().where((group) => group != null).toList();
+              // If the group exist, return the group...
+              if (g.length == 1)
+                return g[0];
+              else
+                deletedGroups.add(group);
+              return null;
+            })
+            .toList()
+            .where((group) => group != null)
+            .toList();
 
     /// Delete all deleted groups in the preferences...
-    if (deletedGroups.length > 0) sharedPreferences.setStringList(Keys.notificationGroups, notifications.map((i) => i.name).toList());
-    
+    if (deletedGroups.length > 0)
+      sharedPreferences.setStringList(
+          Keys.notificationGroups, notifications.map((i) => i.name).toList());
+
     return notifications;
   }
 
@@ -129,155 +156,201 @@ class Messageboard {
   static void syncTags() async {
     // First delete all unitPLan tags...
     Map<String, dynamic> allTags = await Tags.getTags();
-    List<String> allGroupKeys = allGroups.map((Group group) => Keys.messageboardGroupTag(group.name)).toList();
-    allTags.keys.where((String tag) =>  tag.startsWith('messageboard') && !allGroupKeys.contains(tag)).forEach((String tag) {
+    List<String> allGroupKeys = allGroups
+        .map((Group group) => Keys.messageboardGroupTag(group.name))
+        .toList();
+    allTags.keys
+        .where((String tag) =>
+            tag.startsWith('messageboard') && !allGroupKeys.contains(tag))
+        .forEach((String tag) {
       Tags.deleteTag(tag);
     });
   }
 
   /// Get all groups which the user is waiting for a confirmation...
-  static List<Group> get waiting {    
-    List<Group> waitingGroups = (sharedPreferences.getStringList(Keys.waitingGroups) ?? []).map((group) {
-      List<Group> g = allGroups.where((i) => i.name == group).toList();
+  static List<Group> get waiting {
+    List<Group> waitingGroups =
+        (sharedPreferences.getStringList(Keys.waitingGroups) ?? [])
+            .map((group) {
+              List<Group> g = allGroups.where((i) => i.name == group).toList();
 
-      // If the group exist, return the group...
-      if (g.length == 1) return g[0];
-      return null;
-    }).toList().where((group) => group != null).toList();
+              // If the group exist, return the group...
+              if (g.length == 1) return g[0];
+              return null;
+            })
+            .toList()
+            .where((group) => group != null)
+            .toList();
 
     /// Delete all deleted groups in the preferences...
     return waitingGroups;
   }
 
   static Future postsChanged(String group) async {
-      if (following.map((group) => group.name.toString()).contains(group.toString())) await feed.update();
-      await updateGroupPosts(group);
+    if (following
+        .map((group) => group.name.toString())
+        .contains(group.toString())) await feed.update();
+    await updateGroupPosts(group);
   }
 
   static Future groupsChanged(String group) async {
-      await Messageboard.updateGroups();
-      await Messageboard.feed.update();
-      await Messageboard.updateGroupPosts(group);
+    await Messageboard.updateGroups();
+    await Messageboard.feed.update();
+    await Messageboard.updateGroupPosts(group);
   }
 
   /// Add a group to the waiting list...
-  /// 
-  /// onFailed is called when the adding process is failed. 
+  ///
+  /// onFailed is called when the adding process is failed.
   /// Error -101 is when there already are three waiting groups and
   /// error -100 is when the api adding process failed
-  static void addGroup(String username, String password, String info, {Function() onAdded, Function(int error) onFailed}) {    
+  static void addGroup(String username, String password, String info,
+      {Function() onAdded, Function(int error) onFailed}) {
     // Count the current waiting groups...
-    List<String> currentList = (sharedPreferences.getStringList(Keys.waitingGroups) ?? []).toList();
-    
+    List<String> currentList =
+        (sharedPreferences.getStringList(Keys.waitingGroups) ?? []).toList();
+
     // If there are max 2 waiting groups, add this group...
     if (currentList.length < 3) {
       // Add the group in the preferences...
-      sharedPreferences.setStringList(Keys.waitingGroups, currentList..add(username));
+      sharedPreferences.setStringList(
+          Keys.waitingGroups, currentList..add(username));
       // Add group to the api...
-      data.addGroup(username: username, password: password, info: info).then((successfully) {
+      data
+          .addGroup(username: username, password: password, info: info)
+          .then((successfully) {
         if (successfully) {
           // Save login data for this group...
           toogleLoginGroup(username, login: true);
-          sharedPreferences.setString(Keys.groupEditPassword(username), password);
+          sharedPreferences.setString(
+              Keys.groupEditPassword(username), password);
           // Update groups list...
           data.downloadGroups().then((_) {
             setFollowGroup(username, follow: true, notifications: true);
             if (onAdded != null) onAdded();
           });
-        }
-        else if (onFailed != null) onFailed(-100);
+        } else if (onFailed != null) onFailed(-100);
       });
-    }
-    else {
+    } else {
       if (onFailed != null) onFailed(-101);
     }
   }
 
   /// Removes a group from the api and preferences...
-  static void removeGroup(Group group, String password, {Function() onRemoved, Function() onFailed}) {    
+  static void removeGroup(Group group, String password,
+      {Function() onRemoved, Function() onFailed}) {
     // Remove group in preferences...
     toogleLoginGroup(group.name, login: false);
     setFollowGroup(group.name, follow: false, notifications: false);
     if (group.status == 'waiting') {
-      List<String> currentWaitingGroups = sharedPreferences.getStringList(Keys.waitingGroups) ?? [];
-      if (currentWaitingGroups.contains(group.name)){
-        sharedPreferences.setStringList(Keys.waitingGroups, currentWaitingGroups..remove(group.name));
+      List<String> currentWaitingGroups =
+          sharedPreferences.getStringList(Keys.waitingGroups) ?? [];
+      if (currentWaitingGroups.contains(group.name)) {
+        sharedPreferences.setStringList(
+            Keys.waitingGroups, currentWaitingGroups..remove(group.name));
       }
     }
     // Remve group from the api...
-    data.removeGroup(username: group.name, password: password).then((successfully) {
+    data
+        .removeGroup(username: group.name, password: password)
+        .then((successfully) {
       if (successfully) {
         // Remove login data for this group...
         sharedPreferences.remove(Keys.groupEditPassword(group.name));
         // Update groups list...
         data.downloadGroups().then((_) {
-          feed.update().then((_){
+          feed.update().then((_) {
             if (onRemoved != null) onRemoved();
           });
         });
-      }
-      else if (onFailed != null) onFailed();
+      } else if (onFailed != null) onFailed();
     });
   }
 
   /// Add a Post to ta group...
-  static void addPost(String username, String title, String text, {Function() onAdded, Function() onFailed, bool updateGroup = false}) {    
+  static void addPost(String username, String title, String text,
+      {Function() onAdded, Function() onFailed, bool updateGroup = false}) {
     // Add group to the api...
-    data.addPost(username: username, password: sharedPreferences.getString(Keys.groupEditPassword(username)), title: title, text: text).then((successfully) async {
+    data
+        .addPost(
+            username: username,
+            password:
+                sharedPreferences.getString(Keys.groupEditPassword(username)),
+            title: title,
+            text: text)
+        .then((successfully) async {
       if (successfully) {
         // Update feed...
         await feed.update();
-        if (updateGroup) await allGroups.where((group) => group.name == username).toList()[0].reloadPosts();
+        if (updateGroup)
+          await allGroups
+              .where((group) => group.name == username)
+              .toList()[0]
+              .reloadPosts();
         if (onAdded != null) onAdded();
-      }
-      else if (onFailed != null) onFailed();
-    });    
+      } else if (onFailed != null) onFailed();
+    });
   }
 
   /// Switchs a group from the waiting list to the activated list...
-  static void confirmWaitingGroup(String username) {    
-    List<String> currentList = (sharedPreferences.getStringList(Keys.waitingGroups) ?? []).toList();
-    if (!currentList.contains(username)) throw 'confirmWaitingGroup: "$username" do not exist!';
-    sharedPreferences.setStringList(Keys.waitingGroups, currentList..remove(currentList..remove(username)));
+  static void confirmWaitingGroup(String username) {
+    List<String> currentList =
+        (sharedPreferences.getStringList(Keys.waitingGroups) ?? []).toList();
+    if (!currentList.contains(username))
+      throw 'confirmWaitingGroup: "$username" do not exist!';
+    sharedPreferences.setStringList(
+        Keys.waitingGroups, currentList..remove(currentList..remove(username)));
   }
 
   /// Switchs a group from the waiting list to the blocked list...
-  static void blockWaitingGroup(String username) {    
-    List<String> currentList = (sharedPreferences.getStringList(Keys.waitingGroups) ?? []).toList();
-    if (!currentList.contains(username)) throw 'blockWaitingGroup: "$username" do not exist!';
+  static void blockWaitingGroup(String username) {
+    List<String> currentList =
+        (sharedPreferences.getStringList(Keys.waitingGroups) ?? []).toList();
+    if (!currentList.contains(username))
+      throw 'blockWaitingGroup: "$username" do not exist!';
 
     // Add this group to the blocked groups and remove it from the waiting groups...
-    sharedPreferences.setStringList(Keys.blockedGroups, (sharedPreferences.getStringList(Keys.blockedGroups) ?? [])..add(username));
-    sharedPreferences.setStringList(Keys.waitingGroups, currentList..remove(username));
+    sharedPreferences.setStringList(
+        Keys.blockedGroups,
+        (sharedPreferences.getStringList(Keys.blockedGroups) ?? [])
+          ..add(username));
+    sharedPreferences.setStringList(
+        Keys.waitingGroups, currentList..remove(username));
   }
 
   /// Removes a group from the blocked list...
-  static void confirmBolckedGroup(String username) {    
-    List<String> currentList = (sharedPreferences.getStringList(Keys.blockedGroups) ?? []).toList();
-    if (!currentList.contains(username)) throw 'confirmBolckedGroup: "$username" do not exist!';
-    sharedPreferences.setStringList(Keys.blockedGroups, currentList..remove(username));
+  static void confirmBolckedGroup(String username) {
+    List<String> currentList =
+        (sharedPreferences.getStringList(Keys.blockedGroups) ?? []).toList();
+    if (!currentList.contains(username))
+      throw 'confirmBolckedGroup: "$username" do not exist!';
+    sharedPreferences.setStringList(
+        Keys.blockedGroups, currentList..remove(username));
   }
 
   /// Sets the login state of a group
-  /// 
+  ///
   /// bool login sets the must value
   static void toogleLoginGroup(String username, {bool login}) {
-    List<String> groups = (sharedPreferences.getStringList(Keys.loggedInGroups) ?? []);
+    List<String> groups =
+        (sharedPreferences.getStringList(Keys.loggedInGroups) ?? []);
 
-    if (login != null){
-      if (login && !groups.contains(username)) groups.add(username);
+    if (login != null) {
+      if (login && !groups.contains(username))
+        groups.add(username);
       else if (!login && groups.contains(username)) groups.remove(username);
-    }
-    else if (groups.contains(username)) groups.remove(username);
-    else groups.add(username);
+    } else if (groups.contains(username))
+      groups.remove(username);
+    else
+      groups.add(username);
 
     // Save new groups list in the preferences...
     sharedPreferences.setStringList(Keys.loggedInGroups, groups);
     sharedPreferences.commit();
-
   }
 
-  static setFollowGroup(String group, {bool follow = true, bool notifications = true}){
+  static setFollowGroup(String group,
+      {bool follow = true, bool notifications = true}) {
     if (!follow) notifications = false;
 
     // Save is sth is changed...
@@ -285,8 +358,10 @@ class Messageboard {
     bool changedSth = false;
 
     // Get current lists...
-    List<String> currentFollowingList = sharedPreferences.getStringList(Keys.feedGroups) ?? [];
-    List<String> currentNotificationList = sharedPreferences.getStringList(Keys.notificationGroups) ?? [];
+    List<String> currentFollowingList =
+        sharedPreferences.getStringList(Keys.feedGroups) ?? [];
+    List<String> currentNotificationList =
+        sharedPreferences.getStringList(Keys.notificationGroups) ?? [];
 
     // Update following if it's a new state...
     if (follow && !currentFollowingList.contains(group)) {
@@ -294,31 +369,33 @@ class Messageboard {
       notifications = true;
       updateFeed = true;
       changedSth = true;
-    }
-    else if (!follow && currentFollowingList.contains(group)) {
+    } else if (!follow && currentFollowingList.contains(group)) {
       currentFollowingList.remove(group);
       updateFeed = true;
       changedSth = true;
     }
-    
+
     // Update notifications if it's a new state...
     if (notifications && !currentNotificationList.contains(group)) {
       currentNotificationList.add(group);
       changedSth = true;
-    }
-    else if (!notifications && currentNotificationList.contains(group)) {
+    } else if (!notifications && currentNotificationList.contains(group)) {
       currentNotificationList.remove(group);
       changedSth = true;
     }
 
     // Set new lists...
-    sharedPreferences.setStringList(Keys.feedGroups, currentFollowingList.toList());
-    sharedPreferences.setStringList(Keys.notificationGroups, currentNotificationList.toList());
+    sharedPreferences.setStringList(
+        Keys.feedGroups, currentFollowingList.toList());
+    sharedPreferences.setStringList(
+        Keys.notificationGroups, currentNotificationList.toList());
 
     // Update tags if required...
     if (changedSth) {
-      if (!follow) Tags.deleteTag(Keys.messageboardGroupTag(group));
-      else Tags.sendTag(Keys.messageboardGroupTag(group), notifications);
+      if (!follow)
+        Tags.deleteTag(Keys.messageboardGroupTag(group));
+      else
+        Tags.sendTag(Keys.messageboardGroupTag(group), notifications);
     }
 
     // Update the feed if required...
@@ -326,19 +403,25 @@ class Messageboard {
   }
 
   /// Checks if any waiting group changed it's status...
-  static void updateGroupsStates(){
+  static void updateGroupsStates() {
     List<Group> myWaitingGroups = waiting;
-    List<String> allAcceptedGroupNames = Messageboard.publicGroups.map((group) => group.name).toList();
-    List<String> allBlockedGroupNames = Messageboard.blockedGroups.map((group) => group.name).toList();
+    List<String> allAcceptedGroupNames =
+        Messageboard.publicGroups.map((group) => group.name).toList();
+    List<String> allBlockedGroupNames =
+        Messageboard.blockedGroups.map((group) => group.name).toList();
 
     myWaitingGroups.forEach((group) {
-      if (allAcceptedGroupNames.contains(group.name)) confirmWaitingGroup(group.name);
-      else if (allBlockedGroupNames.contains(group.name)) blockWaitingGroup(group.name);
+      if (allAcceptedGroupNames.contains(group.name))
+        confirmWaitingGroup(group.name);
+      else if (allBlockedGroupNames.contains(group.name))
+        blockWaitingGroup(group.name);
     });
   }
 
   static Future updateGroupPosts(String group) async {
-    List<Group> groups = allGroups.where((group) => group.name.toString() == group.toString()).toList();
+    List<Group> groups = allGroups
+        .where((group) => group.name.toString() == group.toString())
+        .toList();
     if (groups.length == 0) return;
     if (groups[0].posts.length > 0) await groups[0].reloadPosts();
   }
@@ -377,14 +460,25 @@ class Group {
 
   /// Creates a json string of this group...
   String toJson() {
-    return json.encode({'username': name, 'password': password, 'info': info, 'status': status});
+    return json.encode({
+      'username': name,
+      'password': password,
+      'info': info,
+      'status': status
+    });
   }
 
   /// Updates the object and the group on the api...
-  Future<bool> update(SharedPreferences sharedPreferences, {String newInfo, String newPassword}) async {
+  Future<bool> update(SharedPreferences sharedPreferences,
+      {String newInfo, String newPassword}) async {
     info = newInfo ?? info;
-    password = newPassword ?? sharedPreferences.getString(Keys.groupEditPassword(name));
-    bool updated = await data.updateGroup(username: name, password: sharedPreferences.getString(Keys.groupEditPassword(name)), newInfo: info, newPassword: password);
+    password = newPassword ??
+        sharedPreferences.getString(Keys.groupEditPassword(name));
+    bool updated = await data.updateGroup(
+        username: name,
+        password: sharedPreferences.getString(Keys.groupEditPassword(name)),
+        newInfo: info,
+        newPassword: password);
     if (newInfo != null) {
       await data.downloadGroups();
       updatedListeners.forEach((updatedListener) => updatedListener());
@@ -400,18 +494,18 @@ class Group {
 
   /// Loads the next posts of this group...
   Future loadNew() async {
-    await data.downloadPosts(this, start: posts.length, end: posts.length + 10, addPosts: true);
+    await data.downloadPosts(this,
+        start: posts.length, end: posts.length + 10, addPosts: true);
     addedListeners.forEach((addedListener) => addedListener());
   }
 
   factory Group.fromJson(Map<String, dynamic> json) {
     return Group(
-      name: json['username'] as String,
-      password: json['password'] as String,
-      info: json['info'] as String,
-      status: json['status'] as String,
-      follower: json['follower'] as int
-    );
+        name: json['username'] as String,
+        password: json['password'] as String,
+        info: json['info'] as String,
+        status: json['status'] as String,
+        follower: json['follower'] as int);
   }
 }
 
@@ -426,18 +520,17 @@ class Feed {
     await data.downloadFeed(addFeed: false);
   }
 
-  void addFeed(Feed feed){
+  void addFeed(Feed feed) {
     this.posts.addAll(feed.posts);
   }
 
   Future<void> loadNew() async {
-    await data.downloadFeed(start: posts.length, end: posts.length + 10, addFeed: true);
+    await data.downloadFeed(
+        start: posts.length, end: posts.length + 10, addFeed: true);
   }
 
-  factory Feed.fromJson(List<dynamic> json){
-    return Feed(
-      posts: json.map((post) => Post.fromJson(post)).toList()
-    );
+  factory Feed.fromJson(List<dynamic> json) {
+    return Feed(posts: json.map((post) => Post.fromJson(post)).toList());
   }
 }
 
@@ -451,39 +544,55 @@ class Post {
 
   Post({this.title, this.text, this.date, this.id, this.username});
 
-  Future<void> delete(String password, {Function() onDeleted, Function() onFailed, String username}) async {
+  Future<void> delete(String password,
+      {Function() onDeleted, Function() onFailed, String username}) async {
     bool deleted = await data.deletePost(id: id, password: password);
-    if (deleted){
+    if (deleted) {
       await data.downloadFeed();
-      Messageboard.allGroups.where((group) => group.name == (this.username == '' ? username : this.username)).toList()[0].reloadPosts();
+      Messageboard.allGroups
+          .where((group) =>
+              group.name == (this.username == '' ? username : this.username))
+          .toList()[0]
+          .reloadPosts();
       if (onDeleted != null) onDeleted();
-    }
-    else if (onFailed != null) onFailed();
+    } else if (onFailed != null) onFailed();
   }
 
-  Future<void> update(String password, String newTitle, String newText, {Function() onUpdated, Function() onFailed, String username}) async {
-    bool updated = await data.updatePost(id: id, password: password, newTitle: newTitle ?? this.title, newText: newText ?? this.text);
-    if (updated){
+  Future<void> update(String password, String newTitle, String newText,
+      {Function() onUpdated, Function() onFailed, String username}) async {
+    bool updated = await data.updatePost(
+        id: id,
+        password: password,
+        newTitle: newTitle ?? this.title,
+        newText: newText ?? this.text);
+    if (updated) {
       this.title = newTitle;
       this.text = newText;
       await data.downloadFeed();
-      await Messageboard.allGroups.where((group) => group.name == (this.username == '' ? username : this.username)).toList()[0].reloadPosts();
+      await Messageboard.allGroups
+          .where((group) =>
+              group.name == (this.username == '' ? username : this.username))
+          .toList()[0]
+          .reloadPosts();
       if (onUpdated != null) onUpdated();
-    }
-    else if (onFailed != null) onFailed();
+    } else if (onFailed != null) onFailed();
   }
 
-  DateTime get dateTime{
+  DateTime get dateTime {
     return DateTime.parse(date);
   }
 
   String get dateString {
     DateTime date = this.dateTime;
     DateTime now = DateTime.now();
-    if (date.isBefore(now.subtract(Duration(days: 1)))) return '${date.day}.${date.month}.${date.year}';
+    if (date.isBefore(now.subtract(Duration(days: 1))))
+      return '${date.day}.${date.month}.${date.year}';
     else {
-      String hour = date.hour < 10 ? '0' + date.hour.toString() : date.hour.toString();
-      String min = date.minute < 10 ? '0' + date.minute.toString() : date.minute.toString();
+      String hour =
+          date.hour < 10 ? '0' + date.hour.toString() : date.hour.toString();
+      String min = date.minute < 10
+          ? '0' + date.minute.toString()
+          : date.minute.toString();
       return '$hour:$min Uhr';
     }
   }
@@ -492,7 +601,9 @@ class Post {
     return Post(
       title: json['title'] as String,
       text: json['text'] as String,
-      date: DateTime.parse(json['time'] as String).add(Duration(hours: 1)).toIso8601String(),
+      date: DateTime.parse(json['time'] as String)
+          .add(Duration(hours: 1))
+          .toIso8601String(),
       id: json['id'] as String,
       username: json['username'] as String ?? '',
     );

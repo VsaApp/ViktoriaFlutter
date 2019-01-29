@@ -14,8 +14,8 @@ class LoadingPage extends StatefulWidget {
 }
 
 abstract class LoadingPageState extends State<LoadingPage> {
- int countCurrentDownloads = 0; 
- SharedPreferences instance;
+  int countCurrentDownloads = 0;
+  SharedPreferences instance;
 
   @override
   void initState() {
@@ -45,12 +45,11 @@ abstract class LoadingPageState extends State<LoadingPage> {
     countCurrentDownloads = 4;
     download(() async {
       await UnitPlan.download();
-      await ReplacementPlan.download(
-        (await SharedPreferences.getInstance()).getString(Keys.grade));
+      ReplacementPlan.load(UnitPlan.getUnitPlan(), false);
     }, onFinishedAll);
-    download(WorkGroups.download, onFinishedAll); 
-    download(Calendar.download, onFinishedAll); 
-    download(Messageboard.download, onFinishedAll); 
+    download(WorkGroups.download, onFinishedAll);
+    download(Calendar.download, onFinishedAll);
+    download(Messageboard.download, onFinishedAll);
   }
 
   Future download(Function() process, Function() onFinishedAll) async {

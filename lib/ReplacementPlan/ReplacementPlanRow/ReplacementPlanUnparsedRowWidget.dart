@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../ReplacementPlanModel.dart';
-import '../../Subjects.dart';
 
 class ReplacementPlanUnparsedRow extends StatelessWidget {
   const ReplacementPlanUnparsedRow({Key key, this.change, this.changes})
@@ -43,12 +42,8 @@ class ReplacementPlanUnparsedRow extends StatelessWidget {
                 padding: EdgeInsets.only(
                     left: constraints.maxWidth * 0.03 - 2, top: 5, bottom: 5),
                 decoration: BoxDecoration(
-                  border: Border(
-                    left: BorderSide(
-                        width: 2,
-                        color: Colors.blue
-                    )
-                  ),
+                  border:
+                      Border(left: BorderSide(width: 2, color: Colors.blue)),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,51 +51,54 @@ class ReplacementPlanUnparsedRow extends StatelessWidget {
                     Column(
                       children: <Widget>[
                         // Original subject
-                        (change.original.length > 0) ? Container(
-                          width: constraints.maxWidth * 0.60,
-                          child: Text(
-                            change.original[0],
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15.0,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                        ) : Container()
+                        (change.original.length > 0)
+                            ? Container(
+                                width: constraints.maxWidth * 0.60,
+                                child: Text(
+                                  change.original[0],
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15.0,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                ),
+                              )
+                            : Container()
                       ]..addAll(change.original.sublist(1).map((line) {
-                        return Container(
-                            width: constraints.maxWidth * 0.60,
-                            child: Text(
-                              line.toString(),
-                              style: TextStyle(
-                                color: Colors.black54,
-                              ),
-                            ));
-                      }).toList()),
+                          return Container(
+                              width: constraints.maxWidth * 0.60,
+                              child: Text(
+                                line.toString(),
+                                style: TextStyle(
+                                  color: Colors.black54,
+                                ),
+                              ));
+                        }).toList()),
                     ),
                     Column(
-                      children: <Widget>[
-                        // Original subject
-                        (change.change.length > 0) ? Container(
-                          width: constraints.maxWidth * 0.40,
-                          child: Text(
-                            change.change[0],
-                            style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                        ) : Container()
-                      ]..addAll(change.change.sublist(1).map((line) {
-                        return Container(
-                            width: constraints.maxWidth * 0.40,
-                            child: Text(
-                              line.toString(),
-                              style: TextStyle(
-                                color: Colors.black54,
+                        children: <Widget>[
+                      // Original subject
+                      (change.change.length > 0)
+                          ? Container(
+                              width: constraints.maxWidth * 0.40,
+                              child: Text(
+                                change.change[0],
+                                style: TextStyle(
+                                  color: Theme.of(context).primaryColor,
+                                ),
                               ),
-                            ));
-                      }).toList())
-                    ),
+                            )
+                          : Container()
+                    ]..addAll(change.change.sublist(1).map((line) {
+                            return Container(
+                                width: constraints.maxWidth * 0.40,
+                                child: Text(
+                                  line.toString(),
+                                  style: TextStyle(
+                                    color: Colors.black54,
+                                  ),
+                                ));
+                          }).toList())),
                   ],
                 ),
               ),

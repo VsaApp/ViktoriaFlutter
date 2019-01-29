@@ -43,7 +43,14 @@ class IntroPageView extends IntroPageState {
   Widget build(BuildContext context) {
     slides.clear();
     UnitPlanSubject subject = UnitPlanSubject(
-        teacher: 'KRA', lesson: 'EK', room: '525', block: '', course: '');
+      teacher: 'KRA',
+      lesson: 'EK',
+      room: '525',
+      block: '',
+      course: '',
+      changes: [],
+      unsures: 0,
+    );
     Change change = Change(
         unit: 0,
         lesson: 'EK',
@@ -55,8 +62,7 @@ class IntroPageView extends IntroPageState {
             subject: 'EK',
             teacher: '',
             room: ''),
-        weekday: 'Montag');
-    change.isMy = -1;
+        sure: true);
     slides.add(
       Slide(
         title: AppLocalizations.of(context).introUnitPlanTitle,

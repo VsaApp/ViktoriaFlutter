@@ -5,7 +5,6 @@ import '../../Localizations.dart';
 import '../../Tags.dart';
 import '../UnitPlanModel.dart';
 import '../UnitPlanRow/UnitPlanRowWidget.dart';
-import '../../ReplacementPlan/ReplacementPlanModel.dart';
 import '../../ReplacementPlan/ReplacementPlanRow/ReplacementPlanRowWidget.dart';
 import '../../Courses/CourseEdit/CourseEditWidget.dart';
 
@@ -84,8 +83,6 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                                   lesson.subjects
                                                       .indexOf(subject));
                                               Navigator.pop(context);
-                                              ReplacementPlan.update(
-                                                  sharedPreferences);
                                             });
                                             // Synchronise tags for notifications
                                             syncTags();
@@ -206,11 +203,15 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                           UnitPlanRow(
                               weekday: widget.days.indexOf(day),
                               subject: UnitPlanSubject(
-                                  teacher: '',
-                                  lesson:
-                                      AppLocalizations.of(context).selectLesson,
-                                  room: '',
-                                  block: ''),
+                                teacher: '',
+                                lesson:
+                                    AppLocalizations.of(context).selectLesson,
+                                room: '',
+                                block: '',
+                                unsures: 0,
+                                course: '',
+                                changes: [],
+                              ),
                               unit: day.lessons.indexOf(lesson),
                             )
                           : (lesson.subjects[_selected].changes.length == 0 ||
@@ -230,11 +231,7 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                     padding: EdgeInsets.only(bottom: 10),
                                     child: Column(
                                       children: [
-                                        (lesson.subjects[_selected].changes
-                                                    .where((change) =>
-                                                        change.isMy == -1)
-                                                    .length >
-                                                0
+                                        (lesson.subjects[_selected].unsures > 0
                                             ? UnitPlanRow(
                                                 weekday:
                                                     widget.days.indexOf(day),

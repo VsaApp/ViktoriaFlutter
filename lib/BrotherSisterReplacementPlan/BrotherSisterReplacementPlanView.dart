@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../ReplacementPlan/ReplacementPlanRow/ReplacementPlanRowWidget.dart';
-import '../Localizations.dart';
-import '../ReplacementPlan/ReplacementPlanModel.dart';
 import 'BrotherSisterReplacementPlanPage.dart';
 import '../ReplacementPlan/ReplacementPlanDayList/ReplacementPlanDayListWidget.dart';
 
-class BrotherSisterReplacementPlanPageView extends BrotherSisterReplacementPlanPageState {
+class BrotherSisterReplacementPlanPageView
+    extends BrotherSisterReplacementPlanPageState {
   @override
   Widget build(BuildContext context) {
     if (days == null) {
@@ -19,8 +16,9 @@ class BrotherSisterReplacementPlanPageView extends BrotherSisterReplacementPlanP
       ),
       body: Hero(
         tag: 'replacementplan-' + widget.grade,
-        child: Column(
-          children: <Widget>[ReplacementPlanDayList(days: days, sort: false)]),
+        child: Column(children: <Widget>[
+          ReplacementPlanDayList(days: days, sort: false)
+        ]),
       ),
     );
   }
