@@ -47,8 +47,7 @@ abstract class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
         sharedPreferences = instance;
 
         // Select the correct tab
-        tabController =
-            new TabController(vsync: this, length: widget.days.length);
+        tabController = TabController(vsync: this, length: widget.days.length);
         int day = 0;
         if (widget.days.length > 1) {
           bool over = false;

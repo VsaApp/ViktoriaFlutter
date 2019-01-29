@@ -24,7 +24,7 @@ class ShortCutDialogView extends ShortCutDialogState {
                 avatar: CircleAvatar(
                   backgroundColor: Theme.of(context).primaryColor,
                   child: Transform(
-                    transform: new Matrix4.identity()..scale(0.8),
+                    transform: Matrix4.identity()..scale(0.8),
                     child: Container(
                       margin: EdgeInsets.all(3.0),
                       child: Icon(item.icon),
@@ -45,7 +45,7 @@ class ShortCutDialogView extends ShortCutDialogState {
                 showDialog1 = value;
               });
             },
-            title: new Text(AppLocalizations.of(context).showShortCutDialog),
+            title: Text(AppLocalizations.of(context).showShortCutDialog),
           ),
         ]);
   }

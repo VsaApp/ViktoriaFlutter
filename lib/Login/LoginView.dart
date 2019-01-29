@@ -88,9 +88,9 @@ class LoginPageView extends LoginPageState {
                                     child: DropdownButton<String>(
                                       isDense: true,
                                       items: LoginPageState.grades.map((String value) {
-                                        return new DropdownMenuItem<String>(
+                                        return DropdownMenuItem<String>(
                                           value: value,
-                                          child: new Text(value),
+                                          child: Text(value),
                                         );
                                       }).toList(),
                                       value: grade,

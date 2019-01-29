@@ -45,24 +45,24 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
                       child: Padding(
                         padding: EdgeInsets.only(top: 10.0),
                         child: RichText(
-                          text: new TextSpan(
-                            style: new TextStyle(
+                          text: TextSpan(
+                            style: TextStyle(
                               color: Colors.black,
                             ),
                             children: <TextSpan>[
-                              new TextSpan(
+                              TextSpan(
                                   text: AppLocalizations.of(context)
                                       .replacementplanFor),
-                              new TextSpan(
+                              TextSpan(
                                   text: '${day.weekday}',
-                                  style: new TextStyle(
+                                  style: TextStyle(
                                       fontWeight: FontWeight.bold)),
-                              new TextSpan(
+                              TextSpan(
                                   text: AppLocalizations.of(context)
                                       .replacementplanThe),
-                              new TextSpan(
+                              TextSpan(
                                   text: '${day.date}',
-                                  style: new TextStyle(
+                                  style: TextStyle(
                                       fontWeight: FontWeight.bold)),
                             ],
                           ),
@@ -74,25 +74,25 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
                         child: Container(
                       margin: EdgeInsets.only(bottom: 10.0),
                       child: RichText(
-                        text: new TextSpan(
-                          style: new TextStyle(
+                        text: TextSpan(
+                          style: TextStyle(
                             color: Colors.black,
                           ),
                           children: <TextSpan>[
-                            new TextSpan(
+                            TextSpan(
                                 text: AppLocalizations.of(context)
                                     .replacementplanLastUpdated),
-                            new TextSpan(
+                            TextSpan(
                                 text: '${day.update}',
                                 style:
-                                    new TextStyle(fontWeight: FontWeight.bold)),
-                            new TextSpan(
+                                    TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(
                                 text: AppLocalizations.of(context)
                                     .replacementplanAt),
-                            new TextSpan(
+                            TextSpan(
                                 text: '${day.time}',
                                 style:
-                                    new TextStyle(fontWeight: FontWeight.bold)),
+                                    TextStyle(fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),

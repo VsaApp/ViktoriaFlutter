@@ -84,7 +84,7 @@ Future<List<ReplacementPlanDay>> load(String _grade,
 
 // Download one day...
 Future downloadDay(String _grade, String _day) async {
-  String url = 'https://api.vsa.2bad2c0.de/replacementplan/' + _day + '/' + _grade + '.json?v=' + new Random().nextInt(99999999).toString(); 
+  String url = 'https://api.vsa.2bad2c0.de/replacementplan/' + _day + '/' + _grade + '.json?v=' + Random().nextInt(99999999).toString(); 
   await fetchDataAndSave(url, Keys.replacementPlan(_grade, _day), '[]');
 }
 

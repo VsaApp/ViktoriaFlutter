@@ -27,7 +27,7 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList> with SingleTi
         grade = sharedPreferences.getString(Keys.grade);
       });
       // Select correct tab
-      tabController = new TabController(vsync: this, length: widget.days.length);
+      tabController = TabController(vsync: this, length: widget.days.length);
       int weekday = DateTime.now().weekday - 1;
       bool over = false;
       // If weekend select Monday

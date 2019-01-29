@@ -9,8 +9,8 @@ import '../Keys.dart';
 import '../Network.dart';
 import 'MessageboardModel.dart';
 
-String urlGroupList = 'https://api.vsa.2bad2c0.de/messageboard/groups/list?v=' + new Random().nextInt(99999999).toString();
-String urlGroupAdd = 'https://api.vsa.2bad2c0.de/messageboard/groups/add?v=' + new Random().nextInt(99999999).toString();
+String urlGroupList = 'https://api.vsa.2bad2c0.de/messageboard/groups/list?v=' + Random().nextInt(99999999).toString();
+String urlGroupAdd = 'https://api.vsa.2bad2c0.de/messageboard/groups/add?v=' + Random().nextInt(99999999).toString();
 String urlGroupInfo = 'https://api.vsa.2bad2c0.de/messageboard/groups/info/'; // + GROUPNAME
 String urlGroupLogin = 'https://api.vsa.2bad2c0.de/messageboard/groups/login'; // + GROUPNAME/PASSWORD
 String urlGroupUpdate = 'https://api.vsa.2bad2c0.de/messageboard/groups/update'; // + GROUPNAME/PASSWORD

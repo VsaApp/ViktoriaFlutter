@@ -29,7 +29,7 @@ class SettingsPageView extends SettingsPageState {
                   sortReplacementPlan = value;
                 });
               },
-              title: new Text(AppLocalizations.of(context).sortReplacementPlan),
+              title: Text(AppLocalizations.of(context).sortReplacementPlan),
               controlAffinity: ListTileControlAffinity.trailing,
             ),
             // Show replacement plan in unit plan option
@@ -43,7 +43,7 @@ class SettingsPageView extends SettingsPageState {
                   showReplacementPlanInUnitPlan = value;
                 });
               },
-              title: new Text(
+              title: Text(
                   AppLocalizations.of(context).showReplacementPlanInUnitPlan),
             ),
             // Get replacementplan notifications option
@@ -59,7 +59,7 @@ class SettingsPageView extends SettingsPageState {
                   syncTags();
                 });
               },
-              title: new Text(
+              title: Text(
                   AppLocalizations.of(context).getReplacementPlanNotifications),
             ),
             // Show short cut dialog option
@@ -72,7 +72,7 @@ class SettingsPageView extends SettingsPageState {
                   showShortCutDialog = value;
                 });
               },
-              title: new Text(AppLocalizations.of(context).showShortCutDialog),
+              title: Text(AppLocalizations.of(context).showShortCutDialog),
             ),
             Padding(
               padding: EdgeInsets.only(left: 15.0, right: 22.5),
@@ -95,9 +95,9 @@ class SettingsPageView extends SettingsPageState {
                       child: DropdownButton<String>(
                         isDense: true,
                         items: pages.map((String value) {
-                          return new DropdownMenuItem<String>(
+                          return DropdownMenuItem<String>(
                             value: value,
-                            child: new Text(value),
+                            child: Text(value),
                           );
                         }).toList(),
                         value: page,
@@ -129,9 +129,9 @@ class SettingsPageView extends SettingsPageState {
                           child: DropdownButton<String>(
                             isDense: true,
                             items: SettingsPageState.grades.map((String value) {
-                              return new DropdownMenuItem<String>(
+                              return DropdownMenuItem<String>(
                                 value: value,
-                                child: new Text(value),
+                                child: Text(value),
                               );
                             }).toList(),
                             value: grade,

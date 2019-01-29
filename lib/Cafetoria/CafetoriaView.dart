@@ -10,7 +10,7 @@ import 'CafetoriaData.dart';
 class CafetoriaPageView extends CafetoriaPageState {
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       body: Stack(
         children: <Widget>[
           data == null
@@ -19,7 +19,7 @@ class CafetoriaPageView extends CafetoriaPageState {
               Scaffold(
                   body: Center(
                     child: SizedBox(
-                      child: new CircularProgressIndicator(strokeWidth: 5.0),
+                      child: CircularProgressIndicator(strokeWidth: 5.0),
                       height: 75.0,
                       width: 75.0,
                     ),

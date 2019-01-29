@@ -14,7 +14,7 @@ class ReplacementPlanPageView extends ReplacementPlanPageState {
   Widget build(BuildContext context) {
     List<ReplacementPlanDay> data = getReplacementPlan();
     if (sharedPreferences == null) return Container();
-    return new Scaffold(
+    return Scaffold(
       body: Stack(children: <Widget>[
         Column(
           children: <Widget>[ReplacementPlanDayList(days: data, sort: sharedPreferences.getBool(Keys.sortReplacementPlan))],

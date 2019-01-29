@@ -59,7 +59,7 @@ Future<String> fetchData(String url) async {
 }
 
 Future<String> post(String url, {dynamic body}) async {
-  HttpClient httpClient = new HttpClient();
+  HttpClient httpClient = HttpClient();
   HttpClientRequest request = await httpClient.postUrl(Uri.parse(url)).timeout(maxTime);
   request.headers.set('content-type', 'application/json');
   request.add(utf8.encode(json.encode(body)));

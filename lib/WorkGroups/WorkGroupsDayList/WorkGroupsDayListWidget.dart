@@ -17,7 +17,7 @@ abstract class WorkGroupsDayListState extends State<WorkGroupsDayList> with Sing
   @override
   void initState() {
     // Select correct tab
-    tabController = new TabController(vsync: this, length: widget.days.length);
+    tabController = TabController(vsync: this, length: widget.days.length);
     int weekday = DateTime.now().weekday - 1;
     if (weekday > 4) {
       weekday = 0;
