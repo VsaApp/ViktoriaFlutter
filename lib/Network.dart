@@ -3,19 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-Duration maxTime = Duration(seconds: 2);
-
-Future<bool> get checkServerConnection async {
-  try {
-    final result = await InternetAddress.lookup('api.vsa.2bad2c0.de');
-    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-      return true;
-    }
-    return false;
-  } on SocketException catch (_) {
-    return false;
-  }
-}
+Duration maxTime = Duration(seconds: 4);
 
 /// Returns 1 if api.vsa.2bad2c0.de is online, 0 if google.com is online and -1 if everthing is offline
 Future<int> get checkOnline async {

@@ -15,16 +15,6 @@ void main() async {
   // Default init is the loading screen...
   String _initialRoute = '/';
 
-  // Set must writing courses...
-  String grade = sharedPreferences.getString(Keys.grade) ?? '';
-  sharedPreferences.setBool(Keys.exams(grade, 'E'), true);
-  sharedPreferences.setBool(Keys.exams(grade, 'M'), true);
-  sharedPreferences.setBool(Keys.exams(grade, 'D'), true);
-  sharedPreferences.setBool(Keys.exams(grade, 'L'), true);
-  sharedPreferences.setBool(Keys.exams(grade, 'S'), true);
-  sharedPreferences.setBool(Keys.exams(grade, 'F'), true);
-  sharedPreferences.commit();
-
   // Set default options
   if (sharedPreferences.get(Keys.sortReplacementPlan) == null ||
       sharedPreferences.get(Keys.showReplacementPlanInUnitPlan) == null ||
