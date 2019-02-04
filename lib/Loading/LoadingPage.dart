@@ -45,7 +45,7 @@ abstract class LoadingPageState extends State<LoadingPage> {
     countCurrentDownloads = 4;
     download(() async {
       await UnitPlan.download();
-      ReplacementPlan.load(UnitPlan.getUnitPlan(), false);
+      await ReplacementPlan.load(UnitPlan.getUnitPlan(), false);
     }, onFinishedAll);
     download(WorkGroups.download, onFinishedAll);
     download(Calendar.download, onFinishedAll);

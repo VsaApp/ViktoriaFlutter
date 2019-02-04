@@ -76,8 +76,7 @@ class UnitPlanDay {
     }
   }
 
-  Future<ReplacementPlanDay> getReplacementPlanDay() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  ReplacementPlanDay getReplacementPlanDay(SharedPreferences sharedPreferences) {
     String grade = sharedPreferences.getString(Keys.grade);
     List<Change> myChanges = [];
     List<Change> undefinedChanges = [];
