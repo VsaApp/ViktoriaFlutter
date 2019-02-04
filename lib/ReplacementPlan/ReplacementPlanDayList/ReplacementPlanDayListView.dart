@@ -108,16 +108,10 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
                     ..addAll((!widget.sort)
                         ?
                         // Show all changes in a list...
-                        [day.myChanges, day.undefinedChanges, day.otherChanges]
-                            .expand((x) => x)
-                            .toList()
+                        getUnsortedList(day)
                             .map((change) {
                             return ReplacementPlanRow(
-                                changes: [
-                                  day.myChanges,
-                                  day.undefinedChanges,
-                                  day.otherChanges
-                                ].expand((x) => x).toList(),
+                                changes: getUnsortedList(day),
                                 change: change);
                           }).toList()
                         :

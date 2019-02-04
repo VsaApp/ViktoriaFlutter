@@ -71,7 +71,7 @@ abstract class HomePageState extends State<HomePage> {
               Messageboard.groupsChanged(msg['data']['group']);
           }
         }
-        // If it's for the messageboard, update messageboard...
+        // If it's for the replacementplan, update replacementplan...
         else if (msg['data']['type'].toString() ==
             'replacementplan'.toString()) {
           SharedPreferences.getInstance().then((sharedPreferences) async {

@@ -40,6 +40,12 @@ abstract class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
     'Q2'
   ];
 
+  List<Change> getUnsortedList(ReplacementPlanDay day){
+    List<Change> changes = [day.myChanges, day.undefinedChanges, day.otherChanges].expand((x) => x).toList();
+    changes.sort((Change c1, Change c2) => c1.unit.compareTo(c2.unit));
+    return changes;
+  }
+
   @override
   void initState() {
     SharedPreferences.getInstance().then((instance) {
