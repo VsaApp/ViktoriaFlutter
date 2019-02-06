@@ -44,7 +44,7 @@ abstract class LoadingPageState extends State<LoadingPage> {
   Future downloadAll() async {
     countCurrentDownloads = 4;
     download(() async {
-      await UnitPlan.download();
+      await UnitPlan.download(instance.getString(Keys.grade), false);
       await ReplacementPlan.load(UnitPlan.getUnitPlan(), false);
     }, onFinishedAll);
     download(WorkGroups.download, onFinishedAll);

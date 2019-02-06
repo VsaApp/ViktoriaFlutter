@@ -7,22 +7,23 @@ import '../Network.dart';
 import './UnitPlanModel.dart';
 
 // Download the unit plan...
-Future<List<UnitPlanDay>> download({String grade, bool setStatic = true}) async {
+Future<List<UnitPlanDay>> download(String grade, bool temp) async {
   // Get the selected grade...
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  String _grade = grade ?? sharedPreferences.getString(Keys.grade);
-  String url = 'https://api.vsa.2bad2c0.de/unitplan/$_grade.json?v=${Random().nextInt(99999999)}';
-  await fetchDataAndSave(url, Keys.unitPlan(_grade), '[]');
+  String url =
+      'https://api.vsa.2bad2c0.de/unitplan/$grade.json?v=${Random().nextInt(99999999)}';
+  await fetchDataAndSave(url, Keys.unitPlan(grade), '[]');
 
   // Parse data...
-  if (setStatic) {
-    UnitPlan.days = await fetchDays();
+  if (!(temp ?? false)) {
+    UnitPlan.days = await fetchDays(grade);
 
     // Set default selections...
     UnitPlan.setAllSelections(sharedPreferences);
     return null;
+  } else {
+    return await fetchDays(grade);
   }
-  else return await fetchDays();
 }
 
 // Returns the static unit plan...
@@ -31,10 +32,9 @@ List<UnitPlanDay> getUnitPlan() {
 }
 
 // Get unit plan from preferences...
-Future<List<UnitPlanDay>> fetchDays() async {
+Future<List<UnitPlanDay>> fetchDays(String grade) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  String _grade = sharedPreferences.getString(Keys.grade);
-  return parseDays(sharedPreferences.getString(Keys.unitPlan(_grade)));
+  return parseDays(sharedPreferences.getString(Keys.unitPlan(grade)));
 }
 
 // Returns parsed unit plan...
@@ -42,4 +42,3 @@ List<UnitPlanDay> parseDays(String responseBody) {
   final parsed = json.decode(responseBody).cast<String, dynamic>()['data'];
   return parsed.map<UnitPlanDay>((json) => UnitPlanDay.fromJson(json)).toList();
 }
-

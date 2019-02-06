@@ -76,7 +76,7 @@ abstract class HomePageState extends State<HomePage> {
             'replacementplan'.toString()) {
           SharedPreferences.getInstance().then((sharedPreferences) async {
             String grade = sharedPreferences.getString(Keys.grade);
-            await unitplan.download(grade: grade, setStatic: true);
+            await unitplan.download(grade, false);
             if (appScaffold != null) {
               replacementplanUpdatedListeners.forEach(
                   (replacementplanUpdated) => replacementplanUpdated());

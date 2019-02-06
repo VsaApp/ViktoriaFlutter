@@ -21,11 +21,10 @@ abstract class BrotherSisterReplacementPlanPageState
 
   @override
   void initState() {
-    unitplan.download(grade: widget.grade, setStatic: false).then((days1) {
+    unitplan.download(widget.grade, true).then((days1) {
       replacementplan.load(days1, true).then((days2) {
         setState(() {
           days = days2;
-          days.forEach((ReplacementPlanDay day) => day.setColors());
         });
       });
     });
