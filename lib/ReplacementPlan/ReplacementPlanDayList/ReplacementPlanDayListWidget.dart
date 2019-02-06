@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../ReplacementPlanModel.dart';
 import 'ReplacementPlanDayListView.dart';
+import '../../UnitPlan/UnitPlanData.dart' as unitplan;
+import '../../ReplacementPlan/ReplacementplanData.dart' as replacementplan;
 import '../../UnitPlan/UnitPlanModel.dart';
 import '../../Localizations.dart';
+import '../../Keys.dart';
 
 class ReplacementPlanDayList extends StatefulWidget {
   final List<ReplacementPlanDay> days;
@@ -17,6 +20,7 @@ class ReplacementPlanDayList extends StatefulWidget {
 
 abstract class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
     with SingleTickerProviderStateMixin {
+
   SharedPreferences sharedPreferences;
   TabController tabController;
   static List<String> grades = [
@@ -39,6 +43,12 @@ abstract class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
     'Q1',
     'Q2'
   ];
+
+  Future update() async {
+    await unitplan.download(grade: sharedPreferences.getString(Keys.grade), setStatic: true);
+    await replacementplan.load(unitplan.getUnitPlan(), false);
+     setState(() => null);
+  }
 
   List<Change> getUnsortedList(ReplacementPlanDay day){
     List<Change> changes = [day.myChanges, day.undefinedChanges, day.otherChanges].expand((x) => x).toList();

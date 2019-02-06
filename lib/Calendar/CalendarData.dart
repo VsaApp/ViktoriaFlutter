@@ -12,12 +12,12 @@ Future download() async {
   await fetchDataAndSave(url, Keys.calendar, '{}');
 
   // Parse loaded data...
-  Calendar.days = await fetchEvents();
+  Calendar.events = await fetchEvents();
 }
 
 // Returns the static calendar data...
 List<CalendarEvent> getCalendar() {
-  return Calendar.days;
+  return Calendar.events;
 }
 
 // Load calendar from preferences...

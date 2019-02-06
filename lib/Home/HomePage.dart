@@ -7,6 +7,7 @@ import '../Keys.dart';
 import '../Localizations.dart';
 import '../Messageboard/MessageboardModel.dart';
 import '../UnitPlan/UnitPlanData.dart' as unitplan;
+import '../ReplacementPlan/ReplacementplanData.dart' as replacementplan;
 import '../Messageboard/MessageboardModel.dart' as messageboard;
 import 'HomeView.dart';
 import '../Tags.dart';
@@ -77,6 +78,7 @@ abstract class HomePageState extends State<HomePage> {
           SharedPreferences.getInstance().then((sharedPreferences) async {
             String grade = sharedPreferences.getString(Keys.grade);
             await unitplan.download(grade, false);
+            await replacementplan.load(unitplan.getUnitPlan(), false);
             if (appScaffold != null) {
               replacementplanUpdatedListeners.forEach(
                   (replacementplanUpdated) => replacementplanUpdated());

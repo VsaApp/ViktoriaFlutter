@@ -1,6 +1,6 @@
 // Describes a list of calendar events...
 class Calendar {
-  static List<CalendarEvent> days;
+  static List<CalendarEvent> events;
 }
 
 // Describes a calendar event...
