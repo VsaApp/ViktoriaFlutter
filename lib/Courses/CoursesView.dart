@@ -9,6 +9,7 @@ import 'CourseEdit/CourseEditWidget.dart';
 import 'CoursesPage.dart';
 
 class CoursesPageView extends CoursesPageState {
+
   @override
   Widget build(BuildContext context) {
     if (sharedPreferences == null) {
@@ -45,7 +46,10 @@ class CoursesPageView extends CoursesPageState {
       }
     });
 
-    return ListView(
+    return RefreshIndicator(
+      onRefresh: update,
+      key: refreshIndicatorKey,
+      child: ListView(
         shrinkWrap: true,
         children: (courses.keys.toList().length > 0)
             ?
@@ -60,7 +64,7 @@ class CoursesPageView extends CoursesPageState {
             // No subjects are selected in the unit plan
             <Widget>[
                 Center(child: Text(AppLocalizations.of(context).noCourses))
-              ]);
+              ]));
   }
 }
 

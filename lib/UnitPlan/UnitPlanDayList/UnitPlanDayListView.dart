@@ -37,226 +37,231 @@ class UnitPlanDayListView extends UnitPlanDayListState {
             controller: tabController,
             // List of days
             children: widget.days.map((day) {
+              final GlobalKey<RefreshIndicatorState> refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
               return Container(
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.white,
                 // List of subjects
-                child: ListView(
-                  padding: EdgeInsets.all(10),
-                  shrinkWrap: true,
-                  children: day.lessons.map((lesson) {
-                    // Check which subject is selected
-                    int _selected = sharedPreferences.getInt(Keys.unitPlan(
-                        grade,
-                        block: lesson.subjects[0].block,
-                        day: widget.days.indexOf(day),
-                        unit: day.lessons.indexOf(lesson)));
-                    bool nothingSelected = _selected == null;
-                    if (nothingSelected) _selected = 0;
-                    return GestureDetector(
-                      onTap: () {
-                        if (lesson.subjects.length > 1) {
-                          // Show subject select dialog
-                          showDialog<String>(
-                              context: context,
-                              barrierDismissible: true,
-                              builder: (BuildContext context1) {
-                                return SimpleDialog(
-                                  title: Text((day.lessons.indexOf(lesson) + 1)
-                                          .toString() +
-                                      AppLocalizations.of(context).nUnit),
-                                  children: lesson.subjects
-                                      .map((subject) {
-                                        return SimpleDialogOption(
-                                          onPressed: () {
-                                            // Update unit plan
-                                            setState(() {
-                                              sharedPreferences.setInt(
-                                                  Keys.unitPlan(grade,
-                                                      block: lesson
-                                                          .subjects[0].block,
-                                                      day: widget.days
-                                                          .indexOf(day),
-                                                      unit: day.lessons
-                                                          .indexOf(lesson)),
-                                                  lesson.subjects
-                                                      .indexOf(subject));
-                                              Navigator.pop(context);
-                                            });
-                                            // Synchronise tags for notifications
-                                            syncTags();
-                                            bool _selected = (sharedPreferences
-                                                    .getKeys()
-                                                    .where((key) =>
-                                                        key ==
-                                                        Keys.exams(
-                                                            sharedPreferences
-                                                                .getString(
-                                                                    Keys.grade),
-                                                            lesson
-                                                                .subjects[lesson
-                                                                    .subjects
-                                                                    .indexOf(
-                                                                        subject)]
-                                                                .lesson
-                                                                .toUpperCase()))
-                                                    .length >
-                                                0);
-                                            if (!_selected &&
-                                                lesson
-                                                        .subjects[lesson
-                                                            .subjects
-                                                            .indexOf(subject)]
-                                                        .block !=
-                                                    null &&
-                                                lesson
-                                                        .subjects[lesson
-                                                            .subjects
-                                                            .indexOf(subject)]
-                                                        .lesson !=
-                                                    AppLocalizations.of(context)
-                                                        .freeLesson) {
-                                              // Show writing option dialog
-                                              showDialog<String>(
-                                                context: context1,
-                                                barrierDismissible: true,
-                                                builder:
-                                                    (BuildContext context2) {
-                                                  return CourseEdit(
-                                                    subject: lesson.subjects[
-                                                        lesson.subjects
-                                                            .indexOf(subject)],
-                                                    blocks: [
-                                                      lesson
+                child: RefreshIndicator(
+                  onRefresh: update,
+                  key: refreshIndicatorKey,
+                  child: ListView(
+                    padding: EdgeInsets.all(10),
+                    shrinkWrap: true,
+                    children: day.lessons.map((lesson) {
+                      // Check which subject is selected
+                      int _selected = sharedPreferences.getInt(Keys.unitPlan(
+                          grade,
+                          block: lesson.subjects[0].block,
+                          day: widget.days.indexOf(day),
+                          unit: day.lessons.indexOf(lesson)));
+                      bool nothingSelected = _selected == null;
+                      if (nothingSelected) _selected = 0;
+                      return GestureDetector(
+                        onTap: () {
+                          if (lesson.subjects.length > 1) {
+                            // Show subject select dialog
+                            showDialog<String>(
+                                context: context,
+                                barrierDismissible: true,
+                                builder: (BuildContext context1) {
+                                  return SimpleDialog(
+                                    title: Text((day.lessons.indexOf(lesson) + 1)
+                                            .toString() +
+                                        AppLocalizations.of(context).nUnit),
+                                    children: lesson.subjects
+                                        .map((subject) {
+                                          return SimpleDialogOption(
+                                            onPressed: () {
+                                              // Update unit plan
+                                              setState(() {
+                                                sharedPreferences.setInt(
+                                                    Keys.unitPlan(grade,
+                                                        block: lesson
+                                                            .subjects[0].block,
+                                                        day: widget.days
+                                                            .indexOf(day),
+                                                        unit: day.lessons
+                                                            .indexOf(lesson)),
+                                                    lesson.subjects
+                                                        .indexOf(subject));
+                                                Navigator.pop(context);
+                                              });
+                                              // Synchronise tags for notifications
+                                              syncTags();
+                                              bool _selected = (sharedPreferences
+                                                      .getKeys()
+                                                      .where((key) =>
+                                                          key ==
+                                                          Keys.exams(
+                                                              sharedPreferences
+                                                                  .getString(
+                                                                      Keys.grade),
+                                                              lesson
+                                                                  .subjects[lesson
+                                                                      .subjects
+                                                                      .indexOf(
+                                                                          subject)]
+                                                                  .lesson
+                                                                  .toUpperCase()))
+                                                      .length >
+                                                  0);
+                                              if (!_selected &&
+                                                  lesson
                                                           .subjects[lesson
                                                               .subjects
                                                               .indexOf(subject)]
-                                                          .block
-                                                    ],
-                                                    onExamChange: (_) {
-                                                      setState(() {
-                                                        /*UnitPlan.setAllSelections(
-                                                            sharedPreferences);*/
-                                                      });
-                                                    },
-                                                  );
-                                                },
-                                              );
-                                            }
-                                          },
-                                          child: UnitPlanRow(
-                                              weekday: widget.days.indexOf(day),
-                                              subject: subject,
-                                              unit: day.lessons.indexOf(lesson),
-                                              showUnit: false),
-                                        );
-                                      })
-                                      .toList()
-                                      .cast<Widget>(),
-                                );
-                              });
-                        }
-                      },
-                      onLongPress: () {
-                        if (lesson.subjects[_selected].block != null &&
-                            lesson.subjects[_selected].lesson !=
-                                AppLocalizations.of(context).freeLesson &&
-                            lesson.subjects[_selected].lesson !=
-                                AppLocalizations.of(context).lunchBreak &&
-                            !nothingSelected) {
-                          if (sharedPreferences.getBool(Keys.exams(
-                                  sharedPreferences.getString(Keys.grade),
-                                  lesson.subjects[_selected].lesson
-                                      .toUpperCase())) ==
-                              null) {
-                            sharedPreferences.setBool(
-                                Keys.exams(
+                                                          .block !=
+                                                      null &&
+                                                  lesson
+                                                          .subjects[lesson
+                                                              .subjects
+                                                              .indexOf(subject)]
+                                                          .lesson !=
+                                                      AppLocalizations.of(context)
+                                                          .freeLesson) {
+                                                // Show writing option dialog
+                                                showDialog<String>(
+                                                  context: context1,
+                                                  barrierDismissible: true,
+                                                  builder:
+                                                      (BuildContext context2) {
+                                                    return CourseEdit(
+                                                      subject: lesson.subjects[
+                                                          lesson.subjects
+                                                              .indexOf(subject)],
+                                                      blocks: [
+                                                        lesson
+                                                            .subjects[lesson
+                                                                .subjects
+                                                                .indexOf(subject)]
+                                                            .block
+                                                      ],
+                                                      onExamChange: (_) {
+                                                        setState(() {
+                                                          /*UnitPlan.setAllSelections(
+                                                              sharedPreferences);*/
+                                                        });
+                                                      },
+                                                    );
+                                                  },
+                                                );
+                                              }
+                                            },
+                                            child: UnitPlanRow(
+                                                weekday: widget.days.indexOf(day),
+                                                subject: subject,
+                                                unit: day.lessons.indexOf(lesson),
+                                                showUnit: false),
+                                          );
+                                        })
+                                        .toList()
+                                        .cast<Widget>(),
+                                  );
+                                });
+                          }
+                        },
+                        onLongPress: () {
+                          if (lesson.subjects[_selected].block != null &&
+                              lesson.subjects[_selected].lesson !=
+                                  AppLocalizations.of(context).freeLesson &&
+                              lesson.subjects[_selected].lesson !=
+                                  AppLocalizations.of(context).lunchBreak &&
+                              !nothingSelected) {
+                            if (sharedPreferences.getBool(Keys.exams(
                                     sharedPreferences.getString(Keys.grade),
                                     lesson.subjects[_selected].lesson
-                                        .toUpperCase()),
-                                true);
-                            sharedPreferences.commit();
-                          }
-                          // Show writing option dialog
-                          showDialog<String>(
-                            context: context,
-                            barrierDismissible: true,
-                            builder: (BuildContext context1) {
-                              return CourseEdit(
-                                subject: lesson.subjects[_selected],
-                                blocks: [lesson.subjects[_selected].block],
-                                onExamChange: (_) {
-                                  setState(() {
-                                    UnitPlan.setAllSelections(
-                                        sharedPreferences);
-                                  });
-                                },
-                              );
-                            },
-                          );
-                        }
-                      },
-                      child: (nothingSelected
-                          ?
-                          // Show select lesson information
-                          UnitPlanRow(
-                              weekday: widget.days.indexOf(day),
-                              subject: UnitPlanSubject(
-                                teacher: '',
-                                lesson:
-                                    AppLocalizations.of(context).selectLesson,
-                                room: '',
-                                block: '',
-                                unsures: 0,
-                                course: '',
-                                changes: [],
-                              ),
-                              unit: day.lessons.indexOf(lesson),
-                            )
-                          : (lesson.subjects[_selected].changes.length == 0 ||
-                                  !sharedPreferences.getBool(
-                                      Keys.showReplacementPlanInUnitPlan)
-                              ?
-                              // Show normal subject
-                              UnitPlanRow(
-                                  weekday: widget.days.indexOf(day),
+                                        .toUpperCase())) ==
+                                null) {
+                              sharedPreferences.setBool(
+                                  Keys.exams(
+                                      sharedPreferences.getString(Keys.grade),
+                                      lesson.subjects[_selected].lesson
+                                          .toUpperCase()),
+                                  true);
+                              sharedPreferences.commit();
+                            }
+                            // Show writing option dialog
+                            showDialog<String>(
+                              context: context,
+                              barrierDismissible: true,
+                              builder: (BuildContext context1) {
+                                return CourseEdit(
                                   subject: lesson.subjects[_selected],
-                                  unit: day.lessons.indexOf(lesson),
-                                )
-                              :
-                              // Show list of changes
-                              Card(
-                                  child: Padding(
-                                    padding: EdgeInsets.only(bottom: 10),
-                                    child: Column(
-                                      children: [
-                                        (lesson.subjects[_selected].unsures > 0
-                                            ? UnitPlanRow(
-                                                weekday:
-                                                    widget.days.indexOf(day),
-                                                subject:
-                                                    lesson.subjects[_selected],
-                                                unit:
-                                                    day.lessons.indexOf(lesson),
-                                              )
-                                            : Container())
-                                      ]..addAll(
-                                          lesson.subjects[_selected].changes
-                                              .map((change) {
-                                                return ReplacementPlanRow(
-                                                    change: change,
-                                                    changes: lesson
-                                                        .subjects[_selected]
-                                                        .changes);
-                                              })
-                                              .toList()
-                                              .cast<Widget>()),
+                                  blocks: [lesson.subjects[_selected].block],
+                                  onExamChange: (_) {
+                                    setState(() {
+                                      UnitPlan.setAllSelections(
+                                          sharedPreferences);
+                                    });
+                                  },
+                                );
+                              },
+                            );
+                          }
+                        },
+                        child: (nothingSelected
+                            ?
+                            // Show select lesson information
+                            UnitPlanRow(
+                                weekday: widget.days.indexOf(day),
+                                subject: UnitPlanSubject(
+                                  teacher: '',
+                                  lesson:
+                                      AppLocalizations.of(context).selectLesson,
+                                  room: '',
+                                  block: '',
+                                  unsures: 0,
+                                  course: '',
+                                  changes: [],
+                                ),
+                                unit: day.lessons.indexOf(lesson),
+                              )
+                            : (lesson.subjects[_selected].changes.length == 0 ||
+                                    !sharedPreferences.getBool(
+                                        Keys.showReplacementPlanInUnitPlan)
+                                ?
+                                // Show normal subject
+                                UnitPlanRow(
+                                    weekday: widget.days.indexOf(day),
+                                    subject: lesson.subjects[_selected],
+                                    unit: day.lessons.indexOf(lesson),
+                                  )
+                                :
+                                // Show list of changes
+                                Card(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(bottom: 10),
+                                      child: Column(
+                                        children: [
+                                          (lesson.subjects[_selected].unsures > 0
+                                              ? UnitPlanRow(
+                                                  weekday:
+                                                      widget.days.indexOf(day),
+                                                  subject:
+                                                      lesson.subjects[_selected],
+                                                  unit:
+                                                      day.lessons.indexOf(lesson),
+                                                )
+                                              : Container())
+                                        ]..addAll(
+                                            lesson.subjects[_selected].changes
+                                                .map((change) {
+                                                  return ReplacementPlanRow(
+                                                      change: change,
+                                                      changes: lesson
+                                                          .subjects[_selected]
+                                                          .changes);
+                                                })
+                                                .toList()
+                                                .cast<Widget>()),
+                                      ),
                                     ),
-                                  ),
-                                ))),
-                    );
-                  }).toList(),
+                                  ))),
+                      );
+                    }).toList(),
+                  ),
                 ),
               );
             }).toList(),

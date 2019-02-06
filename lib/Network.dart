@@ -17,7 +17,7 @@ Future<int> get checkOnline async {
       return 0;
     }
     return -1;
-  } on SocketException catch (_) {
+  } on Exception catch (_) {
     return -1;
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../UnitPlan/UnitPlanData.dart' as unitplan;
+import '../../ReplacementPlan/ReplacementplanData.dart' as replacementplan;
 import '../../Localizations.dart';
 import '../../Keys.dart';
 import '../UnitPlanModel.dart';
@@ -18,6 +20,12 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList> with SingleTi
   SharedPreferences sharedPreferences;
   String grade = '';
   TabController tabController;
+
+  Future update() async {
+    await unitplan.download(grade: sharedPreferences.getString(Keys.grade), setStatic: true);
+    await replacementplan.load(unitplan.getUnitPlan(), false);
+     setState(() => null);
+  }
 
   @override
   void initState() {

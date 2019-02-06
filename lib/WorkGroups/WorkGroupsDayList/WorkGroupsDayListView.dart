@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'WorkGroupsDayListWidget.dart';
+import '../WorkGroupsData.dart';
 
 class WorkGroupsDayListView extends WorkGroupsDayListState {
+
+  Future update() async {
+    await download();
+    setState(() => null);
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -27,73 +34,78 @@ class WorkGroupsDayListView extends WorkGroupsDayListState {
             controller: tabController,
             // List of days
             children: widget.days.map((day) {
+              final GlobalKey<RefreshIndicatorState> refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
               return Container(
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.white,
-                child: ListView(
-                  shrinkWrap: true,
-                  // List of work groups
-                  children: day.data.map((workgroup) {
-                    return Container(
-                      padding: EdgeInsets.all(10.0),
-                      child: LayoutBuilder(
-                        builder:
-                            (BuildContext context, BoxConstraints constraints) {
-                          return Row(
-                            children: <Widget>[
-                              Column(
-                                children: <Widget>[
-                                  // Work group name
-                                  Container(
-                                    width: constraints.maxWidth * 0.75,
-                                    child: Text(
-                                      workgroup.name,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15.0,
-                                        color: Theme.of(context).primaryColor,
+                child: RefreshIndicator(
+                  key: refreshIndicatorKey,
+                  onRefresh: update,
+                  child: ListView(
+                    shrinkWrap: true,
+                    // List of work groups
+                    children: day.data.map((workgroup) {
+                      return Container(
+                        padding: EdgeInsets.all(10.0),
+                        child: LayoutBuilder(
+                          builder:
+                              (BuildContext context, BoxConstraints constraints) {
+                            return Row(
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    // Work group name
+                                    Container(
+                                      width: constraints.maxWidth * 0.75,
+                                      child: Text(
+                                        workgroup.name,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15.0,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  // Work group meet time
-                                  Container(
-                                    width: constraints.maxWidth * 0.75,
-                                    child: Text(
-                                      workgroup.time,
-                                      style: TextStyle(
-                                        color: Colors.black54,
+                                    // Work group meet time
+                                    Container(
+                                      width: constraints.maxWidth * 0.75,
+                                      child: Text(
+                                        workgroup.time,
+                                        style: TextStyle(
+                                          color: Colors.black54,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  // Work groups participants
-                                  Container(
-                                    width: constraints.maxWidth * 0.25,
-                                    child: Text(
-                                      workgroup.participants,
-                                      textAlign: TextAlign.end,
+                                  ],
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    // Work groups participants
+                                    Container(
+                                      width: constraints.maxWidth * 0.25,
+                                      child: Text(
+                                        workgroup.participants,
+                                        textAlign: TextAlign.end,
+                                      ),
                                     ),
-                                  ),
-                                  // Work group place
-                                  Container(
-                                    width: constraints.maxWidth * 0.25,
-                                    child: Text(
-                                      workgroup.place,
-                                      textAlign: TextAlign.end,
+                                    // Work group place
+                                    Container(
+                                      width: constraints.maxWidth * 0.25,
+                                      child: Text(
+                                        workgroup.place,
+                                        textAlign: TextAlign.end,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                    );
-                  }).toList(),
+                                  ],
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 ),
               );
             }).toList(),

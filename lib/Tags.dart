@@ -12,7 +12,12 @@ import 'Messageboard/MessageboardModel.dart';
 Future<Map<String, dynamic>> getTags() async {
   String id = await getPlayerId();
   String url = 'https://api.vsa.2bad2c0.de/tags/$id';
+  try {
   return json.decode((await http.Client().get(url).timeout(maxTime)).body);
+  } on Exception catch (e) {
+    print('Error during getting tags: ${e.toString()}');
+    return null;
+  }
 }
 
 Future sendTag(String key, dynamic value) async {
@@ -42,6 +47,7 @@ Future deleteTags(List<String> tags) async {
 
 Future deleteOldTags() async {
   Map<String, dynamic> tags = await getTags();
+  if (tags == null) return;
   List<String> tagsToDelete = [];
   tags.forEach((tag, value) {
     if (!(tag.startsWith('messageboard') || tag.startsWith('unitPlan') || tag.startsWith('dev') || tag.startsWith('grade') || tag.startsWith('exam'))) {
@@ -64,6 +70,7 @@ Future syncTags() async {
 
   // Get all unitplan and exams tags...
   Map<String, dynamic> allTags = await getTags();
+  if (allTags == null) return;
   allTags.removeWhere((key, value) => !key.startsWith('unitPlan') && !key.startsWith('exams'));
 
   // Get all selected subjects...

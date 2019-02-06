@@ -156,6 +156,7 @@ class Messageboard {
   static void syncTags() async {
     // First delete all unitPLan tags...
     Map<String, dynamic> allTags = await Tags.getTags();
+    if (allTags == null) return;
     List<String> allGroupKeys = allGroups
         .map((Group group) => Keys.messageboardGroupTag(group.name))
         .toList();

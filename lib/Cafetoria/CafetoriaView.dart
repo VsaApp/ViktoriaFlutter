@@ -8,6 +8,13 @@ import 'LoginDialog/LoginDialogWidget.dart';
 import 'CafetoriaData.dart';
 
 class CafetoriaPageView extends CafetoriaPageState {
+  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+
+  Future update() async {
+    await download();
+    setState(() => null);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,11 +32,15 @@ class CafetoriaPageView extends CafetoriaPageState {
                     ),
                   ),
                 )
-              : ListView(
+              : RefreshIndicator(
+                key: refreshIndicatorKey,
+                onRefresh: update,
+                child: ListView(
                   padding: EdgeInsets.only(bottom: 70, left: 10, right: 10, top: 10),
                   shrinkWrap: true,
                   children: data.days.map((day) => DayCard(day: day)).toList(),
                 ),
+              ),
 
           data == null
               ?
