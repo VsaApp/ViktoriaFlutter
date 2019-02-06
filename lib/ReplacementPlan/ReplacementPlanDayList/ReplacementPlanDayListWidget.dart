@@ -9,7 +9,7 @@ import '../../Localizations.dart';
 import '../../Keys.dart';
 
 class ReplacementPlanDayList extends StatefulWidget {
-  final List<ReplacementPlanDay> days;
+  List<ReplacementPlanDay> days;
   final bool sort;
 
   ReplacementPlanDayList({Key key, this.days, this.sort}) : super(key: key);
@@ -46,7 +46,7 @@ abstract class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
   Future update() async {
     await unitplan.download(sharedPreferences.getString(Keys.grade), false);
     await replacementplan.load(unitplan.getUnitPlan(), false);
-    setState(() => null);
+     setState(() => widget.days = ReplacementPlan.days);
   }
 
   List<Change> getUnsortedList(ReplacementPlanDay day) {

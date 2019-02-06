@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
 import 'WorkGroupsDayListWidget.dart';
-import '../WorkGroupsData.dart';
 
 class WorkGroupsDayListView extends WorkGroupsDayListState {
-
-  Future update() async {
-    await download();
-    setState(() => null);
-  }
 
   @override
   Widget build(BuildContext context) {

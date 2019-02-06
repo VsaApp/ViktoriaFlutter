@@ -13,6 +13,11 @@ abstract class CafetoriaPageState extends State<CafetoriaPage> {
   SharedPreferences sharedPreferences;
   Cafetoria data;
 
+  Future update() async {
+    data = await download();
+    setState(() => this.data = data);
+  }
+
   @override
   void initState() {
     // Download data

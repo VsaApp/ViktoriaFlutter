@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../WorkGroupsModel.dart';
 import 'WorkGroupsDayListView.dart';
+import '../WorkGroupsData.dart';
 
 class WorkGroupsDayList extends StatefulWidget {
-  final List<WorkGroupsDay> days;
+  List<WorkGroupsDay> days;
 
   WorkGroupsDayList({Key key, this.days}) : super(key: key);
 
@@ -13,6 +14,11 @@ class WorkGroupsDayList extends StatefulWidget {
 
 abstract class WorkGroupsDayListState extends State<WorkGroupsDayList> with SingleTickerProviderStateMixin {
   TabController tabController;
+
+  Future update() async {
+    await download();
+    setState(() => widget.days = getWorkGroups());
+  }
 
   @override
   void initState() {

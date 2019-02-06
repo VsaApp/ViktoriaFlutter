@@ -8,7 +8,7 @@ import '../UnitPlanModel.dart';
 import 'UnitPlanDayListView.dart';
 
 class UnitPlanDayList extends StatefulWidget {
-  final List<UnitPlanDay> days;
+  List<UnitPlanDay> days;
 
   UnitPlanDayList({Key key, this.days}) : super(key: key);
 
@@ -25,7 +25,7 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
   Future update() async {
     await unitplan.download(sharedPreferences.getString(Keys.grade), false);
     await replacementplan.load(unitplan.getUnitPlan(), false);
-    setState(() => null);
+     setState(() => widget.days = unitplan.getUnitPlan());
   }
 
   @override

@@ -10,11 +10,6 @@ import 'CafetoriaData.dart';
 class CafetoriaPageView extends CafetoriaPageState {
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
-  Future update() async {
-    await download();
-    setState(() => null);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
