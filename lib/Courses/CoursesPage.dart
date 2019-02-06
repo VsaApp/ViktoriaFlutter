@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../UnitPlan/UnitPlanData.dart';
+import '../Keys.dart';
 import 'CoursesView.dart';
 
 class CoursesPage extends StatefulWidget {
@@ -10,10 +11,11 @@ class CoursesPage extends StatefulWidget {
 
 abstract class CoursesPageState extends State<CoursesPage> {
   SharedPreferences sharedPreferences;
-  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
 
   Future update() async {
-    await download();
+    await download(sharedPreferences.getString(Keys.grade), false);
     setState(() => null);
   }
 

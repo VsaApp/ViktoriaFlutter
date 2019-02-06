@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../ReplacementPlanModel.dart';
 import 'ReplacementPlanDayListView.dart';
 import '../../UnitPlan/UnitPlanData.dart' as unitplan;
-import '../../ReplacementPlan/ReplacementplanData.dart' as replacementplan;
+import '../../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
 import '../../UnitPlan/UnitPlanModel.dart';
 import '../../Localizations.dart';
 import '../../Keys.dart';
@@ -20,7 +20,6 @@ class ReplacementPlanDayList extends StatefulWidget {
 
 abstract class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
     with SingleTickerProviderStateMixin {
-
   SharedPreferences sharedPreferences;
   TabController tabController;
   static List<String> grades = [
@@ -45,13 +44,17 @@ abstract class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
   ];
 
   Future update() async {
-    await unitplan.download(grade: sharedPreferences.getString(Keys.grade), setStatic: true);
+    await unitplan.download(sharedPreferences.getString(Keys.grade), false);
     await replacementplan.load(unitplan.getUnitPlan(), false);
-     setState(() => null);
+    setState(() => null);
   }
 
-  List<Change> getUnsortedList(ReplacementPlanDay day){
-    List<Change> changes = [day.myChanges, day.undefinedChanges, day.otherChanges].expand((x) => x).toList();
+  List<Change> getUnsortedList(ReplacementPlanDay day) {
+    List<Change> changes = [
+      day.myChanges,
+      day.undefinedChanges,
+      day.otherChanges
+    ].expand((x) => x).toList();
     changes.sort((Change c1, Change c2) => c1.unit.compareTo(c2.unit));
     return changes;
   }

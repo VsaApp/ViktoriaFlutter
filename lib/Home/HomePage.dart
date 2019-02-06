@@ -7,7 +7,7 @@ import '../Keys.dart';
 import '../Localizations.dart';
 import '../Messageboard/MessageboardModel.dart';
 import '../UnitPlan/UnitPlanData.dart' as unitplan;
-import '../ReplacementPlan/ReplacementplanData.dart' as replacementplan;
+import '../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
 import '../Messageboard/MessageboardModel.dart' as messageboard;
 import 'HomeView.dart';
 import '../Tags.dart';

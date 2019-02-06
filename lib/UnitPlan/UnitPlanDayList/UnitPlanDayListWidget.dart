@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../UnitPlan/UnitPlanData.dart' as unitplan;
-import '../../ReplacementPlan/ReplacementplanData.dart' as replacementplan;
+import '../../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
 import '../../Localizations.dart';
 import '../../Keys.dart';
 import '../UnitPlanModel.dart';
@@ -16,15 +16,16 @@ class UnitPlanDayList extends StatefulWidget {
   UnitPlanDayListView createState() => UnitPlanDayListView();
 }
 
-abstract class UnitPlanDayListState extends State<UnitPlanDayList> with SingleTickerProviderStateMixin {
+abstract class UnitPlanDayListState extends State<UnitPlanDayList>
+    with SingleTickerProviderStateMixin {
   SharedPreferences sharedPreferences;
   String grade = '';
   TabController tabController;
 
   Future update() async {
-    await unitplan.download(grade: sharedPreferences.getString(Keys.grade), setStatic: true);
+    await unitplan.download(sharedPreferences.getString(Keys.grade), false);
     await replacementplan.load(unitplan.getUnitPlan(), false);
-     setState(() => null);
+    setState(() => null);
   }
 
   @override
@@ -48,16 +49,10 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList> with SingleTi
           DateTime.now().day,
           8,
         ).add(Duration(
-            minutes: [
-          60,
-          130,
-          210,
-          280,
-          360,
-          420,
-          480,
-          545
-        ][widget.days[weekday].getUserLesseonsCount(sharedPreferences, AppLocalizations.of(context).freeLesson) - 1])))) {
+            minutes: [60, 130, 210, 280, 360, 420, 480, 545][
+                widget.days[weekday].getUserLesseonsCount(sharedPreferences,
+                        AppLocalizations.of(context).freeLesson) -
+                    1])))) {
           over = true;
         }
       }
@@ -78,5 +73,4 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList> with SingleTi
     tabController.dispose();
     super.dispose();
   }
-
 }
