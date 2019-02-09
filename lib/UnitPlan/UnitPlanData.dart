@@ -37,6 +37,16 @@ Future<List<UnitPlanDay>> fetchDays(String grade) async {
   return parseDays(sharedPreferences.getString(Keys.unitPlan(grade)));
 }
 
+Future<String> fetchDate(String grade) async {
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  return parseDate(sharedPreferences.getString(Keys.unitPlan(grade)));
+}
+
+String parseDate(String responseBody) {
+  final parsed = json.decode(responseBody)['date'] as String;
+  return parsed;
+}
+
 // Returns parsed unit plan...
 List<UnitPlanDay> parseDays(String responseBody) {
   final parsed = json.decode(responseBody).cast<String, dynamic>()['data'];

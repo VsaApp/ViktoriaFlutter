@@ -126,6 +126,8 @@ class AppLocalizations {
       'yes': 'Ja',
       'no': 'Nein',
       'introUnitPlanTitle': 'Stundenplan',
+      'newUnitplan': 'Neuer Stundenplan',
+      'newUnitplanInfo': 'Deine Fachauswahl und deine Schriftlichkeiten wurden zurückgesetzt, da es einen neuen Stundenplan gibt!',
       'introUnitPlanDescription': 'Ein Blick in den Stundenplan zeigt dir eine vollständige Übersicht über deinen Tag mit allen Änderungen',
       'introReplacementPlanTitle': 'Vertretungsplan',
       'introReplacementPlanDescription': 'Alle Vertretungen werden auf deine Stundenplan Auswahl angepasst und für dich gefiltert'
@@ -133,6 +135,14 @@ class AppLocalizations {
   };
 
   // All getter defined...
+  String get newUnitplan {
+    return _localizedValues[locale.languageCode]['newUnitplan'];
+  }
+
+  String get newUnitplanInfo {
+    return _localizedValues[locale.languageCode]['newUnitplanInfo'];
+  }
+
   String get replacementPlanUpdated {
     return _localizedValues[locale.languageCode]['replacementPlanUpdated'];
   }

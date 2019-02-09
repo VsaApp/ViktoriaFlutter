@@ -5,6 +5,10 @@ class Keys {
     return 'grade';
   }
 
+  static String get unitplanDate {
+    return 'unitplanDate';
+  }
+
   static String get dev {
     return 'dev';
   }
@@ -104,11 +108,6 @@ class Keys {
   // Saves the calendar...
   static String get calendar {
     return 'calendar';
-  }
-
-  // Saves if a category is expanded or not...
-  static String categoryExpanded(String name) {
-    return 'categoryExpanded-$name';
   }
 
   static String room(int weekday, int unit, String subject) {

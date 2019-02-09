@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
 import '../Messageboard/MessageboardModel.dart';
+import './NewUnitplanDialog/NewUnitplanDialogModel.dart';
 import '../UnitPlan/UnitPlanData.dart' as unitplan;
 import '../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
 import '../Messageboard/MessageboardModel.dart' as messageboard;
@@ -40,6 +41,8 @@ abstract class HomePageState extends State<HomePage> {
   SharedPreferences sharedPreferences;
   static String grade = '';
   bool dialogShown = false;
+  bool unitplanChanged = false;
+  String currentUnitplanDate;
   bool showDialog1 = true;
   int logoClickCount = 0;
   static const platform = const MethodChannel('viktoriaflutter');
@@ -49,10 +52,13 @@ abstract class HomePageState extends State<HomePage> {
   @override
   void initState() {
     loadData();
+    checkUntiplanData();
     SharedPreferences.getInstance().then((sharedPreferences) {
+      this.sharedPreferences = sharedPreferences; 
       // Default follow VsaApp in messageboard...
       if (sharedPreferences.getStringList(Keys.feedGroups) == null)
         Messageboard.setFollowGroup('VsaApp');
+      checkUntiplanData();
     });
     // Update replacement plan if new message received
     OneSignal.shared.setNotificationReceivedHandler((osNotification) {
@@ -93,6 +99,17 @@ abstract class HomePageState extends State<HomePage> {
             }
           });
         }
+        else if (msg['data']['type'].toString() == 'unitplan'.toString()) {
+          SharedPreferences.getInstance().then((sharedPreferences) async {
+            String grade = sharedPreferences.getString(Keys.grade);
+            await unitplan.download(grade, false);
+            await replacementplan.load(unitplan.getUnitPlan(), false);
+            if (appScaffold != null) {
+              replacementplanUpdatedListeners.forEach((replacementplanUpdated) => replacementplanUpdated());
+            }
+            checkUntiplanData();
+          });
+        }
       }
     });
     OneSignal.shared.setNotificationOpenedHandler((osNotification) {
@@ -116,6 +133,37 @@ abstract class HomePageState extends State<HomePage> {
       messageboard.Messageboard.syncTags();
     });
     super.initState();
+  }
+
+  void checkUntiplanData() async {
+    // If it's a new version of the uniplan...#
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String grade = sharedPreferences.getString(Keys.grade);
+    String currentDate = await unitplan.fetchDate(grade);
+    String lastDate = sharedPreferences.getString(Keys.unitplanDate);
+    if (lastDate == null) {
+      sharedPreferences.setString(Keys.unitplanDate, currentDate);
+      currentDate = lastDate;
+    }
+
+    if (currentDate != lastDate) {
+      print("There is a new unitplan, reset old data");
+      currentUnitplanDate = currentDate;
+      List<String> keys = sharedPreferences.getKeys().toList();
+      List<String> keysToReset = keys.where((String key) => ((key.startsWith('room') || key.startsWith('exams') || (key.startsWith('unitPlan') && key.split('-').length > 2)))).toList();
+      keysToReset.forEach((String key) => sharedPreferences.remove(key));
+      unitplanChanged = true;
+
+      showDialog<String>(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context1) {
+          return NewUnitplanDialog();
+        });
+      SharedPreferences.getInstance().then((SharedPreferences sharedPreferences) => sharedPreferences.setString(Keys.unitplanDate, currentUnitplanDate));
+
+      syncTags();
+    }
   }
 
   // Load saved data
