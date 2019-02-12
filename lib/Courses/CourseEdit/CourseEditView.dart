@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'CourseEditWidget.dart';
-import '../../Subjects.dart';
 import '../../Keys.dart';
 import '../../Rooms.dart';
 import '../../Localizations.dart';
@@ -14,7 +13,7 @@ class CourseEditView extends CourseEditState {
     }
     return SimpleDialog(
       title: Text(
-          getSubject(widget.subject.lesson) + ' ' + widget.subject.teacher),
+          widget.subject.lesson + ' ' + widget.subject.teacher),
       children: <Widget>[
         // Writing option
         CheckboxListTile(

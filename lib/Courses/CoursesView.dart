@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
-import '../Subjects.dart';
 import '../UnitPlan/UnitPlanData.dart' as UnitPlan;
 import '../UnitPlan/UnitPlanModel.dart';
 import 'CourseEdit/CourseEditWidget.dart';
@@ -87,7 +86,7 @@ class CourseRowView extends State<CourseRow> {
 
   @override
   void initState() {
-    name = getSubject(widget.subjects[0].lesson);
+    name = widget.subjects[0].lesson;
     teacher = widget.subjects[0].teacher;
     course = '';
     blocks = [];

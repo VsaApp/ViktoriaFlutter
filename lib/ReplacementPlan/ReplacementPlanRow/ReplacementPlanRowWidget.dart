@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../ReplacementPlanModel.dart';
-import '../../Subjects.dart';
 
 class ReplacementPlanRow extends StatelessWidget {
   const ReplacementPlanRow({Key key, this.change, this.changes})
@@ -63,22 +62,35 @@ class ReplacementPlanRow extends StatelessWidget {
                     Column(
                       children: <Widget>[
                         // Original subject
-                        (change.lesson.length > 0 || change.room.length > 0 || change.teacher.length > 0) ? Container(
-                          width: constraints.maxWidth * 0.60,
-                          child: Text(
-                            getSubject(change.lesson),
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15.0,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                        ) : Container(),
+                        (change.lesson.length > 0 ||
+                                change.room.length > 0 ||
+                                change.teacher.length > 0)
+                            ? Container(
+                                width: constraints.maxWidth * 0.60,
+                                child: Text(
+                                  change.lesson,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15.0,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                ),
+                              )
+                            : Container(),
                         // Information
                         Container(
                             width: constraints.maxWidth * 0.60,
                             child: Text(
-                              change.changed.info,
+                              (change.changed.subject != ''
+                                      ? change.changed.subject
+                                      : '') +
+                                  (change.changed.info != '' &&
+                                          change.changed.subject != ''
+                                      ? ': '
+                                      : '') +
+                                  (change.changed.info != ''
+                                      ? change.changed.info
+                                      : ''),
                               style: TextStyle(
                                 color: Colors.black54,
                               ),
@@ -88,15 +100,19 @@ class ReplacementPlanRow extends StatelessWidget {
                     Column(
                       children: <Widget>[
                         // Original room
-                        (change.lesson.length > 0 || change.room.length > 0 || change.teacher.length > 0) ? Container(
-                          width: constraints.maxWidth * 0.15,
-                          child: Text(
-                            change.room,
-                            style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                        ) : Container(),
+                        (change.lesson.length > 0 ||
+                                change.room.length > 0 ||
+                                change.teacher.length > 0)
+                            ? Container(
+                                width: constraints.maxWidth * 0.15,
+                                child: Text(
+                                  change.room,
+                                  style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                ),
+                              )
+                            : Container(),
                         // Changed room
                         Container(
                           width: constraints.maxWidth * 0.15,
@@ -114,15 +130,19 @@ class ReplacementPlanRow extends StatelessWidget {
                     Column(
                       children: <Widget>[
                         // Original teacher
-                        (change.lesson.length > 0 || change.room.length > 0 || change.teacher.length > 0) ? Container(
-                          width: constraints.maxWidth * 0.15,
-                          child: Text(
-                            nTeacher,
-                            style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                        ) : Container(),
+                        (change.lesson.length > 0 ||
+                                change.room.length > 0 ||
+                                change.teacher.length > 0)
+                            ? Container(
+                                width: constraints.maxWidth * 0.15,
+                                child: Text(
+                                  nTeacher,
+                                  style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                ),
+                              )
+                            : Container(),
                         // Changed teacher
                         Container(
                             width: constraints.maxWidth * 0.15,

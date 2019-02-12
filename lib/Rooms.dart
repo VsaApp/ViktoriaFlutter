@@ -4,7 +4,6 @@ import './Keys.dart';
 String getRoom(SharedPreferences sharedPreferences, int weekday, int unit,
     String subject, String room) {
   subject = subject.toUpperCase();
-  room = room.toUpperCase();
   if (sharedPreferences.getString(Keys.room(weekday, unit, subject)) == null) {
     return room;
   } else {

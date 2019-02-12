@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'UnitPlanRowWidget.dart';
-import '../../Subjects.dart';
 import '../../Times.dart';
 import '../../Rooms.dart';
 
@@ -37,7 +36,7 @@ class UnitPlanRowView extends UnitPlanRowState {
                         ?
                         // Normal name
                         Text(
-                            getSubject(widget.subject.lesson),
+                            widget.subject.lesson,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 15.0,
@@ -48,7 +47,7 @@ class UnitPlanRowView extends UnitPlanRowState {
                         // Lunch break
                         Center(
                             child: Text(
-                              getSubject(widget.subject.lesson),
+                              widget.subject.lesson,
                               style: TextStyle(
                                 fontSize: 15.0,
                               ),
