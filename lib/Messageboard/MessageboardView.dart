@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Home/HomePage.dart';
-import '../Network.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
+import '../Network.dart';
 import 'MessageboardData.dart' as api;
 import 'MessageboardModel.dart';
 
@@ -22,22 +22,24 @@ class MessageboardView extends State<MessageboardPage> {
 
   @override
   void initState() {
-    HomePageState.messageBoardUpdated = (String action, String type, String group) async {
+    HomePageState.messageBoardUpdated =
+        (String action, String type, String group) async {
       if (type == 'messageboard-post') {
         await Messageboard.postsChanged(group);
         if (mounted) setState(() => null);
-      }
-      else if (type == 'messageboard-group') {
+      } else if (type == 'messageboard-group') {
         await Messageboard.groupsChanged(group);
         if (mounted) {
           setState(() => null);
           Fluttertoast.showToast(
-            msg: AppLocalizations.of(context).updatedGroups,
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM, // also possible "TOP" and "CENTER"
-            backgroundColor: Colors.black87,
-            textColor: Colors.white
-          );
+              msg: AppLocalizations
+                  .of(context)
+                  .updatedGroups,
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.BOTTOM,
+              // also possible "TOP" and "CENTER"
+              backgroundColor: Colors.black87,
+              textColor: Colors.white);
         }
       }
     };
@@ -51,7 +53,7 @@ class MessageboardView extends State<MessageboardPage> {
   }
 
   @override
-  void dispose(){
+  void dispose() {
     HomePageState.messageBoardUpdated = null;
 
     super.dispose();
@@ -59,20 +61,28 @@ class MessageboardView extends State<MessageboardPage> {
 
   @override
   Widget build(BuildContext context) {
-      checkOnline.then((online) {
-        if (online != 1) {
-          // Show offline information
-          Scaffold.of(context).showSnackBar(
-            SnackBar(
-              content: Text(online == -1 ? AppLocalizations.of(context).oldDataIsShown : AppLocalizations.of(context).serverIsOffline),
-              action: SnackBarAction(
-                label: AppLocalizations.of(context).ok,
-                onPressed: () {},
-              ),
+    checkOnline.then((online) {
+      if (online != 1) {
+        // Show offline information
+        Scaffold.of(context).showSnackBar(
+          SnackBar(
+            content: Text(online == -1
+                ? AppLocalizations
+                .of(context)
+                .oldDataIsShown
+                : AppLocalizations
+                .of(context)
+                .serverIsOffline),
+            action: SnackBarAction(
+              label: AppLocalizations
+                  .of(context)
+                  .ok,
+              onPressed: () {},
             ),
-          );
-        }
-      });
+          ),
+        );
+      }
+    });
     return Scaffold(
       body: Stack(children: <Widget>[
         Column(
@@ -83,40 +93,48 @@ class MessageboardView extends State<MessageboardPage> {
           bottom: 16.0,
           right: 16.0,
           child: Container(
-            child: GradeFab(
-              onAddGroup: () {
-                List<String> waitingGroups = (sharedPreferences.getStringList(Keys.waitingGroups) ?? []).toList();
-                if (waitingGroups.length < 3){
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => AddGroupPage(onFinished: () {
-                    setState(() => null);
-                  })));
-                } else {
-                  Fluttertoast.showToast(
+              child: GradeFab(
+                onAddGroup: () {
+                  List<String> waitingGroups =
+                  (sharedPreferences.getStringList(Keys.waitingGroups) ?? [])
+                      .toList();
+                  if (waitingGroups.length < 3) {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) =>
+                            AddGroupPage(onFinished: () {
+                              setState(() => null);
+                            })));
+                  } else {
+                    Fluttertoast.showToast(
                     msg: AppLocalizations.of(context).max3Groups,
                     toastLength: Toast.LENGTH_LONG,
-                    gravity: ToastGravity.BOTTOM, // also possible "TOP" and "CENTER"
+                        gravity: ToastGravity.BOTTOM,
+                        // also possible "TOP" and "CENTER"
                     backgroundColor: Colors.black87,
-                    textColor: Colors.white
-                  );
-                }
-              },
-              onWritePost: () {
-                if (Messageboard.loggedIn.where((group) => group.status == 'activated').length > 0){
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => WritePostPage(onFinished: () {
-                    setState(() => null);
-                  })));
-                } else {
-                  Fluttertoast.showToast(
+                        textColor: Colors.white);
+                  }
+                },
+                onWritePost: () {
+                  if (Messageboard.loggedIn
+                      .where((group) => group.status == 'activated')
+                      .length >
+                      0) {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) =>
+                            WritePostPage(onFinished: () {
+                              setState(() => null);
+                            })));
+                  } else {
+                    Fluttertoast.showToast(
                     msg: AppLocalizations.of(context).noLoggedInGroup,
                     toastLength: Toast.LENGTH_LONG,
-                    gravity: ToastGravity.BOTTOM, // also possible "TOP" and "CENTER"
+                        gravity: ToastGravity.BOTTOM,
+                        // also possible "TOP" and "CENTER"
                     backgroundColor: Colors.black87,
-                    textColor: Colors.white
-                  );
-                }
-              },
-            )
-          ),
+                        textColor: Colors.white);
+                  }
+                },
+              )),
         ),
       ]),
     );
@@ -124,7 +142,6 @@ class MessageboardView extends State<MessageboardPage> {
 }
 
 class MessageboardViews extends StatefulWidget {
-
   MessageboardViews({Key key}) : super(key: key);
 
   @override
@@ -133,7 +150,6 @@ class MessageboardViews extends StatefulWidget {
 
 class MessageboardViewsState extends State<MessageboardViews>
     with SingleTickerProviderStateMixin {
-
   SharedPreferences sharedPreferences;
   TabController _tabController;
   int pagesCount = 2;
@@ -154,7 +170,14 @@ class MessageboardViewsState extends State<MessageboardViews>
 
   @override
   Widget build(BuildContext context) {
-    List<String> tabs = [AppLocalizations.of(context).feed, AppLocalizations.of(context).groups];
+    List<String> tabs = [
+      AppLocalizations
+          .of(context)
+          .feed,
+      AppLocalizations
+          .of(context)
+          .groups
+    ];
     if (sharedPreferences == null) {
       return Container();
     }
@@ -175,23 +198,18 @@ class MessageboardViewsState extends State<MessageboardViews>
             }).toList(),
           ),
           // Tab bar views
-          body: TabBarView(
-            controller: _tabController,
-            children: [
-              Container(
+          body: TabBarView(controller: _tabController, children: [
+            Container(
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.white,
-                child: FeedPage()
-              ),
-              Container(
+                child: FeedPage()),
+            Container(
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.white,
-                child: GroupsPage(groups: Messageboard.userGroupList)
-              )
-            ]
-          ),
+                child: GroupsPage(groups: Messageboard.userGroupList))
+          ]),
         ),
       ),
     );
@@ -199,15 +217,14 @@ class MessageboardViewsState extends State<MessageboardViews>
 }
 
 /// Shows the list of all visible groups
-/// 
-/// First the user sees the blocked groups (when he creates them before), then the user sees the waiting groups 
+///
+/// First the user sees the blocked groups (when he creates them before), then the user sees the waiting groups
 /// and at least all activated groups
-/// 
+///
 class GroupsPage extends StatefulWidget {
   final List<Group> groups;
 
-  GroupsPage({Key key, this.groups})
-      : super(key: key);
+  GroupsPage({Key key, this.groups}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -216,106 +233,204 @@ class GroupsPage extends StatefulWidget {
 }
 
 class GroupsView extends State<GroupsPage> {
-
   @override
   Widget build(BuildContext context) {
-    List<Group> allGroups = Messageboard.myBlockedGroups..addAll(Messageboard.waiting)..addAll(widget.groups);
+    List<Group> allGroups = Messageboard.myBlockedGroups..addAll(
+        Messageboard.waiting)..addAll(widget.groups);
     return Container(
-      child: ListView.builder(
-          padding: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 70),
-          shrinkWrap: true,
-          itemCount: allGroups.length == 0 ? 1 : allGroups.length,
-          itemBuilder: (context, index) {
-            if (allGroups.length == 0 ) return Center(child: Text(AppLocalizations.of(context).noGroupsToShow));
-            else {
-            Group group = allGroups[index];
-            return GestureDetector(
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) => GroupPage(group: group)));
-              },
-              child: Container(
-                margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                child: Hero(
-                  tag: 'hero-' + group.name,
-                  child: Card(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        ListTile(
-                          title: Text(group.name + (group.status != 'blocked' ? '' : AppLocalizations.of(context).blockedInfo), style: TextStyle(color: group.status != 'blocked' ? Colors.black : Colors.red)),
-                          subtitle: Text(group.info)
+        child: ListView.builder(
+            padding: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 70),
+            shrinkWrap: true,
+            itemCount: allGroups.length == 0 ? 1 : allGroups.length,
+            itemBuilder: (context, index) {
+              if (allGroups.length == 0)
+                return Center(
+                    child: Text(AppLocalizations
+                        .of(context)
+                        .noGroupsToShow));
+              else {
+                Group group = allGroups[index];
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => GroupPage(group: group)));
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                    child: Hero(
+                      tag: 'hero-' + group.name,
+                      child: Card(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            ListTile(
+                                title: Text(
+                                    group.name +
+                                        (group.status != 'blocked'
+                                            ? ''
+                                            : AppLocalizations
+                                            .of(context)
+                                            .blockedInfo),
+                                    style: TextStyle(
+                                        color: group.status != 'blocked'
+                                            ? Colors.black
+                                            : Colors.red)),
+                                subtitle: Text(group.info)),
+                            ButtonTheme.bar(
+                              // make buttons use the appropriate styles for cards
+                              child: ButtonBar(
+                                children: <Widget>[
+                                  (group.status == 'activated')
+                                      ? FlatButton(
+                                      child: Text((!Messageboard.following
+                                          .contains(group))
+                                          ? AppLocalizations
+                                          .of(context)
+                                          .follow
+                                          : AppLocalizations
+                                          .of(context)
+                                          .doNotFollow),
+                                      onPressed: () {
+                                        checkOnline.then((online) {
+                                          if (online == 1)
+                                            setState(() =>
+                                                Messageboard.setFollowGroup(
+                                                    group.name,
+                                                    follow: !Messageboard
+                                                        .following
+                                                        .map((group) =>
+                                                    group.name)
+                                                        .contains(
+                                                        group.name),
+                                                    notifications:
+                                                    Messageboard
+                                                        .notifications
+                                                        .map((group) =>
+                                                    group.name)
+                                                        .contains(group
+                                                        .name)));
+                                          else {
+                                            Scaffold.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                duration:
+                                                Duration(seconds: 2),
+                                                content: online == -1
+                                                    ? Text(
+                                                    AppLocalizations
+                                                        .of(
+                                                        context)
+                                                        .onlyOnline)
+                                                    : Text(AppLocalizations
+                                                    .of(context)
+                                                    .failedToConnectToServer),
+                                                action: SnackBarAction(
+                                                  label:
+                                                  AppLocalizations
+                                                      .of(
+                                                      context)
+                                                      .ok,
+                                                  onPressed: () {},
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        });
+                                      })
+                                      : Container(),
+                                  (Messageboard.following.contains(group))
+                                      ? FlatButton(
+                                      child: (group.status == 'activated')
+                                          ? (Icon(
+                                          (!Messageboard.notifications
+                                              .contains(group))
+                                              ? Icons.notifications_off
+                                              : Icons
+                                              .notifications_active,
+                                          color: Theme
+                                              .of(context)
+                                              .accentColor))
+                                          : Text(group.status == 'waiting'
+                                          ? AppLocalizations
+                                          .of(context)
+                                          .groupWaiting
+                                          : AppLocalizations
+                                          .of(context)
+                                          .ok),
+                                      onPressed: () {
+                                        if (group.status == 'activated') {
+                                          checkOnline.then((online) {
+                                            if (online == 1)
+                                              setState(() =>
+                                                  Messageboard.setFollowGroup(
+                                                      group.name,
+                                                      follow: Messageboard
+                                                          .following
+                                                          .map((group) =>
+                                                      group.name)
+                                                          .contains(
+                                                          group.name),
+                                                      notifications: !Messageboard
+                                                          .notifications
+                                                          .map((group) =>
+                                                      group.name)
+                                                          .contains(
+                                                          group.name)));
+                                            else {
+                                              Scaffold.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  duration:
+                                                  Duration(seconds: 2),
+                                                  content: Text(online == -1
+                                                      ? AppLocalizations
+                                                      .of(
+                                                      context)
+                                                      .onlyOnline
+                                                      : AppLocalizations
+                                                      .of(
+                                                      context)
+                                                      .failedToConnectToServer),
+                                                  action: SnackBarAction(
+                                                    label:
+                                                    AppLocalizations
+                                                        .of(
+                                                        context)
+                                                        .ok,
+                                                    onPressed: () {},
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          });
+                                        } else if (group.status ==
+                                            'blocked') {
+                                          setState(() =>
+                                              Messageboard
+                                                  .confirmBolckedGroup(
+                                                  group.name));
+                                        }
+                                      })
+                                      : Container(),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                        ButtonTheme.bar( // make buttons use the appropriate styles for cards
-                          child: ButtonBar(
-                            children: <Widget>[
-                              (group.status == 'activated') ?
-                              FlatButton(
-                                child: Text((!Messageboard.following.contains(group)) ? AppLocalizations.of(context).follow : AppLocalizations.of(context).doNotFollow),
-                                onPressed: () {
-                                  checkOnline.then((online) {
-                                    if (online == 1) setState(() => Messageboard.setFollowGroup(group.name, follow: !Messageboard.following.map((group) => group.name).contains(group.name), notifications: Messageboard.notifications.map((group) => group.name).contains(group.name)));
-                                    else {
-                                      Scaffold.of(context).showSnackBar(
-                                        SnackBar(
-                                          duration: Duration(seconds: 2),
-                                          content: online == -1 ? Text(AppLocalizations.of(context).onlyOnline) : Text(AppLocalizations.of(context).failedToConnectToServer),
-                                          action: SnackBarAction(
-                                            label: AppLocalizations.of(context).ok,
-                                            onPressed: () {},
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  });
-                                }
-                              ) : Container(),
-                              (Messageboard.following.contains(group)) ?
-                              FlatButton(
-                                child: (group.status == 'activated') ? (Icon((!Messageboard.notifications.contains(group)) ? Icons.notifications_off : Icons.notifications_active, color: Theme.of(context).accentColor)) : Text(group.status == 'waiting' ? AppLocalizations.of(context).groupWaiting : AppLocalizations.of(context).ok),
-                                onPressed: () {
-                                  if (group.status == 'activated') {
-                                    checkOnline.then((online) {
-                                      if (online == 1) setState(() => Messageboard.setFollowGroup(group.name, follow: Messageboard.following.map((group) => group.name).contains(group.name), notifications: !Messageboard.notifications.map((group) => group.name).contains(group.name)));
-                                      else {
-                                        Scaffold.of(context).showSnackBar(
-                                          SnackBar(
-                                            duration: Duration(seconds: 2),
-                                            content: Text(online == -1 ? AppLocalizations.of(context).onlyOnline : AppLocalizations.of(context).failedToConnectToServer),
-                                            action: SnackBarAction(
-                                              label: AppLocalizations.of(context).ok,
-                                              onPressed: () {},
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                    });
-                                  }  else if (group.status == 'blocked') {
-                                    setState(() => Messageboard.confirmBolckedGroup(group.name));
-                                  }
-                                }
-                              ) : Container(),
-                            ],
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-            );
-          }
-        }
-      )
-    );
+                );
+              }
+            }));
   }
 }
 
 /// Shows the feed (All posts for the following groups sortet by data)
-/// 
+///
 /// The list adds step by step the posts when scrlled to the end of it.
 class FeedPage extends StatefulWidget {
-  FeedPage({Key key})
-      : super(key: key);
+  FeedPage({Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -340,7 +455,9 @@ class FeedView extends State<FeedPage> {
     // Select the correct tab
     _scrollController = ScrollController();
     _scrollController.addListener(() {
-      if (_scrollController.offset >= _scrollController.position.maxScrollExtent && !_scrollController.position.outOfRange) {
+      if (_scrollController.offset >=
+          _scrollController.position.maxScrollExtent &&
+          !_scrollController.position.outOfRange) {
         loadNewPosts();
       }
     });
@@ -348,25 +465,30 @@ class FeedView extends State<FeedPage> {
     isUpdating = Messageboard.status == 'updating';
 
     Messageboard.statusListener = (String status) {
-      if (status == 'updating') setState(() => isUpdating = true);
-      else if (status == 'updated') setState(() {
-        isUpdating = false;
-        _scrollController.animateTo(0, duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
-        posts = Messageboard.feed.posts;
-        Fluttertoast.showToast(
-          msg: AppLocalizations.of(context).feedUpdated,
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM, // also possible "TOP" and "CENTER"
-          backgroundColor: Colors.black87,
-          textColor: Colors.white
-        );
-      });
+      if (status == 'updating')
+        setState(() => isUpdating = true);
+      else if (status == 'updated')
+        setState(() {
+          isUpdating = false;
+          _scrollController.animateTo(0,
+              duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
+          posts = Messageboard.feed.posts;
+          Fluttertoast.showToast(
+              msg: AppLocalizations
+                  .of(context)
+                  .feedUpdated,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              // also possible "TOP" and "CENTER"
+              backgroundColor: Colors.black87,
+              textColor: Colors.white);
+        });
     };
 
     super.initState();
   }
 
-  void loadNewPosts(){
+  void loadNewPosts() {
     if (!Messageboard.feed.loadComplete && !isAdding) {
       setState(() => isAdding = true);
       Messageboard.feed.loadNew().then((_) {
@@ -378,83 +500,100 @@ class FeedView extends State<FeedPage> {
     }
   }
 
-  @override void dispose() {
+  @override
+  void dispose() {
     Messageboard.statusListener = null;
     super.dispose();
   }
 
   get feedGroups {
-    return Messageboard.following.where((group) => group.status == 'activated').toList();
+    return Messageboard.following
+        .where((group) => group.status == 'activated')
+        .toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> items = (Messageboard.feed.posts.length == 0) ?
-        <Widget>[
-          !isUpdating ?
-          Center(
-              child: (feedGroups.length == 0) ?
-                Text(AppLocalizations.of(context).noGroups) :
-                Text(AppLocalizations.of(context).noPosts)
-          ) :
-          Center(
-            child: SizedBox(
-                child: CircularProgressIndicator(strokeWidth: 2.0),
-                height: 20.0,
-                width: 20.0,
-              )
-          ),
-        ]
-        :
-        (
-          <Widget>[]..addAll(posts.map((post) {
+    List<Widget> items = (Messageboard.feed.posts.length == 0)
+        ? <Widget>[
+      !isUpdating
+          ? Center(
+          child: (feedGroups.length == 0)
+              ? Text(AppLocalizations
+              .of(context)
+              .noGroups)
+              : Text(AppLocalizations
+              .of(context)
+              .noPosts))
+          : Center(
+          child: SizedBox(
+            child: CircularProgressIndicator(strokeWidth: 2.0),
+            height: 20.0,
+            width: 20.0,
+          )),
+    ]
+        : (<Widget>[]
+      ..addAll(posts.map((post) {
             return GestureDetector(
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => PostPage(post: post))),
-              child: Hero(
-                tag: 'hero-' + post.id, 
-                child: PostCard(post: post)
-              )
-            );
-          }).toList())..add(
-          Center(
-            child: (!Messageboard.feed.loadComplete) ?
-            ( !isAdding ? 
-              FlatButton(child: Icon(Icons.update, color: Theme.of(context).accentColor), onPressed: loadNewPosts) : 
-              SizedBox(
-                child: (isAdding) ? CircularProgressIndicator(strokeWidth: 2.0) : FlatButton(child: Icon(Icons.update, color: Theme.of(context).accentColor), onPressed: loadNewPosts),
-                height: 20.0,
-                width: 20.0,
-              )
-            )
-                :
-              Text(AppLocalizations.of(context).noPostsAnymore),
-          ),
-        )..insert(0, 
-          Center(
-            child: (isUpdating) ?
-              SizedBox(
-                child: CircularProgressIndicator(strokeWidth: 2.0),
-                height: 20.0,
-                width: 20.0,
-              ) :
-              Container(),
-          ),
-        )
-      );
-    return Container(
-      child: ListView.builder(
-        controller: _scrollController,
-        padding: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 70),
-        shrinkWrap: true,
-        itemCount: items.length,
-        itemBuilder: (context, index) => items[index],
+                onTap: () =>
+                    Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (_) => PostPage(post: post))),
+                child:
+                Hero(tag: 'hero-' + post.id, child: PostCard(post: post)));
+      }).toList())
+      ..add(
+        Center(
+          child: (!Messageboard.feed.loadComplete)
+              ? (!isAdding
+              ? FlatButton(
+              child: Icon(Icons.update,
+                  color: Theme
+                      .of(context)
+                      .accentColor),
+              onPressed: loadNewPosts)
+              : SizedBox(
+            child: (isAdding)
+                ? CircularProgressIndicator(strokeWidth: 2.0)
+                : FlatButton(
+                child: Icon(Icons.update,
+                    color: Theme
+                        .of(context)
+                        .accentColor),
+                onPressed: loadNewPosts),
+            height: 20.0,
+            width: 20.0,
+          ))
+              : Text(AppLocalizations
+              .of(context)
+              .noPostsAnymore),
+        ),
       )
-    );
+      ..insert(
+        0,
+        Center(
+          child: (isUpdating)
+              ? SizedBox(
+            child: CircularProgressIndicator(strokeWidth: 2.0),
+            height: 20.0,
+            width: 20.0,
+          )
+              : Container(),
+        ),
+      ));
+    return Container(
+        child: ListView.builder(
+          controller: _scrollController,
+          padding: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 70),
+          shrinkWrap: true,
+          itemCount: items.length,
+          itemBuilder: (context, index) => items[index],
+        ));
   }
 }
 
 /// Shows a card for one post
-/// 
+///
 /// The card hast a title, text, username and time
 class PostCard extends StatefulWidget {
   /// Sets the post for the card
@@ -464,8 +603,7 @@ class PostCard extends StatefulWidget {
   /// (Default sets to true)
   final bool shortVersion;
 
-  PostCard({Key key, this.post, this.shortVersion = true})
-      : super(key: key);
+  PostCard({Key key, this.post, this.shortVersion = true}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -474,11 +612,11 @@ class PostCard extends StatefulWidget {
 }
 
 class PostCardView extends State<PostCard> {
-
   @override
   Widget build(BuildContext context) {
     String text = widget.post.text;
-    if (widget.shortVersion && text.length > 200) text = text.substring(0, 200) + '...';
+    if (widget.shortVersion && text.length > 200)
+      text = text.substring(0, 200) + '...';
     return Container(
       margin: EdgeInsets.all(10.0),
       child: Card(
@@ -486,33 +624,39 @@ class PostCardView extends State<PostCard> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             ListTile(
-                title: Text(widget.post.title),
-                subtitle: Text(text),
-              ),
+              title: Text(widget.post.title),
+              subtitle: Text(text),
+            ),
             Padding(
               padding: EdgeInsets.only(left: 15, right: 10, bottom: 3),
               child: LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
-                  return Row(
-                    children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          Container(
-                            width: constraints.maxWidth * 0.60,
-                            child: Text(widget.post.username, style: TextStyle(fontSize: 14, color: Theme.of(context).accentColor)),
-                          )
-                        ],
-                      ),
-                      Column(
-                        children: <Widget>[
-                          Container(
-                            width: constraints.maxWidth * 0.40,
-                            child: Text(widget.post.dateString, style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.end),
-                          )
-                        ],
-                      ),
-                    ]
-                  );
+                  return Row(children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        Container(
+                          width: constraints.maxWidth * 0.60,
+                          child: Text(widget.post.username,
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: Theme
+                                      .of(context)
+                                      .accentColor)),
+                        )
+                      ],
+                    ),
+                    Column(
+                      children: <Widget>[
+                        Container(
+                          width: constraints.maxWidth * 0.40,
+                          child: Text(widget.post.dateString,
+                              style: TextStyle(
+                                  fontSize: 14, color: Colors.black54),
+                              textAlign: TextAlign.end),
+                        )
+                      ],
+                    ),
+                  ]);
                 },
               ),
             ),
@@ -646,12 +790,11 @@ class _GradeFabState extends State<GradeFab>
   Widget toggle() {
     return Container(
       child: FloatingActionButton(
-        heroTag: 'main',
-        backgroundColor: _buttonColor.value,
-        onPressed: () => animate(),
-        tooltip: 'Grade',
-        child: Icon(Icons.add, color: Colors.white)
-      ),
+          heroTag: 'main',
+          backgroundColor: _buttonColor.value,
+          onPressed: () => animate(),
+          tooltip: 'Grade',
+          child: Icon(Icons.add, color: Colors.white)),
     );
   }
 
@@ -660,36 +803,33 @@ class _GradeFabState extends State<GradeFab>
     if (sharedPreferences == null ||
         _translateButton == null ||
         _buttonColor == null) return Container();
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        Transform(
-          transform: Matrix4.translationValues(
-            0.0,
-            _translateButton.value * 2,
-            0.0,
-          ),
-          child: addGroup(),
+    return Column(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+      Transform(
+        transform: Matrix4.translationValues(
+          0.0,
+          _translateButton.value * 2,
+          0.0,
         ),
-        Transform(
-          transform: Matrix4.translationValues(
-            0.0,
-            _translateButton.value,
-            0.0,
-          ),
-          child: writePost(),
+        child: addGroup(),
+      ),
+      Transform(
+        transform: Matrix4.translationValues(
+          0.0,
+          _translateButton.value,
+          0.0,
         ),
-        toggle(),
-      ]
-    );
+        child: writePost(),
+      ),
+      toggle(),
+    ]);
   }
 }
 
 /// This is the Page for one group.
-/// 
+///
 /// Only in this view the user can sign in to the group.
-/// 
-/// When the user is logged in, he has the options to edit/delete the group and write a post for it 
+///
+/// When the user is logged in, he has the options to edit/delete the group and write a post for it
 class GroupPage extends StatefulWidget {
   final Group group;
 
@@ -737,10 +877,19 @@ class GroupView extends State<GroupPage> {
 
   /// An App bar item was selected
   /// This is only possible if the user is logged in int the current group
-  void _selectedItem(String action){
-    if (action == AppLocalizations.of(context).addPost) writePost();
-    else if (action == AppLocalizations.of(context).editGroupInfo) editGroupInfo();
-    else if (action == AppLocalizations.of(context).editGroupPassword) editGroupPassword();
+  void _selectedItem(String action) {
+    if (action == AppLocalizations
+        .of(context)
+        .addPost)
+      writePost();
+    else if (action == AppLocalizations
+        .of(context)
+        .editGroupInfo)
+      editGroupInfo();
+    else if (action == AppLocalizations
+        .of(context)
+        .editGroupPassword)
+      editGroupPassword();
     else if (action == AppLocalizations.of(context).removeGroup) deleteGroup();
   }
 
@@ -748,24 +897,31 @@ class GroupView extends State<GroupPage> {
   void checkEditPassword() async {
     String group = widget.group.name;
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    _passwordsAreEqual = newPasswordController.text == repeatNewPasswordController.text;
-    String _password = sha256.convert(utf8.encode(currentPasswordController.text)).toString();
-    _credentialsCorrect = await api.checkLogin(username: group, password: _password);
+    _passwordsAreEqual =
+        newPasswordController.text == repeatNewPasswordController.text;
+    String _password =
+    sha256.convert(utf8.encode(currentPasswordController.text)).toString();
+    _credentialsCorrect =
+    await api.checkLogin(username: group, password: _password);
     if (_formKey.currentState.validate()) {
       // Save correct credentials
-      String _newPassword = sha256.convert(utf8.encode(newPasswordController.text)).toString();
-      widget.group.update(sharedPreferences, newPassword: _newPassword).then((updated) {
+      String _newPassword =
+      sha256.convert(utf8.encode(newPasswordController.text)).toString();
+      widget.group
+          .update(sharedPreferences, newPassword: _newPassword)
+          .then((updated) {
         if (!updated) {
           Fluttertoast.showToast(
-            msg: AppLocalizations.of(context).errorEditGroup,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM, // also possible "TOP" and "CENTER"
-            backgroundColor: Colors.black87,
-            textColor: Colors.white
-          );
+              msg: AppLocalizations
+                  .of(context)
+                  .errorEditGroup,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              // also possible "TOP" and "CENTER"
+              backgroundColor: Colors.black87,
+              textColor: Colors.white);
           Navigator.of(context).pop();
-        }
-        else {
+        } else {
           Navigator.of(context).pop();
         }
       });
@@ -790,86 +946,98 @@ class GroupView extends State<GroupPage> {
           title: Text(AppLocalizations.of(context).editGroupPassword),
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.only(left: 10, right: 10),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: <Widget>[
-                    // Pin input
-                    TextFormField(
-                      controller: currentPasswordController,
-                      validator: (value) {
-                        if (!_credentialsCorrect) {
-                          return AppLocalizations.of(context)
-                              .passwordNotCorrect;
-                        }
-                      },
-                      decoration: InputDecoration(
-                          hintText:
-                              AppLocalizations.of(context).currentPassword),
-                      onFieldSubmitted: (value) {
-                        FocusScope.of(context).requestFocus(_newPasswordFocus);
-                      },
-                      obscureText: true,
-                    ),
-                    TextFormField(
-                      controller: newPasswordController,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return AppLocalizations.of(context)
-                              .fieldCantBeEmpty;
-                        }
-                      },
-                      decoration: InputDecoration(
-                          hintText:
-                              AppLocalizations.of(context).newPassword),
-                      onFieldSubmitted: (value) {
-                        FocusScope.of(context).requestFocus(_repeatNewPasswordFocus);
-                      },
-                      obscureText: true,
-                      focusNode: _newPasswordFocus,
-                    ),
-                    TextFormField(
-                      controller: repeatNewPasswordController,
-                      validator: (value) {
-                        if (!_passwordsAreEqual) {
-                          return AppLocalizations.of(context)
-                              .passwordNotEqual;
-                        }
-                      },
-                      decoration: InputDecoration(
-                          hintText:
-                              AppLocalizations.of(context).repeatNewPassword),
-                      onFieldSubmitted: (value) {
-                        checkEditPassword();
-                      },
-                      obscureText: true,
-                      focusNode: _repeatNewPasswordFocus,
-                    ),
-                    // Login button
-                    Container(
-                      margin: EdgeInsets.only(top: 20.0),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: RaisedButton(
-                          color: Theme.of(context).accentColor,
-                          onPressed: () {
-                            checkEditPassword();
-                          },
-                          child: Text(AppLocalizations.of(context).login),
+                padding: EdgeInsets.only(left: 10, right: 10),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      // Pin input
+                      TextFormField(
+                        controller: currentPasswordController,
+                        validator: (value) {
+                          if (!_credentialsCorrect) {
+                            return AppLocalizations
+                                .of(context)
+                                .passwordNotCorrect;
+                          }
+                        },
+                        decoration: InputDecoration(
+                            hintText:
+                            AppLocalizations
+                                .of(context)
+                                .currentPassword),
+                        onFieldSubmitted: (value) {
+                          FocusScope.of(context)
+                              .requestFocus(_newPasswordFocus);
+                        },
+                        obscureText: true,
+                      ),
+                      TextFormField(
+                        controller: newPasswordController,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return AppLocalizations
+                                .of(context)
+                                .fieldCantBeEmpty;
+                          }
+                        },
+                        decoration: InputDecoration(
+                            hintText: AppLocalizations
+                                .of(context)
+                                .newPassword),
+                        onFieldSubmitted: (value) {
+                          FocusScope.of(context)
+                              .requestFocus(_repeatNewPasswordFocus);
+                        },
+                        obscureText: true,
+                        focusNode: _newPasswordFocus,
+                      ),
+                      TextFormField(
+                        controller: repeatNewPasswordController,
+                        validator: (value) {
+                          if (!_passwordsAreEqual) {
+                            return AppLocalizations
+                                .of(context)
+                                .passwordNotEqual;
+                          }
+                        },
+                        decoration: InputDecoration(
+                            hintText:
+                            AppLocalizations
+                                .of(context)
+                                .repeatNewPassword),
+                        onFieldSubmitted: (value) {
+                          checkEditPassword();
+                        },
+                        obscureText: true,
+                        focusNode: _repeatNewPasswordFocus,
+                      ),
+                      // Login button
+                      Container(
+                        margin: EdgeInsets.only(top: 20.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: RaisedButton(
+                            color: Theme
+                                .of(context)
+                                .accentColor,
+                            onPressed: () {
+                              checkEditPassword();
+                            },
+                            child: Text(AppLocalizations
+                                .of(context)
+                                .login),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              )
-            )
+                    ],
+                  ),
+                ))
           ],
         );
       },
     );
   }
-
 
   /// Edit group info
   void editGroupInfo() {
@@ -886,38 +1054,43 @@ class GroupView extends State<GroupPage> {
             title: Text(AppLocalizations.of(context).editGroupInfo),
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.only(left: 10, right: 10),
-                child: TextField(
-                  controller: editingController,
-                  maxLines: 10,
-                  maxLength: 400,
-                )
-              ),
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  child: TextField(
+                    controller: editingController,
+                    maxLines: 10,
+                    maxLength: 400,
+                  )),
               Padding(
-                padding: EdgeInsets.only(left: 10, right: 10),
-                child: FlatButton(
-                  child: Text(AppLocalizations.of(context).ok),
-                  onPressed: () {
-                    if (editingController.text != widget.group.info) {
-                      widget.group.update(sharedPreferences, newInfo: editingController.text).then((updated) {
-                        if (!updated) {
-                          Fluttertoast.showToast(
-                            msg: AppLocalizations.of(context).errorEditGroup,
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM, // also possible "TOP" and "CENTER"
-                            backgroundColor: Colors.black87,
-                            textColor: Colors.white
-                          );
-                          Navigator.of(context).pop();
-                        }
-                        else {
-                          Navigator.of(context).pop();
-                        }
-                      });
-                    }
-                  },
-                )
-              )
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  child: FlatButton(
+                    child: Text(AppLocalizations
+                        .of(context)
+                        .ok),
+                    onPressed: () {
+                      if (editingController.text != widget.group.info) {
+                        widget.group
+                            .update(sharedPreferences,
+                            newInfo: editingController.text)
+                            .then((updated) {
+                          if (!updated) {
+                            Fluttertoast.showToast(
+                                msg:
+                                AppLocalizations
+                                    .of(context)
+                                    .errorEditGroup,
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                // also possible "TOP" and "CENTER"
+                                backgroundColor: Colors.black87,
+                                textColor: Colors.white);
+                            Navigator.of(context).pop();
+                          } else {
+                            Navigator.of(context).pop();
+                          }
+                        });
+                      }
+                    },
+                  ))
             ],
           );
         },
@@ -932,25 +1105,30 @@ class GroupView extends State<GroupPage> {
       getCorrectPassword((String password) {
         // Remove group...
         Messageboard.removeGroup(widget.group, password,
-          onRemoved: () {
-            Fluttertoast.showToast(
-                msg: AppLocalizations.of(context).removedGroup.replaceAll('%s', widget.group.name),
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM, // also possible "TOP" and "CENTER"
-                backgroundColor: Colors.black87,
-                textColor: Colors.white
-            );
-            Navigator.of(context).pop();
-          },
-          onFailed: () => print("Failed to remove group!")
-        );
+            onRemoved: () {
+              Fluttertoast.showToast(
+                  msg: AppLocalizations
+                      .of(context)
+                      .removedGroup
+                      .replaceAll('%s', widget.group.name),
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  // also possible "TOP" and "CENTER"
+                  backgroundColor: Colors.black87,
+                  textColor: Colors.white);
+              Navigator.of(context).pop();
+            },
+            onFailed: () => print("Failed to remove group!"));
       });
     });
   }
 
   /// Gets the correct group password
   void getCorrectPassword(Function(String password) finished) async {
-    bool correctLogin = await api.checkLogin(username: widget.group.name, password: sharedPreferences.getString(Keys.groupEditPassword(widget.group.name)));
+    bool correctLogin = await api.checkLogin(
+        username: widget.group.name,
+        password: sharedPreferences
+            .getString(Keys.groupEditPassword(widget.group.name)));
     if (!correctLogin) {
       showDialog<String>(
         context: context,
@@ -959,19 +1137,23 @@ class GroupView extends State<GroupPage> {
           return SimpleDialog(
             title: Text(AppLocalizations.of(context).passwordChanged),
             children: <Widget>[
-              LoginDialog(group: widget.group.name, onFinished: () {
-                finished(sharedPreferences.getString(Keys.groupEditPassword(widget.group.name)));
-              }),
+              LoginDialog(
+                  group: widget.group.name,
+                  onFinished: () {
+                    finished(sharedPreferences
+                        .getString(Keys.groupEditPassword(widget.group.name)));
+                  }),
             ],
           );
         },
       );
-    }
-    else finished(sharedPreferences.getString(Keys.groupEditPassword(widget.group.name)));
+    } else
+      finished(sharedPreferences
+          .getString(Keys.groupEditPassword(widget.group.name)));
   }
 
   /// Asks user if he really wants to delete the group
-  void confirmDeleteGroup(Function() onDeleteGroup){
+  void confirmDeleteGroup(Function() onDeleteGroup) {
     showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -1006,10 +1188,14 @@ class GroupView extends State<GroupPage> {
   }
 
   /// Write a new post...
-  void writePost(){
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => WritePostPage(group: widget.group.name, onFinished: () {
-      setState(() => null);
-    })));
+  void writePost() {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) =>
+            WritePostPage(
+                group: widget.group.name,
+                onFinished: () {
+                  setState(() => null);
+                })));
   }
 
   @override
@@ -1022,160 +1208,306 @@ class GroupView extends State<GroupPage> {
     };
 
     Group group = widget.group;
-    if (group.status == 'waiting') appBarIcons.remove(AppLocalizations.of(context).addPost);
+    if (group.status == 'waiting')
+      appBarIcons.remove(AppLocalizations
+          .of(context)
+          .addPost);
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: Text(AppLocalizations.of(context).groupInfo), actions: <Widget>[
-        Messageboard.loggedIn.map((group) => group.name).contains(group.name) && group.status != 'blocked' ?
-          PopupMenuButton<String>(
-            onSelected: _selectedItem,
-            itemBuilder: (BuildContext context) {
-              return appBarIcons.keys.map((String name) => PopupMenuItem<String>(
-                value: name,
-                child: Text(name),
-              )).toList();
-            },
-          ) : Container(),
-        ]
-      ),
+      appBar: AppBar(
+          title: Text(AppLocalizations
+              .of(context)
+              .groupInfo),
+          actions: <Widget>[
+            Messageboard.loggedIn
+                .map((group) => group.name)
+                .contains(group.name) &&
+                group.status != 'blocked'
+                ? PopupMenuButton<String>(
+              onSelected: _selectedItem,
+              itemBuilder: (BuildContext context) {
+                return appBarIcons.keys
+                    .map((String name) =>
+                    PopupMenuItem<String>(
+                      value: name,
+                      child: Text(name),
+                    ))
+                    .toList();
+              },
+            )
+                : Container(),
+          ]),
       body: Builder(
-        builder: (BuildContext context1) => ListView(
-          controller: _scrollController,
-          shrinkWrap: true,
-          children: <Widget>[ 
-            Container(
-              color: Colors.white,
-              padding: EdgeInsets.all(10.0),
-              alignment: Alignment.topLeft,
-              child: Hero(
-                tag: 'hero-' + group.name,
-                child: Card(
-                  child: Column(
-                    children: <Widget>[
-                      ListTile(
-                        title: Text(group.name + (group.status != 'blocked' ? ' (${group.follower})' : AppLocalizations.of(context).blockedInfo), style: TextStyle(color: group.status != 'blocked' ? Colors.black : Colors.red)),
-                        subtitle: Text(group.info)
-                      ),
-                      ButtonTheme.bar( // make buttons use the appropriate styles for cards
-                        child: ButtonBar(
-                          children: (group.status == 'activated') ? <Widget>[
-                            FlatButton(
-                              child: Text((!Messageboard.loggedIn.map((group) => group.name).contains(group.name)) ? AppLocalizations.of(context).login : AppLocalizations.of(context).logout),
-                              onPressed: () {
-                                if (!Messageboard.loggedIn.map((group) => group.name).contains(group.name)){
-                                  showDialog<String>(
-                                    context: context,
-                                    barrierDismissible: true,
-                                    builder: (BuildContext context1) {
-                                      return SimpleDialog(
-                                        title: Text(AppLocalizations.of(context)
-                                            .login),
-                                        children: <Widget>[
-                                          LoginDialog(group: group.name, onFinished: () => setState(() => null)),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                }
-                                else setState(() => Messageboard.toogleLoginGroup(group.name, login: false));
-                              } 
-                            ),
-                            FlatButton(
-                              child: Text((!Messageboard.following.map((group) => group.name).contains(group.name)) ? AppLocalizations.of(context).follow : AppLocalizations.of(context).doNotFollow),
-                              onPressed: () {
-                                checkOnline.then((online) {
-                                  if (online == 1) setState(() {
-                                    Messageboard.setFollowGroup(group.name, follow: !Messageboard.following.map((group) => group.name).contains(group.name), notifications: Messageboard.notifications.map((group) => group.name).contains(group.name));
-                                    if (Messageboard.following.map((group) => group.name).contains(group.name)) {
-                                      group.follower++;
-                                    } else {
-                                      group.follower--;
-                                    }
-                                  });
-                                  else {
-                                    Scaffold.of(context1).showSnackBar(
-                                      SnackBar(
-                                        content: Text(online == -1 ? AppLocalizations.of(context).onlyOnline : AppLocalizations.of(context).failedToConnectToServer),
-                                        action: SnackBarAction(
-                                          label: AppLocalizations.of(context).ok,
-                                          onPressed: () {},
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                });
-                              }
-                            ),
-                            (Messageboard.following.map((group) => group.name).contains(group.name)) ?
-                            FlatButton(
-                              child: Icon((!Messageboard.notifications.map((group) => group.name).contains(group.name)) ? Icons.notifications_off : Icons.notifications_active, color: Theme.of(context).accentColor),
-                              onPressed: () {
-                                checkOnline.then((online) {
-                                  if (online == 1) setState(() => Messageboard.setFollowGroup(group.name, follow: Messageboard.following.map((group) => group.name).contains(group.name), notifications: !Messageboard.notifications.map((group) => group.name).contains(group.name)));
-                                  else {
-                                    Scaffold.of(context1).showSnackBar(
-                                      SnackBar(
-                                        content: Text(online == -1 ? AppLocalizations.of(context).onlyOnline : AppLocalizations.of(context).failedToConnectToServer),
-                                        action: SnackBarAction(
-                                          label: AppLocalizations.of(context).ok,
-                                          onPressed: () {},
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                });
-                              },
-                            ) : Container(),
-                          ] : [
-                            FlatButton(
-                              child: Text(group.status == 'waiting' ? AppLocalizations.of(context).groupWaiting : AppLocalizations.of(context).ok),
-                              onPressed: () {
-                                if (group.status == 'blocked') {
-                                  setState(() {
-                                    Messageboard.confirmBolckedGroup(group.name);
-                                    Fluttertoast.showToast(
-                                        msg: AppLocalizations.of(context).blockedAccepted,
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM, // also possible "TOP" and "CENTER"
-                                        backgroundColor: Colors.black87,
-                                        textColor: Colors.white
-                                    );
-                                    Navigator.pop(context);
-                                  });
-                                }
-                              }
-                            ) 
-                          ],
+          builder: (BuildContext context1) =>
+              ListView(
+                  controller: _scrollController,
+                  shrinkWrap: true,
+                  children: <Widget>[
+                    Container(
+                      color: Colors.white,
+                      padding: EdgeInsets.all(10.0),
+                      alignment: Alignment.topLeft,
+                      child: Hero(
+                        tag: 'hero-' + group.name,
+                        child: Card(
+                          child: Column(
+                            children: <Widget>[
+                              ListTile(
+                                  title: Text(
+                                      group.name +
+                                          (group.status != 'blocked'
+                                              ? ' (${group.follower})'
+                                              : AppLocalizations
+                                              .of(context)
+                                              .blockedInfo),
+                                      style: TextStyle(
+                                          color: group.status != 'blocked'
+                                              ? Colors.black
+                                              : Colors.red)),
+                                  subtitle: Text(group.info)),
+                              ButtonTheme.bar(
+                                // make buttons use the appropriate styles for cards
+                                child: ButtonBar(
+                                  children: (group.status == 'activated')
+                                      ? <Widget>[
+                                    FlatButton(
+                                        child: Text((!Messageboard
+                                            .loggedIn
+                                            .map(
+                                                (group) => group.name)
+                                            .contains(group.name))
+                                            ? AppLocalizations
+                                            .of(context)
+                                            .login
+                                            : AppLocalizations
+                                            .of(context)
+                                            .logout),
+                                        onPressed: () {
+                                          if (!Messageboard.loggedIn
+                                              .map((group) => group.name)
+                                              .contains(group.name)) {
+                                            showDialog<String>(
+                                              context: context,
+                                              barrierDismissible: true,
+                                              builder: (BuildContext
+                                              context1) {
+                                                return SimpleDialog(
+                                                  title: Text(
+                                                      AppLocalizations
+                                                          .of(
+                                                          context)
+                                                          .login),
+                                                  children: <Widget>[
+                                                    LoginDialog(
+                                                        group: group.name,
+                                                        onFinished: () =>
+                                                            setState(() =>
+                                                            null)),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          } else
+                                            setState(() =>
+                                                Messageboard
+                                                    .toogleLoginGroup(
+                                                    group.name,
+                                                    login: false));
+                                        }),
+                                    FlatButton(
+                                        child: Text((!Messageboard
+                                            .following
+                                            .map(
+                                                (group) => group.name)
+                                            .contains(group.name))
+                                            ? AppLocalizations
+                                            .of(context)
+                                            .follow
+                                            : AppLocalizations
+                                            .of(context)
+                                            .doNotFollow),
+                                        onPressed: () {
+                                          checkOnline.then((online) {
+                                            if (online == 1)
+                                              setState(() {
+                                                Messageboard.setFollowGroup(
+                                                    group.name,
+                                                    follow: !Messageboard
+                                                        .following
+                                                        .map((group) =>
+                                                    group.name)
+                                                        .contains(
+                                                        group.name),
+                                                    notifications: Messageboard
+                                                        .notifications
+                                                        .map((group) =>
+                                                    group.name)
+                                                        .contains(
+                                                        group.name));
+                                                if (Messageboard.following
+                                                    .map((group) =>
+                                                group.name)
+                                                    .contains(
+                                                    group.name)) {
+                                                  group.follower++;
+                                                } else {
+                                                  group.follower--;
+                                                }
+                                              });
+                                            else {
+                                              Scaffold.of(context1)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(online ==
+                                                      -1
+                                                      ? AppLocalizations
+                                                      .of(context)
+                                                      .onlyOnline
+                                                      : AppLocalizations
+                                                      .of(context)
+                                                      .failedToConnectToServer),
+                                                  action: SnackBarAction(
+                                                    label: AppLocalizations
+                                                        .of(context)
+                                                        .ok,
+                                                    onPressed: () {},
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          });
+                                        }),
+                                    (Messageboard.following
+                                        .map((group) => group.name)
+                                        .contains(group.name))
+                                        ? FlatButton(
+                                      child: Icon(
+                                          (!Messageboard
+                                              .notifications
+                                              .map((group) =>
+                                          group.name)
+                                              .contains(
+                                              group.name))
+                                              ? Icons
+                                              .notifications_off
+                                              : Icons
+                                              .notifications_active,
+                                          color: Theme
+                                              .of(context)
+                                              .accentColor),
+                                      onPressed: () {
+                                        checkOnline.then((online) {
+                                          if (online == 1)
+                                            setState(() =>
+                                                Messageboard.setFollowGroup(
+                                                    group.name,
+                                                    follow: Messageboard
+                                                        .following
+                                                        .map((group) =>
+                                                    group.name)
+                                                        .contains(
+                                                        group.name),
+                                                    notifications: !Messageboard
+                                                        .notifications
+                                                        .map((group) =>
+                                                    group.name)
+                                                        .contains(group
+                                                        .name)));
+                                          else {
+                                            Scaffold.of(context1)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(online ==
+                                                    -1
+                                                    ? AppLocalizations
+                                                    .of(
+                                                    context)
+                                                    .onlyOnline
+                                                    : AppLocalizations
+                                                    .of(
+                                                    context)
+                                                    .failedToConnectToServer),
+                                                action:
+                                                SnackBarAction(
+                                                  label: AppLocalizations
+                                                      .of(context)
+                                                      .ok,
+                                                  onPressed: () {},
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        });
+                                      },
+                                    )
+                                        : Container(),
+                                  ]
+                                      : [
+                                    FlatButton(
+                                        child: Text(group.status ==
+                                            'waiting'
+                                            ? AppLocalizations
+                                            .of(context)
+                                            .groupWaiting
+                                            : AppLocalizations
+                                            .of(context)
+                                            .ok),
+                                        onPressed: () {
+                                          if (group.status == 'blocked') {
+                                            setState(() {
+                                              Messageboard
+                                                  .confirmBolckedGroup(
+                                                  group.name);
+                                              Fluttertoast.showToast(
+                                                  msg: AppLocalizations
+                                                      .of(context)
+                                                      .blockedAccepted,
+                                                  toastLength:
+                                                  Toast.LENGTH_SHORT,
+                                                  gravity:
+                                                  ToastGravity.BOTTOM,
+                                                  // also possible "TOP" and "CENTER"
+                                                  backgroundColor:
+                                                  Colors.black87,
+                                                  textColor:
+                                                  Colors.white);
+                                              Navigator.pop(context);
+                                            });
+                                          }
+                                        })
+                                  ],
+                                ),
+                              ),
+                              group.status == 'activated'
+                                  ? Padding(
+                                  child: PostsList(
+                                      group: group,
+                                      scrollController: _scrollController),
+                                  padding: EdgeInsets.only(bottom: 20))
+                                  : Container()
+                            ],
+                          ),
                         ),
                       ),
-                      group.status == 'activated' ? Padding(child: PostsList(group: group, scrollController: _scrollController), padding: EdgeInsets.only(bottom: 20)) : Container()
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ]
-        )
-      ),
-    );  
+                    ),
+                  ])),
+    );
   }
 }
 
 /// Is a list with all posts for one group.
-/// 
-/// The list won't load all posts on one time, it's only load the next 10 posts when the user scrolled to the end of the list 
+///
+/// The list won't load all posts on one time, it's only load the next 10 posts when the user scrolled to the end of the list
 /// until it loads all posts of the group.
 class PostsList extends StatefulWidget {
-
   /// Sets the group of the shown posts
   final Group group;
 
   /// The [ScrollContainer] says when the user scrolled to the end of the list and the [PostsList] has to load the next posts
   final ScrollController scrollController;
 
-  PostsList({Key key, this.group, this.scrollController})
-      : super(key: key);
+  PostsList({Key key, this.group, this.scrollController}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -1206,91 +1538,100 @@ class PostsListView extends State<PostsList> {
     // Load the first posts...
     if (posts.length == 0) loadNewPosts();
 
-    // Select the correct tab   
-    _scrollController = widget.scrollController; 
+    // Select the correct tab
+    _scrollController = widget.scrollController;
     _scrollController.addListener(() {
-      if (_scrollController.offset >= _scrollController.position.maxScrollExtent && !_scrollController.position.outOfRange) {
+      if (_scrollController.offset >=
+          _scrollController.position.maxScrollExtent &&
+          !_scrollController.position.outOfRange) {
         loadNewPosts();
       }
     });
 
     // Start painting after the animation...
     Future.delayed(Duration(milliseconds: 500)).then((_) {
-      if (mounted) setState(() => show = true);
-      else show = true;
+      if (mounted)
+        setState(() => show = true);
+      else
+        show = true;
     });
 
     super.initState();
   }
 
-  void loadNewPosts(){
+  void loadNewPosts() {
     if (!widget.group.loadComplete && !widget.group.isAdding) {
-      if(mounted) setState(() => widget.group.isAdding = true);
-      else widget.group.isAdding = true;
+      if (mounted)
+        setState(() => widget.group.isAdding = true);
+      else
+        widget.group.isAdding = true;
       widget.group.loadNew();
     }
   }
 
   @override
-  void dispose(){
+  void dispose() {
     widget.group.addedListeners.remove(addedListener);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!mounted || !show) return Center(
-      child: SizedBox(
+    if (!mounted || !show)
+      return Center(
+          child: SizedBox(
         child: CircularProgressIndicator(strokeWidth: 2.0),
         height: 20.0,
         width: 20.0,
-      )
-    );
-    List<Widget> items = (widget.group.posts.length == 0 && !widget.group.isAdding) ?
-        [
-          Center(child: Text(AppLocalizations.of(context).noPostsInGroup)) 
-        ]
-        :
-        (
-          <Widget>[]..addAll(posts.map((post) {
+          ));
+    List<Widget> items = (widget.group.posts.length == 0 &&
+        !widget.group.isAdding)
+        ? [Center(child: Text(AppLocalizations
+        .of(context)
+        .noPostsInGroup))
+    ]
+        : (<Widget>[]
+      ..addAll(posts.map((post) {
             return GestureDetector(
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => PostPage(post: post, group: widget.group.name))),
-              child: Hero(
-                tag: 'hero-' + post.id, 
-                child: PostCard(post: post)
-              )
-            );
-          }).toList())..add(
-          Center(
-            child: (!widget.group.loadComplete) ?
-            ( !widget.group.isAdding ? 
-              FlatButton(child: Icon(Icons.update, color: Theme.of(context).accentColor), onPressed: loadNewPosts) : 
-              SizedBox(
-                child: CircularProgressIndicator(strokeWidth: 2.0),
-                height: 20.0,
-                width: 20.0,
-              )
-            )
-                :
-              Container(),
-          ),
-        )
-      );
+                onTap: () =>
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) =>
+                            PostPage(post: post, group: widget.group.name))),
+                child:
+                Hero(tag: 'hero-' + post.id, child: PostCard(post: post)));
+      }).toList())
+      ..add(
+        Center(
+          child: (!widget.group.loadComplete)
+              ? (!widget.group.isAdding
+              ? FlatButton(
+              child: Icon(Icons.update,
+                  color: Theme
+                      .of(context)
+                      .accentColor),
+              onPressed: loadNewPosts)
+              : SizedBox(
+            child: CircularProgressIndicator(strokeWidth: 2.0),
+            height: 20.0,
+            width: 20.0,
+          ))
+              : Container(),
+        ),
+      ));
     return Container(
-      child: Column(
-        children: items,
-      )
-    );
+        child: Column(
+          children: items,
+        ));
   }
 }
 
 /// Shows the post on a new page with all the options a post has
-/// 
+///
 /// If the user is logged in in the group, then there are three options.
 /// The user can visist the group page, edit the post and delete it.
-/// 
+///
 /// But if the user is not logged in, then he only can visit the group page.
-/// 
+///
 /// In Addition only in this view the user can see the whole message if the message is longer than 500 characters.
 class PostPage extends StatefulWidget {
   final Post post;
@@ -1338,9 +1679,15 @@ class PostView extends State<PostPage> {
 
   /// An App bar item was selected
   /// This is only possible if the user is logged in int the current group
-  void _selectedItem(String action){
-    if (action == AppLocalizations.of(context).group) openGroup();
-    else if (action == AppLocalizations.of(context).edit) editPost();
+  void _selectedItem(String action) {
+    if (action == AppLocalizations
+        .of(context)
+        .group)
+      openGroup();
+    else if (action == AppLocalizations
+        .of(context)
+        .edit)
+      editPost();
     else if (action == AppLocalizations.of(context).deletePost) deletePost();
   }
 
@@ -1352,12 +1699,11 @@ class PostView extends State<PostPage> {
       String text = editTextController.text;
       Navigator.pop(context);
       widget.post.update(password, title, text,
-        username: username,
-        onUpdated: () {
-          setState(() => null);
-        },
-        onFailed: () => print("Error edit post!")
-      );
+          username: username,
+          onUpdated: () {
+            setState(() => null);
+          },
+          onFailed: () => print("Error edit post!"));
     }
   }
 
@@ -1377,56 +1723,68 @@ class PostView extends State<PostPage> {
             title: Text(AppLocalizations.of(context).edit),
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.only(left: 10, right: 10),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: <Widget>[
-                      TextFormField(
-                        controller: editTitleController,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return AppLocalizations.of(context).fieldCantBeEmpty;
-                          }
-                        },
-                        decoration: InputDecoration(hintText: AppLocalizations.of(context).postTitle),
-                        onFieldSubmitted: (value) {
-                          FocusScope.of(context).requestFocus(_textFocus);
-                        },
-                        autofocus: true,
-                      ),
-                      TextFormField(
-                        maxLines: 10,
-                        controller: editTextController,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return AppLocalizations.of(context).postText;
-                          }
-                        },
-                        decoration: InputDecoration(hintText: AppLocalizations.of(context).postText),
-                        onFieldSubmitted: (value) {
-                          checkEditForm();
-                        },
-                        focusNode: _textFocus,
-                      ),
-                      // Login button
-                      Container(
-                        margin: EdgeInsets.only(top: 20.0),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: RaisedButton(
-                            color: Theme.of(context).accentColor,
-                            onPressed: () {
-                              checkEditForm();
-                            },
-                            child: Text(AppLocalizations.of(context).ok)
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: <Widget>[
+                        TextFormField(
+                          controller: editTitleController,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return AppLocalizations
+                                  .of(context)
+                                  .fieldCantBeEmpty;
+                            }
+                          },
+                          decoration: InputDecoration(
+                              hintText: AppLocalizations
+                                  .of(context)
+                                  .postTitle),
+                          onFieldSubmitted: (value) {
+                            FocusScope.of(context).requestFocus(_textFocus);
+                          },
+                          autofocus: true,
+                        ),
+                        TextFormField(
+                          maxLines: 10,
+                          controller: editTextController,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return AppLocalizations
+                                  .of(context)
+                                  .postText;
+                            }
+                          },
+                          decoration: InputDecoration(
+                              hintText: AppLocalizations
+                                  .of(context)
+                                  .postText),
+                          onFieldSubmitted: (value) {
+                            checkEditForm();
+                          },
+                          focusNode: _textFocus,
+                        ),
+                        // Login button
+                        Container(
+                          margin: EdgeInsets.only(top: 20.0),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: RaisedButton(
+                                color: Theme
+                                    .of(context)
+                                    .accentColor,
+                                onPressed: () {
+                                  checkEditForm();
+                                },
+                                child: Text(AppLocalizations
+                                    .of(context)
+                                    .ok)),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                )
-              )
+                      ],
+                    ),
+                  ))
             ],
           );
         },
@@ -1440,26 +1798,31 @@ class PostView extends State<PostPage> {
       // Check group password...
       getCorrectPassword((String password) {
         // Remove group...
-        widget.post.delete(password, username: username,
-          onDeleted: () {
-            Fluttertoast.showToast(
-                msg: AppLocalizations.of(context).removedPost,
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM, // also possible "TOP" and "CENTER"
-                backgroundColor: Colors.black87,
-                textColor: Colors.white
-            );
-            Navigator.of(context).pop();
-          },
-          onFailed: () => print("Failed to delete post!")
-        );
+        widget.post.delete(password,
+            username: username,
+            onDeleted: () {
+              Fluttertoast.showToast(
+                  msg: AppLocalizations
+                      .of(context)
+                      .removedPost,
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  // also possible "TOP" and "CENTER"
+                  backgroundColor: Colors.black87,
+                  textColor: Colors.white);
+              Navigator.of(context).pop();
+            },
+            onFailed: () => print("Failed to delete post!"));
       });
     });
   }
 
   /// Gets the correct group password
   void getCorrectPassword(Function(String password) finished) async {
-    bool correctLogin = await api.checkLogin(username: username, password: sharedPreferences.getString(Keys.groupEditPassword(username)));
+    bool correctLogin = await api.checkLogin(
+        username: username,
+        password:
+        sharedPreferences.getString(Keys.groupEditPassword(username)));
     if (!correctLogin) {
       showDialog<String>(
         context: context,
@@ -1468,19 +1831,22 @@ class PostView extends State<PostPage> {
           return SimpleDialog(
             title: Text(AppLocalizations.of(context).passwordChanged),
             children: <Widget>[
-              LoginDialog(group: username, onFinished: () {
-                finished(sharedPreferences.getString(Keys.groupEditPassword(username)));
-              }),
+              LoginDialog(
+                  group: username,
+                  onFinished: () {
+                    finished(sharedPreferences
+                        .getString(Keys.groupEditPassword(username)));
+                  }),
             ],
           );
         },
       );
-    }
-    else finished(sharedPreferences.getString(Keys.groupEditPassword(username)));
+    } else
+      finished(sharedPreferences.getString(Keys.groupEditPassword(username)));
   }
 
   /// Asks user if he really wants to delete the group
-  void confirmDeletePost(Function() onDeletePost){
+  void confirmDeletePost(Function() onDeletePost) {
     showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -1515,11 +1881,16 @@ class PostView extends State<PostPage> {
   }
 
   /// Write a new post...
-  void openGroup(){
-    if (widget.group != null) Navigator.of(context).pop();
-    else Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-      GroupPage(group: Messageboard.allGroups.where((group) => group.name == username).toList()[0]);
-    }));
+  void openGroup() {
+    if (widget.group != null)
+      Navigator.of(context).pop();
+    else
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+        GroupPage(
+            group: Messageboard.allGroups
+                .where((group) => group.name == username)
+                .toList()[0]);
+      }));
   }
 
   @override
@@ -1534,46 +1905,43 @@ class PostView extends State<PostPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(title: Text(username), actions: <Widget>[
-        Messageboard.loggedIn.map((group) => group.name).contains(username) ?
-          PopupMenuButton<String>(
-            onSelected: _selectedItem,
-            itemBuilder: (BuildContext context) {
-              return appBarIcons.keys.map((String name) => PopupMenuItem<String>(
-                value: name,
-                child: Text(name),
-              )).toList();
-            },
-          ) : IconButton(
-            icon: Icon(Icons.group),
-            tooltip: 'Group',
-            onPressed: openGroup
-          )
-        ]
-      ),
-      body: Builder(
-        builder: (BuildContext context1) => ListView(
-          controller: _scrollController,
-          shrinkWrap: true,
-          children: <Widget>[ 
-            Container(
-              color: Colors.white,
-              padding: EdgeInsets.all(10.0),
-              alignment: Alignment.topLeft,
-              child: Hero(
-                tag: 'hero-' + post.id,
-                child: PostCard(post: post, shortVersion: false)
-              ),
-            ),
-          ]
+        Messageboard.loggedIn.map((group) => group.name).contains(username)
+            ? PopupMenuButton<String>(
+          onSelected: _selectedItem,
+          itemBuilder: (BuildContext context) {
+            return appBarIcons.keys
+                .map((String name) =>
+                PopupMenuItem<String>(
+                  value: name,
+                  child: Text(name),
+                ))
+                .toList();
+          },
         )
-      ),
-    );  
+            : IconButton(
+            icon: Icon(Icons.group), tooltip: 'Group', onPressed: openGroup)
+      ]),
+      body: Builder(
+          builder: (BuildContext context1) =>
+              ListView(
+                  controller: _scrollController,
+                  shrinkWrap: true,
+                  children: <Widget>[
+                    Container(
+                      color: Colors.white,
+                      padding: EdgeInsets.all(10.0),
+                      alignment: Alignment.topLeft,
+                      child: Hero(
+                          tag: 'hero-' + post.id,
+                          child: PostCard(post: post, shortVersion: false)),
+                    ),
+                  ])),
+    );
   }
 }
 
-
 /// The user can write a new post for one of the group where he is logged in.
-/// 
+///
 /// In top of the page the user can select the group and below he can set the title and information text of the group.
 class WritePostPage extends StatefulWidget {
   /// Is called when the post is created on the api and the feed is already updated
@@ -1581,7 +1949,7 @@ class WritePostPage extends StatefulWidget {
 
   /// Only sets when the user creates a post for a specific group.
   /// This is used when a user clicked add post in the page of one group [GroupPage]
-  /// 
+  ///
   /// When the group is set the posts for this group will be reloaded, ohterwise only the feed will be reloaded.
   final String group;
 
@@ -1608,27 +1976,28 @@ class WritePostView extends State<WritePostPage> {
       String username = _group;
       String title = _titleController.text;
       String text = _textController.text;
-      Messageboard.addPost(username, title, text, updateGroup: widget.group != null,
-        onAdded: () {
-          widget.onFinished();
-          Navigator.pop(context);
-        },
-        onFailed: () {
-          showDialog<String>(
-            context: context,
-            barrierDismissible: true,
-            builder: (BuildContext context1) {
-              return SimpleDialog(
-                title: Text(AppLocalizations.of(context)
-                    .passwordChanged),
-                children: <Widget>[
-                  LoginDialog(group: username, onFinished: () => setState(() => checkForm())),
-                ],
-              );
-            },
-          );
-        }
-      );
+      Messageboard.addPost(username, title, text,
+          updateGroup: widget.group != null, onAdded: () {
+            widget.onFinished();
+            Navigator.pop(context);
+          }, onFailed: () {
+            showDialog<String>(
+              context: context,
+              barrierDismissible: true,
+              builder: (BuildContext context1) {
+                return SimpleDialog(
+                  title: Text(AppLocalizations
+                      .of(context)
+                      .passwordChanged),
+                  children: <Widget>[
+                    LoginDialog(
+                        group: username,
+                        onFinished: () => setState(() => checkForm())),
+                  ],
+                );
+              },
+            );
+          });
     }
   }
 
@@ -1649,7 +2018,8 @@ class WritePostView extends State<WritePostPage> {
       prepareLogin();
     });
 
-    Future.delayed(Duration(milliseconds: 100)).then((_) => setState(() => showWidgets = true));
+    Future.delayed(Duration(milliseconds: 100))
+        .then((_) => setState(() => showWidgets = true));
   }
 
   void prepareLogin() {
@@ -1670,107 +2040,145 @@ class WritePostView extends State<WritePostPage> {
           child: Container(
             color: Colors.white,
             margin: EdgeInsets.all(10.0),
-            child: showWidgets? Column(
+            child: showWidgets
+                ? Column(
               children: <Widget>[
                 (online != 1
                     ?
-                    // Offline information
-                    Padding(
-                        padding: EdgeInsets.only(top: 10.0),
-                        child: Center(
-                          child: Column(
-                            children: <Widget>[
-                              Text(online == -1 ? AppLocalizations.of(context).goOnlineToLogin : AppLocalizations.of(context).failedToConnectToServer),
-                              FlatButton(
-                                color: Theme.of(context).accentColor,
-                                child: Text(AppLocalizations.of(context).retry),
-                                onPressed: () async {
-                                  // Retry
-                                  prepareLogin();
-                                },
-                              )
-                            ],
+                // Offline information
+                Padding(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: Center(
+                    child: Column(
+                      children: <Widget>[
+                        Text(online == -1
+                            ? AppLocalizations
+                            .of(context)
+                            .goOnlineToLogin
+                            : AppLocalizations
+                            .of(context)
+                            .failedToConnectToServer),
+                        FlatButton(
+                          color: Theme
+                              .of(context)
+                              .accentColor,
+                          child: Text(
+                              AppLocalizations
+                                  .of(context)
+                                  .retry),
+                          onPressed: () async {
+                            // Retry
+                            prepareLogin();
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                )
+                    :
+                // Show form
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      Center(
+                          child: Text(AppLocalizations
+                              .of(context)
+                              .postGroup)),
+                      // Group selector
+                      widget.group == null
+                          ? Padding(
+                        padding: EdgeInsets.only(
+                            top: 10, bottom: 20),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              isDense: true,
+                              items: Messageboard.loggedIn
+                                  .where((group) =>
+                              group.status ==
+                                  'activated')
+                                  .map((Group group) {
+                                return DropdownMenuItem<
+                                    String>(
+                                  value: group.name,
+                                  child: Text(group.name),
+                                );
+                              }).toList(),
+                              value: _group,
+                              onChanged: (group) {
+                                setState(() {
+                                  _group = group;
+                                });
+                              },
+                            ),
                           ),
                         ),
                       )
-                    :
-                    // Show form
-                    Form(
-                        key: _formKey,
-                        child: Column(
-                          children: <Widget>[
-                            Center(child: Text(AppLocalizations.of(context).postGroup)),
-                            // Group selector
-                            widget.group == null ?
-                            Padding(
-                              padding: EdgeInsets.only(top: 10, bottom: 20),
-                              child: SizedBox(
-                                width: double.infinity,
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<String>(
-                                    isDense: true,
-                                    items: Messageboard.loggedIn.where((group) => group.status == 'activated').map((Group group) {
-                                      return DropdownMenuItem<String>(
-                                        value: group.name,
-                                        child: Text(group.name),
-                                      );
-                                    }).toList(),
-                                    value: _group,
-                                    onChanged: (group) {
-                                      setState(() {
-                                        _group = group;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ) : Container(),
-                            TextFormField(
-                              controller: _titleController,
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return AppLocalizations.of(context).fieldCantBeEmpty;
-                                }
-                              },
-                              decoration: InputDecoration(hintText: AppLocalizations.of(context).postTitle),
-                              onFieldSubmitted: (value) {
-                                FocusScope.of(context).requestFocus(_textFocus);
-                              },
-                              autofocus: true,
-                            ),
-                            TextFormField(
-                              maxLines: 10,
-                              controller: _textController,
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return AppLocalizations.of(context).fieldCantBeEmpty;
-                                }
-                              },
-                              decoration: InputDecoration(hintText: AppLocalizations.of(context).postText),
-                              onFieldSubmitted: (value) {
+                          : Container(),
+                      TextFormField(
+                        controller: _titleController,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return AppLocalizations
+                                .of(context)
+                                .fieldCantBeEmpty;
+                          }
+                        },
+                        decoration: InputDecoration(
+                            hintText: AppLocalizations
+                                .of(context)
+                                .postTitle),
+                        onFieldSubmitted: (value) {
+                          FocusScope.of(context)
+                              .requestFocus(_textFocus);
+                        },
+                        autofocus: true,
+                      ),
+                      TextFormField(
+                        maxLines: 10,
+                        controller: _textController,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return AppLocalizations
+                                .of(context)
+                                .fieldCantBeEmpty;
+                          }
+                        },
+                        decoration: InputDecoration(
+                            hintText: AppLocalizations
+                                .of(context)
+                                .postText),
+                        onFieldSubmitted: (value) {
+                          checkForm();
+                        },
+                        focusNode: _textFocus,
+                      ),
+                      // Login button
+                      Container(
+                        margin: EdgeInsets.only(top: 20.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: RaisedButton(
+                              color: Theme
+                                  .of(context)
+                                  .accentColor,
+                              onPressed: () {
                                 checkForm();
                               },
-                              focusNode: _textFocus,
-                            ),
-                            // Login button
-                            Container(
-                              margin: EdgeInsets.only(top: 20.0),
-                              child: SizedBox(
-                                width: double.infinity,
-                                child: RaisedButton(
-                                  color: Theme.of(context).accentColor,
-                                  onPressed: () {
-                                    checkForm();
-                                  },
-                                  child: Text(AppLocalizations.of(context).addPost)
-                                ),
-                              ),
-                            ),
-                          ],
+                              child: Text(
+                                  AppLocalizations
+                                      .of(context)
+                                      .addPost)),
                         ),
-                      ))
+                      ),
+                    ],
+                  ),
+                ))
               ],
-            ) : Container(),
+            )
+                : Container(),
           ),
         ),
       ),
@@ -1779,10 +2187,9 @@ class WritePostView extends State<WritePostPage> {
 }
 
 /// Page for create a new group.
-/// 
+///
 /// The user gets a information with the adding group structure (E-Mail, etc.) and has to set the title and information of the group.
 class AddGroupPage extends StatefulWidget {
-
   /// Is called when the group is created and the feed is updated
   final Function() onFinished;
 
@@ -1809,26 +2216,23 @@ class AddGroupView extends State<AddGroupPage> {
     if (_formKey.currentState.validate()) {
       // Save correct credentials
       String _username = _usernameController.text;
-      String _password = sha256.convert(utf8.encode(_passwordController.text)).toString();
+      String _password =
+      sha256.convert(utf8.encode(_passwordController.text)).toString();
       String _info = _infoController.text;
-      Messageboard.addGroup(_username, _password, _info,
-        onAdded: () {
-          widget.onFinished();
-        },
-        onFailed: (int error) {
-          if (error == -100) {
-            Fluttertoast.showToast(
+      Messageboard.addGroup(_username, _password, _info, onAdded: () {
+        widget.onFinished();
+      }, onFailed: (int error) {
+        if (error == -100) {
+          Fluttertoast.showToast(
               msg: AppLocalizations.of(context).errorAddingGroup,
               toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM, // also possible "TOP" and "CENTER"
+              gravity: ToastGravity.BOTTOM,
+              // also possible "TOP" and "CENTER"
               backgroundColor: Colors.black87,
-              textColor: Colors.white
-            );
-          }
+              textColor: Colors.white);
         }
-      );
+      });
       Navigator.pop(context);
-      
     } else {
       _passwordController.clear();
     }
@@ -1850,7 +2254,8 @@ class AddGroupView extends State<AddGroupPage> {
       prepareLogin();
     });
 
-    Future.delayed(Duration(milliseconds: 100)).then((_) => setState(() => showWidgets = true));
+    Future.delayed(Duration(milliseconds: 100))
+        .then((_) => setState(() => showWidgets = true));
   }
 
   void prepareLogin() {
@@ -1871,122 +2276,161 @@ class AddGroupView extends State<AddGroupPage> {
           child: Container(
             color: Colors.white,
             margin: EdgeInsets.all(10.0),
-            child: showWidgets? Column(
+            child: showWidgets
+                ? Column(
               children: <Widget>[
-                Center(child: Text(AppLocalizations.of(context).addGroupInfo)),
+                Center(
+                    child:
+                    Text(AppLocalizations
+                        .of(context)
+                        .addGroupInfo)),
                 (online != 1
                     ?
-                    // Offline information
-                    Padding(
-                        padding: EdgeInsets.only(top: 10.0),
-                        child: Center(
-                          child: Column(
-                            children: <Widget>[
-                              Text(online == -1 ? AppLocalizations.of(context).goOnlineToLogin : AppLocalizations.of(context).failedToConnectToServer),
-                              FlatButton(
-                                color: Theme.of(context).accentColor,
-                                child: Text(AppLocalizations.of(context).retry),
-                                onPressed: () async {
-                                  // Retry
-                                  prepareLogin();
-                                },
-                              )
-                            ],
-                          ),
-                        ),
-                      )
+                // Offline information
+                Padding(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: Center(
+                    child: Column(
+                      children: <Widget>[
+                        Text(online == -1
+                            ? AppLocalizations
+                            .of(context)
+                            .goOnlineToLogin
+                            : AppLocalizations
+                            .of(context)
+                            .failedToConnectToServer),
+                        FlatButton(
+                          color: Theme
+                              .of(context)
+                              .accentColor,
+                          child: Text(
+                              AppLocalizations
+                                  .of(context)
+                                  .retry),
+                          onPressed: () async {
+                            // Retry
+                            prepareLogin();
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                )
                     :
-                    // Show form
-                    Form(
-                        key: _formKey,
-                        child: Column(
-                          children: <Widget>[
-                            TextFormField(
-                              maxLength: 25,
-                              controller: _usernameController,
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return AppLocalizations.of(context)
-                                      .fieldCantBeEmpty;
-                                }
-                                if (value.contains('/')) {
-                                  return AppLocalizations.of(context)
-                                      .noSlash;
-                                }
-                                if (Messageboard.allGroups.map((i) => i.name.toUpperCase()).toList().contains(value.toUpperCase())) {
-                                  return AppLocalizations.of(context).groupAlreadyExist;
-                                }
-                              },
-                              decoration: InputDecoration(hintText: AppLocalizations.of(context).groupName),
-                              onFieldSubmitted: (value) {
-                                FocusScope.of(context)
-                                            .requestFocus(_passwordFocus);
-                              },
-                              autofocus: true,
-                            ),
-                            TextFormField(
-                              controller: _passwordController,
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return AppLocalizations.of(context)
-                                      .fieldCantBeEmpty;
-                                }
-                                if (value.contains('/')) {
-                                  return AppLocalizations.of(context)
-                                      .noSlash;
-                                }
-                              },
-                              decoration: InputDecoration(hintText: AppLocalizations.of(context).groupPassword),
-                              onFieldSubmitted: (value) {
-                                FocusScope.of(context)
-                                            .requestFocus(_infoFocus);
-                              },
-                              obscureText: true,
-                              focusNode: _passwordFocus,
-                            ),
+                // Show form
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                        maxLength: 25,
+                        controller: _usernameController,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return AppLocalizations
+                                .of(context)
+                                .fieldCantBeEmpty;
+                          }
+                          if (value.contains('/')) {
+                            return AppLocalizations
+                                .of(context)
+                                .noSlash;
+                          }
+                          if (Messageboard.allGroups
+                              .map((i) => i.name.toUpperCase())
+                              .toList()
+                              .contains(value.toUpperCase())) {
+                            return AppLocalizations
+                                .of(context)
+                                .groupAlreadyExist;
+                          }
+                        },
+                        decoration: InputDecoration(
+                            hintText: AppLocalizations
+                                .of(context)
+                                .groupName),
+                        onFieldSubmitted: (value) {
+                          FocusScope.of(context)
+                              .requestFocus(_passwordFocus);
+                        },
+                        autofocus: true,
+                      ),
+                      TextFormField(
+                        controller: _passwordController,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return AppLocalizations
+                                .of(context)
+                                .fieldCantBeEmpty;
+                          }
+                          if (value.contains('/')) {
+                            return AppLocalizations
+                                .of(context)
+                                .noSlash;
+                          }
+                        },
+                        decoration: InputDecoration(
+                            hintText: AppLocalizations
+                                .of(context)
+                                .groupPassword),
+                        onFieldSubmitted: (value) {
+                          FocusScope.of(context)
+                              .requestFocus(_infoFocus);
+                        },
+                        obscureText: true,
+                        focusNode: _passwordFocus,
+                      ),
 
-                            // Pin input
-                            TextFormField(
-                              maxLines: 10,
-                              maxLength: 400,
-                              controller: _infoController,
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return AppLocalizations.of(context)
-                                      .fieldCantBeEmpty;
-                                }
-                                if (value.contains('/')) {
-                                  return AppLocalizations.of(context)
-                                      .noSlash;
-                                }
-                              },
-                              decoration: InputDecoration(
-                                  hintText:
-                                      AppLocalizations.of(context).groupInfo),
-                              onFieldSubmitted: (value) {
+                      // Pin input
+                      TextFormField(
+                        maxLines: 10,
+                        maxLength: 400,
+                        controller: _infoController,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return AppLocalizations
+                                .of(context)
+                                .fieldCantBeEmpty;
+                          }
+                          if (value.contains('/')) {
+                            return AppLocalizations
+                                .of(context)
+                                .noSlash;
+                          }
+                        },
+                        decoration: InputDecoration(
+                            hintText: AppLocalizations
+                                .of(context)
+                                .groupInfo),
+                        onFieldSubmitted: (value) {
+                          checkForm();
+                        },
+                        focusNode: _infoFocus,
+                      ),
+                      // Login button
+                      Container(
+                        margin: EdgeInsets.only(top: 20.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: RaisedButton(
+                              color: Theme
+                                  .of(context)
+                                  .accentColor,
+                              onPressed: () {
                                 checkForm();
                               },
-                              focusNode: _infoFocus,
-                            ),
-                            // Login button
-                            Container(
-                              margin: EdgeInsets.only(top: 20.0),
-                              child: SizedBox(
-                                width: double.infinity,
-                                child: RaisedButton(
-                                  color: Theme.of(context).accentColor,
-                                  onPressed: () {
-                                    checkForm();
-                                  },
-                                  child: Text(AppLocalizations.of(context).addGroup)
-                                ),
-                              ),
-                            ),
-                          ],
+                              child: Text(
+                                  AppLocalizations
+                                      .of(context)
+                                      .addGroup)),
                         ),
-                      ))
+                      ),
+                    ],
+                  ),
+                ))
               ],
-            ) : Container(),
+            )
+                : Container(),
           ),
         ),
       ),
@@ -2003,6 +2447,7 @@ class LoginDialog extends StatefulWidget {
   final String group;
 
   LoginDialog({Key key, this.group, this.onFinished}) : super(key: key);
+
   @override
   LoginView createState() => LoginView();
 }
@@ -2018,10 +2463,14 @@ class LoginView extends State<LoginDialog> {
   void checkForm() async {
     String group = widget.group;
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    _credentialsCorrect = await api.checkLogin(username: group, password: sha256.convert(utf8.encode(_passwordController.text)).toString());
+    _credentialsCorrect = await api.checkLogin(
+        username: group,
+        password:
+        sha256.convert(utf8.encode(_passwordController.text)).toString());
     if (_formKey.currentState.validate()) {
       // Save correct credentials
-      String _password = sha256.convert(utf8.encode(_passwordController.text)).toString();
+      String _password =
+      sha256.convert(utf8.encode(_passwordController.text)).toString();
       Messageboard.toogleLoginGroup(group, login: true);
       sharedPreferences.setString(Keys.groupEditPassword(group), _password);
       sharedPreferences.commit();
@@ -2070,7 +2519,13 @@ class LoginView extends State<LoginDialog> {
                   child: Center(
                     child: Column(
                       children: <Widget>[
-                        Text(online == -1 ? AppLocalizations.of(context).goOnlineToLogin : AppLocalizations.of(context).failedToConnectToServer),
+                        Text(online == -1
+                            ? AppLocalizations
+                            .of(context)
+                            .goOnlineToLogin
+                            : AppLocalizations
+                            .of(context)
+                            .failedToConnectToServer),
                         FlatButton(
                           color: Theme.of(context).accentColor,
                           child: Text(AppLocalizations.of(context).retry),

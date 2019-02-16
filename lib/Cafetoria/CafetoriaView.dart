@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'DayCard/DayCardWidget.dart';
-import 'CafetoriaPage.dart';
-import 'ActionFAB/ActionFABWidget.dart';
+
 import '../Localizations.dart';
-import 'LoginDialog/LoginDialogWidget.dart';
+import 'ActionFAB/ActionFABWidget.dart';
 import 'CafetoriaData.dart';
+import 'CafetoriaPage.dart';
+import 'DayCard/DayCardWidget.dart';
+import 'LoginDialog/LoginDialogWidget.dart';
 
 class CafetoriaPageView extends CafetoriaPageState {
-  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
+  GlobalKey<RefreshIndicatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -28,15 +30,16 @@ class CafetoriaPageView extends CafetoriaPageState {
                   ),
                 )
               : RefreshIndicator(
-                key: refreshIndicatorKey,
-                onRefresh: update,
-                child: ListView(
-                  padding: EdgeInsets.only(bottom: 70, left: 10, right: 10, top: 10),
-                  shrinkWrap: true,
-                  children: data.days.map((day) => DayCard(day: day)).toList(),
-                ),
-              ),
-
+            key: refreshIndicatorKey,
+            onRefresh: update,
+            child: ListView(
+              padding: EdgeInsets.only(
+                  bottom: 70, left: 10, right: 10, top: 10),
+              shrinkWrap: true,
+              children:
+              data.days.map((day) => DayCard(day: day)).toList(),
+            ),
+          ),
           data == null
               ?
               // And disable FAB while loading

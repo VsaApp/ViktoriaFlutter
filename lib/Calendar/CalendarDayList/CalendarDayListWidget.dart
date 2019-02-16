@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../CalendarModel.dart';
+
 import '../CalendarData.dart';
+import '../CalendarModel.dart';
 
 class CalendarDayList extends StatefulWidget {
-
   CalendarDayList({Key key}) : super(key: key);
 
   @override
@@ -12,7 +12,8 @@ class CalendarDayList extends StatefulWidget {
 
 class CalendarDayListState extends State<CalendarDayList> {
   List<CalendarEvent> events;
-  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
+  GlobalKey<RefreshIndicatorState>();
 
   Future update() async {
     await download();
@@ -86,7 +87,9 @@ class CalendarDayListState extends State<CalendarDayList> {
                           children: <Widget>[
                             Container(
                               margin: EdgeInsets.only(bottom: 10),
-                              child: event.info != '' ? Text(event.info) : Container(),
+                              child: event.info != ''
+                                  ? Text(event.info)
+                                  : Container(),
                             ),
                             Text((event.start.date) +
                                 (event.start.time != ''

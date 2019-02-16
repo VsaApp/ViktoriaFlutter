@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'CalendarGridView.dart';
+
 import '../CalendarModel.dart';
+import 'CalendarGridView.dart';
 
 class CalendarGridWidget extends StatefulWidget {
   @override
@@ -9,5 +10,6 @@ class CalendarGridWidget extends StatefulWidget {
 
 abstract class CalendarGridState extends State<CalendarGridWidget> {
   List<CalendarEvent> events;
-  CalendarGridState({@required events}): super();
+
+  CalendarGridState({@required events}) : super();
 }

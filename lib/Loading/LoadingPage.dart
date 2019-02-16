@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../Calendar/CalendarData.dart' as Calendar;
 import '../Keys.dart';
+import '../Messageboard/MessageboardData.dart' as Messageboard;
 import '../ReplacementPlan/ReplacementPlanData.dart' as ReplacementPlan;
 import '../UnitPlan/UnitPlanData.dart' as UnitPlan;
 import '../WorkGroups/WorkGroupsData.dart' as WorkGroups;
-import '../Calendar/CalendarData.dart' as Calendar;
-import '../Messageboard/MessageboardData.dart' as Messageboard;
 import 'LoadingView.dart';
 
 class LoadingPage extends StatefulWidget {

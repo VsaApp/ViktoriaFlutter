@@ -1,5 +1,6 @@
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -8,7 +9,8 @@ Duration maxTime = Duration(seconds: 4);
 /// Returns 1 if api.vsa.2bad2c0.de is online, 0 if google.com is online and -1 if everthing is offline
 Future<int> get checkOnline async {
   try {
-    final result1 = await InternetAddress.lookup('api.vsa.2bad2c0.de').timeout(maxTime);
+    final result1 =
+    await InternetAddress.lookup('api.vsa.2bad2c0.de').timeout(maxTime);
     if (result1.isNotEmpty && result1[0].rawAddress.isNotEmpty) {
       return 1;
     }
@@ -48,7 +50,8 @@ Future<String> fetchData(String url) async {
 
 Future<String> post(String url, {dynamic body}) async {
   HttpClient httpClient = HttpClient();
-  HttpClientRequest request = await httpClient.postUrl(Uri.parse(url)).timeout(maxTime);
+  HttpClientRequest request =
+  await httpClient.postUrl(Uri.parse(url)).timeout(maxTime);
   request.headers.set('content-type', 'application/json');
   request.add(utf8.encode(json.encode(body)));
   HttpClientResponse response = await request.close().timeout(maxTime);

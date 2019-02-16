@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'LoginDialogWidget.dart';
-import '../../Localizations.dart';
+
 import '../../Keys.dart';
+import '../../Localizations.dart';
 import '../CafetoriaData.dart';
+import 'LoginDialogWidget.dart';
 
 class LoginDialogView extends LoginDialogState {
   final formKey = GlobalKey<FormState>();
@@ -15,11 +16,13 @@ class LoginDialogView extends LoginDialogState {
   // Check the login
   void checkForm() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    credentialsCorrect = await checkLogin(id: idController.text, password: passwordController.text);
+    credentialsCorrect = await checkLogin(
+        id: idController.text, password: passwordController.text);
     if (formKey.currentState.validate()) {
       // Save correct credentials
       sharedPreferences.setString(Keys.cafetoriaId, idController.text);
-      sharedPreferences.setString(Keys.cafetoriaPassword, passwordController.text);
+      sharedPreferences.setString(
+          Keys.cafetoriaPassword, passwordController.text);
       sharedPreferences.commit();
       Navigator.pop(context);
       // Update UI
@@ -50,7 +53,13 @@ class LoginDialogView extends LoginDialogState {
                   child: Center(
                     child: Column(
                       children: <Widget>[
-                        Text(online == -1 ? AppLocalizations.of(context).goOnlineToLogin : AppLocalizations.of(context).failedToConnectToServer),
+                        Text(online == -1
+                            ? AppLocalizations
+                            .of(context)
+                            .goOnlineToLogin
+                            : AppLocalizations
+                            .of(context)
+                            .failedToConnectToServer),
                         FlatButton(
                           color: Theme.of(context).accentColor,
                           child: Text(AppLocalizations.of(context).retry),
@@ -83,8 +92,9 @@ class LoginDialogView extends LoginDialogState {
                           }
                         },
                         decoration: InputDecoration(
-                            hintText:
-                                AppLocalizations.of(context).cafetoriaId),
+                            hintText: AppLocalizations
+                                .of(context)
+                                .cafetoriaId),
                         onFieldSubmitted: (value) {
                           FocusScope.of(context).requestFocus(focus);
                         },

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'CourseEditWidget.dart';
+
 import '../../Keys.dart';
-import '../../Rooms.dart';
 import '../../Localizations.dart';
+import '../../Rooms.dart';
 import '../../Tags.dart';
+import 'CourseEditWidget.dart';
 
 class CourseEditView extends CourseEditState {
   @override
@@ -12,8 +13,7 @@ class CourseEditView extends CourseEditState {
       return Container();
     }
     return SimpleDialog(
-      title: Text(
-          widget.subject.lesson + ' ' + widget.subject.teacher),
+      title: Text(widget.subject.lesson + ' ' + widget.subject.teacher),
       children: <Widget>[
         // Writing option
         CheckboxListTile(

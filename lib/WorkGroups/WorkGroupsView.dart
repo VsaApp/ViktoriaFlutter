@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'WorkGroupsData.dart';
 import 'WorkGroupsDayList/WorkGroupsDayListWidget.dart';
 
@@ -13,5 +14,3 @@ class WorkGroupsView extends State<WorkGroupsPage> {
     return Column(children: <Widget>[WorkGroupsDayList(days: getWorkGroups())]);
   }
 }
-
-

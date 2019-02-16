@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../Keys.dart';
-import '../HomePage.dart';
+
 import './NewUnitplanDialogView.dart';
 
 class NewUnitplanDialog extends StatefulWidget {
-
-  NewUnitplanDialog({Key key})
-      : super(key: key);
+  NewUnitplanDialog({Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => NewUnitplanDialogDialogView();

@@ -1,5 +1,7 @@
 import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../Keys.dart';
 import '../Tags.dart' as Tags;
 import 'MessageboardData.dart' as data;
@@ -454,7 +456,9 @@ class Group {
   bool loadComplete = false;
   bool isAdding = false;
   bool isUpdating = false;
+
   List<Function()> addedListeners = [];
+
   List<Function()> updatedListeners = [];
 
   Group({this.name, this.password, this.info, this.status, this.follower});
@@ -541,6 +545,7 @@ class Post {
   final String date;
   final String username;
   final String id;
+
   List<Function()> updatedListeners = [];
 
   Post({this.title, this.text, this.date, this.id, this.username});

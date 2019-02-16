@@ -51,7 +51,6 @@ class CafetoriaDay {
   }
 }
 
-
 // Desribes a menu of a day...
 class CafetoriaMenu {
   final String time;

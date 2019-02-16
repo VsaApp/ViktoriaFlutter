@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'Keys.dart';
-import 'Localizations.dart';
+
 import 'Home/HomePage.dart';
-import 'Loading/LoadingPage.dart';
-import 'Login/LoginPage.dart';
 import 'Intro/IntroPage.dart';
+import 'Keys.dart';
+import 'Loading/LoadingPage.dart';
+import 'Localizations.dart';
+import 'Login/LoginPage.dart';
 
 // This is the first functions which is called in the app...
 void main() async {

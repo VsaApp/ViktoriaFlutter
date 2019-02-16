@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onesignal/onesignal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+
+import './NewUnitplanDialog/NewUnitplanDialogModel.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
 import '../Messageboard/MessageboardModel.dart';
-import './NewUnitplanDialog/NewUnitplanDialogModel.dart';
-import '../UnitPlan/UnitPlanData.dart' as unitplan;
-import '../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
 import '../Messageboard/MessageboardModel.dart' as messageboard;
-import 'HomeView.dart';
+import '../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
 import '../Tags.dart';
+import '../UnitPlan/UnitPlanData.dart' as unitplan;
+import 'HomeView.dart';
 
 // Define drawer item
 class DrawerItem {
@@ -47,6 +48,7 @@ abstract class HomePageState extends State<HomePage> {
   int logoClickCount = 0;
   static const platform = const MethodChannel('viktoriaflutter');
   static Function(String action, String type, String group) messageBoardUpdated;
+
   static List<Function()> replacementplanUpdatedListeners = [];
 
   @override
@@ -54,7 +56,7 @@ abstract class HomePageState extends State<HomePage> {
     loadData();
     checkUntiplanData();
     SharedPreferences.getInstance().then((sharedPreferences) {
-      this.sharedPreferences = sharedPreferences; 
+      this.sharedPreferences = sharedPreferences;
       // Default follow VsaApp in messageboard...
       if (sharedPreferences.getStringList(Keys.feedGroups) == null)
         Messageboard.setFollowGroup('VsaApp');
@@ -98,14 +100,14 @@ abstract class HomePageState extends State<HomePage> {
                   textColor: Colors.white);
             }
           });
-        }
-        else if (msg['data']['type'].toString() == 'unitplan'.toString()) {
+        } else if (msg['data']['type'].toString() == 'unitplan'.toString()) {
           SharedPreferences.getInstance().then((sharedPreferences) async {
             String grade = sharedPreferences.getString(Keys.grade);
             await unitplan.download(grade, false);
             await replacementplan.load(unitplan.getUnitPlan(), false);
             if (appScaffold != null) {
-              replacementplanUpdatedListeners.forEach((replacementplanUpdated) => replacementplanUpdated());
+              replacementplanUpdatedListeners.forEach(
+                      (replacementplanUpdated) => replacementplanUpdated());
             }
             checkUntiplanData();
           });
@@ -150,17 +152,27 @@ abstract class HomePageState extends State<HomePage> {
       print("There is a new unitplan, reset old data");
       currentUnitplanDate = currentDate;
       List<String> keys = sharedPreferences.getKeys().toList();
-      List<String> keysToReset = keys.where((String key) => ((key.startsWith('room') || key.startsWith('exams') || (key.startsWith('unitPlan') && key.split('-').length > 2)))).toList();
+      List<String> keysToReset = keys
+          .where((String key) =>
+      ((key.startsWith('room') ||
+          key.startsWith('exams') ||
+          (key.startsWith('unitPlan') && key
+              .split('-')
+              .length > 2))))
+          .toList();
       keysToReset.forEach((String key) => sharedPreferences.remove(key));
       unitplanChanged = true;
 
       showDialog<String>(
-        context: context,
-        barrierDismissible: true,
-        builder: (BuildContext context1) {
-          return NewUnitplanDialog();
-        });
-      SharedPreferences.getInstance().then((SharedPreferences sharedPreferences) => sharedPreferences.setString(Keys.unitplanDate, currentUnitplanDate));
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext context1) {
+            return NewUnitplanDialog();
+          });
+      SharedPreferences.getInstance().then(
+              (SharedPreferences sharedPreferences) =>
+              sharedPreferences.setString(
+                  Keys.unitplanDate, currentUnitplanDate));
 
       syncTags();
     }

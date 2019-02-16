@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'ShortCutDialogWidget.dart';
-import '../../Localizations.dart';
+
 import '../../Keys.dart';
+import '../../Localizations.dart';
+import 'ShortCutDialogWidget.dart';
 
 class ShortCutDialogView extends ShortCutDialogState {
   @override

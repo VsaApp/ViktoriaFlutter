@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'SettingsPage.dart';
-import '../SectionWidget.dart';
-import '../Localizations.dart';
+
 import '../Keys.dart';
+import '../Localizations.dart';
+import '../SectionWidget.dart';
 import '../Tags.dart';
+import 'SettingsPage.dart';
 
 class SettingsPageView extends SettingsPageState {
   @override
@@ -119,36 +120,34 @@ class SettingsPageView extends SettingsPageState {
           Section(
             title: AppLocalizations.of(context).personalData,
             children: <Widget>[
-              
-                  // Grade selector
-                  Padding(
-                      padding: EdgeInsets.only(left: 15.0, right: 22.5),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            isDense: true,
-                            items: SettingsPageState.grades.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            value: grade,
-                            onChanged: (grade) async {
-                              setState(() {
-                                sharedPreferences.setString(Keys.grade, grade);
-                                sharedPreferences.commit().then((_) {
-                                  // Reload app
-                                  Navigator.of(context)
-                                      .pushReplacementNamed('/');
-                                });
-                              });
-                            },
-                          ),
-                        ),
-                      ),
+              // Grade selector
+              Padding(
+                padding: EdgeInsets.only(left: 15.0, right: 22.5),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      isDense: true,
+                      items: SettingsPageState.grades.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      value: grade,
+                      onChanged: (grade) async {
+                        setState(() {
+                          sharedPreferences.setString(Keys.grade, grade);
+                          sharedPreferences.commit().then((_) {
+                            // Reload app
+                            Navigator.of(context).pushReplacementNamed('/');
+                          });
+                        });
+                      },
                     ),
+                  ),
+                ),
+              ),
               // Logout button
               Container(
                 margin: EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../Keys.dart';
 import '../ReplacementPlan/ReplacementPlanModel.dart';
 
@@ -76,7 +77,8 @@ class UnitPlanDay {
     }
   }
 
-  ReplacementPlanDay getReplacementPlanDay(SharedPreferences sharedPreferences) {
+  ReplacementPlanDay getReplacementPlanDay(
+      SharedPreferences sharedPreferences) {
     String grade = sharedPreferences.getString(Keys.grade);
     List<Change> myChanges = [];
     List<Change> undefinedChanges = [];

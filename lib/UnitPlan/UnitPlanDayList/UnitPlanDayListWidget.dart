@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../UnitPlan/UnitPlanData.dart' as unitplan;
-import '../../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
-import '../../Localizations.dart';
+
 import '../../Keys.dart';
+import '../../Localizations.dart';
+import '../../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
+import '../../UnitPlan/UnitPlanData.dart' as unitplan;
 import '../UnitPlanModel.dart';
 import 'UnitPlanDayListView.dart';
 
@@ -25,7 +26,7 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
   Future update() async {
     await unitplan.download(sharedPreferences.getString(Keys.grade), false);
     await replacementplan.load(unitplan.getUnitPlan(), false);
-     setState(() => widget.days = unitplan.getUnitPlan());
+    setState(() => widget.days = unitplan.getUnitPlan());
   }
 
   @override

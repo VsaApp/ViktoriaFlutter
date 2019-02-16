@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../Localizations.dart';
 
 class ActionFab extends StatefulWidget {
@@ -158,4 +159,3 @@ class ActionFabState extends State<ActionFab>
         ]);
   }
 }
-

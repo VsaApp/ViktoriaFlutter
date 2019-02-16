@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'UnitPlanDayListWidget.dart';
+
+import '../../Courses/CourseEdit/CourseEditWidget.dart';
 import '../../Keys.dart';
 import '../../Localizations.dart';
+import '../../ReplacementPlan/ReplacementPlanRow/ReplacementPlanRowWidget.dart';
 import '../../Tags.dart';
 import '../UnitPlanModel.dart';
 import '../UnitPlanRow/UnitPlanRowWidget.dart';
-import '../../ReplacementPlan/ReplacementPlanRow/ReplacementPlanRowWidget.dart';
-import '../../Courses/CourseEdit/CourseEditWidget.dart';
+import 'UnitPlanDayListWidget.dart';
 
 class UnitPlanDayListView extends UnitPlanDayListState {
   @override
@@ -37,7 +38,8 @@ class UnitPlanDayListView extends UnitPlanDayListState {
             controller: tabController,
             // List of days
             children: widget.days.map((day) {
-              final GlobalKey<RefreshIndicatorState> refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+              final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
+              GlobalKey<RefreshIndicatorState>();
               return Container(
                 width: double.infinity,
                 height: double.infinity,
@@ -67,9 +69,12 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                 barrierDismissible: true,
                                 builder: (BuildContext context1) {
                                   return SimpleDialog(
-                                    title: Text((day.lessons.indexOf(lesson) + 1)
+                                    title: Text(
+                                        (day.lessons.indexOf(lesson) + 1)
                                             .toString() +
-                                        AppLocalizations.of(context).nUnit),
+                                            AppLocalizations
+                                                .of(context)
+                                                .nUnit),
                                     children: lesson.subjects
                                         .map((subject) {
                                           return SimpleDialogOption(
@@ -97,7 +102,8 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                                           Keys.exams(
                                                               sharedPreferences
                                                                   .getString(
-                                                                      Keys.grade),
+                                                                  Keys
+                                                                      .grade),
                                                               lesson
                                                                   .subjects[lesson
                                                                       .subjects
@@ -119,7 +125,9 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                                               .subjects
                                                               .indexOf(subject)]
                                                           .lesson !=
-                                                      AppLocalizations.of(context)
+                                                      AppLocalizations
+                                                          .of(
+                                                          context)
                                                           .freeLesson) {
                                                 // Show writing option dialog
                                                 showDialog<String>(
@@ -130,12 +138,14 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                                     return CourseEdit(
                                                       subject: lesson.subjects[
                                                           lesson.subjects
-                                                              .indexOf(subject)],
+                                                              .indexOf(
+                                                              subject)],
                                                       blocks: [
                                                         lesson
                                                             .subjects[lesson
                                                                 .subjects
-                                                                .indexOf(subject)]
+                                                            .indexOf(
+                                                            subject)]
                                                             .block
                                                       ],
                                                       onExamChange: (_) {
@@ -150,9 +160,11 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                               }
                                             },
                                             child: UnitPlanRow(
-                                                weekday: widget.days.indexOf(day),
+                                                weekday:
+                                                widget.days.indexOf(day),
                                                 subject: subject,
-                                                unit: day.lessons.indexOf(lesson),
+                                                unit:
+                                                day.lessons.indexOf(lesson),
                                                 showUnit: false),
                                           );
                                         })
@@ -235,14 +247,15 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                       padding: EdgeInsets.only(bottom: 10),
                                       child: Column(
                                         children: [
-                                          (lesson.subjects[_selected].unsures > 0
+                                          (lesson.subjects[_selected].unsures >
+                                              0
                                               ? UnitPlanRow(
                                                   weekday:
                                                       widget.days.indexOf(day),
-                                                  subject:
-                                                      lesson.subjects[_selected],
-                                                  unit:
-                                                      day.lessons.indexOf(lesson),
+                                            subject: lesson
+                                                .subjects[_selected],
+                                            unit: day.lessons
+                                                .indexOf(lesson),
                                                 )
                                               : Container())
                                         ]..addAll(

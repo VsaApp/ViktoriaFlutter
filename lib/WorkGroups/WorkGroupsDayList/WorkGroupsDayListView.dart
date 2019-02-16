@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'WorkGroupsDayListWidget.dart';
 
 class WorkGroupsDayListView extends WorkGroupsDayListState {
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -28,7 +28,8 @@ class WorkGroupsDayListView extends WorkGroupsDayListState {
             controller: tabController,
             // List of days
             children: widget.days.map((day) {
-              final GlobalKey<RefreshIndicatorState> refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+              final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
+              GlobalKey<RefreshIndicatorState>();
               return Container(
                 width: double.infinity,
                 height: double.infinity,
@@ -43,8 +44,8 @@ class WorkGroupsDayListView extends WorkGroupsDayListState {
                       return Container(
                         padding: EdgeInsets.all(10.0),
                         child: LayoutBuilder(
-                          builder:
-                              (BuildContext context, BoxConstraints constraints) {
+                          builder: (BuildContext context,
+                              BoxConstraints constraints) {
                             return Row(
                               children: <Widget>[
                                 Column(

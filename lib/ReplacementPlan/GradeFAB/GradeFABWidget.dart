@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'GradeFABView.dart';
+
 import '../../Keys.dart';
+import 'GradeFABView.dart';
 
 class GradeFab extends StatefulWidget {
   final Function(Function(String grade)) onSelectPressed;
@@ -13,7 +14,8 @@ class GradeFab extends StatefulWidget {
   GradeFabView createState() => GradeFabView();
 }
 
-abstract class GradeFabState extends State<GradeFab> with SingleTickerProviderStateMixin {
+abstract class GradeFabState extends State<GradeFab>
+    with SingleTickerProviderStateMixin {
   static List<String> grades = [
     '5a',
     '5b',
@@ -47,12 +49,13 @@ abstract class GradeFabState extends State<GradeFab> with SingleTickerProviderSt
         sharedPreferences = instance;
         grade = instance.getString(Keys.grade);
         shownGrades = (instance.getString(Keys.lastGrades) ?? '').split(':');
-        if (shownGrades.length > 0) if (shownGrades[0].length == 0) shownGrades = [];
+        if (shownGrades.length > 0) if (shownGrades[0].length == 0)
+          shownGrades = [];
       });
     });
     super.initState();
   }
-  
+
   // Update last selected grades
   void updatePrefs(String grade) {
     if (!shownGrades.contains(grade)) {
@@ -61,10 +64,12 @@ abstract class GradeFabState extends State<GradeFab> with SingleTickerProviderSt
           sharedPreferences.setString(Keys.lastGrades, grade);
           shownGrades.add(grade);
         } else if (shownGrades.length == 1) {
-          sharedPreferences.setString(Keys.lastGrades, shownGrades[0] + ':' + grade);
+          sharedPreferences.setString(
+              Keys.lastGrades, shownGrades[0] + ':' + grade);
           shownGrades.add(grade);
         } else {
-          sharedPreferences.setString(Keys.lastGrades, shownGrades[1] + ':' + grade);
+          sharedPreferences.setString(
+              Keys.lastGrades, shownGrades[1] + ':' + grade);
           shownGrades[0] = shownGrades[1];
           shownGrades[1] = grade;
         }

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'ReplacementPlanDayListWidget.dart';
+
 import '../../Localizations.dart';
+import '../../SectionWidget.dart';
 import '../ReplacementPlanRow/ReplacementPlanRowWidget.dart';
 import '../ReplacementPlanRow/ReplacementPlanUnparsedRowWidget.dart';
-import '../../SectionWidget.dart';
+import 'ReplacementPlanDayListWidget.dart';
 
 class ReplacementPlanDayListView extends ReplacementPlanDayListState {
-
   @override
   Widget build(BuildContext context) {
     if (sharedPreferences == null) {
@@ -32,7 +32,8 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
           body: TabBarView(
             controller: tabController,
             children: widget.days.map((day) {
-              final GlobalKey<RefreshIndicatorState> refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+              final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
+              GlobalKey<RefreshIndicatorState>();
               // List of replacement plan days
               return Container(
                 width: double.infinity,
@@ -89,13 +90,15 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
                                       .replacementplanLastUpdated),
                               TextSpan(
                                   text: '${day.update}',
-                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                                  style:
+                                  TextStyle(fontWeight: FontWeight.bold)),
                               TextSpan(
                                   text: AppLocalizations.of(context)
                                       .replacementplanAt),
                               TextSpan(
                                   text: '${day.time}',
-                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                                  style:
+                                  TextStyle(fontWeight: FontWeight.bold)),
                             ],
                           ),
                         ),
@@ -113,8 +116,7 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
                       ..addAll((!widget.sort)
                           ?
                           // Show all changes in a list...
-                          getUnsortedList(day)
-                              .map((change) {
+                      getUnsortedList(day).map((change) {
                               return ReplacementPlanRow(
                                   changes: getUnsortedList(day),
                                   change: change);

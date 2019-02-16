@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../Keys.dart';
 import '../Localizations.dart';
 import 'SettingsView.dart';

@@ -59,12 +59,14 @@ class AppLocalizations {
       'goOnlineToLogin': 'Du musst online sein, um dich anzumelden',
       'retry': 'Erneut versuchen',
       'oldDataIsShown': 'Alte Daten werden angezeigt, weil du offline bist',
-      'serverIsOffline': 'Alte Daten werden angezeigt, weil der Server offline ist',
+      'serverIsOffline':
+      'Alte Daten werden angezeigt, weil der Server offline ist',
       'failedToConnectToServer': 'Fehler beim verbinden zum Server',
       'ok': 'OK',
       'showShortCutDialog': 'Schnellstartdialog anzeigen',
       'initialPage': 'Startseite',
-      'showReplacementPlanForBrotherSister': 'Vertretungsplan für Geschwisterkind anzeigen',
+      'showReplacementPlanForBrotherSister':
+      'Vertretungsplan für Geschwisterkind anzeigen',
       'noChanges': 'Keine Änderungen',
       'cafetoria': 'Cafetoria',
       'cafetoriaNoMenues': 'Keine Menüs vorhanden',
@@ -98,7 +100,8 @@ class AppLocalizations {
       'addGroup': 'Gruppe erstellen',
       'groupName': 'Gruppen Name',
       'groupPassword': 'Gruppen Passwort',
-      'addGroupInfo': 'Die Gruppe kannst erstmal nur du sehen, bis sie von den App-Entwicklern bestätigt wurde. Dies könnte etwas Zeit in Anspruch nehmen.',
+      'addGroupInfo':
+      'Die Gruppe kannst erstmal nur du sehen, bis sie von den App-Entwicklern bestätigt wurde. Dies könnte etwas Zeit in Anspruch nehmen.',
       'noSlash': '\'/\' ist nicht erlaubt',
       'groupAlreadyExist': 'Name ist schon vergeben',
       'passwordNotCorrect': 'Passwort falsch',
@@ -115,7 +118,8 @@ class AppLocalizations {
       'deletePost': 'Post löschen',
       'repeatNewPassword': 'Neues Passwort wiederholen',
       'passwordNotEqual': 'Die Passwörter sind unterschiedlich!',
-      'noGroupsToShow': 'Es gibt aktuell noch keine Gruppen!\nDu kannst aber der erste sein der eine erstellt. Einfach unten rechts auf das Plus und dann auf das Gruppenzeichen klicken und schon kannst du eine Gruppe erstellen!',
+      'noGroupsToShow':
+      'Es gibt aktuell noch keine Gruppen!\nDu kannst aber der erste sein der eine erstellt. Einfach unten rechts auf das Plus und dann auf das Gruppenzeichen klicken und schon kannst du eine Gruppe erstellen!',
       'nowADeveloper': 'Du bist jetzt ein Entwickler!',
       'nowNoDeveloper': 'Du bist kein Entwickler mehr!',
       'removedPost': 'Post gelöscht!',
@@ -127,10 +131,13 @@ class AppLocalizations {
       'no': 'Nein',
       'introUnitPlanTitle': 'Stundenplan',
       'newUnitplan': 'Neuer Stundenplan',
-      'newUnitplanInfo': 'Deine Fachauswahl und deine Schriftlichkeiten wurden zurückgesetzt, da es einen neuen Stundenplan gibt!',
-      'introUnitPlanDescription': 'Ein Blick in den Stundenplan zeigt dir eine vollständige Übersicht über deinen Tag mit allen Änderungen',
+      'newUnitplanInfo':
+      'Deine Fachauswahl und deine Schriftlichkeiten wurden zurückgesetzt, da es einen neuen Stundenplan gibt!',
+      'introUnitPlanDescription':
+      'Ein Blick in den Stundenplan zeigt dir eine vollständige Übersicht über deinen Tag mit allen Änderungen',
       'introReplacementPlanTitle': 'Vertretungsplan',
-      'introReplacementPlanDescription': 'Alle Vertretungen werden auf deine Stundenplan Auswahl angepasst und für dich gefiltert'
+      'introReplacementPlanDescription':
+      'Alle Vertretungen werden auf deine Stundenplan Auswahl angepasst und für dich gefiltert'
     },
   };
 
@@ -235,7 +242,7 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]['confirmDeleteGroup'];
   }
 
-  String get removeGroup{
+  String get removeGroup {
     return _localizedValues[locale.languageCode]['removeGroup'];
   }
 
@@ -599,7 +606,8 @@ class AppLocalizations {
   }
 
   String get introReplacementPlanDescription {
-    return _localizedValues[locale.languageCode]['introReplacementPlanDescription'];
+    return _localizedValues[locale.languageCode]
+    ['introReplacementPlanDescription'];
   }
 }
 

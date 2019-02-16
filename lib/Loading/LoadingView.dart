@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'LoadingPage.dart';
 
 class LoadingPageView extends LoadingPageState {

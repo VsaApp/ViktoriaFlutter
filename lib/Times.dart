@@ -1,4 +1,3 @@
-
 // Define all times of the lessons...
 List<String> get times {
   return [

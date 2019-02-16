@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../Keys.dart';
 import '../Network.dart';
 import 'CafetoriaModel.dart';
@@ -10,8 +12,13 @@ Future<Cafetoria> download({String id, String password, bool parse}) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   // If id and password is not set, load login data from preferences...
   String url = 'https://api.vsa.2bad2c0.de/cafetoria/login/' +
-      ((id != null) ? id: sharedPreferences.getString(Keys.cafetoriaId) ?? 'null') + '/' +
-      ((password != null) ? password : sharedPreferences.getString(Keys.cafetoriaPassword) ?? 'null');
+      ((id != null)
+          ? id
+          : sharedPreferences.getString(Keys.cafetoriaId) ?? 'null') +
+      '/' +
+      ((password != null)
+          ? password
+          : sharedPreferences.getString(Keys.cafetoriaPassword) ?? 'null');
   await fetchDataAndSave(url, Keys.cafetoria, '{}');
 
   // Parse the downloaded data...
@@ -22,7 +29,11 @@ Future<Cafetoria> download({String id, String password, bool parse}) async {
 // Check the login data of the keyfob...
 Future<bool> checkLogin({String id, String password}) async {
   try {
-    String url = 'https://api.vsa.2bad2c0.de/cafetoria/login/' + id + '/' + password + '/';
+    String url = 'https://api.vsa.2bad2c0.de/cafetoria/login/' +
+        id +
+        '/' +
+        password +
+        '/';
     return json.decode(await fetchData(url))['error'] == null;
   } catch (e) {
     return false;

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../Keys.dart';
+import '../../Localizations.dart';
+import '../../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
+import '../../UnitPlan/UnitPlanData.dart' as unitplan;
+import '../../UnitPlan/UnitPlanModel.dart';
 import '../ReplacementPlanModel.dart';
 import 'ReplacementPlanDayListView.dart';
-import '../../UnitPlan/UnitPlanData.dart' as unitplan;
-import '../../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
-import '../../UnitPlan/UnitPlanModel.dart';
-import '../../Localizations.dart';
-import '../../Keys.dart';
 
 class ReplacementPlanDayList extends StatefulWidget {
   List<ReplacementPlanDay> days;
@@ -46,7 +47,7 @@ abstract class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
   Future update() async {
     await unitplan.download(sharedPreferences.getString(Keys.grade), false);
     await replacementplan.load(unitplan.getUnitPlan(), false);
-     setState(() => widget.days = ReplacementPlan.days);
+    setState(() => widget.days = ReplacementPlan.days);
   }
 
   List<Change> getUnsortedList(ReplacementPlanDay day) {

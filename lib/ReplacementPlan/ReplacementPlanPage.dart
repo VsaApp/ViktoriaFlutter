@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'ReplacementPlanView.dart';
+
 import '../Home/HomePage.dart';
+import 'ReplacementPlanView.dart';
 
 class ReplacementPlanPage extends StatefulWidget {
   @override

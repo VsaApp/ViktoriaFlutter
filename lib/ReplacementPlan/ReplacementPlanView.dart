@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+
 import '../BrotherSisterReplacementPlan/BrotherSisterReplacementPlanPage.dart';
+import '../Keys.dart';
 import '../Localizations.dart';
 import '../Network.dart';
-import '../Keys.dart';
 import '../ReplacementPlan/ReplacementPlanData.dart';
 import '../ReplacementPlan/ReplacementPlanModel.dart';
+import 'GradeFAB/GradeFABWidget.dart';
 import 'ReplacementPlanDayList/ReplacementPlanDayListWidget.dart';
 import 'ReplacementPlanPage.dart';
-import 'GradeFAB/GradeFABWidget.dart';
 
 class ReplacementPlanPageView extends ReplacementPlanPageState {
   @override
@@ -17,7 +18,11 @@ class ReplacementPlanPageView extends ReplacementPlanPageState {
     return Scaffold(
       body: Stack(children: <Widget>[
         Column(
-          children: <Widget>[ReplacementPlanDayList(days: data, sort: sharedPreferences.getBool(Keys.sortReplacementPlan))],
+          children: <Widget>[
+            ReplacementPlanDayList(
+                days: data,
+                sort: sharedPreferences.getBool(Keys.sortReplacementPlan))
+          ],
         ),
         // FAB
         Positioned(
@@ -31,15 +36,20 @@ class ReplacementPlanPageView extends ReplacementPlanPageState {
                   if (online != 1) {
                     Scaffold.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(online == -1 ? AppLocalizations.of(context).onlyOnline : AppLocalizations.of(context).serverIsOffline),
+                        content: Text(online == -1
+                            ? AppLocalizations
+                            .of(context)
+                            .onlyOnline
+                            : AppLocalizations
+                            .of(context)
+                            .serverIsOffline),
                         action: SnackBarAction(
                           label: AppLocalizations.of(context).ok,
                           onPressed: () {},
                         ),
                       ),
                     );
-                  }
-                  else {
+                  } else {
                     showDialog<String>(
                         context: context,
                         barrierDismissible: true,
@@ -47,26 +57,23 @@ class ReplacementPlanPageView extends ReplacementPlanPageState {
                           return SimpleDialog(
                             title:
                                 Text(AppLocalizations.of(context).pleaseSelect),
-                            children: ReplacementPlanPageState.grades.map((_grade) {
+                            children:
+                            ReplacementPlanPageState.grades.map((_grade) {
                               return SimpleDialogOption(
                                 onPressed: () {
                                   print(_grade);
                                   selected(_grade);
                                   Navigator.of(context).pop();
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
+                                  Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) =>
-                                          BrotherSisterReplacementPlanPage(grade: _grade)
-                                    )
-                                  );
+                                          BrotherSisterReplacementPlanPage(
+                                              grade: _grade)));
                                 },
                                 child: Text(_grade),
                               );
-                            }
-                          ).toList(),
-                        );
-                      }
-                    );
+                            }).toList(),
+                          );
+                        });
                   }
                 },
                 onSelected: (String grade) async {
@@ -74,15 +81,20 @@ class ReplacementPlanPageView extends ReplacementPlanPageState {
                   if (online != 1) {
                     Scaffold.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(online == -1 ? AppLocalizations.of(context).onlyOnline : AppLocalizations.of(context).serverIsOffline),
+                        content: Text(online == -1
+                            ? AppLocalizations
+                            .of(context)
+                            .onlyOnline
+                            : AppLocalizations
+                            .of(context)
+                            .serverIsOffline),
                         action: SnackBarAction(
                           label: AppLocalizations.of(context).ok,
                           onPressed: () {},
                         ),
                       ),
                     );
-                  }
-                  else {
+                  } else {
                     // Show replacement plan for another grade
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) =>

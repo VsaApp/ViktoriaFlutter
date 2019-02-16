@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'LoginDialogView.dart';
+
 import '../../Network.dart';
+import 'LoginDialogView.dart';
 
 class LoginDialog extends StatefulWidget {
   final Function onFinished;
-  
+
   LoginDialog({Key key, this.onFinished}) : super(key: key);
-  
+
   @override
   LoginDialogView createState() => LoginDialogView();
 }
 
 abstract class LoginDialogState extends State<LoginDialog> {
   int online = 1;
-  
+
   @override
   void initState() {
     super.initState();
@@ -29,5 +30,5 @@ abstract class LoginDialogState extends State<LoginDialog> {
         this.online = online;
       });
     });
-  }  
+  }
 }

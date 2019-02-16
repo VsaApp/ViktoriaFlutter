@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'CalendarData.dart';
-import 'CalendarModel.dart';
+
 import 'CalendarDayList/CalendarDayListWidget.dart';
 
 class CalendarPage extends StatefulWidget {
@@ -11,7 +10,6 @@ class CalendarPage extends StatefulWidget {
 class CalendarView extends State<CalendarPage> {
   @override
   Widget build(BuildContext context) {
-    
     return Column(children: <Widget>[CalendarDayList()]);
   }
 }

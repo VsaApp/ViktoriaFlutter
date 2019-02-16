@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../Keys.dart';
 import '../Localizations.dart';
 import '../UnitPlan/UnitPlanData.dart' as UnitPlan;
@@ -8,7 +9,6 @@ import 'CourseEdit/CourseEditWidget.dart';
 import 'CoursesPage.dart';
 
 class CoursesPageView extends CoursesPageState {
-
   @override
   Widget build(BuildContext context) {
     if (sharedPreferences == null) {
@@ -46,24 +46,29 @@ class CoursesPageView extends CoursesPageState {
     });
 
     return RefreshIndicator(
-      onRefresh: update,
-      key: refreshIndicatorKey,
-      child: ListView(
-        shrinkWrap: true,
-        children: (courses.keys.toList().length > 0)
-            ?
+        onRefresh: update,
+        key: refreshIndicatorKey,
+        child: ListView(
+            shrinkWrap: true,
+            children: (courses.keys
+                .toList()
+                .length > 0)
+                ?
             // List of courses
             courses.keys
                 .toList()
-                .map((key) => CourseRow(
+                .map((key) =>
+                CourseRow(
                     subjects: courses[key].toList(),
                     sharedPreferences: sharedPreferences))
                 .toList()
-            :
+                :
             // No subjects are selected in the unit plan
             <Widget>[
-                Center(child: Text(AppLocalizations.of(context).noCourses))
-              ]));
+              Center(child: Text(AppLocalizations
+                  .of(context)
+                  .noCourses))
+            ]));
   }
 }
 
@@ -90,8 +95,9 @@ class CourseRowView extends State<CourseRow> {
     teacher = widget.subjects[0].teacher;
     course = '';
     blocks = [];
-    _exams = widget.sharedPreferences
-            .getBool(Keys.exams(widget.sharedPreferences.getString(Keys.grade), widget.subjects[0].lesson.toUpperCase())) ??
+    _exams = widget.sharedPreferences.getBool(Keys.exams(
+        widget.sharedPreferences.getString(Keys.grade),
+        widget.subjects[0].lesson.toUpperCase())) ??
         true;
 
     // Create list of blocks

@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../Keys.dart';
-import '../Localizations.dart';
+
 import '../Cafetoria/CafetoriaPage.dart';
 import '../Calendar/CalendarPage.dart';
 import '../Courses/CoursesPage.dart';
+import '../Keys.dart';
+import '../Localizations.dart';
+import '../Messageboard/MessageboardView.dart';
 import '../ReplacementPlan/ReplacementPlanPage.dart';
 import '../Settings/SettingsPage.dart';
 import '../UnitPlan/UnitPlanPage.dart';
 import '../WorkGroups/WorkGroupsView.dart';
-import '../Messageboard/MessageboardView.dart';
 import 'HomePage.dart';
 import 'ShortCutDialog/ShortCutDialogWidget.dart';
 
@@ -65,7 +66,8 @@ class HomePageView extends HomePageState {
         SharedPreferences sharedPreferences =
             await SharedPreferences.getInstance();
         bool selectedSubjects = sharedPreferences.getKeys().where((key) {
-              if (key.startsWith('unitPlan-${sharedPreferences.getString(Keys.grade)}-')) {
+          if (key.startsWith(
+              'unitPlan-${sharedPreferences.getString(Keys.grade)}-')) {
                 if ('-'.allMatches(key).length == 3)
                   return key.split('-')[key.split('-').length - 1] != '5';
                 return true;
@@ -136,5 +138,4 @@ class HomePageView extends HomePageState {
     );
     return appScaffold;
   }
-
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../Keys.dart';
 import '../UnitPlan/UnitPlanData.dart';
-import '../Keys.dart';
 import 'CoursesView.dart';
-import '../Keys.dart';
 
 class CoursesPage extends StatefulWidget {
   @override

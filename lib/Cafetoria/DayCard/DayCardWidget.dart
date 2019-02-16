@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../CafetoriaModel.dart';
-import '../../Localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../Localizations.dart';
+import '../CafetoriaModel.dart';
 
 class DayCard extends StatelessWidget {
   const DayCard({Key key, this.day}) : super(key: key);
@@ -11,13 +12,16 @@ class DayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String menues = '';
-    day.menues.forEach((menu) => menues += (
-            menu.name +
-            (menu.price > 0 ? ' (${menu.price}€)' : '') +
-            (menu.time != '' ? '\n${menu.time}' : '') + '\n\n'
-        ));
+    day.menues.forEach((menu) =>
+    menues += (menu.name +
+        (menu.price > 0 ? ' (${menu.price}€)' : '') +
+        (menu.time != '' ? '\n${menu.time}' : '') +
+        '\n\n'));
     menues = menues.trim();
-    if (menues.length == 0) menues = AppLocalizations.of(context).cafetoriaNoMenues;
+    if (menues.length == 0)
+      menues = AppLocalizations
+          .of(context)
+          .cafetoriaNoMenues;
     return Container(
       padding: EdgeInsets.only(top: 5),
       child: Card(
@@ -27,7 +31,10 @@ class DayCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                leading: Icon(Icons.restaurant_menu, color: Theme.of(context).accentColor),
+                leading: Icon(Icons.restaurant_menu,
+                    color: Theme
+                        .of(context)
+                        .accentColor),
                 title: Padding(
                   padding: EdgeInsets.only(bottom: 5),
                   child: Text(day.weekday),
@@ -42,4 +49,3 @@ class DayCard extends StatelessWidget {
     );
   }
 }
-

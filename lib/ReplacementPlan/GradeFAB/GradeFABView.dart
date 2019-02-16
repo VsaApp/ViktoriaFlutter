@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'GradeFABWidget.dart';
+
 import '../../Keys.dart';
+import 'GradeFABWidget.dart';
 
 class GradeFabView extends GradeFabState {
   AnimationController animationController;
@@ -126,8 +127,7 @@ class GradeFabView extends GradeFabState {
                 transform: Matrix4.translationValues(
                   0.0,
                   translateButton.value *
-                      (shownGrades.length -
-                          shownGrades.indexOf(grade)),
+                      (shownGrades.length - shownGrades.indexOf(grade)),
                   0.0,
                 ),
                 child: Container(

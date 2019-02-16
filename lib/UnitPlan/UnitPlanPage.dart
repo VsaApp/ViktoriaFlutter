@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import '../Network.dart';
-import '../Localizations.dart';
-import 'UnitPlanDayList/UnitPlanDayListWidget.dart';
-import 'UnitPlanData.dart';
+
 import '../Home/HomePage.dart';
+import '../Localizations.dart';
+import '../Network.dart';
+import 'UnitPlanData.dart';
+import 'UnitPlanDayList/UnitPlanDayListWidget.dart';
 
 class UnitPlanPage extends StatefulWidget {
   @override
@@ -26,7 +27,7 @@ class UnitPlanView extends State<UnitPlanPage> {
     HomePageState.replacementplanUpdatedListeners.remove(listener);
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     if (!offlineShown) {
@@ -36,7 +37,13 @@ class UnitPlanView extends State<UnitPlanPage> {
           // Show offline information
           Scaffold.of(context).showSnackBar(
             SnackBar(
-              content: Text(online == -1 ? AppLocalizations.of(context).oldDataIsShown : AppLocalizations.of(context).serverIsOffline),
+              content: Text(online == -1
+                  ? AppLocalizations
+                  .of(context)
+                  .oldDataIsShown
+                  : AppLocalizations
+                  .of(context)
+                  .serverIsOffline),
               action: SnackBarAction(
                 label: AppLocalizations.of(context).ok,
                 onPressed: () {},

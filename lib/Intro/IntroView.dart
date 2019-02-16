@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intro_slider/intro_slider.dart';
-import 'IntroPage.dart';
+
 import '../Localizations.dart';
-import '../UnitPlan/UnitPlanRow/UnitPlanRowWidget.dart';
-import '../ReplacementPlan/ReplacementPlanRow/ReplacementPlanRowWidget.dart';
-import '../UnitPlan/UnitPlanModel.dart';
 import '../ReplacementPlan/ReplacementPlanModel.dart';
+import '../ReplacementPlan/ReplacementPlanRow/ReplacementPlanRowWidget.dart';
 import '../SectionWidget.dart';
+import '../UnitPlan/UnitPlanModel.dart';
+import '../UnitPlan/UnitPlanRow/UnitPlanRowWidget.dart';
+import 'IntroPage.dart';
 
 class IntroPageView extends IntroPageState {
   void onDonePress() {
