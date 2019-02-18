@@ -148,6 +148,61 @@ class SettingsPageView extends SettingsPageState {
                   ),
                 ),
               ),
+              Container(
+                margin: EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: FlatButton(
+                    color: Theme.of(context).accentColor,
+                    child: Text(AppLocalizations.of(context).scanUnitPlan),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          builder: (BuildContext context1) {
+                            return AlertDialog(
+                              title: Text(AppLocalizations.of(context).scanUnitPlan),
+                              content: Text(AppLocalizations.of(context).scanUnitPlanExplanation),
+                              actions: <Widget>[
+                                FlatButton(
+                                  color: Theme.of(context).accentColor,
+                                  child: Text(AppLocalizations.of(context).ok,
+                                      style: TextStyle(color: Colors.black)),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pushNamed('/scan');
+                                  },
+                                )
+                              ],
+                            );
+                          });
+                    },
+                  ),
+                ),
+              ),
+              // Unit plan reset button
+              Container(
+                margin: EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: FlatButton(
+                    color: Theme.of(context).accentColor,
+                    child: Text('Stundenplan zurücksetzen'),
+                    onPressed: () async {
+                      sharedPreferences
+                          .getKeys()
+                          .where((key) =>
+                              (key.startsWith('unitPlan') &&
+                                  key.split('-').length >= 3 &&
+                                  !key.endsWith('-5')) ||
+                              key.startsWith('exams'))
+                          .forEach((key) {
+                        sharedPreferences.remove(key);
+                      });
+                    },
+                  ),
+                ),
+              ),
               // Logout button
               Container(
                 margin: EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),

@@ -60,13 +60,13 @@ class AppLocalizations {
       'retry': 'Erneut versuchen',
       'oldDataIsShown': 'Alte Daten werden angezeigt, weil du offline bist',
       'serverIsOffline':
-      'Alte Daten werden angezeigt, weil der Server offline ist',
+          'Alte Daten werden angezeigt, weil der Server offline ist',
       'failedToConnectToServer': 'Fehler beim verbinden zum Server',
       'ok': 'OK',
       'showShortCutDialog': 'Schnellstartdialog anzeigen',
       'initialPage': 'Startseite',
       'showReplacementPlanForBrotherSister':
-      'Vertretungsplan für Geschwisterkind anzeigen',
+          'Vertretungsplan für Geschwisterkind anzeigen',
       'noChanges': 'Keine Änderungen',
       'cafetoria': 'Cafetoria',
       'cafetoriaNoMenues': 'Keine Menüs vorhanden',
@@ -101,7 +101,7 @@ class AppLocalizations {
       'groupName': 'Gruppen Name',
       'groupPassword': 'Gruppen Passwort',
       'addGroupInfo':
-      'Die Gruppe kannst erstmal nur du sehen, bis sie von den App-Entwicklern bestätigt wurde. Dies könnte etwas Zeit in Anspruch nehmen.',
+          'Die Gruppe kannst erstmal nur du sehen, bis sie von den App-Entwicklern bestätigt wurde. Dies könnte etwas Zeit in Anspruch nehmen.',
       'noSlash': '\'/\' ist nicht erlaubt',
       'groupAlreadyExist': 'Name ist schon vergeben',
       'passwordNotCorrect': 'Passwort falsch',
@@ -119,7 +119,7 @@ class AppLocalizations {
       'repeatNewPassword': 'Neues Passwort wiederholen',
       'passwordNotEqual': 'Die Passwörter sind unterschiedlich!',
       'noGroupsToShow':
-      'Es gibt aktuell noch keine Gruppen!\nDu kannst aber der erste sein der eine erstellt. Einfach unten rechts auf das Plus und dann auf das Gruppenzeichen klicken und schon kannst du eine Gruppe erstellen!',
+          'Es gibt aktuell noch keine Gruppen!\nDu kannst aber der erste sein der eine erstellt. Einfach unten rechts auf das Plus und dann auf das Gruppenzeichen klicken und schon kannst du eine Gruppe erstellen!',
       'nowADeveloper': 'Du bist jetzt ein Entwickler!',
       'nowNoDeveloper': 'Du bist kein Entwickler mehr!',
       'removedPost': 'Post gelöscht!',
@@ -132,12 +132,16 @@ class AppLocalizations {
       'introUnitPlanTitle': 'Stundenplan',
       'newUnitplan': 'Neuer Stundenplan',
       'newUnitplanInfo':
-      'Deine Fachauswahl und deine Schriftlichkeiten wurden zurückgesetzt, da es einen neuen Stundenplan gibt!',
+          'Deine Fachauswahl und deine Schriftlichkeiten wurden zurückgesetzt, da es einen neuen Stundenplan gibt!',
       'introUnitPlanDescription':
-      'Ein Blick in den Stundenplan zeigt dir eine vollständige Übersicht über deinen Tag mit allen Änderungen',
+          'Ein Blick in den Stundenplan zeigt dir eine vollständige Übersicht über deinen Tag mit allen Änderungen',
       'introReplacementPlanTitle': 'Vertretungsplan',
       'introReplacementPlanDescription':
-      'Alle Vertretungen werden auf deine Stundenplan Auswahl angepasst und für dich gefiltert'
+          'Alle Vertretungen werden auf deine Stundenplan Auswahl angepasst und für dich gefiltert',
+      'scanUnitPlan': 'Stundenplan scannen',
+      'scanUnitPlanExplanation':
+          'Du musst die Kamera deines Handys auf deinen Stundenplan halten und warten bis der Text erscheint. Wenn du meinst, dass alles erkannt wurde, dann kannst du einfach irgendwo auf den Bildschirm klicken. Danach musst du möglicherweise noch Fächer auswählen, wenn diese nicht erkannt werden konnten.',
+      'scanUnitPlanAllDetected': 'Alles erkannt'
     },
   };
 
@@ -607,7 +611,19 @@ class AppLocalizations {
 
   String get introReplacementPlanDescription {
     return _localizedValues[locale.languageCode]
-    ['introReplacementPlanDescription'];
+        ['introReplacementPlanDescription'];
+  }
+
+  String get scanUnitPlan {
+    return _localizedValues[locale.languageCode]['scanUnitPlan'];
+  }
+
+  String get scanUnitPlanExplanation {
+    return _localizedValues[locale.languageCode]['scanUnitPlanExplanation'];
+  }
+
+  String get scanUnitPlanAllDetected {
+    return _localizedValues[locale.languageCode]['scanUnitPlanAllDetected'];
   }
 }
 

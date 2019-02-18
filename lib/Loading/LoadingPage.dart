@@ -7,6 +7,9 @@ import '../Messageboard/MessageboardData.dart' as Messageboard;
 import '../ReplacementPlan/ReplacementPlanData.dart' as ReplacementPlan;
 import '../UnitPlan/UnitPlanData.dart' as UnitPlan;
 import '../WorkGroups/WorkGroupsData.dart' as WorkGroups;
+import '../Subjects/SubjectsData.dart' as Subjects;
+import '../Rooms/RoomsData.dart' as Rooms;
+import '../Teachers/TeachersData.dart' as Teachers;
 import 'LoadingView.dart';
 
 class LoadingPage extends StatefulWidget {
@@ -43,7 +46,7 @@ abstract class LoadingPageState extends State<LoadingPage> {
 
   // Download all data
   Future downloadAll() async {
-    countCurrentDownloads = 4;
+    countCurrentDownloads = 7;
     download(() async {
       await UnitPlan.download(instance.getString(Keys.grade), false);
       await ReplacementPlan.load(UnitPlan.getUnitPlan(), false);
@@ -51,6 +54,9 @@ abstract class LoadingPageState extends State<LoadingPage> {
     download(WorkGroups.download, onFinishedAll);
     download(Calendar.download, onFinishedAll);
     download(Messageboard.download, onFinishedAll);
+    download(Subjects.download, onFinishedAll);
+    download(Rooms.download, onFinishedAll);
+    download(Teachers.download, onFinishedAll);
   }
 
   Future download(Function() process, Function() onFinishedAll) async {

@@ -157,4 +157,16 @@ class Keys {
   static String get slidesVersion {
     return 'slidesVersion';
   }
+
+  static String get subjects {
+    return 'subjects';
+  }
+  
+  static String get rooms {
+    return 'rooms';
+  }
+
+  static String get teachers {
+    return 'teachers';
+  }
 }

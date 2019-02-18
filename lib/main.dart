@@ -8,6 +8,7 @@ import 'Keys.dart';
 import 'Loading/LoadingPage.dart';
 import 'Localizations.dart';
 import 'Login/LoginPage.dart';
+import 'Scan/ScanPage.dart';
 
 // This is the first functions which is called in the app...
 void main() async {
@@ -56,7 +57,8 @@ void main() async {
       '/': (BuildContext context) => LoadingPage(),
       '/home': (BuildContext context) => HomePage(),
       '/login': (BuildContext context) => LoginPage(),
-      '/intro': (BuildContext context) => IntroPage()
+      '/intro': (BuildContext context) => IntroPage(),
+      '/scan': (BuildContext context) => ScanPage()
     },
   ));
 }
