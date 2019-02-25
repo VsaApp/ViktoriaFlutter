@@ -5,6 +5,7 @@ import '../../Keys.dart';
 import '../../Localizations.dart';
 import '../../ReplacementPlan/ReplacementPlanRow/ReplacementPlanRowWidget.dart';
 import '../../Tags.dart';
+import '../../ReplacementPlan/ReplacementPlanData.dart' as Replacementplan;
 import '../UnitPlanModel.dart';
 import '../UnitPlanRow/UnitPlanRowWidget.dart';
 import 'UnitPlanDayListWidget.dart';
@@ -95,6 +96,7 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                               });
                                               // Synchronise tags for notifications
                                               syncTags();
+                                              Replacementplan.load(UnitPlan.days, false);
                                               bool _selected = (sharedPreferences
                                                       .getKeys()
                                                       .where((key) =>
