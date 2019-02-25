@@ -70,6 +70,10 @@ class Change {
   bool sure;
   Color color;
 
+  bool equals(Change c) {
+    return unit == c.unit && lesson == c.lesson && course == c.course && room == c.room && teacher == c.teacher && changed.equals(c.changed);
+  }
+
   Change({
     @required this.unit,
     @required this.lesson,
@@ -109,6 +113,10 @@ class Changed {
   final String teacher;
   final String room;
   final String subject;
+
+  bool equals(Changed c) {
+    return info == c.info && teacher == c.teacher && room == c.room && subject == c.subject;
+  }
 
   Changed({
     @required this.info,

@@ -77,8 +77,12 @@ class UnitPlanDay {
     }
   }
 
-  ReplacementPlanDay getReplacementPlanDay(
-      SharedPreferences sharedPreferences) {
+  List<Change> getEqualChanges(List<Change> changes, Change change) {
+    changes = changes.where((Change c) => c != change).toList();
+    return changes.where((Change c) => change.equals(c)).toList();
+  }
+
+  ReplacementPlanDay getReplacementPlanDay(SharedPreferences sharedPreferences) {
     String grade = sharedPreferences.getString(Keys.grade);
     List<Change> myChanges = [];
     List<Change> undefinedChanges = [];
@@ -107,6 +111,40 @@ class UnitPlanDay {
         });
       });
     });
+
+    for (int i = 0; i < 3; i++) {
+      List<Change> listToEdit = i == 0 ? myChanges : i == 1 ? undefinedChanges : otherChanges;
+      // Delete all double changes in the same list...
+      for (int j = 0; j < listToEdit.length; j++) {
+        Change change = listToEdit[j];
+        List<Change> equalChanges = getEqualChanges(listToEdit, change);
+        if (equalChanges.length > 0) {
+          listToEdit.removeWhere((Change c) => equalChanges.contains(c));
+          j = 0;
+          continue;
+        }
+      }
+      // Delete all double chanes in the other lists...
+      for (int j = 0; j < listToEdit.length; j++) {
+        Change change = listToEdit[j];
+        // If change is in myChanges, delete in other lists...
+        if (i == 0) {
+          List<Change> equalChanges = getEqualChanges(otherChanges, change);
+          otherChanges.removeWhere((Change c) => equalChanges.contains(c));
+          equalChanges = getEqualChanges(undefinedChanges, change);
+          undefinedChanges.removeWhere((Change c) => equalChanges.contains(c));
+        }
+        // If change is in undefinedChanges, delete in otherChanges...
+        else if (i == 1) {
+          List<Change> equalChanges = getEqualChanges(otherChanges, change);
+          otherChanges.removeWhere((Change c) => equalChanges.contains(c));
+        }
+      }
+      if (i == 0) myChanges = listToEdit;
+      else if (i == 1) undefinedChanges = listToEdit;
+      else otherChanges = listToEdit;
+    }
+
     return ReplacementPlanDay(
       date: replacementPlanForDate,
       time: replacementPlanUpdatedTime,
