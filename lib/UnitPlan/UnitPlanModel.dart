@@ -106,8 +106,17 @@ class UnitPlanDay {
             )) ??
             0;
         subject.changes.forEach((change) {
-          (i == s ? (change.sure ? myChanges : undefinedChanges) : otherChanges)
-              .add(change);
+          if (i == s) {
+            if (change.isExam) {
+              int isMy = change.isMyExam(sharedPreferences);
+              (isMy == 1 ? myChanges : (isMy == -1 ? undefinedChanges : otherChanges)).add(change);
+            }
+            else {
+              (change.sure ? myChanges : undefinedChanges).add(change);
+            }
+          } else {
+            otherChanges.add(change);
+          }
         });
       });
     });
@@ -202,6 +211,12 @@ class UnitPlanSubject {
     @required this.unsures,
   });
 
+  List<Change> getChanges(SharedPreferences sharedPreferences) {
+    List<Change> changes = this.changes.where((Change change) => !change.isExam).toList();
+    List<Change> exams = this.changes.where((Change change) => change.isExam).toList();
+    return changes..addAll(exams.where((Change exam) => exam.isMyExam(sharedPreferences) != 0).toList());
+  } 
+
   factory UnitPlanSubject.fromJson(Map<String, dynamic> json) {
     List<Change> changes =
         json['changes'].map((i) => Change.fromJson(i)).toList().cast<Change>();
@@ -212,7 +227,7 @@ class UnitPlanSubject {
       block: json['block'] as String,
       course: json['course'] as String,
       changes: changes,
-      unsures: changes.where((change) => !change.sure).length,
+      unsures: changes.where((change) => !change.sure).length
     );
   }
 }

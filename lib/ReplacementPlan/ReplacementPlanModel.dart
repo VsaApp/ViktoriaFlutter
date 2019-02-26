@@ -70,6 +70,63 @@ class Change {
   bool sure;
   Color color;
 
+  bool get isExam {
+    return changed.info.toLowerCase().contains('klausur');
+  }
+
+  bool get isRewriteExam {
+    return isExam && changed.info.toLowerCase().contains('nachschreiber');
+  }
+
+  int isMyExam(SharedPreferences sharedPreferences) {
+    if (isRewriteExam) return -1;
+    String grade = sharedPreferences.getString(Keys.grade) ?? '';
+    if (!(sharedPreferences.getBool(Keys.exams(grade, lesson.toUpperCase())) ?? true)) return 0;
+
+    Map<String, List<int>> courseCount = {};
+    int selected = 0;
+    bool containsLK = false;
+    int count = 0;
+
+    for (int i = 0; i < UnitPlan.days.length; i++) {
+      UnitPlanDay day = UnitPlan.days[i];
+      for (int j = 0; j < day.lessons.length; j++) {
+        UnitPlanLesson lesson = day.lessons[j];
+        int _selected = sharedPreferences.getInt(Keys.unitPlan(grade, block: lesson.subjects[0].block, day: UnitPlan.days.indexOf(day), unit: day.lessons.indexOf(lesson)));
+        for (int k = 0; k < lesson.subjects.length; k++) {
+          UnitPlanSubject subject = lesson.subjects[k];
+          if ((subject.lesson == this.lesson && subject.course == this.course) || (subject.course.length == 0 && subject.lesson == this.lesson && subject.teacher == this.teacher)) {
+            containsLK = containsLK || subject.course.toLowerCase().contains('lk') || course.toLowerCase().contains('lk');
+            count++;
+            if (!courseCount.keys.contains(subject.course)) courseCount[subject.course] = [0, 1];
+            else courseCount[subject.course][1]++;
+            if (lesson.subjects.indexOf(subject) == _selected) {
+              selected++;
+              courseCount[subject.course][0]++;
+            }
+          }
+        }
+      }
+    }
+
+    if (selected == 0) return 0; 
+    if (selected >= count - 1) return 1;
+    for (int i = 0; i < courseCount.keys.length; i++) {
+      String key = courseCount.keys.toList()[i];
+      if (key == course) {
+        if (courseCount[key][0] > 0) return 1;
+      }
+    }
+    if (!courseCount.keys.contains('')) {
+      if (courseCount[''][0] >= courseCount[''][1] - 1) return 1;
+      if (courseCount[''][1] > 3) return -1;
+      if (courseCount[''][0] >= 1) return 1;
+      return 0;
+    }
+    else return 0;
+  }
+
+
   bool equals(Change c) {
     return unit == c.unit && lesson == c.lesson && course == c.course && room == c.room && teacher == c.teacher && changed.equals(c.changed);
   }

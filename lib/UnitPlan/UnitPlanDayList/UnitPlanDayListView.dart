@@ -244,13 +244,13 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                   )
                                 :
                                 // Show list of changes
+                                lesson.subjects[_selected].getChanges(sharedPreferences).length > 0 ?
                                 Card(
                                     child: Padding(
                                       padding: EdgeInsets.only(bottom: 10),
                                       child: Column(
                                         children: [
-                                          (lesson.subjects[_selected].unsures >
-                                              0
+                                          (lesson.subjects[_selected].unsures > 0
                                               ? UnitPlanRow(
                                                   weekday:
                                                       widget.days.indexOf(day),
@@ -261,19 +261,16 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                                 )
                                               : Container())
                                         ]..addAll(
-                                            lesson.subjects[_selected].changes
-                                                .map((change) {
+                                            lesson.subjects[_selected].getChanges(sharedPreferences).map((change) {
                                                   return ReplacementPlanRow(
                                                       change: change,
-                                                      changes: lesson
-                                                          .subjects[_selected]
-                                                          .changes);
+                                                      changes: lesson.subjects[_selected].getChanges(sharedPreferences));
                                                 })
                                                 .toList()
                                                 .cast<Widget>()),
                                       ),
                                     ),
-                                  ))),
+                                  ) : Container())),
                       );
                     }).toList(),
                   ),
