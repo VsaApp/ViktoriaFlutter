@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../Keys.dart';
 import '../../Localizations.dart';
-import '../../Rooms.dart';
 import '../../Tags.dart';
 import 'CourseEditWidget.dart';
+import 'RoomEdit/RoomEditView.dart';
 
 class CourseEditView extends CourseEditState {
   @override
@@ -39,48 +39,8 @@ class CourseEditView extends CourseEditState {
           width: double.infinity,
           padding: EdgeInsets.all(10),
           child: Column(
-            children: subjects1.map((subject) {
-              TextEditingController _controller = TextEditingController(
-                  text: getRoom(
-                      sharedPreferences,
-                      subject['weekday'],
-                      subject['unit'],
-                      subject['subject'].lesson,
-                      subject['subject'].room));
-              return Container(
-                width: double.infinity,
-                margin: EdgeInsets.only(bottom: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text([
-                          'Montag',
-                          'Dienstag',
-                          'Mittwoch',
-                          'Donnerstag',
-                          'Freitag'
-                        ][subject['weekday']] +
-                        ' ' +
-                        (subject['unit'] + 1).toString() +
-                        '. Stunde:'),
-                    TextField(
-                      controller: _controller,
-                      decoration: InputDecoration(
-                        hintText: subject['subject'].room,
-                        contentPadding: EdgeInsets.only(
-                          top: 5,
-                          bottom: 5,
-                        ),
-                      ),
-                      onChanged: (value) {
-                        setRoom(sharedPreferences, subject['weekday'],
-                            subject['unit'], subject['subject'].lesson, value);
-                      },
-                    )
-                  ],
-                ),
-              );
-            }).toList(),
+            children:
+                subjects1.map((subject) => RoomEdit(subject: subject)).toList(),
           ),
         ),
         Container(

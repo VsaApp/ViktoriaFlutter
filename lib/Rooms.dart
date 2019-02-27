@@ -15,7 +15,6 @@ String getRoom(SharedPreferences sharedPreferences, int weekday, int unit,
 void setRoom(SharedPreferences sharedPreferences, int weekday, int unit,
     String subject, String room) {
   subject = subject.toUpperCase();
-  room = room.toUpperCase();
   sharedPreferences.setString(Keys.room(weekday, unit, subject), room);
   sharedPreferences.commit();
 }

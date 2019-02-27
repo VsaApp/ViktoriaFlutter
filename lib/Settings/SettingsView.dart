@@ -162,8 +162,10 @@ class SettingsPageView extends SettingsPageState {
                           barrierDismissible: true,
                           builder: (BuildContext context1) {
                             return AlertDialog(
-                              title: Text(AppLocalizations.of(context).scanUnitPlan),
-                              content: Text(AppLocalizations.of(context).scanUnitPlanExplanation),
+                              title: Text(
+                                  AppLocalizations.of(context).scanUnitPlan),
+                              content: Text(AppLocalizations.of(context)
+                                  .scanUnitPlanExplanation),
                               actions: <Widget>[
                                 FlatButton(
                                   color: Theme.of(context).accentColor,
@@ -193,7 +195,8 @@ class SettingsPageView extends SettingsPageState {
                       sharedPreferences
                           .getKeys()
                           .where((key) =>
-                              (key.startsWith('unitPlan') &&
+                              ((key.startsWith('unitPlan') ||
+                                      key.startsWith('room')) &&
                                   key.split('-').length >= 3 &&
                                   !key.endsWith('-5')) ||
                               key.startsWith('exams'))
@@ -227,42 +230,46 @@ class SettingsPageView extends SettingsPageState {
               ),
             ],
           ),
-          dev ? Section(
-            title: AppLocalizations.of(context).developerOptions,
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: FlatButton(
-                    color: Theme.of(context).accentColor,
-                    child: Text(AppLocalizations.of(context).replacementplanVersion),
-                    onPressed: () => showDialog<String>(
-                      context: context,
-                      barrierDismissible: true,
-                      builder: (BuildContext context1) => HistoryDialog(type: 'replacementplan')
+          dev
+              ? Section(
+                  title: AppLocalizations.of(context).developerOptions,
+                  children: <Widget>[
+                    Container(
+                      margin:
+                          EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: FlatButton(
+                          color: Theme.of(context).accentColor,
+                          child: Text(AppLocalizations.of(context)
+                              .replacementplanVersion),
+                          onPressed: () => showDialog<String>(
+                              context: context,
+                              barrierDismissible: true,
+                              builder: (BuildContext context1) =>
+                                  HistoryDialog(type: 'replacementplan')),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: FlatButton(
-                    color: Theme.of(context).accentColor,
-                    child: Text(AppLocalizations.of(context).unitplanVersion),
-                    onPressed: () => showDialog<String>(
-                      context: context,
-                      barrierDismissible: true,
-                      builder: (BuildContext context1) => HistoryDialog(type: 'unitplan')
-                    )
-                  ),
-                ),
-              ),
-            ],
-          ) :
-          Container()
+                    Container(
+                      margin:
+                          EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: FlatButton(
+                            color: Theme.of(context).accentColor,
+                            child: Text(
+                                AppLocalizations.of(context).unitplanVersion),
+                            onPressed: () => showDialog<String>(
+                                context: context,
+                                barrierDismissible: true,
+                                builder: (BuildContext context1) =>
+                                    HistoryDialog(type: 'unitplan'))),
+                      ),
+                    ),
+                  ],
+                )
+              : Container()
         ],
       ),
     );
