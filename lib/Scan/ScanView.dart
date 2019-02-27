@@ -29,7 +29,7 @@ class ScanPageView extends ScanPageState {
       ')';
   String roomRegex = '(' +
       Rooms.rooms.keys.toList().map((room) => room.toLowerCase()).join('|') +
-      '|[0-9]{3})';
+      ')';
 
   insertData(List<String> matches) {
     matches.forEach((match) {
