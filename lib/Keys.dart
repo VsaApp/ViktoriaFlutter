@@ -154,6 +154,14 @@ class Keys {
     return 'messageboard-${group.replaceAll(RegExp(r' '), '-')}';
   }
 
+  static String historyData(String type) {
+    return 'historyDate-$type';
+  }
+
+  static String history(String type) {
+    return 'history-$type';
+  }
+
   static String get slidesVersion {
     return 'slidesVersion';
   }

@@ -4,6 +4,7 @@ import '../Keys.dart';
 import '../Localizations.dart';
 import '../SectionWidget.dart';
 import '../Tags.dart';
+import './HistoryDialog/HistoryDialogWidget.dart';
 import 'SettingsPage.dart';
 
 class SettingsPageView extends SettingsPageState {
@@ -225,7 +226,43 @@ class SettingsPageView extends SettingsPageState {
                 ),
               ),
             ],
-          )
+          ),
+          dev ? Section(
+            title: AppLocalizations.of(context).developerOptions,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: FlatButton(
+                    color: Theme.of(context).accentColor,
+                    child: Text(AppLocalizations.of(context).replacementplanVersion),
+                    onPressed: () => showDialog<String>(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (BuildContext context1) => HistoryDialog(type: 'replacementplan')
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: FlatButton(
+                    color: Theme.of(context).accentColor,
+                    child: Text(AppLocalizations.of(context).unitplanVersion),
+                    onPressed: () => showDialog<String>(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (BuildContext context1) => HistoryDialog(type: 'unitplan')
+                    )
+                  ),
+                ),
+              ),
+            ],
+          ) :
+          Container()
         ],
       ),
     );

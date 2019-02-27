@@ -37,10 +37,13 @@ abstract class SettingsPageState extends State<SettingsPage> {
   String grade = grades[0];
   List<String> pages = [];
   String page = '';
+  List<String> replacementplanVerion;
+  List<String> unitplanVerion;
   bool sortReplacementPlan = true;
   bool showReplacementPlanInUnitPlan = true;
   bool getReplacementPlanNotifications = true;
   bool showShortCutDialog = true;
+  bool dev = false;
 
   @override
   void initState() {
@@ -53,6 +56,7 @@ abstract class SettingsPageState extends State<SettingsPage> {
     sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
       grade = sharedPreferences.get(Keys.grade) ?? '';
+      dev = sharedPreferences.get(Keys.dev) ?? false;
       sortReplacementPlan =
           sharedPreferences.getBool(Keys.sortReplacementPlan) ?? true;
       showReplacementPlanInUnitPlan =
@@ -62,6 +66,8 @@ abstract class SettingsPageState extends State<SettingsPage> {
               true;
       showShortCutDialog =
           sharedPreferences.getBool(Keys.showShortCutDialog) ?? true;
+      replacementplanVerion = sharedPreferences.getStringList(Keys.historyData('replacementplan'));
+      unitplanVerion = sharedPreferences.getStringList(Keys.historyData('unitplan'));
       pages = [
         AppLocalizations.of(context).unitPlan,
         AppLocalizations.of(context).replacementPlan,

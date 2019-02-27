@@ -20,6 +20,7 @@ class AppLocalizations {
       'teacher': 'Lehrer*In',
       'pleaseSelect': 'Bitte auswählen',
       'login': 'Anmelden',
+      'developerOptions': 'Entwickleroptionen',
       'fieldCantBeEmpty': 'Das Feld darf nicht leer sein',
       'pupilUsername': 'Nutzername der Homepage',
       'pupilPassword': 'Passwort der Homepage',
@@ -114,6 +115,7 @@ class AppLocalizations {
       'currentPassword': 'Aktuelles Passwort',
       'newPassword': 'Neues Passwort',
       'blockedAccepted': 'Gruppe wird ausgeblendet!',
+      'selectDate': 'Datum auswählen',
       'group': 'Gruppe',
       'deletePost': 'Post löschen',
       'repeatNewPassword': 'Neues Passwort wiederholen',
@@ -141,13 +143,51 @@ class AppLocalizations {
       'scanUnitPlan': 'Stundenplan scannen',
       'scanUnitPlanExplanation':
           'Du musst die Kamera deines Handys auf deinen Stundenplan halten und warten bis der Text erscheint. Wenn du meinst, dass alles erkannt wurde, dann kannst du einfach irgendwo auf den Bildschirm klicken. Danach musst du möglicherweise noch Fächer auswählen, wenn diese nicht erkannt werden konnten.',
-      'scanUnitPlanAllDetected': 'Alles erkannt'
+      'scanUnitPlanAllDetected': 'Alles erkannt',
+      'year': 'Jahr',
+      'month': 'Monat',
+      'day': 'Tag',
+      'time': 'Zeit',
+      'replacementplanVersion': 'Vertretungsplan Version',
+      'unitplanVersion': 'Stundenplan Version',
     },
   };
 
   // All getter defined...
+  String get replacementplanVersion {
+    return _localizedValues[locale.languageCode]['replacementplanVersion'];
+  }
+
+  String get unitplanVersion {
+    return _localizedValues[locale.languageCode]['unitplanVersion'];
+  }
+
+  String get year {
+    return _localizedValues[locale.languageCode]['year'];
+  }
+
+  String get month {
+    return _localizedValues[locale.languageCode]['month'];
+  }
+
+  String get day {
+    return _localizedValues[locale.languageCode]['day'];
+  }
+
+  String get time {
+    return _localizedValues[locale.languageCode]['time'];
+  }
+
   String get newUnitplan {
     return _localizedValues[locale.languageCode]['newUnitplan'];
+  }
+
+  String get selectDate {
+    return _localizedValues[locale.languageCode]['selectDate'];
+  }
+
+  String get developerOptions {
+    return _localizedValues[locale.languageCode]['developerOptions'];
   }
 
   String get newUnitplanInfo {
