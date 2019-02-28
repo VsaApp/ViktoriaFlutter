@@ -12,7 +12,6 @@ class ReplacementPlanRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String nTeacher = change.teacher;
-    //print(change.lesson + nTeacher);
     String cTeacher = change.changed.teacher;
     bool showUnit = true;
     if (changes.indexOf(change) !=

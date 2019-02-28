@@ -6,13 +6,11 @@ import './HistoryDialogModel.dart';
 import './HistoryDialogView.dart';
 import './HistoryDialogData.dart';
 import '../../UnitPlan/UnitPlanData.dart' as Unitplan;
-import '../../ReplacementPlan/ReplacementPlanModel.dart';
 
 class HistoryDialog extends StatefulWidget {
   final String type;
 
-  HistoryDialog({Key key, @required this.type})
-      : super(key: key);
+  HistoryDialog({Key key, @required this.type}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => HistoryDialogView();
@@ -28,12 +26,17 @@ abstract class HistoryDialogState extends State<HistoryDialog> {
   String currentTime;
 
   List<Year> get years {
-    return data;
+    return data
+      ..sort((a, b) => (int.parse(a.name).compareTo(int.parse(b.name))));
   }
 
   List<Month> get months {
     try {
-      return data.where((Year year) => year.name == currentYear).toList()[0].months;
+      return data
+          .where((Year year) => year.name == currentYear)
+          .toList()[0]
+          .months
+        ..sort((a, b) => (int.parse(a.name).compareTo(int.parse(b.name))));
     } catch (e) {
       return [];
     }
@@ -41,7 +44,14 @@ abstract class HistoryDialogState extends State<HistoryDialog> {
 
   List<Day> get days {
     try {
-      return data.where((Year year) => year.name == currentYear).toList()[0].months.where((Month month) => month.name == currentMonth).toList()[0].days;
+      return data
+          .where((Year year) => year.name == currentYear)
+          .toList()[0]
+          .months
+          .where((Month month) => month.name == currentMonth)
+          .toList()[0]
+          .days
+        ..sort((a, b) => (int.parse(a.name).compareTo(int.parse(b.name))));
     } catch (e) {
       return [];
     }
@@ -49,7 +59,22 @@ abstract class HistoryDialogState extends State<HistoryDialog> {
 
   List<Time> get times {
     try {
-      return data.where((Year year) => year.name == currentYear).toList()[0].months.where((Month month) => month.name == currentMonth).toList()[0].days.where((Day day) => day.name == currentDay).toList()[0].times;
+      return data
+          .where((Year year) => year.name == currentYear)
+          .toList()[0]
+          .months
+          .where((Month month) => month.name == currentMonth)
+          .toList()[0]
+          .days
+          .where((Day day) => day.name == currentDay)
+          .toList()[0]
+          .times
+        ..sort((a, b) {
+          return (int.parse(a.time.split(':')[0]) * 60 +
+                  int.parse(a.time.split(':')[1]))
+              .compareTo((int.parse(b.time.split(':')[0]) * 60 +
+                  int.parse(b.time.split(':')[1])));
+        });
     } catch (e) {
       return [];
     }
@@ -59,33 +84,33 @@ abstract class HistoryDialogState extends State<HistoryDialog> {
   void initState() {
     download(widget.type).then((List<Year> years) {
       setState(() => data = years);
-      print(data);
       SharedPreferences.getInstance().then((instance) {
         setState(() {
           sharedPreferences = instance;
-          List<String> currentDate = sharedPreferences.getStringList(Keys.historyData(widget.type));
+          List<String> currentDate =
+              sharedPreferences.getStringList(Keys.historyData(widget.type));
           if (currentDate != null) {
             currentYear = currentDate[0];
             currentMonth = currentDate[1];
             currentDay = currentDate[2];
-            currentTime = currentDate[3];
+            currentTime = null;
             loadNewestData = false;
-          }
-          else if (widget.type == 'unitplan') {
-            Unitplan.fetchDate(sharedPreferences.getString(Keys.grade)).then((String date) {
+          } else if (widget.type == 'unitplan') {
+            Unitplan.fetchDate(sharedPreferences.getString(Keys.grade))
+                .then((String date) {
               setState(() {
-                currentYear = date.split('.')[2];
+                currentYear = '20' + date.split('.')[2];
                 currentMonth = date.split('.')[1];
                 currentDay = date.split('.')[0];
+                currentTime = null;
               });
             });
-          }
-          else {
+          } else {
             setState(() {
-              currentYear = ReplacementPlan.days[ReplacementPlan.days.length - 1].date.split('.')[2];
-              currentMonth = ReplacementPlan.days[ReplacementPlan.days.length - 1].date.split('.')[1];
-              currentDay = ReplacementPlan.days[ReplacementPlan.days.length - 1].date.split('.')[0];
-              print(currentYear);
+              currentYear = years[years.length - 1].name;
+              currentMonth = months[months.length - 1].name;
+              currentDay = days[days.length - 1].name;
+              currentTime = times[times.length - 1].time;
             });
           }
         });

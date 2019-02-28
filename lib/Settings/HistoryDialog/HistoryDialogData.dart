@@ -11,8 +11,8 @@ import '../../Network.dart';
 
 // Download the unit plan...
 Future<List<Year>> download(String type) async {
-  String url = 'https://history.api.vsa.2bad2c0.de/$type?v=${Random().nextInt(99999999)}';
-  print(url);
+  String url =
+      'https://history.api.vsa.2bad2c0.de/$type?v=${Random().nextInt(99999999)}';
   await fetchDataAndSave(url, Keys.history(type), '[]');
 
   return await fetchDays(type);
