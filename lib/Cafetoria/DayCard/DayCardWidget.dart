@@ -31,10 +31,10 @@ class DayCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                leading: Icon(Icons.restaurant_menu,
-                    color: Theme
-                        .of(context)
-                        .accentColor),
+                leading:
+                Icon(Icons.fastfood, color: Theme
+                    .of(context)
+                    .accentColor),
                 title: Padding(
                   padding: EdgeInsets.only(bottom: 5),
                   child: Text(day.weekday),
