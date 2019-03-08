@@ -36,8 +36,9 @@ class CafetoriaPageView extends CafetoriaPageState {
               padding: EdgeInsets.only(
                   bottom: 70, left: 10, right: 10, top: 10),
               shrinkWrap: true,
-              children:
-              data.days.map((day) => DayCard(day: day)).toList(),
+              children: data.days
+                  .map((day) => CafetoriaDayCard(day: day))
+                  .toList(),
             ),
           ),
           data == null

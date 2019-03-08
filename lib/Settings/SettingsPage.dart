@@ -43,6 +43,8 @@ abstract class SettingsPageState extends State<SettingsPage> {
   bool showReplacementPlanInUnitPlan = true;
   bool getReplacementPlanNotifications = true;
   bool showShortCutDialog = true;
+  bool showWorkGroupsInUnitPlan = true;
+  bool showCalendarInUnitPlan = true;
   bool dev = false;
 
   @override
@@ -66,8 +68,14 @@ abstract class SettingsPageState extends State<SettingsPage> {
               true;
       showShortCutDialog =
           sharedPreferences.getBool(Keys.showShortCutDialog) ?? true;
-      replacementplanVerion = sharedPreferences.getStringList(Keys.historyData('replacementplan'));
-      unitplanVerion = sharedPreferences.getStringList(Keys.historyData('unitplan'));
+      showWorkGroupsInUnitPlan =
+          sharedPreferences.getBool(Keys.showWorkGroupsInUnitPlan) ?? true;
+      showCalendarInUnitPlan =
+          sharedPreferences.getBool(Keys.showCalendarInUnitPlan) ?? true;
+      replacementplanVerion =
+          sharedPreferences.getStringList(Keys.historyData('replacementplan'));
+      unitplanVerion =
+          sharedPreferences.getStringList(Keys.historyData('unitplan'));
       pages = [
         AppLocalizations.of(context).unitPlan,
         AppLocalizations.of(context).replacementPlan,

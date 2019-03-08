@@ -3,10 +3,15 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 
 import '../WorkGroupsModel.dart';
 
-class DayCard extends StatelessWidget {
-  const DayCard({Key key, this.day}) : super(key: key);
+class WorkGroupsDayCard extends StatelessWidget {
+  const WorkGroupsDayCard({
+    Key key,
+    @required this.day,
+    @required this.showWeekday,
+  }) : super(key: key);
 
   final WorkGroupsDay day;
+  final bool showWeekday;
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +49,12 @@ class DayCard extends StatelessWidget {
           child: ListTile(
             leading:
                 Icon(MdiIcons.soccer, color: Theme.of(context).accentColor),
-            title: Padding(
+            title: showWeekday
+                ? Padding(
               padding: EdgeInsets.only(bottom: 5),
               child: Text(day.weekday),
-            ),
+            )
+                : null,
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: workGroups,

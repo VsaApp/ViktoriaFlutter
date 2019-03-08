@@ -169,12 +169,20 @@ class Keys {
   static String get subjects {
     return 'subjects';
   }
-  
+
   static String get rooms {
     return 'rooms';
   }
 
   static String get teachers {
     return 'teachers';
+  }
+
+  static String get showWorkGroupsInUnitPlan {
+    return 'showWorkGroupsInUnitPlan';
+  }
+
+  static String get showCalendarInUnitPlan {
+    return 'showCalendarInUnitPlan';
   }
 }

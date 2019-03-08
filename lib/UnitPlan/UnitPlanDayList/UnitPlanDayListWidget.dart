@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../Calendar/CalendarModel.dart';
 import '../../Keys.dart';
 import '../../Localizations.dart';
 import '../../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
 import '../../UnitPlan/UnitPlanData.dart' as unitplan;
+import '../../WorkGroups/WorkGroupsModel.dart';
 import '../UnitPlanModel.dart';
 import 'UnitPlanDayListView.dart';
 
@@ -22,6 +24,10 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
   SharedPreferences sharedPreferences;
   String grade = '';
   TabController tabController;
+  WorkGroupsDay workGroupsDay;
+  bool nextWeek = false;
+  bool showWorkGroups = false;
+  bool showCalendar = false;
 
   Future update() async {
     await unitplan.download(sharedPreferences.getString(Keys.grade), false);
@@ -35,6 +41,8 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
       sharedPreferences = instance;
       setState(() {
         grade = sharedPreferences.getString(Keys.grade);
+        showWorkGroups = sharedPreferences.get(Keys.showWorkGroupsInUnitPlan);
+        showCalendar = sharedPreferences.get(Keys.showCalendarInUnitPlan);
       });
       // Select correct tab
       tabController = TabController(vsync: this, length: widget.days.length);
@@ -63,8 +71,10 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
       // If weekend select Monday
       if (weekday > 4) {
         weekday = 0;
+        nextWeek = true;
       }
       tabController.animateTo(weekday);
+      workGroupsDay = WorkGroups.days[weekday];
     });
     super.initState();
   }
@@ -73,5 +83,27 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
   void dispose() {
     tabController.dispose();
     super.dispose();
+  }
+
+  List<CalendarEvent> getEventsForWeekday(int weekday) {
+    DateTime today = DateTime.now();
+    DateTime targetDay = today
+        .subtract(Duration(days: today.weekday))
+        .add(Duration(days: weekday + (nextWeek ? 7 : 0) + 1));
+    int date = dateToInt(targetDay.day.toString() +
+        '.' +
+        targetDay.month.toString() +
+        '.' +
+        targetDay.year.toString());
+    return Calendar.events.where((event) {
+      return dateToInt(event.start.date) <= date &&
+          date <= dateToInt(event.end.date);
+    }).toList();
+  }
+
+  int dateToInt(String date) {
+    return int.parse(date.split('.')[0]) +
+        int.parse(date.split('.')[1]) * 31 +
+        int.parse(date.split('.')[2]) * 365;
   }
 }

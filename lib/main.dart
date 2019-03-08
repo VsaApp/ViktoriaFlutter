@@ -20,10 +20,14 @@ void main() async {
   // Set default options
   if (sharedPreferences.get(Keys.sortReplacementPlan) == null ||
       sharedPreferences.get(Keys.showReplacementPlanInUnitPlan) == null ||
-      sharedPreferences.get(Keys.getReplacementPlanNotifications) == null) {
+      sharedPreferences.get(Keys.getReplacementPlanNotifications) == null ||
+      sharedPreferences.get(Keys.showWorkGroupsInUnitPlan) == null ||
+      sharedPreferences.get(Keys.showCalendarInUnitPlan) == null) {
     sharedPreferences.setBool(Keys.sortReplacementPlan, true);
     sharedPreferences.setBool(Keys.showReplacementPlanInUnitPlan, true);
     sharedPreferences.setBool(Keys.getReplacementPlanNotifications, true);
+    sharedPreferences.setBool(Keys.showWorkGroupsInUnitPlan, true);
+    sharedPreferences.setBool(Keys.showCalendarInUnitPlan, true);
   }
 
   // Check if logged in

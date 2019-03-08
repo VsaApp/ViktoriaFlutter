@@ -20,7 +20,7 @@ class AppLocalizations {
       'teacher': 'Lehrer*In',
       'pleaseSelect': 'Bitte auswählen',
       'login': 'Anmelden',
-      'developerOptions': 'Entwickleroptionen',
+      'developerOptions': 'Entwickler',
       'fieldCantBeEmpty': 'Das Feld darf nicht leer sein',
       'pupilUsername': 'Nutzername der Homepage',
       'pupilPassword': 'Passwort der Homepage',
@@ -32,15 +32,13 @@ class AppLocalizations {
       'credentialsNotCorrect': 'Nutzername oder Passwort falsch',
       'lunchBreak': 'Mittagspause',
       'settings': 'Einstellungen',
-      'personalData': 'PERSÖNLICHE DATEN',
-      'appSettings': 'APPEINSTELLUNGEN',
+      'personalData': 'Persönliche Daten',
+      'appSettings': 'App',
       'logout': 'Abmelden',
       'freeLesson': 'Freistunde',
-      'sortReplacementPlan': 'Vertretungsplan sortieren',
-      'showReplacementPlanInUnitPlan':
-          'Vertretungsplan im Stundenplan anzeigen',
-      'getReplacementPlanNotifications':
-          'Benachrichtigungen für Änderungen auf dem Vertretungsplan',
+      'sortReplacementPlan': 'Sortieren',
+      'showReplacementPlanInUnitPlan': 'Vertretungsplan anzeigen',
+      'getReplacementPlanNotifications': 'Benachrichtigungen für Änderungen',
       'nUnit': '. Stunde',
       'myChanges': 'Meine Vertretungen',
       'undefChanges': 'Eventuell meine Vertretungen',
@@ -144,12 +142,17 @@ class AppLocalizations {
       'scanUnitPlanExplanation':
           'Du musst die Kamera deines Handys auf deinen Stundenplan halten und warten bis der Text erscheint. Wenn du meinst, dass alles erkannt wurde, dann kannst du einfach irgendwo auf den Bildschirm klicken. Danach musst du möglicherweise noch Fächer auswählen, wenn diese nicht erkannt werden konnten.',
       'scanUnitPlanAllDetected': 'Alles erkannt',
+      'resetUnitPlan': 'Stundenplan zurücksetzen',
       'year': 'Jahr',
       'month': 'Monat',
       'day': 'Tag',
       'time': 'Zeit',
       'replacementplanVersion': 'Vertretungsplan Version',
       'unitplanVersion': 'Stundenplan Version',
+      'showWorkGroupsInUnitPlan': 'AGs anzeigen',
+      'showCalendarInUnitPlan': 'Termine anzeigen',
+      'unitPlanSettings': 'Stundenplan',
+      'replacementPlanSettings': 'Vertretungsplan'
     },
   };
 
@@ -664,6 +667,26 @@ class AppLocalizations {
 
   String get scanUnitPlanAllDetected {
     return _localizedValues[locale.languageCode]['scanUnitPlanAllDetected'];
+  }
+
+  String get resetUnitPlan {
+    return _localizedValues[locale.languageCode]['resetUnitPlan'];
+  }
+
+  String get showWorkGroupsInUnitPlan {
+    return _localizedValues[locale.languageCode]['showWorkGroupsInUnitPlan'];
+  }
+
+  String get showCalendarInUnitPlan {
+    return _localizedValues[locale.languageCode]['showCalendarInUnitPlan'];
+  }
+
+  String get unitPlanSettings {
+    return _localizedValues[locale.languageCode]['unitPlanSettings'];
+  }
+
+  String get replacementPlanSettings {
+    return _localizedValues[locale.languageCode]['replacementPlanSettings'];
   }
 }
 

@@ -16,7 +16,13 @@ class WorkGroupsPageView extends WorkGroupsPageState {
       child: ListView(
         padding: EdgeInsets.all(10),
         shrinkWrap: true,
-        children: WorkGroups.days.map((day) => DayCard(day: day)).toList(),
+        children: WorkGroups.days
+            .map((day) =>
+            WorkGroupsDayCard(
+              day: day,
+              showWeekday: true,
+            ))
+            .toList(),
       ),
     );
   }

@@ -4,8 +4,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../Localizations.dart';
 import '../CafetoriaModel.dart';
 
-class DayCard extends StatelessWidget {
-  const DayCard({Key key, this.day}) : super(key: key);
+class CafetoriaDayCard extends StatelessWidget {
+  const CafetoriaDayCard({Key key, this.day}) : super(key: key);
 
   final CafetoriaDay day;
 
