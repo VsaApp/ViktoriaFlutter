@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 
-import 'WorkGroupsData.dart';
-import 'WorkGroupsDayList/WorkGroupsDayListWidget.dart';
+import 'DayCard/DayCardWidget.dart';
+import 'WorkGroupsModel.dart';
+import 'WorkGroupsPage.dart';
 
-class WorkGroupsPage extends StatefulWidget {
-  @override
-  WorkGroupsView createState() => WorkGroupsView();
-}
+class WorkGroupsPageView extends WorkGroupsPageState {
+  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
+  GlobalKey<RefreshIndicatorState>();
 
-class WorkGroupsView extends State<WorkGroupsPage> {
   @override
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[WorkGroupsDayList(days: getWorkGroups())]);
+    return RefreshIndicator(
+      key: refreshIndicatorKey,
+      onRefresh: update,
+      child: ListView(
+        padding: EdgeInsets.all(10),
+        shrinkWrap: true,
+        children: WorkGroups.days.map((day) => DayCard(day: day)).toList(),
+      ),
+    );
   }
 }

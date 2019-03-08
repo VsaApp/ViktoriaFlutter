@@ -12,16 +12,13 @@ class DayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String menues = '';
-    day.menues.forEach((menu) =>
-    menues += (menu.name +
+    day.menues.forEach((menu) => menues += (menu.name +
         (menu.price > 0 ? ' (${menu.price}€)' : '') +
         (menu.time != '' ? '\n${menu.time}' : '') +
         '\n\n'));
     menues = menues.trim();
     if (menues.length == 0)
-      menues = AppLocalizations
-          .of(context)
-          .cafetoriaNoMenues;
+      menues = AppLocalizations.of(context).cafetoriaNoMenues;
     return Container(
       padding: EdgeInsets.only(top: 5),
       child: Card(
@@ -32,9 +29,7 @@ class DayCard extends StatelessWidget {
             children: <Widget>[
               ListTile(
                 leading:
-                Icon(Icons.fastfood, color: Theme
-                    .of(context)
-                    .accentColor),
+                    Icon(Icons.fastfood, color: Theme.of(context).accentColor),
                 title: Padding(
                   padding: EdgeInsets.only(bottom: 5),
                   child: Text(day.weekday),

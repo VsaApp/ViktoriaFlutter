@@ -12,7 +12,7 @@ import '../Messageboard/MessageboardView.dart';
 import '../ReplacementPlan/ReplacementPlanPage.dart';
 import '../Settings/SettingsPage.dart';
 import '../UnitPlan/UnitPlanPage.dart';
-import '../WorkGroups/WorkGroupsView.dart';
+import '../WorkGroups/WorkGroupsPage.dart';
 import 'HomePage.dart';
 import 'ShortCutDialog/ShortCutDialogWidget.dart';
 
