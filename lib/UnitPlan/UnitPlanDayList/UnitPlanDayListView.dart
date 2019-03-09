@@ -262,7 +262,11 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                       ),
                     ),
                   )
-                      : Container())),
+                      : UnitPlanRow(
+                    weekday: widget.days.indexOf(day),
+                    subject: lesson.subjects[_selected],
+                    unit: day.lessons.indexOf(lesson),
+                  ))),
                 );
               }).toList());
               if (showCalendar) {
