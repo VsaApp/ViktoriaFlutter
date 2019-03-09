@@ -68,9 +68,9 @@ class SettingsPageView extends SettingsPageState {
                             );
                           }).toList(),
                           value: page,
-                          onChanged: (page) async {
+                          onChanged: (p) async {
                             setState(() {
-                              page = page;
+                              page = p;
                               sharedPreferences.setInt(
                                   Keys.initialPage, pages.indexOf(page));
                               sharedPreferences.commit();

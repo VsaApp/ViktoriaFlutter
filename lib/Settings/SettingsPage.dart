@@ -69,8 +69,10 @@ abstract class SettingsPageState extends State<SettingsPage> {
               true;
       showShortCutDialog =
           sharedPreferences.getBool(Keys.showShortCutDialog) ?? true;
-      replacementplanVerion = sharedPreferences.getStringList(Keys.historyDate('replacementplan'));
-      unitplanVerion = sharedPreferences.getStringList(Keys.historyDate('unitplan'));
+      replacementplanVerion =
+          sharedPreferences.getStringList(Keys.historyDate('replacementplan'));
+      unitplanVerion =
+          sharedPreferences.getStringList(Keys.historyDate('unitplan'));
       showWorkGroupsInUnitPlan =
           sharedPreferences.getBool(Keys.showWorkGroupsInUnitPlan) ?? true;
       showCalendarInUnitPlan =
@@ -84,6 +86,9 @@ abstract class SettingsPageState extends State<SettingsPage> {
       pages = [
         AppLocalizations.of(context).unitPlan,
         AppLocalizations.of(context).replacementPlan,
+        AppLocalizations
+            .of(context)
+            .messageboard,
         AppLocalizations.of(context).calendar,
         AppLocalizations.of(context).cafetoria,
         AppLocalizations.of(context).workGroups,
