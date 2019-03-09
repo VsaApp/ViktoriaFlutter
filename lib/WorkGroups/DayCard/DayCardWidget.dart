@@ -46,19 +46,26 @@ class WorkGroupsDayCard extends StatelessWidget {
       child: Card(
         child: Container(
           padding: EdgeInsets.only(bottom: 5),
-          child: ListTile(
-            leading:
-                Icon(MdiIcons.soccer, color: Theme.of(context).accentColor),
-            title: showWeekday
-                ? Padding(
-              padding: EdgeInsets.only(bottom: 5),
-              child: Text(day.weekday),
-            )
-                : null,
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: workGroups,
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading:
+                Icon(MdiIcons.soccer, color: Theme
+                    .of(context)
+                    .accentColor),
+                title: showWeekday
+                    ? Padding(
+                  padding: EdgeInsets.only(bottom: 5),
+                  child: Text(day.weekday),
+                )
+                    : null,
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: workGroups,
+                ),
+              ),
+            ],
           ),
         ),
       ),

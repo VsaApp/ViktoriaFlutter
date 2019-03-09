@@ -151,6 +151,7 @@ class AppLocalizations {
       'unitplanVersion': 'Stundenplan Version',
       'showWorkGroupsInUnitPlan': 'AGs anzeigen',
       'showCalendarInUnitPlan': 'Termine anzeigen',
+      'showCafetoriaInUnitPlan': 'Cafetoriamenüs anzeigen',
       'unitPlanSettings': 'Stundenplan',
       'replacementPlanSettings': 'Vertretungsplan',
       'loadNewestData': 'Aktuellste Version',
@@ -684,6 +685,10 @@ class AppLocalizations {
 
   String get showCalendarInUnitPlan {
     return _localizedValues[locale.languageCode]['showCalendarInUnitPlan'];
+  }
+
+  String get showCafetoriaInUnitPlan {
+    return _localizedValues[locale.languageCode]['showCafetoriaInUnitPlan'];
   }
 
   String get unitPlanSettings {

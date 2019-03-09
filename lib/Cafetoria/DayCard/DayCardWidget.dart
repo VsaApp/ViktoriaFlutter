@@ -5,24 +5,53 @@ import '../../Localizations.dart';
 import '../CafetoriaModel.dart';
 
 class CafetoriaDayCard extends StatelessWidget {
-  const CafetoriaDayCard({Key key, this.day}) : super(key: key);
+  const CafetoriaDayCard({
+    Key key,
+    @required this.day,
+    @required this.showWeekday,
+  }) : super(key: key);
 
   final CafetoriaDay day;
+  final bool showWeekday;
 
   @override
   Widget build(BuildContext context) {
-    String menues = '';
-    day.menues.forEach((menu) => menues += (menu.name +
-        (menu.price > 0 ? ' (${menu.price}€)' : '') +
-        (menu.time != '' ? '\n${menu.time}' : '') +
-        '\n\n'));
-    menues = menues.trim();
-    if (menues.length == 0)
-      menues = AppLocalizations.of(context).cafetoriaNoMenues;
+    List<Widget> menues = day.menues
+        .map((menu) =>
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              menu.name +
+                  (menu.price > 0 ? ' (${menu.price.toString()}€)' : ''),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            menu.time != '' ? Text(menu.time) : Container(),
+            day.menues.indexOf(menu) != day.menues.length - 1
+                ? Text('')
+                : Container(),
+          ],
+        ))
+        .toList();
+    if (menues.length == 0) {
+      menues = [
+        Text(
+          AppLocalizations
+              .of(context)
+              .cafetoriaNoMenues,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(''),
+      ];
+    }
     return Container(
       padding: EdgeInsets.only(top: 5),
       child: Card(
-        child: Padding(
+        child: Container(
           padding: EdgeInsets.only(bottom: 5),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -30,11 +59,16 @@ class CafetoriaDayCard extends StatelessWidget {
               ListTile(
                 leading:
                     Icon(Icons.fastfood, color: Theme.of(context).accentColor),
-                title: Padding(
+                title: showWeekday
+                    ? Padding(
                   padding: EdgeInsets.only(bottom: 5),
                   child: Text(day.weekday),
+                )
+                    : null,
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: menues,
                 ),
-                subtitle: Text(menues),
                 onTap: () => launch('https://www.opc-asp.de/vs-aachen/'),
               ),
             ],

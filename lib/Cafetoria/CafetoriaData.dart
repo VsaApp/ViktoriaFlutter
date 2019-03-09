@@ -8,7 +8,7 @@ import '../Network.dart';
 import 'CafetoriaModel.dart';
 
 // Download cafetoria data from the api...
-Future<Cafetoria> download({String id, String password, bool parse}) async {
+Future download({String id, String password}) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   // If id and password is not set, load login data from preferences...
   String url = 'https://api.vsa.2bad2c0.de/cafetoria/login/' +
@@ -21,9 +21,7 @@ Future<Cafetoria> download({String id, String password, bool parse}) async {
           : sharedPreferences.getString(Keys.cafetoriaPassword) ?? 'null');
   await fetchDataAndSave(url, Keys.cafetoria, '{}');
 
-  // Parse the downloaded data...
-  if (parse == null || !parse) return await fetchDays();
-  return null;
+  Cafetoria.menues = await fetchDays();
 }
 
 // Check the login data of the keyfob...
@@ -41,13 +39,13 @@ Future<bool> checkLogin({String id, String password}) async {
 }
 
 // Load the preferences data...
-Future<Cafetoria> fetchDays() async {
+Future<CafetoriaMenues> fetchDays() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   return parseDays(sharedPreferences.getString(Keys.cafetoria));
 }
 
 // Parse the json string to the model structure...
-Cafetoria parseDays(String responseBody) {
+CafetoriaMenues parseDays(String responseBody) {
   final parsed = json.decode(responseBody);
-  return Cafetoria.fromJson(parsed);
+  return CafetoriaMenues.fromJson(parsed);
 }

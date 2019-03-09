@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 
+import '../../Cafetoria/CafetoriaModel.dart';
+import '../../Cafetoria/DayCard/DayCardWidget.dart';
 import '../../Calendar/EventCard/EventCard.dart';
 import '../../Courses/CourseEdit/CourseEditWidget.dart';
 import '../../Keys.dart';
-import '../../Selection.dart';
 import '../../Localizations.dart';
 import '../../ReplacementPlan/ReplacementPlanData.dart' as Replacementplan;
 import '../../ReplacementPlan/ReplacementPlanRow/ReplacementPlanRowWidget.dart';
+import '../../Selection.dart';
 import '../../Tags.dart';
 import '../../WorkGroups/DayCard/DayCardWidget.dart';
+import '../../WorkGroups/WorkGroupsModel.dart';
 import '../UnitPlanModel.dart';
 import '../UnitPlanRow/UnitPlanRowWidget.dart';
 import 'UnitPlanDayListWidget.dart';
@@ -47,7 +50,11 @@ class UnitPlanDayListView extends UnitPlanDayListState {
               List<Widget> items = [];
               items.addAll(day.lessons.map((lesson) {
                 // Check which subject is selected
-                int _selected = getSelectedIndex(sharedPreferences, lesson.subjects, widget.days.indexOf(day), day.lessons.indexOf(lesson));
+                int _selected = getSelectedIndex(
+                    sharedPreferences,
+                    lesson.subjects,
+                    widget.days.indexOf(day),
+                    day.lessons.indexOf(lesson));
                 bool nothingSelected = _selected == null;
                 if (nothingSelected) _selected = 0;
                 return GestureDetector(
@@ -70,7 +77,11 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                   onPressed: () {
                                     // Update unit plan
                                     setState(() {
-                                      setSelectedSubject(sharedPreferences, subject, widget.days.indexOf(day), day.lessons.indexOf(lesson));
+                                      setSelectedSubject(
+                                          sharedPreferences,
+                                          subject,
+                                          widget.days.indexOf(day),
+                                          day.lessons.indexOf(lesson));
                                       Navigator.pop(context);
                                     });
                                     // Synchronise tags for notifications
@@ -194,17 +205,16 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                   UnitPlanRow(
                     weekday: widget.days.indexOf(day),
                     subject: UnitPlanSubject(
-                      teacher: '',
-                      lesson: AppLocalizations
-                          .of(context)
-                          .selectLesson,
-                      room: '',
-                      block: '',
-                      unsures: 0,
-                      course: '',
-                      changes: [],
-                      week: 'AB'
-                    ),
+                        teacher: '',
+                        lesson: AppLocalizations
+                            .of(context)
+                            .selectLesson,
+                        room: '',
+                        block: '',
+                        unsures: 0,
+                        course: '',
+                        changes: [],
+                        week: 'AB'),
                     unit: day.lessons.indexOf(lesson),
                   )
                       : (lesson.subjects[_selected].changes.length == 0 ||
@@ -271,11 +281,20 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                   ));
                 });
               }
+              if (showCafetoria) {
+                items.add(Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: CafetoriaDayCard(
+                    day: Cafetoria.menues.days[widget.days.indexOf(day)],
+                    showWeekday: false,
+                  ),
+                ));
+              }
               if (showWorkGroups) {
                 items.add(Padding(
                   padding: EdgeInsets.only(top: 10),
                   child: WorkGroupsDayCard(
-                    day: workGroupsDay,
+                    day: WorkGroups.days[widget.days.indexOf(day)],
                     showWeekday: false,
                   ),
                 ));

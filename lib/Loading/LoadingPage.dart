@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Cafetoria/CafetoriaData.dart' as Cafetoria;
 import '../Calendar/CalendarData.dart' as Calendar;
 import '../Keys.dart';
 import '../Messageboard/MessageboardData.dart' as Messageboard;
 import '../ReplacementPlan/ReplacementPlanData.dart' as ReplacementPlan;
+import '../Rooms/RoomsData.dart' as Rooms;
+import '../Subjects/SubjectsData.dart' as Subjects;
+import '../Teachers/TeachersData.dart' as Teachers;
 import '../UnitPlan/UnitPlanData.dart' as UnitPlan;
 import '../WorkGroups/WorkGroupsData.dart' as WorkGroups;
-import '../Subjects/SubjectsData.dart' as Subjects;
-import '../Rooms/RoomsData.dart' as Rooms;
-import '../Teachers/TeachersData.dart' as Teachers;
 import 'LoadingView.dart';
 
 class LoadingPage extends StatefulWidget {
@@ -30,38 +31,37 @@ abstract class LoadingPageState extends State<LoadingPage> {
     super.initState();
   }
 
-  onFinishedAll() {
-    // After download show app
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      int storedVersion = instance.getInt(Keys.slidesVersion) ?? 0;
-      int currentVersion = 1;
-      if (currentVersion != storedVersion) {
-        instance.setInt(Keys.slidesVersion, currentVersion);
-        Navigator.of(context).pushReplacementNamed('/intro');
-      } else {
-        Navigator.of(context).pushReplacementNamed('/home');
-      }
-    });
-  }
-
   // Download all data
   Future downloadAll() async {
-    countCurrentDownloads = 7;
+    countCurrentDownloads = 8;
     download(() async {
       await UnitPlan.download(instance.getString(Keys.grade), false);
       await ReplacementPlan.load(UnitPlan.getUnitPlan(), false);
-    }, onFinishedAll);
-    download(WorkGroups.download, onFinishedAll);
-    download(Calendar.download, onFinishedAll);
-    download(Messageboard.download, onFinishedAll);
-    download(Subjects.download, onFinishedAll);
-    download(Rooms.download, onFinishedAll);
-    download(Teachers.download, onFinishedAll);
+    });
+    download(WorkGroups.download);
+    download(Calendar.download);
+    download(Messageboard.download);
+    download(Subjects.download);
+    download(Rooms.download);
+    download(Teachers.download);
+    download(Cafetoria.download);
   }
 
-  Future download(Function() process, Function() onFinishedAll) async {
+  Future download(Function() process) async {
     await process();
     countCurrentDownloads--;
-    if (countCurrentDownloads == 0) onFinishedAll();
+    if (countCurrentDownloads == 0) {
+      // After download show app
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        int storedVersion = instance.getInt(Keys.slidesVersion) ?? 0;
+        int currentVersion = 1;
+        if (currentVersion != storedVersion) {
+          instance.setInt(Keys.slidesVersion, currentVersion);
+          Navigator.of(context).pushReplacementNamed('/intro');
+        } else {
+          Navigator.of(context).pushReplacementNamed('/home');
+        }
+      });
+    }
   }
 }

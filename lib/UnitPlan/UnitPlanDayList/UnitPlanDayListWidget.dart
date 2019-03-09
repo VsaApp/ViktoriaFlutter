@@ -6,7 +6,6 @@ import '../../Keys.dart';
 import '../../Localizations.dart';
 import '../../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
 import '../../UnitPlan/UnitPlanData.dart' as unitplan;
-import '../../WorkGroups/WorkGroupsModel.dart';
 import '../UnitPlanModel.dart';
 import 'UnitPlanDayListView.dart';
 
@@ -24,10 +23,10 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
   SharedPreferences sharedPreferences;
   String grade = '';
   TabController tabController;
-  WorkGroupsDay workGroupsDay;
   bool nextWeek = false;
   bool showWorkGroups = false;
   bool showCalendar = false;
+  bool showCafetoria = false;
 
   Future update() async {
     await unitplan.download(sharedPreferences.getString(Keys.grade), false);
@@ -43,6 +42,7 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
         grade = sharedPreferences.getString(Keys.grade);
         showWorkGroups = sharedPreferences.get(Keys.showWorkGroupsInUnitPlan);
         showCalendar = sharedPreferences.get(Keys.showCalendarInUnitPlan);
+        showCafetoria = sharedPreferences.get(Keys.showCafetoriaInUnitPlan);
       });
       // Select correct tab
       tabController = TabController(vsync: this, length: widget.days.length);
@@ -74,7 +74,6 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
         nextWeek = true;
       }
       tabController.animateTo(weekday);
-      workGroupsDay = WorkGroups.days[weekday];
     });
     super.initState();
   }

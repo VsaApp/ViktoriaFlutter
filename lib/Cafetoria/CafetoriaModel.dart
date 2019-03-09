@@ -1,4 +1,9 @@
 // Describes the login information...
+
+class Cafetoria {
+  static CafetoriaMenues menues;
+}
+
 class CafetoriaLogin {
   final String error;
 
@@ -12,15 +17,15 @@ class CafetoriaLogin {
 }
 
 // Describes the whole Cafetoria data...
-class Cafetoria {
+class CafetoriaMenues {
   final String error;
   final List<CafetoriaDay> days;
   final double saldo;
 
-  Cafetoria({this.error, this.days, this.saldo});
+  CafetoriaMenues({this.error, this.days, this.saldo});
 
-  factory Cafetoria.fromJson(Map<String, dynamic> json) {
-    return Cafetoria(
+  factory CafetoriaMenues.fromJson(Map<String, dynamic> json) {
+    return CafetoriaMenues(
         error: json['error'] as String,
         days: json['days']
             .toList()

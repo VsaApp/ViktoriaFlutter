@@ -185,4 +185,8 @@ class Keys {
   static String get showCalendarInUnitPlan {
     return 'showCalendarInUnitPlan';
   }
+
+  static String get showCafetoriaInUnitPlan {
+    return 'showCafetoriaInUnitPlan';
+  }
 }

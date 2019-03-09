@@ -22,12 +22,14 @@ void main() async {
       sharedPreferences.get(Keys.showReplacementPlanInUnitPlan) == null ||
       sharedPreferences.get(Keys.getReplacementPlanNotifications) == null ||
       sharedPreferences.get(Keys.showWorkGroupsInUnitPlan) == null ||
-      sharedPreferences.get(Keys.showCalendarInUnitPlan) == null) {
+      sharedPreferences.get(Keys.showCalendarInUnitPlan) == null ||
+      sharedPreferences.get(Keys.showCafetoriaInUnitPlan) == null) {
     sharedPreferences.setBool(Keys.sortReplacementPlan, true);
     sharedPreferences.setBool(Keys.showReplacementPlanInUnitPlan, true);
     sharedPreferences.setBool(Keys.getReplacementPlanNotifications, true);
     sharedPreferences.setBool(Keys.showWorkGroupsInUnitPlan, true);
     sharedPreferences.setBool(Keys.showCalendarInUnitPlan, true);
+    sharedPreferences.setBool(Keys.showCafetoriaInUnitPlan, true);
   }
 
   // Check if logged in

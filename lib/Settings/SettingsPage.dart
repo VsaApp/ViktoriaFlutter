@@ -45,6 +45,7 @@ abstract class SettingsPageState extends State<SettingsPage> {
   bool showShortCutDialog = true;
   bool showWorkGroupsInUnitPlan = true;
   bool showCalendarInUnitPlan = true;
+  bool showCafetoriaInUnitPlan = true;
   bool dev = false;
 
   @override
@@ -74,6 +75,8 @@ abstract class SettingsPageState extends State<SettingsPage> {
           sharedPreferences.getBool(Keys.showWorkGroupsInUnitPlan) ?? true;
       showCalendarInUnitPlan =
           sharedPreferences.getBool(Keys.showCalendarInUnitPlan) ?? true;
+      showCafetoriaInUnitPlan =
+          sharedPreferences.getBool(Keys.showCafetoriaInUnitPlan) ?? true;
       replacementplanVerion =
           sharedPreferences.getStringList(Keys.historyDate('replacementplan'));
       unitplanVerion =

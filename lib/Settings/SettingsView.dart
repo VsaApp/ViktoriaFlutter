@@ -178,6 +178,22 @@ class SettingsPageView extends SettingsPageState {
                       .of(context)
                       .showCalendarInUnitPlan),
                 ),
+                // Show cafetoria in unit plan option
+                CheckboxListTile(
+                  value: showCafetoriaInUnitPlan,
+                  onChanged: (bool value) {
+                    setState(() {
+                      sharedPreferences.setBool(
+                          Keys.showCafetoriaInUnitPlan, value);
+                      sharedPreferences.commit();
+                      showCafetoriaInUnitPlan = value;
+                    });
+                  },
+                  title: Text(
+                      AppLocalizations
+                          .of(context)
+                          .showCafetoriaInUnitPlan),
+                ),
                 Container(
                   margin: EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
                   child: SizedBox(
