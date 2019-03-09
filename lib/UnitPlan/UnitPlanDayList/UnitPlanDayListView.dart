@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../Calendar/EventCard/EventCard.dart';
 import '../../Courses/CourseEdit/CourseEditWidget.dart';
 import '../../Keys.dart';
+import '../../Selection.dart';
 import '../../Localizations.dart';
 import '../../ReplacementPlan/ReplacementPlanData.dart' as Replacementplan;
 import '../../ReplacementPlan/ReplacementPlanRow/ReplacementPlanRowWidget.dart';
@@ -46,10 +47,7 @@ class UnitPlanDayListView extends UnitPlanDayListState {
               List<Widget> items = [];
               items.addAll(day.lessons.map((lesson) {
                 // Check which subject is selected
-                int _selected = sharedPreferences.getInt(Keys.unitPlan(grade,
-                    block: lesson.subjects[0].block,
-                    day: widget.days.indexOf(day),
-                    unit: day.lessons.indexOf(lesson)));
+                int _selected = getSelectedIndex(sharedPreferences, lesson.subjects, widget.days.indexOf(day), day.lessons.indexOf(lesson));
                 bool nothingSelected = _selected == null;
                 if (nothingSelected) _selected = 0;
                 return GestureDetector(
@@ -72,14 +70,7 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                   onPressed: () {
                                     // Update unit plan
                                     setState(() {
-                                      sharedPreferences.setInt(
-                                          Keys.unitPlan(grade,
-                                              block:
-                                              lesson.subjects[0].block,
-                                              day: widget.days.indexOf(day),
-                                              unit: day.lessons
-                                                  .indexOf(lesson)),
-                                          lesson.subjects.indexOf(subject));
+                                      setSelectedSubject(sharedPreferences, subject, widget.days.indexOf(day), day.lessons.indexOf(lesson));
                                       Navigator.pop(context);
                                     });
                                     // Synchronise tags for notifications
@@ -212,6 +203,7 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                       unsures: 0,
                       course: '',
                       changes: [],
+                      week: 'AB'
                     ),
                     unit: day.lessons.indexOf(lesson),
                   )

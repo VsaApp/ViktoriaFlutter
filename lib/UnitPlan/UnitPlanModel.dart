@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Keys.dart';
+import '../Selection.dart';
 import '../ReplacementPlan/ReplacementPlanModel.dart';
 
 // Describes the whole unit plan...
@@ -9,9 +10,10 @@ class UnitPlan {
   static List<UnitPlanDay> days;
 
   // Set all default selections...
-  static void setAllSelections(SharedPreferences sharedPreferences) {
-    days.forEach(
-        (day) => day.setSelections(days.indexOf(day), sharedPreferences));
+  static Future setAllSelections(SharedPreferences sharedPreferences) async {
+    for (int i = 0; i < days.length; i++) {
+      await days[i].setSelections(days.indexOf(days[i]), sharedPreferences);
+    }
   }
 }
 
@@ -55,15 +57,10 @@ class UnitPlanDay {
       SharedPreferences sharedPreferences, String freeLesson) {
     for (int i = lessons.length - 1; i >= 0; i--) {
       UnitPlanLesson lesson = lessons[i];
-      int selected = sharedPreferences.getInt(Keys.unitPlan(
-          sharedPreferences.getString(Keys.grade),
-          block: lesson.subjects[0].block,
-          day: UnitPlan.days.indexOf(this),
-          unit: lessons.indexOf(lesson)));
+      UnitPlanSubject selected = getSelectedSubject(sharedPreferences, lesson.subjects, UnitPlan.days.indexOf(this), lessons.indexOf(lesson));
+
       // If nothing  or a subject (not lunchtime and free lesson) selected return the index...
-      if ((selected == null ||
-              lesson.subjects[selected].lesson != freeLesson) &&
-          i != 5) {
+      if ((selected == null || selected.lesson != freeLesson) && i != 5) {
         return i + 1;
       }
     }
@@ -71,9 +68,9 @@ class UnitPlanDay {
   }
 
   // Set the default selections...
-  void setSelections(int day, SharedPreferences sharedPreferences) {
+  Future setSelections(int day, SharedPreferences sharedPreferences) async {
     for (int i = 0; i < lessons.length; i++) {
-      lessons[i].setSelection(day, i, sharedPreferences);
+      await lessons[i].setSelection(day, i, sharedPreferences);
     }
   }
 
@@ -87,24 +84,18 @@ class UnitPlanDay {
     List<Change> myChanges = [];
     List<Change> undefinedChanges = [];
     List<Change> otherChanges = [];
-    lessons.forEach((lesson) {
-      lesson.subjects.forEach((subject) {
-        int weekday = [
+    int weekday = [
           'Montag',
           'Dienstag',
           'Mittwoch',
           'Donnerstag',
           'Freitag'
         ].indexOf(name);
-        int unit = lessons.indexOf(lesson);
+    lessons.forEach((lesson) {
+      int unit = lessons.indexOf(lesson);
+      int s = getSelectedIndex(sharedPreferences, lesson.subjects, weekday, unit) ?? 0;
+      lesson.subjects.forEach((subject) {
         int i = lesson.subjects.indexOf(subject);
-        int s = sharedPreferences.getInt(Keys.unitPlan(
-              grade,
-              block: subject.block,
-              day: weekday,
-              unit: unit,
-            )) ??
-            0;
         subject.changes.forEach((change) {
           if (i == s) {
             if (change.isExam) {
@@ -182,11 +173,9 @@ class UnitPlanLesson {
   }
 
   // Set the default selection...
-  void setSelection(int day, int unit, SharedPreferences sharedPreferences) {
-    String prefKey = Keys.unitPlan(sharedPreferences.getString(Keys.grade),
-        block: subjects[0].block, day: day, unit: unit);
-    if (subjects.length == 1 && sharedPreferences.getInt(prefKey) == null) {
-      sharedPreferences.setInt(prefKey, 0);
+  Future setSelection(int day, int unit, SharedPreferences sharedPreferences) async {
+    if (subjects.length == 1) {
+      await setSelectedSubject(sharedPreferences, subjects[0], day, unit);
     }
   }
 }
@@ -198,6 +187,7 @@ class UnitPlanSubject {
   final String room;
   final String block;
   final String course;
+  final String week;
   final List<Change> changes;
   final int unsures;
 
@@ -207,6 +197,7 @@ class UnitPlanSubject {
     @required this.room,
     @required this.block,
     @required this.course,
+    @required this.week,
     @required this.changes,
     @required this.unsures,
   });
@@ -226,6 +217,7 @@ class UnitPlanSubject {
       room: json['room'] as String,
       block: json['block'] as String,
       course: json['course'] as String,
+      week: json['week'] as String,
       changes: changes,
       unsures: changes.where((change) => !change.sure).length
     );

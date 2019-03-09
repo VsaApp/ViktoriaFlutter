@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Selection.dart';
 import '../Keys.dart';
 import '../UnitPlan/UnitPlanModel.dart';
 
@@ -92,7 +93,7 @@ class Change {
       UnitPlanDay day = UnitPlan.days[i];
       for (int j = 0; j < day.lessons.length; j++) {
         UnitPlanLesson lesson = day.lessons[j];
-        int _selected = sharedPreferences.getInt(Keys.unitPlan(grade, block: lesson.subjects[0].block, day: UnitPlan.days.indexOf(day), unit: day.lessons.indexOf(lesson)));
+        int _selected = getSelectedIndex(sharedPreferences, lesson.subjects, UnitPlan.days.indexOf(day), day.lessons.indexOf(lesson));
         for (int k = 0; k < lesson.subjects.length; k++) {
           UnitPlanSubject subject = lesson.subjects[k];
           if ((subject.lesson == this.lesson && subject.course == this.course) || (subject.course.length == 0 && subject.lesson == this.lesson && subject.teacher == this.teacher)) {
@@ -189,15 +190,4 @@ class Changed {
         room: json['room'] as String,
         subject: json['subject'] as String);
   }
-}
-
-// Returns the selected subject index...
-int getSelectedSubject(SharedPreferences sharedPreferences,
-    UnitPlanSubject subject, int day, int unit) {
-  // If the subject block is set, get index for block, else get index for day + unit...
-  return sharedPreferences.getInt(Keys.unitPlan(
-      sharedPreferences.getString(Keys.grade),
-      block: subject.block,
-      day: day,
-      unit: unit));
 }

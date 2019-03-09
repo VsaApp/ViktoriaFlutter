@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Keys.dart';
+import '../../Selection.dart';
 import '../../UnitPlan/UnitPlanData.dart' as UnitPlan;
 import '../../UnitPlan/UnitPlanModel.dart';
 import 'CourseEditView.dart';
@@ -40,17 +41,15 @@ abstract class CourseEditState extends State<CourseEdit> {
       List<UnitPlanDay> days = UnitPlan.getUnitPlan();
       days.forEach((day) {
         day.lessons.forEach((lesson) {
-          int _selected = sharedPreferences.getInt(Keys.unitPlan(
-              sharedPreferences.getString(Keys.grade),
-              block: lesson.subjects[0].block,
-              day: days.indexOf(day),
-              unit: day.lessons.indexOf(lesson)));
+          UnitPlanSubject _selected = getSelectedSubject(sharedPreferences, lesson.subjects,
+              days.indexOf(day),
+              day.lessons.indexOf(lesson));
           if (_selected == null) return;
-          if (lesson.subjects[_selected].lesson == widget.subject.lesson) {
+          if (_selected.lesson == widget.subject.lesson) {
             subjects1.add({
               'weekday': days.indexOf(day),
               'unit': day.lessons.indexOf(lesson),
-              'subject': lesson.subjects[_selected]
+              'subject': _selected
             });
           }
         });

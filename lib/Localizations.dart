@@ -152,11 +152,16 @@ class AppLocalizations {
       'showWorkGroupsInUnitPlan': 'AGs anzeigen',
       'showCalendarInUnitPlan': 'Termine anzeigen',
       'unitPlanSettings': 'Stundenplan',
-      'replacementPlanSettings': 'Vertretungsplan'
+      'replacementPlanSettings': 'Vertretungsplan',
+      'loadNewestData': 'Aktuellste Version',
     },
   };
 
   // All getter defined...
+  String get loadNewestData {
+    return _localizedValues[locale.languageCode]['loadNewestData'];
+  }
+
   String get replacementplanVersion {
     return _localizedValues[locale.languageCode]['replacementplanVersion'];
   }

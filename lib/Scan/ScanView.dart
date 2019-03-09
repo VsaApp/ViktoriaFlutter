@@ -8,6 +8,7 @@ import '../Teachers/TeachersModel.dart';
 import '../Keys.dart';
 import '../SectionWidget.dart';
 import '../Localizations.dart';
+import '../Selection.dart';
 
 import 'ScanPage.dart';
 
@@ -97,12 +98,7 @@ class ScanPageView extends ScanPageState {
         print('');
       } else {
         matchingSubjects.forEach((match) {
-          sharedPreferences.setInt(
-              Keys.unitPlan(sharedPreferences.getString(Keys.grade),
-                  block: match.subject.block,
-                  day: match.weekday,
-                  unit: match.unit),
-              match.index);
+          setSelectedSubject(sharedPreferences, match.subject, match.weekday, match.unit);
         });
       }
     });
@@ -214,18 +210,7 @@ class ScanPageView extends ScanPageState {
                   children: lesson.lesson.subjects.map((subject) {
                     return GestureDetector(
                       onTap: () {
-                        String key = Keys.unitPlan(
-                          sharedPreferences.getString(Keys.grade),
-                          block: lesson.lesson.subjects[0].block,
-                          day: lesson.weekday,
-                          unit: lesson.unit,
-                        );
-                        sharedPreferences
-                            .setInt(
-                                key, lesson.lesson.subjects.indexOf(subject))
-                            .then((a) {
-                          setState(() {});
-                        });
+                        setSelectedSubject(sharedPreferences, subject, lesson.weekday, lesson.unit).then((_) => setState(() {}));
                       },
                       child: UnitPlanRow(
                         subject: subject,

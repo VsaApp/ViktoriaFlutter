@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Selection.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
 import '../UnitPlan/UnitPlanData.dart' as UnitPlan;
@@ -19,17 +20,12 @@ class CoursesPageView extends CoursesPageState {
 
     // Get all selected subjects...
     UnitPlan.getUnitPlan().forEach((day) => day.lessons.forEach((lesson) {
-          if (lesson.subjects.length > 0) {
-            int selected = sharedPreferences.getInt(Keys.unitPlan(
-                    sharedPreferences.getString(Keys.grade),
-                    block: lesson.subjects[0].block,
-                    day: UnitPlan.getUnitPlan().indexOf(day),
-                    unit: day.lessons.indexOf(lesson))) ??
-                lesson.subjects.length;
-            if (selected < lesson.subjects.length)
-              selectedSubjects.add(lesson.subjects[selected]);
-          }
-        }));
+      if (lesson.subjects.length > 0) {
+        int selected = getSelectedIndex(sharedPreferences, lesson.subjects, UnitPlan.getUnitPlan().indexOf(day), day.lessons.indexOf(lesson)) ?? lesson.subjects.length;
+        if (selected < lesson.subjects.length)
+          selectedSubjects.add(lesson.subjects[selected]);
+      }
+    }));
 
     Map<String, List<UnitPlanSubject>> courses = {};
 

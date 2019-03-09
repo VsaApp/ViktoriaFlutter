@@ -49,7 +49,7 @@ class Day {
   factory Day.fromJson(Map<String, dynamic> json) {
     return Day(
       name: json['day'] as String,
-      files: json['htmls'].map((i) => File.fromJson(i)).toList().cast<File>().toList(),
+      files: json['files'].map((i) => File.fromJson(i)).toList().cast<File>().toList(),
       times: json['times'].map((i) => Time.fromJson(i)).toList().cast<Time>().toList(),
     );
   }

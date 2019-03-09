@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:onesignal/onesignal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'Selection.dart';
 import 'Keys.dart';
 import 'Messageboard/MessageboardModel.dart';
 import 'Network.dart';
@@ -88,10 +89,7 @@ Future syncTags() async {
   List<String> subjects = [];
   getUnitPlan().forEach((day) {
     day.lessons.forEach((lesson) {
-      int selected = sharedPreferences.getInt(Keys.unitPlan(grade,
-          block: lesson.subjects[0].block,
-          day: getUnitPlan().indexOf(day),
-          unit: day.lessons.indexOf(lesson)));
+      int selected = getSelectedIndex(sharedPreferences, lesson.subjects, getUnitPlan().indexOf(day), day.lessons.indexOf(lesson));
       if (selected == null) {
         return;
       }
@@ -122,12 +120,7 @@ Future syncTags() async {
                 block: lesson.subjects[0].block,
                 day: getUnitPlan().indexOf(day),
             unit: day.lessons.indexOf(lesson))] =
-            sharedPreferences
-                .getInt(Keys.unitPlan(grade,
-                    block: lesson.subjects[0].block,
-                    day: getUnitPlan().indexOf(day),
-                    unit: day.lessons.indexOf(lesson)))
-                .toString();
+              getSelectedIndex(sharedPreferences, lesson.subjects, getUnitPlan().indexOf(day), day.lessons.indexOf(lesson)).toString();
       });
     });
   }

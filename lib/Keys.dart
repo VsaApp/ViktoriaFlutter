@@ -154,7 +154,7 @@ class Keys {
     return 'messageboard-${group.replaceAll(RegExp(r' '), '-')}';
   }
 
-  static String historyData(String type) {
+  static String historyDate(String type) {
     return 'historyDate-$type';
   }
 

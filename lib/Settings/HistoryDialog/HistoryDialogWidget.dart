@@ -80,6 +80,23 @@ abstract class HistoryDialogState extends State<HistoryDialog> {
     }
   }
 
+    List<Time> get unsortedTimes {
+    try {
+      return data
+          .where((Year year) => year.name == currentYear)
+          .toList()[0]
+          .months
+          .where((Month month) => month.name == currentMonth)
+          .toList()[0]
+          .days
+          .where((Day day) => day.name == currentDay)
+          .toList()[0]
+          .times;
+    } catch (e) {
+      return [];
+    }
+  }
+
   @override
   void initState() {
     download(widget.type).then((List<Year> years) {
@@ -88,12 +105,12 @@ abstract class HistoryDialogState extends State<HistoryDialog> {
         setState(() {
           sharedPreferences = instance;
           List<String> currentDate =
-              sharedPreferences.getStringList(Keys.historyData(widget.type));
+              sharedPreferences.getStringList(Keys.historyDate(widget.type));
           if (currentDate != null) {
             currentYear = currentDate[0];
             currentMonth = currentDate[1];
             currentDay = currentDate[2];
-            currentTime = null;
+            currentTime = currentDate[3];
             loadNewestData = false;
           } else if (widget.type == 'unitplan') {
             Unitplan.fetchDate(sharedPreferences.getString(Keys.grade))

@@ -24,11 +24,15 @@ Future<int> get checkOnline async {
   }
 }
 
-Future fetchDataAndSave(String url, String key, String defaultValue) async {
+Future fetchDataAndSave(String url, String key, String defaultValue, {Map<String, dynamic> body}) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   try {
-    final response = await http.Client().get(url).timeout(maxTime);
-    sharedPreferences.setString(key, response.body);
+    dynamic response;
+    if (body != null) {
+      response = await post(url, body: body);
+    }
+    else response = (await http.Client().get(url).timeout(maxTime)).body;
+    sharedPreferences.setString(key, response);
     await sharedPreferences.commit();
   } catch (e) {
     print("Error during downloading \'$key\': " + e.toString());
@@ -50,8 +54,7 @@ Future<String> fetchData(String url) async {
 
 Future<String> post(String url, {dynamic body}) async {
   HttpClient httpClient = HttpClient();
-  HttpClientRequest request =
-  await httpClient.postUrl(Uri.parse(url)).timeout(maxTime);
+  HttpClientRequest request = await httpClient.postUrl(Uri.parse(url)).timeout(maxTime);
   request.headers.set('content-type', 'application/json');
   request.add(utf8.encode(json.encode(body)));
   HttpClientResponse response = await request.close().timeout(maxTime);

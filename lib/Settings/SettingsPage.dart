@@ -68,14 +68,16 @@ abstract class SettingsPageState extends State<SettingsPage> {
               true;
       showShortCutDialog =
           sharedPreferences.getBool(Keys.showShortCutDialog) ?? true;
+      replacementplanVerion = sharedPreferences.getStringList(Keys.historyDate('replacementplan'));
+      unitplanVerion = sharedPreferences.getStringList(Keys.historyDate('unitplan'));
       showWorkGroupsInUnitPlan =
           sharedPreferences.getBool(Keys.showWorkGroupsInUnitPlan) ?? true;
       showCalendarInUnitPlan =
           sharedPreferences.getBool(Keys.showCalendarInUnitPlan) ?? true;
       replacementplanVerion =
-          sharedPreferences.getStringList(Keys.historyData('replacementplan'));
+          sharedPreferences.getStringList(Keys.historyDate('replacementplan'));
       unitplanVerion =
-          sharedPreferences.getStringList(Keys.historyData('unitplan'));
+          sharedPreferences.getStringList(Keys.historyDate('unitplan'));
       pages = [
         AppLocalizations.of(context).unitPlan,
         AppLocalizations.of(context).replacementPlan,

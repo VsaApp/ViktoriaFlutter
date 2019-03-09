@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../UnitPlan/UnitPlanData.dart' as unitplan;
+import '../../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
+import '../../Keys.dart';
 import '../../Localizations.dart';
 import './HistoryDialogWidget.dart';
 import './HistoryDialogModel.dart';
@@ -19,15 +22,24 @@ class HistoryDialogView extends HistoryDialogState {
             // Show loader
             Center(
                 child: SizedBox(
-                  child: CircularProgressIndicator(strokeWidth: 5.0),
-                  height: 75.0,
-                  width: 75.0,
+                  child: CircularProgressIndicator(strokeWidth: 1.0),
+                  height: 25.0,
+                  width: 25.0,
                 ),
               )
             : Padding(
                 padding: EdgeInsets.all(10),
                 child: Column(
                   children: <Widget>[
+                    CheckboxListTile(
+                      value: loadNewestData,
+                      onChanged: (bool value) {
+                        setState(() {
+                          loadNewestData = value;
+                        });
+                      },
+                      title: Text(AppLocalizations.of(context).loadNewestData),
+                    ),
                     Container(
                       width: double.infinity,
                       margin: EdgeInsets.only(bottom: 10),
@@ -47,7 +59,7 @@ class HistoryDialogView extends HistoryDialogState {
                                   );
                                 }).toList(),
                                 value: currentYear.toString(),
-                                onChanged: (year) {
+                                onChanged: loadNewestData ? null : (year) {
                                   setState(() {
                                     currentYear = year;
                                     currentMonth =
@@ -78,7 +90,7 @@ class HistoryDialogView extends HistoryDialogState {
                               child: DropdownButton<String>(
                                 isDense: true,
                                 value: currentMonth.toString(),
-                                onChanged: (month) {
+                                onChanged: loadNewestData ? null : (month) {
                                   setState(() {
                                     currentMonth = month;
                                     currentDay = days[days.length - 1].name;
@@ -115,7 +127,7 @@ class HistoryDialogView extends HistoryDialogState {
                               child: DropdownButton<String>(
                                 isDense: true,
                                 value: currentDay.toString(),
-                                onChanged: (day) {
+                                onChanged: loadNewestData ? null : (day) {
                                   setState(() {
                                     currentDay = day;
                                     if (currentTime != null) {
@@ -153,7 +165,7 @@ class HistoryDialogView extends HistoryDialogState {
                                     child: DropdownButton<String>(
                                       isDense: true,
                                       value: currentTime,
-                                      onChanged: (time) {
+                                      onChanged: loadNewestData ? null : (time) {
                                         setState(() {
                                           currentTime = time;
                                         });
@@ -174,6 +186,34 @@ class HistoryDialogView extends HistoryDialogState {
                               ],
                             ),
                           ),
+                    FlatButton(
+                      color: Theme.of(context).accentColor,
+                      child: Text(AppLocalizations.of(context).ok,
+                          style: TextStyle(color: Colors.black)),
+                      onPressed: () {
+                        if (loadNewestData && sharedPreferences.getStringList(Keys.historyDate(widget.type)) != null) {
+                          sharedPreferences.remove(Keys.historyDate(widget.type));
+                        }
+                        else if (!loadNewestData) {
+                          String fileName;
+                          if (widget.type == 'unitplan') {
+                            Day day = days.firstWhere((Day day) => day.name == currentDay);
+                            fileName = day.files[day.files.length - 1].name;
+                          }
+                          else {
+                            int index = unsortedTimes.map((Time time) => time.time).toList().indexOf(currentTime);
+                            fileName = days.firstWhere((Day day) => day.name == currentDay).files[index].name;
+                          }
+                          sharedPreferences.setStringList(Keys.historyDate(widget.type), [currentYear, currentMonth, currentDay, currentTime, fileName]);
+                        }
+                        Navigator.of(context).pop();
+                        Function() update = () async { 
+                          await unitplan.download(sharedPreferences.getString(Keys.grade), false);
+                          await replacementplan.load(unitplan.getUnitPlan(), false);
+                        };
+                        update();
+                      },
+                    )
                   ],
                 ),
               ),
