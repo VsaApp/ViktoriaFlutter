@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:viktoriaflutter/Rooms.dart';
 
 import '../ReplacementPlanModel.dart';
 
 class ReplacementPlanRow extends StatelessWidget {
-  const ReplacementPlanRow({Key key, this.change, this.changes})
-      : super(key: key);
+  const ReplacementPlanRow({
+    Key key,
+    @required this.change,
+    @required this.changes,
+    @required this.weekday,
+    @required this.sharedPreferences,
+  }) : super(key: key);
 
   final Change change;
   final List<dynamic> changes;
+  final int weekday;
+  final SharedPreferences sharedPreferences;
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +115,13 @@ class ReplacementPlanRow extends StatelessWidget {
                             ? Container(
                                 width: constraints.maxWidth * 0.15,
                                 child: Text(
-                                  change.room,
+                                  getRoom(
+                                    sharedPreferences,
+                                    weekday,
+                                    change.unit,
+                                    change.lesson,
+                                    change.room,
+                                  ),
                                   style: TextStyle(
                                     color: Theme.of(context).primaryColor,
                                   ),

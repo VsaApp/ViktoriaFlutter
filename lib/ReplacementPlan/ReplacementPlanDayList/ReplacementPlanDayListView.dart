@@ -118,8 +118,17 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
                           // Show all changes in a list...
                       getUnsortedList(day).map((change) {
                               return ReplacementPlanRow(
-                                  changes: getUnsortedList(day),
-                                  change: change);
+                                changes: getUnsortedList(day),
+                                change: change,
+                                weekday: [
+                                  'Montag',
+                                  'Dienstag',
+                                  'Mittwoch',
+                                  'Donnerstag',
+                                  'Freitag'
+                                ].indexOf(day.weekday),
+                                sharedPreferences: sharedPreferences,
+                              );
                             }).toList()
                           :
                           // Show the changes in three categories...
@@ -133,8 +142,17 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
                                     // Show my changes
                                     day.myChanges.map((change) {
                                         return ReplacementPlanRow(
-                                            changes: day.myChanges,
-                                            change: change);
+                                          changes: day.myChanges,
+                                          change: change,
+                                          weekday: [
+                                            'Montag',
+                                            'Dienstag',
+                                            'Mittwoch',
+                                            'Donnerstag',
+                                            'Freitag'
+                                          ].indexOf(day.weekday),
+                                          sharedPreferences: sharedPreferences,
+                                        );
                                       }).toList()
                                     :
                                     // Show no changes information
@@ -162,8 +180,17 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
                                       children:
                                           day.undefinedChanges.map((change) {
                                         return ReplacementPlanRow(
-                                            changes: day.undefinedChanges,
-                                            change: change);
+                                          changes: day.undefinedChanges,
+                                          change: change,
+                                          weekday: [
+                                            'Montag',
+                                            'Dienstag',
+                                            'Mittwoch',
+                                            'Donnerstag',
+                                            'Freitag'
+                                          ].indexOf(day.weekday),
+                                          sharedPreferences: sharedPreferences,
+                                        );
                                       }).toList())
                                   : Container(),
                               day.otherChanges.length > 0
@@ -175,8 +202,17 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
                                           .otherChanges,
                                       children: day.otherChanges.map((change) {
                                         return ReplacementPlanRow(
-                                            changes: day.otherChanges,
-                                            change: change);
+                                          changes: day.otherChanges,
+                                          change: change,
+                                          weekday: [
+                                            'Montag',
+                                            'Dienstag',
+                                            'Mittwoch',
+                                            'Donnerstag',
+                                            'Freitag'
+                                          ].indexOf(day.weekday),
+                                          sharedPreferences: sharedPreferences,
+                                        );
                                       }).toList())
                                   : Container(),
                             ]),

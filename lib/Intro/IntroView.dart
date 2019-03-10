@@ -84,7 +84,12 @@ class IntroPageView extends IntroPageState {
                   unit: 0,
                   sharedPreferences: sharedPreferences,
                 ),
-                ReplacementPlanRow(change: change, changes: [change])
+                ReplacementPlanRow(
+                  change: change,
+                  changes: [change],
+                  weekday: 0,
+                  sharedPreferences: sharedPreferences,
+                )
               ]),
             ),
           ),
@@ -100,7 +105,12 @@ class IntroPageView extends IntroPageState {
               isLast: false,
               title: AppLocalizations.of(context).myChanges,
               children: [
-                ReplacementPlanRow(change: change, changes: [change])
+                ReplacementPlanRow(
+                  change: change,
+                  changes: [change],
+                  weekday: 0,
+                  sharedPreferences: sharedPreferences,
+                )
               ])),
     );
     slides.forEach((slide) {

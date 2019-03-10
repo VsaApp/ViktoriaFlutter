@@ -259,11 +259,15 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                               .getChanges(sharedPreferences)
                               .map((change) {
                             return ReplacementPlanRow(
-                                change: change,
-                                changes: lesson
-                                    .subjects[_selected]
-                                    .getChanges(
-                                    sharedPreferences));
+                              change: change,
+                              changes: lesson
+                                  .subjects[_selected]
+                                  .getChanges(
+                                  sharedPreferences),
+                              weekday: widget.days.indexOf(day),
+                              sharedPreferences:
+                              sharedPreferences,
+                            );
                           })
                               .toList()
                               .cast<Widget>()),
