@@ -7,8 +7,14 @@ class ActionFab extends StatefulWidget {
   final Function() onLogin;
   final Function() onOrder;
   final double saldo;
+  final bool loading;
 
-  ActionFab({this.onLogin, this.onOrder, this.saldo});
+  ActionFab({
+    @required this.onLogin,
+    @required this.onOrder,
+    @required this.saldo,
+    @required this.loading,
+  });
 
   @override
   ActionFabState createState() => ActionFabState();
@@ -121,12 +127,21 @@ class ActionFabState extends State<ActionFab>
           Icons.euro_symbol,
           color: Colors.white,
         ),
-        label: Text(
-          widget.saldo == -1.0
-              ? AppLocalizations.of(context).login
-              : widget.saldo.toString(),
-          style: TextStyle(color: Colors.white),
-        ),
+        label: widget.loading
+            ? SizedBox(
+                height: 25.0,
+                width: 25.0,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  strokeWidth: 3,
+                ),
+              )
+            : Text(
+                widget.saldo == -1.0
+                    ? AppLocalizations.of(context).login
+                    : widget.saldo.toString(),
+                style: TextStyle(color: Colors.white),
+              ),
       ),
     );
   }

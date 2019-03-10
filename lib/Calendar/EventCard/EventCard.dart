@@ -32,9 +32,7 @@ class EventCard extends StatelessWidget {
               },
               child: ListTile(
                 leading: Icon(Icons.calendar_today,
-                    color: Theme
-                        .of(context)
-                        .accentColor),
+                    color: Theme.of(context).accentColor),
                 title: Text(event.name),
                 subtitle: Container(
                   child: Column(
@@ -43,19 +41,19 @@ class EventCard extends StatelessWidget {
                       Container(
                         margin: EdgeInsets.only(bottom: 10),
                         child:
-                        event.info != '' ? Text(event.info) : Container(),
+                            event.info != '' ? Text(event.info) : Container(),
                       ),
                       Text((event.start.date) +
                           (event.start.time != ''
                               ? ' (' + (event.start.time) + ' Uhr)'
                               : '')),
                       (event.start.date) + (event.start.time) !=
-                          (event.end.date ?? '') + (event.end.time ?? '')
+                              (event.end.date ?? '') + (event.end.time ?? '')
                           ? Text('bis ' +
-                          (event.end.date) +
-                          (event.end.time != ''
-                              ? ' (' + (event.end.time) + ' Uhr)'
-                              : ''))
+                              (event.end.date) +
+                              (event.end.time != ''
+                                  ? ' (' + (event.end.time) + ' Uhr)'
+                                  : ''))
                           : Container()
                     ],
                   ),

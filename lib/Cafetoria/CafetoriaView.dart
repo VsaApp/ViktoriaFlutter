@@ -11,9 +11,7 @@ import 'LoginDialog/LoginDialogWidget.dart';
 
 class CafetoriaPageView extends CafetoriaPageState {
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
-  GlobalKey<RefreshIndicatorState>();
-
-  double saldo = Cafetoria.menues.saldo;
+      GlobalKey<RefreshIndicatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +22,10 @@ class CafetoriaPageView extends CafetoriaPageState {
             padding: EdgeInsets.only(bottom: 70, left: 10, right: 10, top: 10),
             shrinkWrap: true,
             children: Cafetoria.menues.days
-                .map((day) =>
-                CafetoriaDayCard(
-                  day: day,
-                  showWeekday: true,
-                ))
+                .map((day) => CafetoriaDayCard(
+                      day: day,
+                      showWeekday: true,
+                    ))
                 .toList(),
           ),
           Positioned(
@@ -43,9 +40,7 @@ class CafetoriaPageView extends CafetoriaPageState {
                     builder: (BuildContext context1) {
                       return SimpleDialog(
                         title:
-                        Text(AppLocalizations
-                            .of(context)
-                            .cafetoriaLogin),
+                            Text(AppLocalizations.of(context).cafetoriaLogin),
                         children: <Widget>[
                           LoginDialog(onFinished: () {
                             download().then((a) {
@@ -62,6 +57,7 @@ class CafetoriaPageView extends CafetoriaPageState {
                 onOrder: () {
                   launch('https://www.opc-asp.de/vs-aachen/');
                 },
+                loading: loading,
                 saldo: saldo,
               ),
             ),

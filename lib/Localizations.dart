@@ -158,7 +158,10 @@ class AppLocalizations {
       'coursesLanguagesArts': 'Sprachlich-literarisch-künstlerisch',
       'coursesSocialScienes': 'Gesellschaftswissenschaftlich',
       'coursesNatureScienes': 'Mathematisch-naturwissenschaftlich-technisch',
-      'coursesOthers': 'Sonstige'
+      'coursesOthers': 'Sonstige',
+      'subjects': 'Fächer',
+      'rooms': 'Räume',
+      'teachers': 'Lehrer*innen'
     },
   };
 
@@ -717,6 +720,18 @@ class AppLocalizations {
 
   String get coursesOthers {
     return _localizedValues[locale.languageCode]['coursesOthers'];
+  }
+
+  String get subjects {
+    return _localizedValues[locale.languageCode]['subjects'];
+  }
+
+  String get rooms {
+    return _localizedValues[locale.languageCode]['rooms'];
+  }
+
+  String get teachers {
+    return _localizedValues[locale.languageCode]['teachers'];
   }
 }
 
