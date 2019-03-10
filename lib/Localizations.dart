@@ -155,6 +155,10 @@ class AppLocalizations {
       'unitPlanSettings': 'Stundenplan',
       'replacementPlanSettings': 'Vertretungsplan',
       'loadNewestData': 'Aktuellste Version',
+      'coursesLanguagesArts': 'Sprachlich-literarisch-künstlerisch',
+      'coursesSocialScienes': 'Gesellschaftswissenschaftlich',
+      'coursesNatureScienes': 'Mathematisch-naturwissenschaftlich-technisch',
+      'coursesOthers': 'Sonstige'
     },
   };
 
@@ -697,6 +701,22 @@ class AppLocalizations {
 
   String get replacementPlanSettings {
     return _localizedValues[locale.languageCode]['replacementPlanSettings'];
+  }
+
+  String get coursesLanguagesArts {
+    return _localizedValues[locale.languageCode]['coursesLanguagesArts'];
+  }
+
+  String get coursesSocialScienes {
+    return _localizedValues[locale.languageCode]['coursesSocialScienes'];
+  }
+
+  String get coursesNatureScienes {
+    return _localizedValues[locale.languageCode]['coursesNatureScienes'];
+  }
+
+  String get coursesOthers {
+    return _localizedValues[locale.languageCode]['coursesOthers'];
   }
 }
 

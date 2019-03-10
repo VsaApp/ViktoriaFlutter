@@ -7,8 +7,12 @@ class Section extends StatefulWidget {
   final String title;
   final bool isLast;
 
-  Section({Key key, this.children, this.title, this.isLast = false})
-      : super(key: key);
+  Section({
+    Key key,
+    @required this.children,
+    @required this.title,
+    this.isLast = false,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {

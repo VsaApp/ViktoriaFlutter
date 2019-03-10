@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Selection.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
+import '../SectionWidget.dart';
+import '../Selection.dart';
+import '../Subjects/SubjectsModel.dart';
 import '../UnitPlan/UnitPlanData.dart' as UnitPlan;
 import '../UnitPlan/UnitPlanModel.dart';
 import 'CourseEdit/CourseEditWidget.dart';
@@ -21,7 +23,12 @@ class CoursesPageView extends CoursesPageState {
     // Get all selected subjects...
     UnitPlan.getUnitPlan().forEach((day) => day.lessons.forEach((lesson) {
       if (lesson.subjects.length > 0) {
-        int selected = getSelectedIndex(sharedPreferences, lesson.subjects, UnitPlan.getUnitPlan().indexOf(day), day.lessons.indexOf(lesson)) ?? lesson.subjects.length;
+        int selected = getSelectedIndex(
+            sharedPreferences,
+            lesson.subjects,
+            UnitPlan.getUnitPlan().indexOf(day),
+            day.lessons.indexOf(lesson)) ??
+            lesson.subjects.length;
         if (selected < lesson.subjects.length)
           selectedSubjects.add(lesson.subjects[selected]);
       }
@@ -41,30 +48,95 @@ class CoursesPageView extends CoursesPageState {
       }
     });
 
+    List<Widget> sections = [];
+    List<Widget> section0Items = [];
+    List<Widget> section1Items = [];
+    List<Widget> section2Items = [];
+    List<Widget> section3Items = [];
+
+    courses.keys.toList().forEach((key) {
+      String lesson = courses[key][0].lesson;
+      if (lesson == Subjects.subjects['D'] ||
+          lesson == Subjects.subjects['E'] ||
+          lesson == Subjects.subjects['F'] ||
+          lesson == Subjects.subjects['L'] ||
+          lesson == Subjects.subjects['S'] ||
+          lesson == Subjects.subjects['KU'] ||
+          lesson == Subjects.subjects['MU'] ||
+          lesson == Subjects.subjects['MC'] ||
+          lesson == Subjects.subjects['UC'] ||
+          lesson == Subjects.subjects['SG']) {
+        section0Items.add(CourseRow(
+            subjects: courses[key].toList(),
+            sharedPreferences: sharedPreferences));
+      } else if (lesson == Subjects.subjects['EK'] ||
+          lesson == Subjects.subjects['GE'] ||
+          lesson == Subjects.subjects['PL'] ||
+          lesson == Subjects.subjects['SW'] ||
+          lesson == Subjects.subjects['DP'] ||
+          lesson == Subjects.subjects['PK']) {
+        section1Items.add(CourseRow(
+            subjects: courses[key].toList(),
+            sharedPreferences: sharedPreferences));
+      } else if (lesson == Subjects.subjects['BI'] ||
+          lesson == Subjects.subjects['CH'] ||
+          lesson == Subjects.subjects['NW'] ||
+          lesson == Subjects.subjects['IF'] ||
+          lesson == Subjects.subjects['MI'] ||
+          lesson == Subjects.subjects['M'] ||
+          lesson == Subjects.subjects['PH']) {
+        section2Items.add(CourseRow(
+            subjects: courses[key].toList(),
+            sharedPreferences: sharedPreferences));
+      } else {
+        section3Items.add(CourseRow(
+            subjects: courses[key].toList(),
+            sharedPreferences: sharedPreferences));
+      }
+    });
+    sections.add(Section(
+      title: AppLocalizations
+          .of(context)
+          .coursesLanguagesArts,
+      children: section0Items,
+    ));
+    sections.add(Section(
+      title: AppLocalizations
+          .of(context)
+          .coursesSocialScienes,
+      children: section1Items,
+    ));
+    sections.add(Section(
+      title: AppLocalizations
+          .of(context)
+          .coursesNatureScienes,
+      children: section2Items,
+    ));
+    sections.add(Section(
+      title: AppLocalizations
+          .of(context)
+          .coursesOthers,
+      children: section3Items,
+    ));
+
     return RefreshIndicator(
-        onRefresh: update,
-        key: refreshIndicatorKey,
-        child: ListView(
-            shrinkWrap: true,
-            children: (courses.keys
-                .toList()
-                .length > 0)
-                ?
-            // List of courses
-            courses.keys
-                .toList()
-                .map((key) =>
-                CourseRow(
-                    subjects: courses[key].toList(),
-                    sharedPreferences: sharedPreferences))
-                .toList()
-                :
+      onRefresh: update,
+      key: refreshIndicatorKey,
+      child: ListView(
+        shrinkWrap: true,
+        children: (courses.keys
+            .toList()
+            .length > 0)
+            ? sections
+            :
             // No subjects are selected in the unit plan
             <Widget>[
               Center(child: Text(AppLocalizations
                   .of(context)
                   .noCourses))
-            ]));
+            ],
+      ),
+    );
   }
 }
 
