@@ -42,6 +42,9 @@ class IntroPageView extends IntroPageState {
 
   @override
   Widget build(BuildContext context) {
+    if (sharedPreferences == null) {
+      return Container();
+    }
     slides.clear();
     UnitPlanSubject subject = UnitPlanSubject(
       teacher: 'KRA',
@@ -51,6 +54,7 @@ class IntroPageView extends IntroPageState {
       course: '',
       changes: [],
       unsures: 0,
+      week: 'AB',
     );
     Change change = Change(
         unit: 0,
@@ -78,6 +82,7 @@ class IntroPageView extends IntroPageState {
                   weekday: 0,
                   subject: subject,
                   unit: 0,
+                  sharedPreferences: sharedPreferences,
                 ),
                 ReplacementPlanRow(change: change, changes: [change])
               ]),

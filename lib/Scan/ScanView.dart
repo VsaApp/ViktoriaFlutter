@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../Keys.dart';
+import '../Localizations.dart';
+import '../Rooms/RoomsModel.dart';
+import '../SectionWidget.dart';
+import '../Selection.dart';
+import '../Subjects/SubjectsModel.dart';
+import '../Teachers/TeachersModel.dart';
 import '../UnitPlan/UnitPlanModel.dart';
 import '../UnitPlan/UnitPlanRow/UnitPlanRowWidget.dart';
-import '../Subjects/SubjectsModel.dart';
-import '../Rooms/RoomsModel.dart';
-import '../Teachers/TeachersModel.dart';
-import '../Keys.dart';
-import '../SectionWidget.dart';
-import '../Localizations.dart';
-import '../Selection.dart';
-
 import 'ScanPage.dart';
 
 class ScanPageView extends ScanPageState {
@@ -98,7 +97,8 @@ class ScanPageView extends ScanPageState {
         print('');
       } else {
         matchingSubjects.forEach((match) {
-          setSelectedSubject(sharedPreferences, match.subject, match.weekday, match.unit);
+          setSelectedSubject(
+              sharedPreferences, match.subject, match.weekday, match.unit);
         });
       }
     });
@@ -210,13 +210,16 @@ class ScanPageView extends ScanPageState {
                   children: lesson.lesson.subjects.map((subject) {
                     return GestureDetector(
                       onTap: () {
-                        setSelectedSubject(sharedPreferences, subject, lesson.weekday, lesson.unit).then((_) => setState(() {}));
+                        setSelectedSubject(sharedPreferences, subject,
+                            lesson.weekday, lesson.unit)
+                            .then((_) => setState(() {}));
                       },
                       child: UnitPlanRow(
                         subject: subject,
                         weekday: 0,
                         unit: 0,
                         showUnit: false,
+                        sharedPreferences: sharedPreferences,
                       ),
                     );
                   }).toList(),
@@ -237,6 +240,7 @@ class MatchingSubject {
   final int weekday;
   final int unit;
   final int index;
+
   MatchingSubject({this.subject, this.weekday, this.unit, this.index})
       : super();
 }
@@ -245,5 +249,6 @@ class UnidentifiedLesson {
   final UnitPlanLesson lesson;
   final int weekday;
   final int unit;
+
   UnidentifiedLesson({this.lesson, this.weekday, this.unit}) : super();
 }

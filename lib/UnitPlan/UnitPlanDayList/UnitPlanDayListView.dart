@@ -145,10 +145,12 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                     }
                                   },
                                   child: UnitPlanRow(
-                                      weekday: widget.days.indexOf(day),
-                                      subject: subject,
-                                      unit: day.lessons.indexOf(lesson),
-                                      showUnit: false),
+                                    weekday: widget.days.indexOf(day),
+                                    subject: subject,
+                                    unit: day.lessons.indexOf(lesson),
+                                    showUnit: false,
+                                    sharedPreferences: sharedPreferences,
+                                  ),
                                 );
                               })
                                   .toList()
@@ -216,6 +218,7 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                         changes: [],
                         week: 'AB'),
                     unit: day.lessons.indexOf(lesson),
+                    sharedPreferences: sharedPreferences,
                   )
                       : (lesson.subjects[_selected].changes.length == 0 ||
                       !sharedPreferences
@@ -226,6 +229,7 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                     weekday: widget.days.indexOf(day),
                     subject: lesson.subjects[_selected],
                     unit: day.lessons.indexOf(lesson),
+                    sharedPreferences: sharedPreferences,
                   )
                       :
                   // Show list of changes
@@ -246,6 +250,8 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                             lesson.subjects[_selected],
                             unit:
                             day.lessons.indexOf(lesson),
+                            sharedPreferences:
+                            sharedPreferences,
                           )
                               : Container())
                         ]
@@ -268,6 +274,7 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                     weekday: widget.days.indexOf(day),
                     subject: lesson.subjects[_selected],
                     unit: day.lessons.indexOf(lesson),
+                    sharedPreferences: sharedPreferences,
                   ))),
                 );
               }).toList());
