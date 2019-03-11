@@ -168,10 +168,8 @@ class AppLocalizations {
       'introCafetoriaTitle': 'Cafetoria',
       'introCafetoriaDescription':
           'Sieh dir die Menüs an und überprüfe direkt wie viel Geld du noch hast',
-      'introWorkGroupsTitle': 'AGs',
-      'introWorkGroupsDescription':
-          'Du kannst alle AGs der Schule direkt auf einen Blick sehen'
-      'teachers': 'Lehrer*innen',
+      'introWorkGroupsTitle': 'AGs', 
+      'introWorkGroupsDescription': 'Du kannst alle AGs der Schule direkt auf einen Blick sehen',
       'aWeek': 'A-Woche:',
       'bWeek': 'B-Woche:',
     },

@@ -52,28 +52,29 @@ abstract class LoadingPageState extends State<LoadingPage> {
     countCurrentDownloads = allDownloadsCount;
     download(() async {
       await UnitPlan.download(instance.getString(Keys.grade), false);
+      texts.remove(AppLocalizations.of(context).unitPlan);
       await ReplacementPlan.load(UnitPlan.getUnitPlan(), false);
-    }, 2);
-    download(WorkGroups.download, 1);
-    download(Calendar.download, 1);
-    download(Messageboard.download, 1);
-    download(Subjects.download, 1);
-    download(Rooms.download, 1);
-    download(Teachers.download, 1);
+    }, 2, AppLocalizations.of(context).replacementPlan);
+    download(WorkGroups.download, 1, AppLocalizations.of(context).workGroups);
+    download(Calendar.download, 1, AppLocalizations.of(context).calendar);
+    download(Messageboard.download, 1, AppLocalizations.of(context).messageboard);
+    download(Subjects.download, 1, AppLocalizations.of(context).subjects);
+    download(Rooms.download, 1, AppLocalizations.of(context).rooms);
+    download(Teachers.download, 1, AppLocalizations.of(context).teachers);
     download(() async {
       Cafetoria.download(
         id: 'null',
         password: 'null',
       );
-    }, 1);
+    }, 1, AppLocalizations.of(context).cafetoria);
   }
 
-  Future download(Function() process, int count) async {
+  Future download(Function() process, int count, String text) async {
     await process();
     for (int i = 0; i < count; i++) {
       countCurrentDownloads--;
       setState(() {
-        texts.removeAt(Random().nextInt(texts.length));
+        texts.remove(text);
       });
     }
     if (countCurrentDownloads == 0) {
