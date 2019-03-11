@@ -9,7 +9,7 @@ class LoadingPageView extends LoadingPageState {
     List<Widget> items = texts.map((text) => Text(text)).toList();
     List<int> itemCharacters = texts.map((text) => text.length).toList();
     itemCharacters.sort((a, b) => b.compareTo(a));
-    if (itemCharacters.length == 0) {
+    if (allDownloadsCount == 0) {
       return Container();
     }
     return Scaffold(
@@ -20,7 +20,9 @@ class LoadingPageView extends LoadingPageState {
             child: Padding(
               padding: EdgeInsets.only(
                   top: height -
-                      ((allDownloadsCount - 1) * 16).toDouble() -
+                      ((allDownloadsCount - (allDownloadsCount > 0 ? 1 : 0)) *
+                          16)
+                          .toDouble() -
                       100 -
                       height / 5),
               child: SizedBox(
@@ -30,7 +32,8 @@ class LoadingPageView extends LoadingPageState {
               ),
             ),
           ),
-          Align(
+          itemCharacters.length > 0
+              ? Align(
             alignment: Alignment.topCenter,
             child: Padding(
               padding: EdgeInsets.only(
@@ -47,7 +50,8 @@ class LoadingPageView extends LoadingPageState {
                 ),
               ),
             ),
-          ),
+          )
+              : Container(),
         ],
       ),
     );

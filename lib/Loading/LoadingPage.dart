@@ -22,8 +22,8 @@ class LoadingPage extends StatefulWidget {
 }
 
 abstract class LoadingPageState extends State<LoadingPage> {
-  int allDownloadsCount = 9;
-  int countCurrentDownloads = 9;
+  int allDownloadsCount = 0;
+  int countCurrentDownloads;
   SharedPreferences instance;
   List<String> texts = [];
 
@@ -48,6 +48,8 @@ abstract class LoadingPageState extends State<LoadingPage> {
 
   // Download all data
   Future downloadAll() async {
+    allDownloadsCount = 9;
+    countCurrentDownloads = allDownloadsCount;
     download(() async {
       await UnitPlan.download(instance.getString(Keys.grade), false);
       await ReplacementPlan.load(UnitPlan.getUnitPlan(), false);
