@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:onesignal/onesignal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,17 +19,19 @@ import 'HomeView.dart';
 class DrawerItem {
   String title;
   IconData icon;
+  String url;
 
-  DrawerItem(this.title, this.icon);
+  DrawerItem(this.title, this.icon, this.url);
 }
 
 // Define page
 class Page {
+  String url;
   IconData icon;
   String name;
   Widget page;
 
-  Page(this.name, this.icon, this.page);
+  Page(this.name, this.icon, this.page, {this.url});
 }
 
 class HomePage extends StatefulWidget {
@@ -74,6 +77,16 @@ abstract class HomePageState extends State<HomePage> {
     if (!weekChangeable) return;
     setState(() => currentWeek = currentWeek == 'B' ? 'A' : 'B');
     if (weekChanged != null) weekChanged(currentWeek);
+  }
+
+    
+  launchURL(String url) async {
+    if (url == null) return;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   @override

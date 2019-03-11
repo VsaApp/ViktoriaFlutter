@@ -23,9 +23,10 @@ class HomePageView extends HomePageState {
     // List of pages
     List<Page> pages = [
       Page(AppLocalizations.of(context).unitPlan, Icons.event_note,
-          UnitPlanPage()),
+          UnitPlanPage(), url: 'https://www.viktoriaschule-aachen.de/sundvplan/sps/index.html'),
       Page(AppLocalizations.of(context).replacementPlan,
-          Icons.format_list_numbered, ReplacementPlanPage()),
+          Icons.format_list_numbered, ReplacementPlanPage(),
+          url: 'https://www.viktoriaschule-aachen.de/sundvplan/vps/index.html'),
       Page(AppLocalizations.of(context).messageboard, Icons.message,
           MessageboardPage()),
       Page(AppLocalizations.of(context).calendar, Icons.calendar_today,
@@ -41,7 +42,7 @@ class HomePageView extends HomePageState {
 
     // Map pages to drawer items
     List<DrawerItem> drawerItems =
-        pages.map((Page page) => DrawerItem(page.name, page.icon)).toList();
+        pages.map((Page page) => DrawerItem(page.name, page.icon, page.url)).toList();
 
     // Create list of widget options
     var drawerOptions = <Widget>[];
@@ -119,7 +120,11 @@ class HomePageView extends HomePageState {
     appScaffold = Scaffold(
       appBar: AppBar(
         // Current page's title
-        title: Text(drawerItems[selectedDrawerIndex].title),
+        title: FlatButton(
+          padding: EdgeInsets.only(left: 0),
+          child: Text(drawerItems[selectedDrawerIndex].title, style: TextStyle(color: Colors.white, fontSize: 20)),
+          onPressed: () => launchURL(drawerItems[selectedDrawerIndex].url),
+        ),
         elevation: 0.0,
         actions: <Widget>[
           showWeek ?
