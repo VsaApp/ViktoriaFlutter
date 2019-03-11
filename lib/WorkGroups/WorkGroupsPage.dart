@@ -21,7 +21,7 @@ abstract class WorkGroupsPageState extends State<WorkGroupsPage> {
   void initState() {
     // Download data
     download().then((data) {
-      setState(() {
+      if (mounted) setState(() {
         this.data = data;
       });
     });
