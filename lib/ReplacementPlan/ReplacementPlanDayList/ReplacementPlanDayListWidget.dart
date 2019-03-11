@@ -12,8 +12,16 @@ import 'ReplacementPlanDayListView.dart';
 class ReplacementPlanDayList extends StatefulWidget {
   List<ReplacementPlanDay> days;
   final bool sort;
+  final bool temp;
+  final String grade;
 
-  ReplacementPlanDayList({Key key, this.days, this.sort}) : super(key: key);
+  ReplacementPlanDayList({
+    Key key,
+    this.days,
+    this.sort,
+    this.grade,
+    this.temp = false,
+  }) : super(key: key);
 
   @override
   ReplacementPlanDayListView createState() => ReplacementPlanDayListView();
@@ -45,9 +53,24 @@ abstract class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
   ];
 
   Future update() async {
-    await unitplan.download(sharedPreferences.getString(Keys.grade), false);
-    await replacementplan.load(unitplan.getUnitPlan(), false);
-    setState(() => widget.days = ReplacementPlan.days);
+    if (widget.temp) {
+      replacementplan
+          .load(
+          await unitplan.download(
+              widget.grade ?? sharedPreferences.getString(Keys.grade),
+              true),
+          true)
+          .then((days) {
+        setState(() {
+          widget.days = days;
+        });
+      });
+    } else {
+      await unitplan.download(
+          widget.grade ?? sharedPreferences.getString(Keys.grade), false);
+      await replacementplan.load(unitplan.getUnitPlan(), false);
+      setState(() => widget.days = ReplacementPlan.days);
+    }
   }
 
   List<Change> getUnsortedList(ReplacementPlanDay day) {

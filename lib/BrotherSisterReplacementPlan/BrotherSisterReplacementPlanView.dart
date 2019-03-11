@@ -17,9 +17,16 @@ class BrotherSisterReplacementPlanPageView
       ),
       body: Hero(
         tag: 'replacementplan-' + widget.grade,
-        child: Column(children: <Widget>[
-          ReplacementPlanDayList(days: days, sort: false)
-        ]),
+        child: Column(
+          children: <Widget>[
+            ReplacementPlanDayList(
+              days: days,
+              sort: false,
+              temp: true,
+              grade: widget.grade,
+            ),
+          ],
+        ),
       ),
     );
   }
