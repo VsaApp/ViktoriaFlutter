@@ -7,6 +7,18 @@ String getKey(UnitPlanSubject subject) {
   return '${subject.lesson}-${subject.teacher}';
 }
 
+/// Returns the value for key and reset when the value is still in the old format...
+List<String> getValue(SharedPreferences sharedPreferences, String key) {
+  try {
+    return sharedPreferences.getStringList(key);
+  } catch (_) {
+    sharedPreferences.setStringList(key, null);
+    UnitPlan.setAllSelections(sharedPreferences);
+    return null;
+  }
+}
+
+/// Logs all unitPlan keys and values... (Only for debugging)
 void logValues(SharedPreferences sharedPreferences) {
   String grade = sharedPreferences.getString(Keys.grade);
   List<String> keys = sharedPreferences
@@ -23,6 +35,7 @@ void logValues(SharedPreferences sharedPreferences) {
   }
 }
 
+/// Converts all old format values to the new format...
 Future convertFromOldVerion(SharedPreferences sharedPreferences) async {
   String grade = sharedPreferences.getString(Keys.grade);
   List<String> keys = sharedPreferences
@@ -69,20 +82,18 @@ int getSelectedIndex(SharedPreferences sharedPreferences,
     List<UnitPlanSubject> subjects, int day, int unit,
     {String week = 'A'}) {
   // List element 0: week A  -- element 1: week B (Only one element: week AB)
-  List<String> selected = sharedPreferences.getStringList(Keys.unitPlan(
-      sharedPreferences.getString(Keys.grade),
-      block: subjects[0].block,
-      day: day,
-      unit: unit));
+  if (unit == 5) return 0;
+  List<String> selected = getValue(sharedPreferences, Keys.unitPlan(
+              sharedPreferences.getString(Keys.grade),
+              block: subjects[0].block,
+              day: day,
+              unit: unit));
   if (selected == null) return null;
   week = week.toUpperCase();
   int index = selected.length == 1 ? 0 : week == 'A' ? 0 : 1;
-  List<String> keys =
-      subjects.map((UnitPlanSubject subject) => getKey(subject)).toList();
-  if (!keys.contains(selected[index]))
-    return null;
-  else
-    return keys.indexOf(selected[index]);
+  List<UnitPlanSubject> subject = subjects.where((UnitPlanSubject subject) => subject.week.contains(week) && getKey(subject) == selected[index]).toList();
+  if (subject.length == 0) return null;
+  else return subjects.indexOf(subject[0]);
 }
 
 UnitPlanSubject getSelectedSubject(SharedPreferences sharedPreferences,
@@ -93,13 +104,12 @@ UnitPlanSubject getSelectedSubject(SharedPreferences sharedPreferences,
   return index == null ? null : subjects[index];
 }
 
-Future setSelectedSubject(SharedPreferences sharedPreferences,
-    UnitPlanSubject selected, int day, int unit,
-    {UnitPlanSubject selectedB}) async {
-  List<String> weeks = selected.week == 'AB' || true
-      ? [getKey(selected)]
-      : [getKey(selected), getKey(selectedB)];
-  String key = Keys.unitPlan(sharedPreferences.getString(Keys.grade),
-      block: selected.block, day: day, unit: unit);
+Future setSelectedSubject(SharedPreferences sharedPreferences, UnitPlanSubject selected, int day, int unit, {UnitPlanSubject selectedB}) async {
+  List<String> weeks = selected.week == 'AB' || selectedB == null ? [getKey(selected)] : [getKey(selected), getKey(selectedB)];
+  String key = Keys.unitPlan(
+              sharedPreferences.getString(Keys.grade),
+              block: selected.block,
+              day: day,
+              unit: unit);
   await sharedPreferences.setStringList(key, weeks);
 }

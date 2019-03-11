@@ -16,6 +16,7 @@ class UnitPlanView extends State<UnitPlanPage> {
   void initState() {
     listener = () => setState(() => null);
     HomePageState.replacementplanUpdatedListeners.add(listener);
+    HomePageState.setWeekChangeable(true);
     super.initState();
   }
 

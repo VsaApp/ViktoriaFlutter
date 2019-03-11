@@ -23,14 +23,17 @@ class UnitPlanDay {
   final List<dynamic> lessons;
   final String replacementPlanForDate;
   final String replacementPlanForWeekday;
+  final String replacementPlanForWeektype;
   final String replacementPlanUpdatedDate;
   final String replacementPlanUpdatedTime;
+  String showWeek = 'A';
 
   UnitPlanDay({
     @required this.name,
     @required this.lessons,
     @required this.replacementPlanForDate,
     @required this.replacementPlanForWeekday,
+    @required this.replacementPlanForWeektype,
     @required this.replacementPlanUpdatedDate,
     @required this.replacementPlanUpdatedTime,
   });
@@ -44,8 +47,8 @@ class UnitPlanDay {
           .map((i) => UnitPlanLesson.fromJson(i))
           .toList(),
       replacementPlanForDate: json['replacementplan']['for']['date'] as String,
-      replacementPlanForWeekday:
-          json['replacementplan']['for']['weekday'] as String,
+      replacementPlanForWeekday: json['replacementplan']['for']['weekday'] as String,
+      replacementPlanForWeektype: json['replacementplan']['for']['weektype'] as String,
       replacementPlanUpdatedDate:
           json['replacementplan']['updated']['date'] as String,
       replacementPlanUpdatedTime:
@@ -93,9 +96,7 @@ class UnitPlanDay {
         .indexOf(name);
     lessons.forEach((lesson) {
       int unit = lessons.indexOf(lesson);
-      int s =
-          getSelectedIndex(sharedPreferences, lesson.subjects, weekday, unit) ??
-              0;
+      int s = getSelectedIndex(sharedPreferences, lesson.subjects, weekday, unit, week: showWeek) ?? 0;
       lesson.subjects.forEach((subject) {
         int i = lesson.subjects.indexOf(subject);
         subject.changes.forEach((change) {
@@ -157,6 +158,7 @@ class UnitPlanDay {
       date: replacementPlanForDate,
       time: replacementPlanUpdatedTime,
       weekday: replacementPlanForWeekday,
+      weektype: replacementPlanForWeektype,
       update: replacementPlanUpdatedDate,
       unparsed: [],
       myChanges: myChanges,

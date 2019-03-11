@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../Home/HomePage.dart';
 import '../../Keys.dart';
 import '../../Localizations.dart';
 import '../../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
@@ -124,6 +125,8 @@ abstract class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
 
           tabController.animateTo(day);
         }
+        HomePageState.updateWeek(widget.days[tabController.index].weektype);
+        tabController.addListener(() => HomePageState.updateWeek(widget.days[tabController.index].weektype));
       });
     });
 

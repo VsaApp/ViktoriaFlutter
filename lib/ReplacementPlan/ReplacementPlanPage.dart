@@ -42,6 +42,7 @@ abstract class ReplacementPlanPageState extends State<ReplacementPlanPage> {
     });
     listener = () => setState(() => null);
     HomePageState.replacementplanUpdatedListeners.add(listener);
+    HomePageState.setWeekChangeable(false);
     super.initState();
   }
 

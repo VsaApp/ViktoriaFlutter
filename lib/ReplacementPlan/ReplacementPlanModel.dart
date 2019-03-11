@@ -16,6 +16,7 @@ class ReplacementPlanDay {
   final String time;
   final String update;
   final String weekday;
+  final String weektype;
   final List<Change> myChanges;
   final List<Change> undefinedChanges;
   final List<Change> otherChanges;
@@ -26,6 +27,7 @@ class ReplacementPlanDay {
     @required this.time,
     @required this.update,
     @required this.weekday,
+    @required this.weektype,
     @required this.myChanges,
     @required this.undefinedChanges,
     @required this.otherChanges,
@@ -96,7 +98,7 @@ class Change {
       for (int j = 0; j < day.lessons.length; j++) {
         UnitPlanLesson lesson = day.lessons[j];
         int _selected = getSelectedIndex(sharedPreferences, lesson.subjects,
-            UnitPlan.days.indexOf(day), day.lessons.indexOf(lesson));
+            UnitPlan.days.indexOf(day), day.lessons.indexOf(lesson), week: day.showWeek);
         for (int k = 0; k < lesson.subjects.length; k++) {
           UnitPlanSubject subject = lesson.subjects[k];
           if ((subject.lesson == this.lesson &&

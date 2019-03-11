@@ -171,10 +171,21 @@ class AppLocalizations {
       'introWorkGroupsTitle': 'AGs',
       'introWorkGroupsDescription':
           'Du kannst alle AGs der Schule direkt auf einen Blick sehen'
+      'teachers': 'Lehrer*innen',
+      'aWeek': 'A-Woche:',
+      'bWeek': 'B-Woche:',
     },
   };
 
   // All getter defined...
+  String get aWeek {
+    return _localizedValues[locale.languageCode]['aWeek'];
+  }
+
+  String get bWeek {
+    return _localizedValues[locale.languageCode]['bWeek'];
+  }
+
   String get loadNewestData {
     return _localizedValues[locale.languageCode]['loadNewestData'];
   }

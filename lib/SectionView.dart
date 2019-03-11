@@ -6,7 +6,7 @@ class SectionView extends State<Section> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(10.0),
+      margin: EdgeInsets.all(widget.margin),
       child: Card(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -15,7 +15,7 @@ class SectionView extends State<Section> {
               title: Text(widget.title),
             ),
             Container(
-                padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
+                padding: EdgeInsets.only(top: widget.paddingTop, bottom: widget.paddingBottom),
                 decoration: BoxDecoration(
                   border: Border(
                     top: BorderSide(

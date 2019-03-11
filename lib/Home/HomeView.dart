@@ -121,6 +121,13 @@ class HomePageView extends HomePageState {
         // Current page's title
         title: Text(drawerItems[selectedDrawerIndex].title),
         elevation: 0.0,
+        actions: <Widget>[
+          showWeek ?
+          FlatButton(
+            child: Text(currentWeek, style: TextStyle(color: Colors.white, fontSize: 20)),
+            onPressed: weekPressed
+          ) : Container()
+        ],
       ),
       drawer: Drawer(
         child: ListView(

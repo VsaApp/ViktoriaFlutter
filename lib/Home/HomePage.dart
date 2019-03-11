@@ -37,6 +37,9 @@ class HomePage extends StatefulWidget {
 }
 
 abstract class HomePageState extends State<HomePage> {
+  String currentWeek = 'A';
+  bool showWeek = true;
+  static bool weekChangeable = true;
   Scaffold appScaffold;
   int selectedDrawerIndex = 0;
   SharedPreferences sharedPreferences;
@@ -49,13 +52,36 @@ abstract class HomePageState extends State<HomePage> {
   bool offlineShown = false;
   static const platform = const MethodChannel('viktoriaflutter');
   static Function(String action, String type, String group) messageBoardUpdated;
+  static Function(String week) weekChanged;
+  static Function(String week) updateWeek;
+  static Function(bool value) setShowWeek;
 
   static List<Function()> replacementplanUpdatedListeners = [];
+
+  void _showWeek(bool value) {
+    if (mounted) setState(() => showWeek = value);
+  }
+
+  static setWeekChangeable(bool value) {
+    HomePageState.weekChangeable = value;
+  }
+
+  void _updateWeek(String week) {
+    if (mounted && week != currentWeek) setState(() => currentWeek = week);
+  }
+
+  void weekPressed() {
+    if (!weekChangeable) return;
+    setState(() => currentWeek = currentWeek == 'B' ? 'A' : 'B');
+    if (weekChanged != null) weekChanged(currentWeek);
+  }
 
   @override
   void initState() {
     loadData();
     checkUntiplanData();
+    HomePageState.updateWeek = _updateWeek;
+    HomePageState.setShowWeek = _showWeek;
     SharedPreferences.getInstance().then((sharedPreferences) {
       this.sharedPreferences = sharedPreferences;
       // Default follow VsaApp in messageboard...
