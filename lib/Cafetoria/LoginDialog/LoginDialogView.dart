@@ -54,12 +54,9 @@ class LoginDialogView extends LoginDialogState {
                     child: Column(
                       children: <Widget>[
                         Text(online == -1
-                            ? AppLocalizations
-                            .of(context)
-                            .goOnlineToLogin
-                            : AppLocalizations
-                            .of(context)
-                            .failedToConnectToServer),
+                            ? AppLocalizations.of(context).goOnlineToLogin
+                            : AppLocalizations.of(context)
+                                .failedToConnectToServer),
                         FlatButton(
                           color: Theme.of(context).accentColor,
                           child: Text(AppLocalizations.of(context).retry),
@@ -92,9 +89,7 @@ class LoginDialogView extends LoginDialogState {
                           }
                         },
                         decoration: InputDecoration(
-                            hintText: AppLocalizations
-                                .of(context)
-                                .cafetoriaId),
+                            hintText: AppLocalizations.of(context).cafetoriaId),
                         onFieldSubmitted: (value) {
                           FocusScope.of(context).requestFocus(focus);
                         },

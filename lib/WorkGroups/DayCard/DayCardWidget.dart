@@ -51,14 +51,12 @@ class WorkGroupsDayCard extends StatelessWidget {
             children: <Widget>[
               ListTile(
                 leading:
-                Icon(MdiIcons.soccer, color: Theme
-                    .of(context)
-                    .accentColor),
+                    Icon(MdiIcons.soccer, color: Theme.of(context).accentColor),
                 title: showWeekday
                     ? Padding(
-                  padding: EdgeInsets.only(bottom: 5),
-                  child: Text(day.weekday),
-                )
+                        padding: EdgeInsets.only(bottom: 5),
+                        child: Text(day.weekday),
+                      )
                     : null,
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

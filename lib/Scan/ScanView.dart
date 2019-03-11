@@ -211,7 +211,7 @@ class ScanPageView extends ScanPageState {
                     return GestureDetector(
                       onTap: () {
                         setSelectedSubject(sharedPreferences, subject,
-                            lesson.weekday, lesson.unit)
+                                lesson.weekday, lesson.unit)
                             .then((_) => setState(() {}));
                       },
                       child: UnitPlanRow(

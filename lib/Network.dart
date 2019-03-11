@@ -10,7 +10,7 @@ Duration maxTime = Duration(seconds: 4);
 Future<int> get checkOnline async {
   try {
     final result1 =
-    await InternetAddress.lookup('api.vsa.2bad2c0.de').timeout(maxTime);
+        await InternetAddress.lookup('api.vsa.2bad2c0.de').timeout(maxTime);
     if (result1.isNotEmpty && result1[0].rawAddress.isNotEmpty) {
       return 1;
     }
@@ -24,14 +24,15 @@ Future<int> get checkOnline async {
   }
 }
 
-Future fetchDataAndSave(String url, String key, String defaultValue, {Map<String, dynamic> body}) async {
+Future fetchDataAndSave(String url, String key, String defaultValue,
+    {Map<String, dynamic> body}) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   try {
     dynamic response;
     if (body != null) {
       response = await post(url, body: body);
-    }
-    else response = (await http.Client().get(url).timeout(maxTime)).body;
+    } else
+      response = (await http.Client().get(url).timeout(maxTime)).body;
     sharedPreferences.setString(key, response);
     await sharedPreferences.commit();
   } catch (e) {
@@ -54,7 +55,8 @@ Future<String> fetchData(String url) async {
 
 Future<String> post(String url, {dynamic body}) async {
   HttpClient httpClient = HttpClient();
-  HttpClientRequest request = await httpClient.postUrl(Uri.parse(url)).timeout(maxTime);
+  HttpClientRequest request =
+      await httpClient.postUrl(Uri.parse(url)).timeout(maxTime);
   request.headers.set('content-type', 'application/json');
   request.add(utf8.encode(json.encode(body)));
   HttpClientResponse response = await request.close().timeout(maxTime);

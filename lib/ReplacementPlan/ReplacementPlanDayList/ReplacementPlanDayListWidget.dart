@@ -56,10 +56,10 @@ abstract class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
     if (widget.temp) {
       replacementplan
           .load(
-          await unitplan.download(
-              widget.grade ?? sharedPreferences.getString(Keys.grade),
-              true),
-          true)
+              await unitplan.download(
+                  widget.grade ?? sharedPreferences.getString(Keys.grade),
+                  true),
+              true)
           .then((days) {
         setState(() {
           widget.days = days;

@@ -62,7 +62,7 @@ class CafetoriaMenu {
   final String name;
   final double price;
 
-  CafetoriaMenu({this.time, this.name, this.price});
+  CafetoriaMenu({this.time, this.name, this.price}):super();
 
   factory CafetoriaMenu.fromJson(Map<String, dynamic> json) {
     return CafetoriaMenu(

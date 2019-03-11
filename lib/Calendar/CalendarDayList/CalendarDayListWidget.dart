@@ -13,7 +13,7 @@ class CalendarDayList extends StatefulWidget {
 class CalendarDayListState extends State<CalendarDayList> {
   List<CalendarEvent> events;
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
-  GlobalKey<RefreshIndicatorState>();
+      GlobalKey<RefreshIndicatorState>();
 
   Future update() async {
     await download();

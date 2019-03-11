@@ -17,30 +17,27 @@ class CafetoriaDayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> menues = day.menues
-        .map((menu) =>
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              menu.name +
-                  (menu.price > 0 ? ' (${menu.price.toString()}€)' : ''),
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            menu.time != '' ? Text(menu.time) : Container(),
-            day.menues.indexOf(menu) != day.menues.length - 1
-                ? Text('')
-                : Container(),
-          ],
-        ))
+        .map((menu) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  menu.name +
+                      (menu.price > 0 ? ' (${menu.price.toString()}€)' : ''),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                menu.time != '' ? Text(menu.time) : Container(),
+                day.menues.indexOf(menu) != day.menues.length - 1
+                    ? Text('')
+                    : Container(),
+              ],
+            ))
         .toList();
     if (menues.length == 0) {
       menues = [
         Text(
-          AppLocalizations
-              .of(context)
-              .cafetoriaNoMenues,
+          AppLocalizations.of(context).cafetoriaNoMenues,
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -61,9 +58,9 @@ class CafetoriaDayCard extends StatelessWidget {
                     Icon(Icons.fastfood, color: Theme.of(context).accentColor),
                 title: showWeekday
                     ? Padding(
-                  padding: EdgeInsets.only(bottom: 5),
-                  child: Text(day.weekday),
-                )
+                        padding: EdgeInsets.only(bottom: 5),
+                        child: Text(day.weekday),
+                      )
                     : null,
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

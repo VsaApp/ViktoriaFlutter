@@ -34,16 +34,15 @@ abstract class CourseEditState extends State<CourseEdit> {
       setState(() {
         sharedPreferences = instance;
         exams = sharedPreferences.getBool(Keys.exams(
-            sharedPreferences.getString(Keys.grade),
-            widget.subject.lesson.toUpperCase())) ??
+                sharedPreferences.getString(Keys.grade),
+                widget.subject.lesson.toUpperCase())) ??
             true;
       });
       List<UnitPlanDay> days = UnitPlan.getUnitPlan();
       days.forEach((day) {
         day.lessons.forEach((lesson) {
-          UnitPlanSubject _selected = getSelectedSubject(sharedPreferences, lesson.subjects,
-              days.indexOf(day),
-              day.lessons.indexOf(lesson));
+          UnitPlanSubject _selected = getSelectedSubject(sharedPreferences,
+              lesson.subjects, days.indexOf(day), day.lessons.indexOf(lesson));
           if (_selected == null) return;
           if (_selected.lesson == widget.subject.lesson) {
             subjects1.add({

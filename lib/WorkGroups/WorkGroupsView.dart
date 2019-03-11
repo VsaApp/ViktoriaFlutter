@@ -6,7 +6,7 @@ import 'WorkGroupsPage.dart';
 
 class WorkGroupsPageView extends WorkGroupsPageState {
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
-  GlobalKey<RefreshIndicatorState>();
+      GlobalKey<RefreshIndicatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -17,11 +17,10 @@ class WorkGroupsPageView extends WorkGroupsPageState {
         padding: EdgeInsets.all(10),
         shrinkWrap: true,
         children: WorkGroups.days
-            .map((day) =>
-            WorkGroupsDayCard(
-              day: day,
-              showWeekday: true,
-            ))
+            .map((day) => WorkGroupsDayCard(
+                  day: day,
+                  showWeekday: true,
+                ))
             .toList(),
       ),
     );

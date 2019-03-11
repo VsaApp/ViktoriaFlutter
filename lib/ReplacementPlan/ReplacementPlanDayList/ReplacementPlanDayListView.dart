@@ -33,7 +33,7 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
             controller: tabController,
             children: widget.days.map((day) {
               final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
-              GlobalKey<RefreshIndicatorState>();
+                  GlobalKey<RefreshIndicatorState>();
               // List of replacement plan days
               return Container(
                 width: double.infinity,
@@ -91,14 +91,14 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
                               TextSpan(
                                   text: '${day.update}',
                                   style:
-                                  TextStyle(fontWeight: FontWeight.bold)),
+                                      TextStyle(fontWeight: FontWeight.bold)),
                               TextSpan(
                                   text: AppLocalizations.of(context)
                                       .replacementplanAt),
                               TextSpan(
                                   text: '${day.time}',
                                   style:
-                                  TextStyle(fontWeight: FontWeight.bold)),
+                                      TextStyle(fontWeight: FontWeight.bold)),
                             ],
                           ),
                         ),
@@ -116,7 +116,7 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
                       ..addAll((!widget.sort)
                           ?
                           // Show all changes in a list...
-                      getUnsortedList(day).map((change) {
+                          getUnsortedList(day).map((change) {
                               return ReplacementPlanRow(
                                 changes: getUnsortedList(day),
                                 change: change,

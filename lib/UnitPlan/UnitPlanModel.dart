@@ -57,7 +57,11 @@ class UnitPlanDay {
       SharedPreferences sharedPreferences, String freeLesson) {
     for (int i = lessons.length - 1; i >= 0; i--) {
       UnitPlanLesson lesson = lessons[i];
-      UnitPlanSubject selected = getSelectedSubject(sharedPreferences, lesson.subjects, UnitPlan.days.indexOf(this), lessons.indexOf(lesson));
+      UnitPlanSubject selected = getSelectedSubject(
+          sharedPreferences,
+          lesson.subjects,
+          UnitPlan.days.indexOf(this),
+          lessons.indexOf(lesson));
 
       // If nothing  or a subject (not lunchtime and free lesson) selected return the index...
       if ((selected == null || selected.lesson != freeLesson) && i != 5) {
@@ -79,30 +83,30 @@ class UnitPlanDay {
     return changes.where((Change c) => change.equals(c)).toList();
   }
 
-  ReplacementPlanDay getReplacementPlanDay(SharedPreferences sharedPreferences) {
+  ReplacementPlanDay getReplacementPlanDay(
+      SharedPreferences sharedPreferences) {
     String grade = sharedPreferences.getString(Keys.grade);
     List<Change> myChanges = [];
     List<Change> undefinedChanges = [];
     List<Change> otherChanges = [];
-    int weekday = [
-          'Montag',
-          'Dienstag',
-          'Mittwoch',
-          'Donnerstag',
-          'Freitag'
-        ].indexOf(name);
+    int weekday = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag']
+        .indexOf(name);
     lessons.forEach((lesson) {
       int unit = lessons.indexOf(lesson);
-      int s = getSelectedIndex(sharedPreferences, lesson.subjects, weekday, unit) ?? 0;
+      int s =
+          getSelectedIndex(sharedPreferences, lesson.subjects, weekday, unit) ??
+              0;
       lesson.subjects.forEach((subject) {
         int i = lesson.subjects.indexOf(subject);
         subject.changes.forEach((change) {
           if (i == s) {
             if (change.isExam) {
               int isMy = change.isMyExam(sharedPreferences);
-              (isMy == 1 ? myChanges : (isMy == -1 ? undefinedChanges : otherChanges)).add(change);
-            }
-            else {
+              (isMy == 1
+                      ? myChanges
+                      : (isMy == -1 ? undefinedChanges : otherChanges))
+                  .add(change);
+            } else {
               (change.sure ? myChanges : undefinedChanges).add(change);
             }
           } else {
@@ -113,7 +117,8 @@ class UnitPlanDay {
     });
 
     for (int i = 0; i < 3; i++) {
-      List<Change> listToEdit = i == 0 ? myChanges : i == 1 ? undefinedChanges : otherChanges;
+      List<Change> listToEdit =
+          i == 0 ? myChanges : i == 1 ? undefinedChanges : otherChanges;
       // Delete all double changes in the same list...
       for (int j = 0; j < listToEdit.length; j++) {
         Change change = listToEdit[j];
@@ -140,9 +145,12 @@ class UnitPlanDay {
           otherChanges.removeWhere((Change c) => equalChanges.contains(c));
         }
       }
-      if (i == 0) myChanges = listToEdit;
-      else if (i == 1) undefinedChanges = listToEdit;
-      else otherChanges = listToEdit;
+      if (i == 0)
+        myChanges = listToEdit;
+      else if (i == 1)
+        undefinedChanges = listToEdit;
+      else
+        otherChanges = listToEdit;
     }
 
     return ReplacementPlanDay(
@@ -173,7 +181,8 @@ class UnitPlanLesson {
   }
 
   // Set the default selection...
-  Future setSelection(int day, int unit, SharedPreferences sharedPreferences) async {
+  Future setSelection(
+      int day, int unit, SharedPreferences sharedPreferences) async {
     if (subjects.length == 1) {
       await setSelectedSubject(sharedPreferences, subjects[0], day, unit);
     }
@@ -203,23 +212,27 @@ class UnitPlanSubject {
   });
 
   List<Change> getChanges(SharedPreferences sharedPreferences) {
-    List<Change> changes = this.changes.where((Change change) => !change.isExam).toList();
-    List<Change> exams = this.changes.where((Change change) => change.isExam).toList();
-    return changes..addAll(exams.where((Change exam) => exam.isMyExam(sharedPreferences) != 0).toList());
-  } 
+    List<Change> changes =
+        this.changes.where((Change change) => !change.isExam).toList();
+    List<Change> exams =
+        this.changes.where((Change change) => change.isExam).toList();
+    return changes
+      ..addAll(exams
+          .where((Change exam) => exam.isMyExam(sharedPreferences) != 0)
+          .toList());
+  }
 
   factory UnitPlanSubject.fromJson(Map<String, dynamic> json) {
     List<Change> changes =
         json['changes'].map((i) => Change.fromJson(i)).toList().cast<Change>();
     return UnitPlanSubject(
-      teacher: json['participant'] as String,
-      lesson: json['subject'] as String,
-      room: json['room'] as String,
-      block: json['block'] as String,
-      course: json['course'] as String,
-      week: json['week'] as String,
-      changes: changes,
-      unsures: changes.where((change) => !change.sure).length
-    );
+        teacher: json['participant'] as String,
+        lesson: json['subject'] as String,
+        room: json['room'] as String,
+        block: json['block'] as String,
+        course: json['course'] as String,
+        week: json['week'] as String,
+        changes: changes,
+        unsures: changes.where((change) => !change.sure).length);
   }
 }

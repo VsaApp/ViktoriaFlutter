@@ -6,7 +6,6 @@
 #import <add_2_calendar/Add2CalendarPlugin.h>
 #import <flutter_mobile_vision/FlutterMobileVisionPlugin.h>
 #import <fluttertoast/FluttertoastPlugin.h>
-#import <intro_slider/IntroSliderPlugin.h>
 #import <onesignal/OneSignalPlugin.h>
 #import <shared_preferences/SharedPreferencesPlugin.h>
 #import <url_launcher/UrlLauncherPlugin.h>
@@ -17,7 +16,6 @@
   [Add2CalendarPlugin registerWithRegistrar:[registry registrarForPlugin:@"Add2CalendarPlugin"]];
   [FlutterMobileVisionPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterMobileVisionPlugin"]];
   [FluttertoastPlugin registerWithRegistrar:[registry registrarForPlugin:@"FluttertoastPlugin"]];
-  [IntroSliderPlugin registerWithRegistrar:[registry registrarForPlugin:@"IntroSliderPlugin"]];
   [OneSignalPlugin registerWithRegistrar:[registry registrarForPlugin:@"OneSignalPlugin"]];
   [FLTSharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharedPreferencesPlugin"]];
   [FLTUrlLauncherPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTUrlLauncherPlugin"]];

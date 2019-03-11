@@ -161,7 +161,16 @@ class AppLocalizations {
       'coursesOthers': 'Sonstige',
       'subjects': 'Fächer',
       'rooms': 'Räume',
-      'teachers': 'Lehrer*innen'
+      'teachers': 'Lehrer*innen',
+      'introCalendarTitle': 'Kalender',
+      'introCalendarDescription':
+          'Alle Termine der Schule und Feiertage werden dir übersichtlich angezeigt',
+      'introCafetoriaTitle': 'Cafetoria',
+      'introCafetoriaDescription':
+          'Sieh dir die Menüs an und überprüfe direkt wie viel Geld du noch hast',
+      'introWorkGroupsTitle': 'AGs',
+      'introWorkGroupsDescription':
+          'Du kannst alle AGs der Schule direkt auf einen Blick sehen'
     },
   };
 
@@ -732,6 +741,30 @@ class AppLocalizations {
 
   String get teachers {
     return _localizedValues[locale.languageCode]['teachers'];
+  }
+
+  String get introCalendarTitle {
+    return _localizedValues[locale.languageCode]['introCalendarTitle'];
+  }
+
+  String get introCalendarDescription {
+    return _localizedValues[locale.languageCode]['introCalendarDescription'];
+  }
+
+  String get introCafetoriaTitle {
+    return _localizedValues[locale.languageCode]['introCafetoriaTitle'];
+  }
+
+  String get introCafetoriaDescription {
+    return _localizedValues[locale.languageCode]['introCafetoriaDescription'];
+  }
+
+  String get introWorkGroupsTitle {
+    return _localizedValues[locale.languageCode]['introWorkGroupsTitle'];
+  }
+
+  String get introWorkGroupsDescription {
+    return _localizedValues[locale.languageCode]['introWorkGroupsDescription'];
   }
 }
 

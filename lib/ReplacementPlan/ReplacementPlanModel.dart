@@ -100,7 +100,7 @@ class Change {
         for (int k = 0; k < lesson.subjects.length; k++) {
           UnitPlanSubject subject = lesson.subjects[k];
           if ((subject.lesson == this.lesson &&
-              subject.course == this.course) ||
+                  subject.course == this.course) ||
               (subject.course.length == 0 &&
                   subject.lesson == this.lesson &&
                   subject.teacher == this.teacher)) {

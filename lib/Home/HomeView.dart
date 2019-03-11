@@ -96,21 +96,13 @@ class HomePageView extends HomePageState {
               barrierDismissible: true,
               builder: (BuildContext context1) {
                 return AlertDialog(
-                  title: Text(AppLocalizations
-                      .of(context)
-                      .scanUnitPlan),
+                  title: Text(AppLocalizations.of(context).scanUnitPlan),
                   content: Text(
-                      AppLocalizations
-                          .of(context)
-                          .scanUnitPlanExplanation),
+                      AppLocalizations.of(context).scanUnitPlanExplanation),
                   actions: <Widget>[
                     FlatButton(
-                      color: Theme
-                          .of(context)
-                          .accentColor,
-                      child: Text(AppLocalizations
-                          .of(context)
-                          .ok,
+                      color: Theme.of(context).accentColor,
+                      child: Text(AppLocalizations.of(context).ok,
                           style: TextStyle(color: Colors.black)),
                       onPressed: () {
                         Navigator.of(context).pop();

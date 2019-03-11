@@ -14,7 +14,7 @@ class CalendarPage extends StatefulWidget {
 class CalendarPageState extends State<CalendarPage> {
   List<CalendarEvent> events;
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
-  GlobalKey<RefreshIndicatorState>();
+      GlobalKey<RefreshIndicatorState>();
 
   Future update() async {
     await download();

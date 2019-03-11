@@ -80,7 +80,7 @@ abstract class LoadingPageState extends State<LoadingPage> {
       // After download show app
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         int storedVersion = instance.getInt(Keys.slidesVersion) ?? 0;
-        int currentVersion = 1;
+        int currentVersion = 2;
         if (currentVersion != storedVersion) {
           instance.setInt(Keys.slidesVersion, currentVersion);
           Navigator.of(context).pushReplacementNamed('/intro');

@@ -78,7 +78,7 @@ Future downloadFeed({int start = 0, int end = 10, bool addFeed = false}) async {
   Messageboard.sharedPreferences = sharedPreferences;
   try {
     final response =
-    await post('$urlFeed/$start/$end', body: {"groups": feedGroups});
+        await post('$urlFeed/$start/$end', body: {"groups": feedGroups});
     // Save loaded data...
     sharedPreferences.setString(
         Keys.messageboardFeed(start, end, feedGroups), response);
@@ -87,7 +87,7 @@ Future downloadFeed({int start = 0, int end = 10, bool addFeed = false}) async {
   } catch (e) {
     print("Error in download feed: " + e.toString());
     if (sharedPreferences
-        .getString(Keys.messageboardFeed(start, end, feedGroups)) ==
+            .getString(Keys.messageboardFeed(start, end, feedGroups)) ==
         null) {
       // Set default data...
       sharedPreferences.setString(
@@ -166,10 +166,11 @@ Future downloadPosts(Group group,
 }
 
 /// Update group data...
-Future<bool> updateGroup({String username,
-  String password,
-  String newInfo,
-  String newPassword}) async {
+Future<bool> updateGroup(
+    {String username,
+    String password,
+    String newInfo,
+    String newPassword}) async {
   try {
     String _url = '$urlGroupUpdate/$username/$password';
     final response = await post(_url,
@@ -188,7 +189,7 @@ Future<bool> updatePost(
   try {
     String _url = '$urlPostUpdate/$id/$password';
     final response =
-    await post(_url, body: {'title': newTitle, 'text': newText});
+        await post(_url, body: {'title': newTitle, 'text': newText});
     final parsed = json.decode(response);
     print(_url);
     print(MessageboardError.fromJson(parsed).error);

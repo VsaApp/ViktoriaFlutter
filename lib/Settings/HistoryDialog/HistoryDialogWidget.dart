@@ -80,7 +80,7 @@ abstract class HistoryDialogState extends State<HistoryDialog> {
     }
   }
 
-    List<Time> get unsortedTimes {
+  List<Time> get unsortedTimes {
     try {
       return data
           .where((Year year) => year.name == currentYear)

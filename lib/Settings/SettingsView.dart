@@ -20,10 +20,7 @@ class SettingsPageView extends SettingsPageState {
         shrinkWrap: true,
         children: <Widget>[
           Section(
-            title: AppLocalizations
-                .of(context)
-                .appSettings
-                .toUpperCase(),
+            title: AppLocalizations.of(context).appSettings.toUpperCase(),
             children: <Widget>[
               // Show short cut dialog option
               CheckboxListTile(
@@ -35,9 +32,7 @@ class SettingsPageView extends SettingsPageState {
                     showShortCutDialog = value;
                   });
                 },
-                title: Text(AppLocalizations
-                    .of(context)
-                    .showShortCutDialog),
+                title: Text(AppLocalizations.of(context).showShortCutDialog),
               ),
               Padding(
                 padding: EdgeInsets.only(left: 15.0, right: 22.5),
@@ -46,9 +41,7 @@ class SettingsPageView extends SettingsPageState {
                     SizedBox(
                       width: double.infinity,
                       child: Text(
-                        AppLocalizations
-                            .of(context)
-                            .initialPage,
+                        AppLocalizations.of(context).initialPage,
                         textAlign: TextAlign.left,
                         style: TextStyle(
                           fontSize: 16.0,
@@ -85,8 +78,7 @@ class SettingsPageView extends SettingsPageState {
             ],
           ),
           Section(
-            title: AppLocalizations
-                .of(context)
+            title: AppLocalizations.of(context)
                 .replacementPlanSettings
                 .toUpperCase(),
             children: <Widget>[
@@ -100,9 +92,7 @@ class SettingsPageView extends SettingsPageState {
                     sortReplacementPlan = value;
                   });
                 },
-                title: Text(AppLocalizations
-                    .of(context)
-                    .sortReplacementPlan),
+                title: Text(AppLocalizations.of(context).sortReplacementPlan),
                 controlAffinity: ListTileControlAffinity.trailing,
               ),
               // Get replacementplan notifications option
@@ -118,18 +108,14 @@ class SettingsPageView extends SettingsPageState {
                     syncTags();
                   });
                 },
-                title: Text(AppLocalizations
-                    .of(context)
+                title: Text(AppLocalizations.of(context)
                     .getReplacementPlanNotifications),
               ),
             ],
           ),
           Section(
               title:
-              AppLocalizations
-                  .of(context)
-                  .unitPlanSettings
-                  .toUpperCase(),
+                  AppLocalizations.of(context).unitPlanSettings.toUpperCase(),
               children: <Widget>[
                 // Show replacement plan in unit plan option
                 CheckboxListTile(
@@ -142,8 +128,7 @@ class SettingsPageView extends SettingsPageState {
                       showReplacementPlanInUnitPlan = value;
                     });
                   },
-                  title: Text(AppLocalizations
-                      .of(context)
+                  title: Text(AppLocalizations.of(context)
                       .showReplacementPlanInUnitPlan),
                 ),
                 // Show work groups in unit plan option
@@ -158,9 +143,7 @@ class SettingsPageView extends SettingsPageState {
                     });
                   },
                   title: Text(
-                      AppLocalizations
-                          .of(context)
-                          .showWorkGroupsInUnitPlan),
+                      AppLocalizations.of(context).showWorkGroupsInUnitPlan),
                 ),
                 // Show calendar in unit plan option
                 CheckboxListTile(
@@ -174,9 +157,7 @@ class SettingsPageView extends SettingsPageState {
                     });
                   },
                   title:
-                  Text(AppLocalizations
-                      .of(context)
-                      .showCalendarInUnitPlan),
+                      Text(AppLocalizations.of(context).showCalendarInUnitPlan),
                 ),
                 // Show cafetoria in unit plan option
                 CheckboxListTile(
@@ -190,21 +171,15 @@ class SettingsPageView extends SettingsPageState {
                     });
                   },
                   title: Text(
-                      AppLocalizations
-                          .of(context)
-                          .showCafetoriaInUnitPlan),
+                      AppLocalizations.of(context).showCafetoriaInUnitPlan),
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
                   child: SizedBox(
                     width: double.infinity,
                     child: FlatButton(
-                      color: Theme
-                          .of(context)
-                          .accentColor,
-                      child: Text(AppLocalizations
-                          .of(context)
-                          .scanUnitPlan),
+                      color: Theme.of(context).accentColor,
+                      child: Text(AppLocalizations.of(context).scanUnitPlan),
                       onPressed: () {
                         showDialog(
                             context: context,
@@ -212,20 +187,13 @@ class SettingsPageView extends SettingsPageState {
                             builder: (BuildContext context1) {
                               return AlertDialog(
                                 title: Text(
-                                    AppLocalizations
-                                        .of(context)
-                                        .scanUnitPlan),
-                                content: Text(AppLocalizations
-                                    .of(context)
+                                    AppLocalizations.of(context).scanUnitPlan),
+                                content: Text(AppLocalizations.of(context)
                                     .scanUnitPlanExplanation),
                                 actions: <Widget>[
                                   FlatButton(
-                                    color: Theme
-                                        .of(context)
-                                        .accentColor,
-                                    child: Text(AppLocalizations
-                                        .of(context)
-                                        .ok,
+                                    color: Theme.of(context).accentColor,
+                                    child: Text(AppLocalizations.of(context).ok,
                                         style: TextStyle(color: Colors.black)),
                                     onPressed: () {
                                       Navigator.of(context).pop();
@@ -245,23 +213,17 @@ class SettingsPageView extends SettingsPageState {
                   child: SizedBox(
                     width: double.infinity,
                     child: FlatButton(
-                      color: Theme
-                          .of(context)
-                          .accentColor,
-                      child: Text(AppLocalizations
-                          .of(context)
-                          .resetUnitPlan),
+                      color: Theme.of(context).accentColor,
+                      child: Text(AppLocalizations.of(context).resetUnitPlan),
                       onPressed: () async {
                         sharedPreferences
                             .getKeys()
                             .where((key) =>
-                        ((key.startsWith('unitPlan') ||
-                            key.startsWith('room')) &&
-                            key
-                                .split('-')
-                                .length >= 3 &&
-                            !key.endsWith('-5')) ||
-                            key.startsWith('exams'))
+                                ((key.startsWith('unitPlan') ||
+                                        key.startsWith('room')) &&
+                                    key.split('-').length >= 3 &&
+                                    !key.endsWith('-5')) ||
+                                key.startsWith('exams'))
                             .forEach((key) {
                           sharedPreferences.remove(key);
                         });
@@ -271,10 +233,7 @@ class SettingsPageView extends SettingsPageState {
                 ),
               ]),
           Section(
-            title: AppLocalizations
-                .of(context)
-                .personalData
-                .toUpperCase(),
+            title: AppLocalizations.of(context).personalData.toUpperCase(),
             children: <Widget>[
               // Grade selector
               Padding(
@@ -329,10 +288,9 @@ class SettingsPageView extends SettingsPageState {
           ),
           dev
               ? Section(
-            title: AppLocalizations
-                .of(context)
-                .developerOptions
-                .toUpperCase(),
+                  title: AppLocalizations.of(context)
+                      .developerOptions
+                      .toUpperCase(),
                   children: <Widget>[
                     Container(
                       margin:

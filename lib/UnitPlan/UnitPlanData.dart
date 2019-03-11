@@ -15,19 +15,23 @@ Future<List<UnitPlanDay>> download(String grade, bool temp) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
   // Check if a date is selected...
-  List<String> uVersion = sharedPreferences.getStringList(Keys.historyDate('unitplan'));
-  List<String> rVersion = sharedPreferences.getStringList(Keys.historyDate('replacementplan'));
+  List<String> uVersion =
+      sharedPreferences.getStringList(Keys.historyDate('unitplan'));
+  List<String> rVersion =
+      sharedPreferences.getStringList(Keys.historyDate('replacementplan'));
 
   String url;
   Map<String, dynamic> body;
 
-  if (uVersion == null && rVersion == null || !(sharedPreferences.getBool(Keys.dev) ?? false)) {
-    url = 'https://api.vsa.2bad2c0.de/unitplan/$grade.json?v=${Random().nextInt(99999999)}';
-  }
-  else {
+  if (uVersion == null && rVersion == null ||
+      !(sharedPreferences.getBool(Keys.dev) ?? false)) {
+    url =
+        'https://api.vsa.2bad2c0.de/unitplan/$grade.json?v=${Random().nextInt(99999999)}';
+  } else {
     url = 'https://history.api.vsa.2bad2c0.de/injectedunitplan/$grade';
     if (rVersion != null) {
-      List<String> date = sharedPreferences.getStringList(Keys.historyDate('replacementplan'));
+      List<String> date =
+          sharedPreferences.getStringList(Keys.historyDate('replacementplan'));
       body = {
         'replacementplanFile': '${date[0]}/${date[1]}/${date[2]}/${date[4]}'
       };

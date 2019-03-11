@@ -22,17 +22,17 @@ class CoursesPageView extends CoursesPageState {
 
     // Get all selected subjects...
     UnitPlan.getUnitPlan().forEach((day) => day.lessons.forEach((lesson) {
-      if (lesson.subjects.length > 0) {
-        int selected = getSelectedIndex(
-            sharedPreferences,
-            lesson.subjects,
-            UnitPlan.getUnitPlan().indexOf(day),
-            day.lessons.indexOf(lesson)) ??
-            lesson.subjects.length;
-        if (selected < lesson.subjects.length)
-          selectedSubjects.add(lesson.subjects[selected]);
-      }
-    }));
+          if (lesson.subjects.length > 0) {
+            int selected = getSelectedIndex(
+                    sharedPreferences,
+                    lesson.subjects,
+                    UnitPlan.getUnitPlan().indexOf(day),
+                    day.lessons.indexOf(lesson)) ??
+                lesson.subjects.length;
+            if (selected < lesson.subjects.length)
+              selectedSubjects.add(lesson.subjects[selected]);
+          }
+        }));
 
     Map<String, List<UnitPlanSubject>> courses = {};
 
@@ -95,27 +95,19 @@ class CoursesPageView extends CoursesPageState {
       }
     });
     sections.add(Section(
-      title: AppLocalizations
-          .of(context)
-          .coursesLanguagesArts,
+      title: AppLocalizations.of(context).coursesLanguagesArts,
       children: section0Items,
     ));
     sections.add(Section(
-      title: AppLocalizations
-          .of(context)
-          .coursesSocialScienes,
+      title: AppLocalizations.of(context).coursesSocialScienes,
       children: section1Items,
     ));
     sections.add(Section(
-      title: AppLocalizations
-          .of(context)
-          .coursesNatureScienes,
+      title: AppLocalizations.of(context).coursesNatureScienes,
       children: section2Items,
     ));
     sections.add(Section(
-      title: AppLocalizations
-          .of(context)
-          .coursesOthers,
+      title: AppLocalizations.of(context).coursesOthers,
       children: section3Items,
     ));
 
@@ -124,17 +116,13 @@ class CoursesPageView extends CoursesPageState {
       key: refreshIndicatorKey,
       child: ListView(
         shrinkWrap: true,
-        children: (courses.keys
-            .toList()
-            .length > 0)
+        children: (courses.keys.toList().length > 0)
             ? sections
             :
             // No subjects are selected in the unit plan
             <Widget>[
-              Center(child: Text(AppLocalizations
-                  .of(context)
-                  .noCourses))
-            ],
+                Center(child: Text(AppLocalizations.of(context).noCourses))
+              ],
       ),
     );
   }
@@ -164,8 +152,8 @@ class CourseRowView extends State<CourseRow> {
     course = '';
     blocks = [];
     _exams = widget.sharedPreferences.getBool(Keys.exams(
-        widget.sharedPreferences.getString(Keys.grade),
-        widget.subjects[0].lesson.toUpperCase())) ??
+            widget.sharedPreferences.getString(Keys.grade),
+            widget.subjects[0].lesson.toUpperCase())) ??
         true;
 
     // Create list of blocks

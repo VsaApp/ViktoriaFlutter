@@ -37,12 +37,8 @@ class ReplacementPlanPageView extends ReplacementPlanPageState {
                     Scaffold.of(context).showSnackBar(
                       SnackBar(
                         content: Text(online == -1
-                            ? AppLocalizations
-                            .of(context)
-                            .onlyOnline
-                            : AppLocalizations
-                            .of(context)
-                            .serverIsOffline),
+                            ? AppLocalizations.of(context).onlyOnline
+                            : AppLocalizations.of(context).serverIsOffline),
                         action: SnackBarAction(
                           label: AppLocalizations.of(context).ok,
                           onPressed: () {},
@@ -58,7 +54,7 @@ class ReplacementPlanPageView extends ReplacementPlanPageState {
                             title:
                                 Text(AppLocalizations.of(context).pleaseSelect),
                             children:
-                            ReplacementPlanPageState.grades.map((_grade) {
+                                ReplacementPlanPageState.grades.map((_grade) {
                               return SimpleDialogOption(
                                 onPressed: () {
                                   print(_grade);
@@ -82,12 +78,8 @@ class ReplacementPlanPageView extends ReplacementPlanPageState {
                     Scaffold.of(context).showSnackBar(
                       SnackBar(
                         content: Text(online == -1
-                            ? AppLocalizations
-                            .of(context)
-                            .onlyOnline
-                            : AppLocalizations
-                            .of(context)
-                            .serverIsOffline),
+                            ? AppLocalizations.of(context).onlyOnline
+                            : AppLocalizations.of(context).serverIsOffline),
                         action: SnackBarAction(
                           label: AppLocalizations.of(context).ok,
                           onPressed: () {},

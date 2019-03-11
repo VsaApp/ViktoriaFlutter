@@ -82,14 +82,14 @@ Future syncTags() async {
   Map<String, dynamic> allTags = await getTags();
   if (allTags == null) return;
   allTags.removeWhere(
-          (key, value) =>
-      !key.startsWith('unitPlan') && !key.startsWith('exams'));
+      (key, value) => !key.startsWith('unitPlan') && !key.startsWith('exams'));
 
   // Get all selected subjects...
   List<String> subjects = [];
   getUnitPlan().forEach((day) {
     day.lessons.forEach((lesson) {
-      int selected = getSelectedIndex(sharedPreferences, lesson.subjects, getUnitPlan().indexOf(day), day.lessons.indexOf(lesson));
+      int selected = getSelectedIndex(sharedPreferences, lesson.subjects,
+          getUnitPlan().indexOf(day), day.lessons.indexOf(lesson));
       if (selected == null) {
         return;
       }
@@ -107,8 +107,7 @@ Future syncTags() async {
 
   // Get all new exams tags...
   Map<String, dynamic> newTags = {};
-  subjects.forEach((subject) =>
-  newTags[Keys.exams(grade, subject)] =
+  subjects.forEach((subject) => newTags[Keys.exams(grade, subject)] =
       sharedPreferences.getBool(Keys.exams(grade, subject)) ?? true);
 
   // Only set tags when the user activated notifications...
@@ -117,10 +116,14 @@ Future syncTags() async {
     getUnitPlan().forEach((day) {
       day.lessons.forEach((lesson) {
         newTags[Keys.unitPlan(grade,
-                block: lesson.subjects[0].block,
-                day: getUnitPlan().indexOf(day),
-            unit: day.lessons.indexOf(lesson))] =
-              getSelectedIndex(sharedPreferences, lesson.subjects, getUnitPlan().indexOf(day), day.lessons.indexOf(lesson)).toString();
+            block: lesson.subjects[0].block,
+            day: getUnitPlan().indexOf(day),
+            unit: day.lessons.indexOf(lesson))] = getSelectedIndex(
+                sharedPreferences,
+                lesson.subjects,
+                getUnitPlan().indexOf(day),
+                day.lessons.indexOf(lesson))
+            .toString();
       });
     });
   }
@@ -128,8 +131,8 @@ Future syncTags() async {
   // Add all messageboard tags...
   List<Group> notifications = Messageboard.notifications;
   Messageboard.following.forEach((group) =>
-  newTags[Keys.messageboardGroupTag(group.name)] =
-      notifications.contains(group));
+      newTags[Keys.messageboardGroupTag(group.name)] =
+          notifications.contains(group));
 
   // Compare new and old tags...
   Map<String, dynamic> tagsToUpdate = {};

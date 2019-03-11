@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intro_slider/intro_slider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'IntroView.dart';
+import 'Slide/SlideWidget.dart';
 
 class IntroPage extends StatefulWidget {
   @override

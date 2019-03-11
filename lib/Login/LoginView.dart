@@ -55,132 +55,113 @@ class LoginPageView extends LoginPageState {
             ),
             (online != 1
                 ?
-            // Show offline info
-            Padding(
-              padding: EdgeInsets.only(top: 10.0),
-              child: Center(
-                child: Column(
-                  children: <Widget>[
-                    Text(online == 0
-                        ? AppLocalizations
-                        .of(context)
-                        .failedToConnectToServer
-                        : AppLocalizations
-                        .of(context)
-                        .goOnlineToLogin),
-                    FlatButton(
-                      color: Theme
-                          .of(context)
-                          .accentColor,
-                      child: Text(AppLocalizations
-                          .of(context)
-                          .retry),
-                      onPressed: () async {
-                        prepareLogin();
-                      },
-                    )
-                  ],
-                ),
-              ),
-            )
+                // Show offline info
+                Padding(
+                    padding: EdgeInsets.only(top: 10.0),
+                    child: Center(
+                      child: Column(
+                        children: <Widget>[
+                          Text(online == 0
+                              ? AppLocalizations.of(context)
+                                  .failedToConnectToServer
+                              : AppLocalizations.of(context).goOnlineToLogin),
+                          FlatButton(
+                            color: Theme.of(context).accentColor,
+                            child: Text(AppLocalizations.of(context).retry),
+                            onPressed: () async {
+                              prepareLogin();
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                  )
                 :
-            // Show pupil login
-            Form(
-              key: pupilFormKey,
-              child: Column(
-                children: <Widget>[
-                  // Grade selector
-                  SizedBox(
-                    width: double.infinity,
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        isDense: true,
-                        items: LoginPageState.grades.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        value: grade,
-                        onChanged: (grade) {
-                          setState(() {
-                            this.grade = grade;
-                          });
-                        },
-                      ),
+                // Show pupil login
+                Form(
+                    key: pupilFormKey,
+                    child: Column(
+                      children: <Widget>[
+                        // Grade selector
+                        SizedBox(
+                          width: double.infinity,
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              isDense: true,
+                              items: LoginPageState.grades.map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              value: grade,
+                              onChanged: (grade) {
+                                setState(() {
+                                  this.grade = grade;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                        // Username input
+                        TextFormField(
+                          controller: usernameController,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return AppLocalizations.of(context)
+                                  .fieldCantBeEmpty;
+                            }
+                            if (!pupilCredentialsCorrect) {
+                              return AppLocalizations.of(context)
+                                  .credentialsNotCorrect;
+                            }
+                          },
+                          decoration: InputDecoration(
+                              hintText:
+                                  AppLocalizations.of(context).pupilUsername),
+                          onFieldSubmitted: (value) {
+                            FocusScope.of(context).requestFocus(pupilFocus);
+                          },
+                        ),
+                        // Password input
+                        TextFormField(
+                          controller: passwordController,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return AppLocalizations.of(context)
+                                  .fieldCantBeEmpty;
+                            }
+                            if (!pupilCredentialsCorrect) {
+                              return AppLocalizations.of(context)
+                                  .credentialsNotCorrect;
+                            }
+                          },
+                          decoration: InputDecoration(
+                              hintText:
+                                  AppLocalizations.of(context).pupilPassword),
+                          onFieldSubmitted: (value) {
+                            checkForm();
+                          },
+                          obscureText: true,
+                          focusNode: pupilFocus,
+                        ),
+                        // Login button
+                        Container(
+                          margin: EdgeInsets.only(top: 20.0),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: RaisedButton(
+                              color: Theme.of(context).accentColor,
+                              onPressed: () {
+                                checkForm();
+                              },
+                              child: Text(AppLocalizations.of(context).login),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  // Username input
-                  TextFormField(
-                    controller: usernameController,
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return AppLocalizations
-                            .of(context)
-                            .fieldCantBeEmpty;
-                      }
-                      if (!pupilCredentialsCorrect) {
-                        return AppLocalizations
-                            .of(context)
-                            .credentialsNotCorrect;
-                      }
-                    },
-                    decoration: InputDecoration(
-                        hintText:
-                        AppLocalizations
-                            .of(context)
-                            .pupilUsername),
-                    onFieldSubmitted: (value) {
-                      FocusScope.of(context).requestFocus(pupilFocus);
-                    },
-                  ),
-                  // Password input
-                  TextFormField(
-                    controller: passwordController,
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return AppLocalizations
-                            .of(context)
-                            .fieldCantBeEmpty;
-                      }
-                      if (!pupilCredentialsCorrect) {
-                        return AppLocalizations
-                            .of(context)
-                            .credentialsNotCorrect;
-                      }
-                    },
-                    decoration: InputDecoration(
-                        hintText:
-                        AppLocalizations
-                            .of(context)
-                            .pupilPassword),
-                    onFieldSubmitted: (value) {
-                      checkForm();
-                    },
-                    obscureText: true,
-                    focusNode: pupilFocus,
-                  ),
-                  // Login button
-                  Container(
-                    margin: EdgeInsets.only(top: 20.0),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: RaisedButton(
-                        color: Theme
-                            .of(context)
-                            .accentColor,
-                        onPressed: () {
-                          checkForm();
-                        },
-                        child: Text(AppLocalizations
-                            .of(context)
-                            .login),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )),
+                  )),
           ],
         ),
       ),
