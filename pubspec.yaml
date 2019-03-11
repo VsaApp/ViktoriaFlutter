@@ -33,8 +33,7 @@ flutter:
   - family: Ubuntu
     fonts:
     - asset: assets/fonts/Ubuntu-R.ttf
-    - asset: assets/fonts/Ubuntu-RI.ttf
-      style: italic
   uses-material-design: true
   assets:
-  - assets/images/
+  - assets/images/logo.svg
+  - assets/images/logo_white.svg
