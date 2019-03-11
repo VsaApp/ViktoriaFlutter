@@ -10,7 +10,6 @@ Future<List<ReplacementPlanDay>> load(
       .where((day) => day.replacementPlanForWeekday != '')
       .map((day) => day.getReplacementPlanDay(sharedPreferences))
       .toList();
-  days.forEach((day) => day.setColors());
 
   // Return or set the data in a static object...
   if (!(temp ?? false)) {

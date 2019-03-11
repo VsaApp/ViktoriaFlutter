@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Selection.dart';
 import '../Keys.dart';
+import '../Selection.dart';
 import '../UnitPlan/UnitPlanModel.dart';
 
 // Describes the replacement plan
@@ -31,13 +31,6 @@ class ReplacementPlanDay {
     @required this.otherChanges,
     @required this.unparsed,
   });
-
-  // Set the category colors of the changes...
-  void setColors() {
-    myChanges.forEach((change) => change.setColor());
-    undefinedChanges.forEach((change) => change.setColor());
-    otherChanges.forEach((change) => change.setColor());
-  }
 }
 
 // Desrcibes a change which could not be parsed...
@@ -69,7 +62,15 @@ class Change {
   String teacher;
   final Changed changed;
   bool sure;
-  Color color;
+
+  Color get color {
+    if (changed.info.toLowerCase().contains('klausur'))
+      return Colors.red;
+    else if (changed.info.toLowerCase().contains('freistunde'))
+      return null;
+    else
+      return Colors.orange;
+  }
 
   bool get isExam {
     return changed.info.toLowerCase().contains('klausur');
@@ -82,7 +83,8 @@ class Change {
   int isMyExam(SharedPreferences sharedPreferences) {
     if (isRewriteExam) return -1;
     String grade = sharedPreferences.getString(Keys.grade) ?? '';
-    if (!(sharedPreferences.getBool(Keys.exams(grade, lesson.toUpperCase())) ?? true)) return 0;
+    if (!(sharedPreferences.getBool(Keys.exams(grade, lesson.toUpperCase())) ??
+        true)) return 0;
 
     Map<String, List<int>> courseCount = {};
     int selected = 0;
@@ -93,14 +95,23 @@ class Change {
       UnitPlanDay day = UnitPlan.days[i];
       for (int j = 0; j < day.lessons.length; j++) {
         UnitPlanLesson lesson = day.lessons[j];
-        int _selected = getSelectedIndex(sharedPreferences, lesson.subjects, UnitPlan.days.indexOf(day), day.lessons.indexOf(lesson));
+        int _selected = getSelectedIndex(sharedPreferences, lesson.subjects,
+            UnitPlan.days.indexOf(day), day.lessons.indexOf(lesson));
         for (int k = 0; k < lesson.subjects.length; k++) {
           UnitPlanSubject subject = lesson.subjects[k];
-          if ((subject.lesson == this.lesson && subject.course == this.course) || (subject.course.length == 0 && subject.lesson == this.lesson && subject.teacher == this.teacher)) {
-            containsLK = containsLK || subject.course.toLowerCase().contains('lk') || course.toLowerCase().contains('lk');
+          if ((subject.lesson == this.lesson &&
+              subject.course == this.course) ||
+              (subject.course.length == 0 &&
+                  subject.lesson == this.lesson &&
+                  subject.teacher == this.teacher)) {
+            containsLK = containsLK ||
+                subject.course.toLowerCase().contains('lk') ||
+                course.toLowerCase().contains('lk');
             count++;
-            if (!courseCount.keys.contains(subject.course)) courseCount[subject.course] = [0, 1];
-            else courseCount[subject.course][1]++;
+            if (!courseCount.keys.contains(subject.course))
+              courseCount[subject.course] = [0, 1];
+            else
+              courseCount[subject.course][1]++;
             if (lesson.subjects.indexOf(subject) == _selected) {
               selected++;
               courseCount[subject.course][0]++;
@@ -110,7 +121,7 @@ class Change {
       }
     }
 
-    if (selected == 0) return 0; 
+    if (selected == 0) return 0;
     if (selected >= count - 1) return 1;
     for (int i = 0; i < courseCount.keys.length; i++) {
       String key = courseCount.keys.toList()[i];
@@ -123,13 +134,17 @@ class Change {
       if (courseCount[''][1] > 3) return -1;
       if (courseCount[''][0] >= 1) return 1;
       return 0;
-    }
-    else return 0;
+    } else
+      return 0;
   }
 
-
   bool equals(Change c) {
-    return unit == c.unit && lesson == c.lesson && course == c.course && room == c.room && teacher == c.teacher && changed.equals(c.changed);
+    return unit == c.unit &&
+        lesson == c.lesson &&
+        course == c.course &&
+        room == c.room &&
+        teacher == c.teacher &&
+        changed.equals(c.changed);
   }
 
   Change({
@@ -153,16 +168,6 @@ class Change {
       sure: json['sure'] as bool,
     );
   }
-
-  // Set color of this change category...
-  void setColor() {
-    if (changed.info.toLowerCase().contains('klausur'))
-      color = Colors.red;
-    else if (changed.info.toLowerCase().contains('freistunde'))
-      color = null;
-    else
-      color = Colors.orange;
-  }
 }
 
 // Describes a changed of a replacement plan change...
@@ -173,7 +178,10 @@ class Changed {
   final String subject;
 
   bool equals(Changed c) {
-    return info == c.info && teacher == c.teacher && room == c.room && subject == c.subject;
+    return info == c.info &&
+        teacher == c.teacher &&
+        room == c.room &&
+        subject == c.subject;
   }
 
   Changed({
