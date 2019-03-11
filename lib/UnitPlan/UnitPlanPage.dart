@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../Home/HomePage.dart';
-import '../Localizations.dart';
-import '../Network.dart';
 import 'UnitPlanData.dart';
 import 'UnitPlanDayList/UnitPlanDayListWidget.dart';
 
@@ -13,7 +11,6 @@ class UnitPlanPage extends StatefulWidget {
 
 class UnitPlanView extends State<UnitPlanPage> {
   Function() listener;
-  static bool offlineShown = false;
 
   @override
   void initState() {
@@ -30,29 +27,6 @@ class UnitPlanView extends State<UnitPlanPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (!offlineShown) {
-      checkOnline.then((online) {
-        offlineShown = true;
-        if (online != 1) {
-          // Show offline information
-          Scaffold.of(context).showSnackBar(
-            SnackBar(
-              content: Text(online == -1
-                  ? AppLocalizations
-                  .of(context)
-                  .oldDataIsShown
-                  : AppLocalizations
-                  .of(context)
-                  .serverIsOffline),
-              action: SnackBarAction(
-                label: AppLocalizations.of(context).ok,
-                onPressed: () {},
-              ),
-            ),
-          );
-        }
-      });
-    }
     return Column(children: <Widget>[UnitPlanDayList(days: getUnitPlan())]);
   }
 }

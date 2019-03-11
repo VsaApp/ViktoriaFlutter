@@ -14,6 +14,7 @@ import '../Settings/SettingsPage.dart';
 import '../UnitPlan/UnitPlanPage.dart';
 import '../WorkGroups/WorkGroupsPage.dart';
 import 'HomePage.dart';
+import 'OfflineWidget.dart';
 import 'ShortCutDialog/ShortCutDialogWidget.dart';
 
 class HomePageView extends HomePageState {
@@ -66,8 +67,8 @@ class HomePageView extends HomePageState {
         SharedPreferences sharedPreferences =
             await SharedPreferences.getInstance();
         bool selectedSubjects = sharedPreferences.getKeys().where((key) {
-          if (key.startsWith(
-              'unitPlan-${sharedPreferences.getString(Keys.grade)}-')) {
+              if (key.startsWith(
+                  'unitPlan-${sharedPreferences.getString(Keys.grade)}-')) {
                 if ('-'.allMatches(key).length == 3)
                   return key.split('-')[key.split('-').length - 1] != '5';
                 return true;
@@ -134,8 +135,16 @@ class HomePageView extends HomePageState {
         ),
       ),
       // Current page
-      body: getDrawerItemWidget(selectedDrawerIndex, pages),
+      body: Stack(
+        children: <Widget>[
+          !offlineShown ? OfflineWidget() : Container(),
+          getDrawerItemWidget(selectedDrawerIndex, pages),
+        ],
+      ),
     );
+    if (!offlineShown) {
+      offlineShown = true;
+    }
     return appScaffold;
   }
 }

@@ -21,7 +21,7 @@ class LoadingPageView extends LoadingPageState {
               padding: EdgeInsets.only(
                   top: height -
                       ((allDownloadsCount - (allDownloadsCount > 0 ? 1 : 0)) *
-                          16)
+                              16)
                           .toDouble() -
                       100 -
                       height / 5),
@@ -34,23 +34,23 @@ class LoadingPageView extends LoadingPageState {
           ),
           itemCharacters.length > 0
               ? Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: EdgeInsets.only(
-                top: height -
-                    ((allDownloadsCount - 1) * 16).toDouble() -
-                    height / 5,
-              ),
-              child: SizedBox(
-                height: ((texts.length + 1) * 16).toDouble(),
-                width: (itemCharacters[0] * 7).toDouble(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: items,
-                ),
-              ),
-            ),
-          )
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      top: height -
+                          ((allDownloadsCount - 1) * 16).toDouble() -
+                          height / 5,
+                    ),
+                    child: SizedBox(
+                      height: ((texts.length + 1) * 16).toDouble(),
+                      width: (itemCharacters[0] * 7).toDouble(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: items,
+                      ),
+                    ),
+                  ),
+                )
               : Container(),
         ],
       ),
