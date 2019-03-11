@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../Keys.dart';
 import '../../Localizations.dart';
+import '../../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
 import '../../Tags.dart';
+import '../../UnitPlan/UnitPlanData.dart' as unitplan;
 import 'CourseEditWidget.dart';
 import 'RoomEdit/RoomEditView.dart';
 
@@ -31,6 +33,7 @@ class CourseEditView extends CourseEditState {
               if (widget.onExamChange != null) {
                 widget.onExamChange(exams);
               }
+              replacementplan.load(unitplan.getUnitPlan(), false);
             });
           },
           title: Text(AppLocalizations.of(context).writeExams),
