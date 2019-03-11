@@ -42,7 +42,7 @@ class LoadingPageView extends LoadingPageState {
                     height / 5,
               ),
               child: SizedBox(
-                height: (texts.length * 16).toDouble(),
+                height: ((texts.length + 1) * 16).toDouble(),
                 width: (itemCharacters[0] * 7).toDouble(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
