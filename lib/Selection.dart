@@ -91,6 +91,10 @@ int getSelectedIndex(SharedPreferences sharedPreferences,
   if (selected == null) return null;
   week = week.toUpperCase();
   int index = selected.length == 1 ? 0 : week == 'A' ? 0 : 1;
+  if (selected.length > 1 && subjects.where((s) => s.week != 'AB').length == 0) {
+    if (selected[0].endsWith('-')) index = 1;
+    else if (selected[1].endsWith('-')) index = 0;
+  }
   List<UnitPlanSubject> subject = subjects.where((UnitPlanSubject subject) => subject.week.contains(week) && getKey(subject) == selected[index]).toList();
   if (subject.length == 0) return null;
   else return subjects.indexOf(subject[0]);
