@@ -96,6 +96,10 @@ class IntroPageView extends IntroPageState {
         ),
       ),
     );
+    slides.add(Slide(
+      title: AppLocalizations.of(context).introNotificationsTitle,
+      description: AppLocalizations.of(context).introNotificationsDescription,
+    ));
     CalendarEvent event = CalendarEvent(
       name: 'Elternsprechtag',
       info: '',
@@ -136,11 +140,13 @@ class IntroPageView extends IntroPageState {
     );
     slides.add(Slide(
       title: AppLocalizations.of(context).introCafetoriaTitle,
-      description:
-          AppLocalizations.of(context).introCafetoriaDescription,
+      description: AppLocalizations.of(context).introCafetoriaDescription,
       centerWidget: Container(
         margin: EdgeInsets.all(10),
-        child: CafetoriaDayCard(day: cafetoriaDay, showWeekday: true),
+        child: CafetoriaDayCard(
+          day: cafetoriaDay,
+          showWeekday: true,
+        ),
       ),
     ));
 
@@ -183,6 +189,19 @@ class IntroPageView extends IntroPageState {
           showWeekday: true,
         ),
       ),
+    ));
+    slides.add(Slide(
+      title: AppLocalizations.of(context).introExtendedUnitplanTitle,
+      description:
+          AppLocalizations.of(context).introExtendedUnitplanDescription,
+    ));
+    slides.add(Slide(
+      title: AppLocalizations.of(context).introCoursesTitle,
+      description: AppLocalizations.of(context).introCoursesDescription,
+    ));
+    slides.add(Slide(
+      title: AppLocalizations.of(context).introVsaAppTitle,
+      description: AppLocalizations.of(context).introVsaAppDescription,
     ));
 
     slides.forEach((slide) {

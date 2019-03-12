@@ -168,10 +168,23 @@ class AppLocalizations {
       'introCafetoriaTitle': 'Cafetoria',
       'introCafetoriaDescription':
           'Sieh dir die Menüs an und überprüfe direkt wie viel Geld du noch hast',
-      'introWorkGroupsTitle': 'AGs', 
-      'introWorkGroupsDescription': 'Du kannst alle AGs der Schule direkt auf einen Blick sehen',
+      'introWorkGroupsTitle': 'AGs',
+      'introWorkGroupsDescription':
+          'Du kannst alle AGs der Schule direkt auf einen Blick sehen',
       'aWeek': 'A-Woche:',
       'bWeek': 'B-Woche:',
+      'introNotificationsTitle': 'Benachrichtigungen',
+      'introNotificationsDescription':
+          'Erhalte personalisierte Benachrichtigungen Vertretungs- und Stundenplanänderungen',
+      'introExtendedUnitplanTitle': 'Erweiterter Stundenplan',
+      'introExtendedUnitplanDescription':
+          'Zusätzlich zum Stundenplan kannst du dir auch alle AGs, alle Termine und alle Cafetoria Menüs für den jeweiligen Tag anzeigen lassen',
+      'introCoursesTitle': 'Kurse',
+      'introCoursesDescription':
+          'Ändere Schriftlichkeiten für Klausuren oder überschreibe Räume',
+      'introVsaAppTitle': 'VsaApp',
+      'introVsaAppDescription': 'Viel Spaß beim Nutzen!',
+      'viewIntro': 'Einführung nochmal anschauen',
     },
   };
 
@@ -774,6 +787,44 @@ class AppLocalizations {
 
   String get introWorkGroupsDescription {
     return _localizedValues[locale.languageCode]['introWorkGroupsDescription'];
+  }
+
+  String get introNotificationsTitle {
+    return _localizedValues[locale.languageCode]['introNotificationsTitle'];
+  }
+
+  String get introNotificationsDescription {
+    return _localizedValues[locale.languageCode]
+        ['introNotificationsDescription'];
+  }
+
+  String get introExtendedUnitplanTitle {
+    return _localizedValues[locale.languageCode]['introExtendedUnitplanTitle'];
+  }
+
+  String get introExtendedUnitplanDescription {
+    return _localizedValues[locale.languageCode]
+        ['introExtendedUnitplanDescription'];
+  }
+
+  String get introCoursesTitle {
+    return _localizedValues[locale.languageCode]['introCoursesTitle'];
+  }
+
+  String get introCoursesDescription {
+    return _localizedValues[locale.languageCode]['introCoursesDescription'];
+  }
+
+  String get introVsaAppTitle {
+    return _localizedValues[locale.languageCode]['introVsaAppTitle'];
+  }
+
+  String get introVsaAppDescription {
+    return _localizedValues[locale.languageCode]['introVsaAppDescription'];
+  }
+
+  String get viewIntro {
+    return _localizedValues[locale.languageCode]['viewIntro'];
   }
 }
 
