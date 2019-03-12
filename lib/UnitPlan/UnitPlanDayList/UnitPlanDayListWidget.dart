@@ -26,7 +26,6 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
   String grade = '';
   TabController tabController;
   String originalWeek;
-  bool nextWeek = false;
   bool showWorkGroups = false;
   bool showCalendar = false;
   bool showCafetoria = false;
@@ -39,32 +38,38 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
     setState(() => widget.days = unitplan.getUnitPlan());
   }
 
-
   void setWeeks() {
     // Get the week number of the shown week...
-    DateTime today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1);
+    DateTime today = DateTime(
+        DateTime.now().year, DateTime.now().month, DateTime.now().day + 1);
     DateTime startOfYear = DateTime(today.year, 1, 1, 0, 0);
     int firstMonday = startOfYear.weekday;
     int daysInFirstWeek = 8 - firstMonday;
     Duration diff = today.difference(startOfYear);
     int weeks = ((diff.inDays - daysInFirstWeek) / 7).ceil();
-    if(daysInFirstWeek > 3) weeks++;
+    if (daysInFirstWeek > 3) weeks++;
     if (!thisWeek) weeks++;
     String currentWeek = weeks % 2 == 0 ? 'A' : 'B';
-    
+
     // Set all days to this week...
     UnitPlan.days.forEach((UnitPlanDay day) => day.showWeek = currentWeek);
-    
+
     // If there are changes for other weeks, set that days to this week...
-    DateTime dateOfMonday = today.add(Duration(days: thisWeek ? - today.weekday : DateTime.sunday + 1 - today.weekday));
-    for (int i = 0; i < ReplacementPlan.days.length; i++){
+    DateTime dateOfMonday = today.add(Duration(
+        days: thisWeek ? -today.weekday : DateTime.sunday + 1 - today.weekday));
+    for (int i = 0; i < ReplacementPlan.days.length; i++) {
       ReplacementPlanDay day = ReplacementPlan.days[i];
       if (day.weektype != currentWeek) {
-        DateTime date = DateTime(int.parse(day.date.split('.')[2]), int.parse(day.date.split('.')[1]), int.parse(day.date.split('.')[0])); 
-        for (int j = 0; j < UnitPlan.days.length; j++){
+        DateTime date = DateTime(
+            int.parse(day.date.split('.')[2]),
+            int.parse(day.date.split('.')[1]),
+            int.parse(day.date.split('.')[0]));
+        for (int j = 0; j < UnitPlan.days.length; j++) {
           DateTime dateOfDay = dateOfMonday.add(Duration(days: j));
-          if (date.isAfter(today) && dateOfDay.weekday <= date.weekday) UnitPlan.days[j].showWeek = day.weektype;
-          else if (date.isBefore(today) && dateOfDay.weekday >= date.weekday) UnitPlan.days[j].showWeek = day.weektype;
+          if (date.isAfter(today) && dateOfDay.weekday <= date.weekday)
+            UnitPlan.days[j].showWeek = day.weektype;
+          else if (date.isBefore(today) && dateOfDay.weekday >= date.weekday)
+            UnitPlan.days[j].showWeek = day.weektype;
         }
       }
     }
@@ -83,10 +88,18 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
         DateTime.now().day,
         8,
       ).add(Duration(
-          minutes: [60, 130, 210, 280, 360, 420, 480, 545][
-              widget.days[weekday].getUserLesseonsCount(sharedPreferences,
-                      AppLocalizations.of(context).freeLesson) -
-                  1])))) {
+          minutes: [
+        60,
+        130,
+        210,
+        280,
+        360,
+        420,
+        480,
+        545
+      ][widget.days[weekday].getUserLesseonsCount(
+                  sharedPreferences, AppLocalizations.of(context).freeLesson) -
+              1])))) {
         over = true;
       }
     }
@@ -130,10 +143,11 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
 
       // Add week listener...
       HomePageState.weekChanged = (String week) {
-        if (originalWeek == null) originalWeek = UnitPlan.days[tabController.index].showWeek;
-        if(mounted) setState(() => UnitPlan.days[tabController.index].showWeek = week);
+        if (originalWeek == null)
+          originalWeek = UnitPlan.days[tabController.index].showWeek;
+        if (mounted)
+          setState(() => UnitPlan.days[tabController.index].showWeek = week);
       };
-      
     });
 
     super.initState();
@@ -149,7 +163,7 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
     DateTime today = DateTime.now();
     DateTime targetDay = today
         .subtract(Duration(days: today.weekday))
-        .add(Duration(days: weekday + (nextWeek ? 7 : 0) + 1));
+        .add(Duration(days: weekday + (!thisWeek ? 7 : 0) + 1));
     int date = dateToInt(targetDay.day.toString() +
         '.' +
         targetDay.month.toString() +
