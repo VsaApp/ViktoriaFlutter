@@ -62,7 +62,7 @@ abstract class HomePageState extends State<HomePage> {
   static List<Function()> replacementplanUpdatedListeners = [];
 
   void _showWeek(bool value) {
-    if (mounted) setState(() => showWeek = value);
+    if (mounted && value != showWeek) setState(() => showWeek = value);
   }
 
   static setWeekChangeable(bool value) {
@@ -253,6 +253,8 @@ abstract class HomePageState extends State<HomePage> {
 
   // Change page
   onSelectItem(int index) {
+    if (index > 1) setShowWeek(false);
+    else setShowWeek(true);
     setState(() => selectedDrawerIndex = index);
     Navigator.of(context).pop();
   }
