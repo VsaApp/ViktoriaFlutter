@@ -32,7 +32,7 @@ class HomePageView extends HomePageState {
       Page(AppLocalizations.of(context).calendar, Icons.calendar_today,
           CalendarPage()),
       Page(AppLocalizations.of(context).cafetoria, Icons.fastfood,
-          CafetoriaPage()),
+          CafetoriaPage(), url: 'https://www.opc-asp.de/vs-aachen/'),
       Page(AppLocalizations.of(context).workGroups, MdiIcons.soccer,
           WorkGroupsPage()),
       Page(AppLocalizations.of(context).courses, Icons.person, CoursesPage()),
