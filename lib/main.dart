@@ -27,9 +27,9 @@ void main() async {
     sharedPreferences.setBool(Keys.sortReplacementPlan, true);
     sharedPreferences.setBool(Keys.showReplacementPlanInUnitPlan, true);
     sharedPreferences.setBool(Keys.getReplacementPlanNotifications, true);
-    sharedPreferences.setBool(Keys.showWorkGroupsInUnitPlan, true);
+    sharedPreferences.setBool(Keys.showWorkGroupsInUnitPlan, false);
     sharedPreferences.setBool(Keys.showCalendarInUnitPlan, true);
-    sharedPreferences.setBool(Keys.showCafetoriaInUnitPlan, true);
+    sharedPreferences.setBool(Keys.showCafetoriaInUnitPlan, false);
   }
 
   // Check if logged in
