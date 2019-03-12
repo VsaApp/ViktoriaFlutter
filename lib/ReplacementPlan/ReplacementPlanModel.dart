@@ -82,7 +82,7 @@ class Change {
     return isExam && changed.info.toLowerCase().contains('nachschreiber');
   }
 
-  int isMyExam(SharedPreferences sharedPreferences) {
+  int isMyExam(SharedPreferences sharedPreferences, String week) {
     if (isRewriteExam) return -1;
     String grade = sharedPreferences.getString(Keys.grade) ?? '';
     if (!(sharedPreferences.getBool(Keys.exams(grade, lesson.toUpperCase())) ??
@@ -98,7 +98,7 @@ class Change {
       for (int j = 0; j < day.lessons.length; j++) {
         UnitPlanLesson lesson = day.lessons[j];
         int _selected = getSelectedIndex(sharedPreferences, lesson.subjects,
-            UnitPlan.days.indexOf(day), day.lessons.indexOf(lesson), week: day.showWeek);
+            UnitPlan.days.indexOf(day), day.lessons.indexOf(lesson), week: week);
         for (int k = 0; k < lesson.subjects.length; k++) {
           UnitPlanSubject subject = lesson.subjects[k];
           if ((subject.lesson == this.lesson &&

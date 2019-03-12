@@ -145,7 +145,7 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                           :
                           // Show list of changes
                           lesson.subjects[_selected]
-                                      .getChanges(sharedPreferences)
+                                      .getChanges(day.replacementPlanForWeektype , sharedPreferences)
                                       .length >
                                   0
                               ? Card(
@@ -166,13 +166,13 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                               )
                                             : Container())
                                       ]..addAll(lesson.subjects[_selected]
-                                          .getChanges(sharedPreferences)
+                                          .getChanges(day.replacementPlanForWeektype, sharedPreferences)
                                           .map((change) {
                                             return ReplacementPlanRow(
                                               change: change,
                                               changes: lesson
                                                   .subjects[_selected]
-                                                  .getChanges(
+                                                  .getChanges(day.replacementPlanForWeektype,
                                                       sharedPreferences),
                                               weekday: widget.days.indexOf(day),
                                               sharedPreferences:

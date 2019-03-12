@@ -64,7 +64,7 @@ class UnitPlanDay {
           sharedPreferences,
           lesson.subjects,
           UnitPlan.days.indexOf(this),
-          lessons.indexOf(lesson));
+          lessons.indexOf(lesson), week: replacementPlanForWeektype);
 
       // If nothing  or a subject (not lunchtime and free lesson) selected return the index...
       if ((selected == null || selected.lesson != freeLesson) && i != 5) {
@@ -88,7 +88,6 @@ class UnitPlanDay {
 
   ReplacementPlanDay getReplacementPlanDay(
       SharedPreferences sharedPreferences) {
-    String grade = sharedPreferences.getString(Keys.grade);
     List<Change> myChanges = [];
     List<Change> undefinedChanges = [];
     List<Change> otherChanges = [];
@@ -96,13 +95,13 @@ class UnitPlanDay {
         .indexOf(name);
     lessons.forEach((lesson) {
       int unit = lessons.indexOf(lesson);
-      int s = getSelectedIndex(sharedPreferences, lesson.subjects, weekday, unit, week: showWeek) ?? 0;
+      int s = getSelectedIndex(sharedPreferences, lesson.subjects, weekday, unit, week: replacementPlanForWeektype) ?? 0;
       lesson.subjects.forEach((subject) {
         int i = lesson.subjects.indexOf(subject);
         subject.changes.forEach((change) {
           if (i == s) {
             if (change.isExam) {
-              int isMy = change.isMyExam(sharedPreferences);
+              int isMy = change.isMyExam(sharedPreferences, replacementPlanForWeektype);
               (isMy == 1
                       ? myChanges
                       : (isMy == -1 ? undefinedChanges : otherChanges))
@@ -213,14 +212,14 @@ class UnitPlanSubject {
     @required this.unsures,
   });
 
-  List<Change> getChanges(SharedPreferences sharedPreferences) {
+  List<Change> getChanges(String week, SharedPreferences sharedPreferences) {
     List<Change> changes =
         this.changes.where((Change change) => !change.isExam).toList();
     List<Change> exams =
         this.changes.where((Change change) => change.isExam).toList();
     return changes
       ..addAll(exams
-          .where((Change exam) => exam.isMyExam(sharedPreferences) != 0)
+          .where((Change exam) => exam.isMyExam(sharedPreferences, week) != 0)
           .toList());
   }
 

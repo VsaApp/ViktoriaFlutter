@@ -23,14 +23,22 @@ class CoursesPageView extends CoursesPageState {
     // Get all selected subjects...
     UnitPlan.getUnitPlan().forEach((day) => day.lessons.forEach((lesson) {
           if (lesson.subjects.length > 0) {
-            int selected = getSelectedIndex(
+            int selectedA = getSelectedIndex(
                     sharedPreferences,
                     lesson.subjects,
                     UnitPlan.getUnitPlan().indexOf(day),
-                    day.lessons.indexOf(lesson)) ??
+                    day.lessons.indexOf(lesson), week: 'A') ??
                 lesson.subjects.length;
-            if (selected < lesson.subjects.length)
-              selectedSubjects.add(lesson.subjects[selected]);
+            int selectedB = getSelectedIndex(
+                sharedPreferences,
+                lesson.subjects,
+                UnitPlan.getUnitPlan().indexOf(day),
+                day.lessons.indexOf(lesson), week: 'B') ??
+            lesson.subjects.length;
+            if (selectedA < lesson.subjects.length)
+              selectedSubjects.add(lesson.subjects[selectedA]);
+            if (selectedB != selectedA && selectedB < lesson.subjects.length)
+              selectedSubjects.add(lesson.subjects[selectedB]);
           }
         }));
 
