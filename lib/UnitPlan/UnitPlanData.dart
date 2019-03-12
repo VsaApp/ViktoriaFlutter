@@ -49,7 +49,6 @@ Future<List<UnitPlanDay>> download(String grade, bool temp) async {
 
     // Convert old selection format...
     await convertFromOldVerion(sharedPreferences);
-    logValues(sharedPreferences);
 
     return null;
   } else {

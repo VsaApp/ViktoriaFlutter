@@ -81,8 +81,7 @@ Future syncTags() async {
   // Get all unitplan and exams tags...
   Map<String, dynamic> allTags = await getTags();
   if (allTags == null) return;
-  allTags.removeWhere(
-      (key, value) => !key.startsWith('unitPlan') && !key.startsWith('exams'));
+  allTags.removeWhere((key, value) => !key.startsWith('unitPlan') && !key.startsWith('exams'));
 
   // Get all selected subjects...
   List<String> subjects = [];
@@ -99,7 +98,7 @@ Future syncTags() async {
 
   // Remove all lunch times...
   subjects = subjects.where((subject) {
-    return subject.length < 3;
+    return subject != 'Mittagspause' && subject != 'Freistunde';
   }).toList();
 
   // Remove double subjects...
@@ -107,8 +106,7 @@ Future syncTags() async {
 
   // Get all new exams tags...
   Map<String, dynamic> newTags = {};
-  subjects.forEach((subject) => newTags[Keys.exams(grade, subject)] =
-      sharedPreferences.getBool(Keys.exams(grade, subject)) ?? true);
+  subjects.forEach((subject) => newTags[Keys.exams(grade, subject)] = sharedPreferences.getBool(Keys.exams(grade, subject.toUpperCase())) ?? true);
 
   // Only set tags when the user activated notifications...
   if (sharedPreferences.getBool(Keys.getReplacementPlanNotifications) ?? true) {
@@ -118,12 +116,12 @@ Future syncTags() async {
         newTags[Keys.unitPlan(grade,
             block: lesson.subjects[0].block,
             day: getUnitPlan().indexOf(day),
-            unit: day.lessons.indexOf(lesson))] = getSelectedIndex(
-                sharedPreferences,
-                lesson.subjects,
-                getUnitPlan().indexOf(day),
-                day.lessons.indexOf(lesson))
-            .toString();
+            unit: day.lessons.indexOf(lesson))] = sharedPreferences.getStringList(Keys.unitPlan(
+              grade,
+              block: lesson.subjects[0].block,
+              day: getUnitPlan().indexOf(day),
+              unit: day.lessons.indexOf(lesson)
+            ));
       });
     });
   }

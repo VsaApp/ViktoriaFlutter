@@ -131,7 +131,7 @@ class Change {
         if (courseCount[key][0] > 0) return 1;
       }
     }
-    if (!courseCount.keys.contains('')) {
+    if (courseCount.keys.contains('')) {
       if (courseCount[''][0] >= courseCount[''][1] - 1) return 1;
       if (courseCount[''][1] > 3) return -1;
       if (courseCount[''][0] >= 1) return 1;
