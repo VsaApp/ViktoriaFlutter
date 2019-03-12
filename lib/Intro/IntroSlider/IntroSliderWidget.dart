@@ -16,15 +16,27 @@ class IntroSlider extends StatefulWidget {
   IntroSliderState createState() => IntroSliderState();
 }
 
-class IntroSliderState extends State<IntroSlider> {
+class IntroSliderState extends State<IntroSlider> 
+  with SingleTickerProviderStateMixin {
   int slideIndex = 0;
+  TabController tabController;
+
+  @override
+  void initState() {
+    tabController = TabController(vsync: this, length: widget.slides.length);
+    tabController.addListener(() => setState(() => null));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        widget.slides[slideIndex],
-        slideIndex == 0
+        TabBarView(
+          controller: tabController,
+          children: widget.slides,
+        ),
+        tabController.index == 0
             ? Align(
                 alignment: Alignment.bottomLeft,
                 child: Container(
@@ -56,7 +68,7 @@ class IntroSliderState extends State<IntroSlider> {
                   child: FlatButton(
                     onPressed: () {
                       setState(() {
-                        slideIndex--;
+                        tabController.animateTo(tabController.index--);
                       });
                     },
                     color: Theme.of(context).accentColor,
@@ -67,7 +79,7 @@ class IntroSliderState extends State<IntroSlider> {
                   ),
                 ),
               ),
-        slideIndex == widget.slides.length - 1
+        tabController.index  == widget.slides.length - 1
             ? Align(
                 alignment: Alignment.bottomRight,
                 child: Container(
@@ -99,7 +111,7 @@ class IntroSliderState extends State<IntroSlider> {
                   child: FlatButton(
                     onPressed: () {
                       setState(() {
-                        slideIndex++;
+                        tabController.animateTo(tabController.index + 1);
                       });
                     },
                     color: Theme.of(context).accentColor,
