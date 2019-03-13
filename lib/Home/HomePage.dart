@@ -166,8 +166,7 @@ abstract class HomePageState extends State<HomePage> {
     });
     // Initialize onesignal
     OneSignal.shared.init('1d7b8ef7-9c9d-4843-a833-8a1e9999818c');
-    OneSignal.shared
-        .setInFocusDisplayType(OSNotificationDisplayType.notification);
+    OneSignal.shared.setInFocusDisplayType(OSNotificationDisplayType.notification);
     // Synchronise tags for notifications
     deleteOldTags().then((_) async {
       await initTags();

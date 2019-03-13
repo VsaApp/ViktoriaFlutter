@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Localizations.dart';
+import '../Tags.dart';
 import '../Keys.dart';
 import 'LoginView.dart';
 
@@ -64,8 +66,38 @@ abstract class LoginPageState extends State<LoginPage> {
       sharedPreferences.setString(Keys.password, passwordController.text);
       sharedPreferences.setString(Keys.grade, grade);
       sharedPreferences.commit();
+
+      Map<String, dynamic> alreadyInitialized = await isInitialized();
+      if (alreadyInitialized != null) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(AppLocalizations.of(context).loadOldData),
+              content: Text(AppLocalizations.of(context).loadOldDataDescription),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text(AppLocalizations.of(context).yes),
+                  onPressed: () async {
+                    await syncWithTags();
+                    Navigator.of(context).pop();
+                    Navigator.pushReplacementNamed(context, '/');
+                  },
+                ),
+                FlatButton(
+                  child: Text(AppLocalizations.of(context).no),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.pushReplacementNamed(context, '/');
+                  }
+                ),
+              ],
+            );
+          }
+        );
+      }
       // Show app
-      Navigator.pushReplacementNamed(context, '/');
+      else Navigator.pushReplacementNamed(context, '/');
     } else {
       passwordController.clear();
     }

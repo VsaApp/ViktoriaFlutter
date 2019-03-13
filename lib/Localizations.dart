@@ -185,10 +185,20 @@ class AppLocalizations {
       'introVsaAppTitle': 'VsaApp',
       'introVsaAppDescription': 'Viel Spaß beim Nutzen!',
       'viewIntro': 'Einführung nochmal anschauen',
+      'loadOldData': 'Alte Daten laden?',
+      'loadOldDataDescription': 'Es werden die ausgewählten Stunden und die Schriftlichkeiten vom letzten mal übernommen.',
     },
   };
 
   // All getter defined...
+  String get loadOldData {
+    return _localizedValues[locale.languageCode]['loadOldData'];
+  }
+
+  String get loadOldDataDescription {
+    return _localizedValues[locale.languageCode]['loadOldDataDescription'];
+  }
+
   String get aWeek {
     return _localizedValues[locale.languageCode]['aWeek'];
   }

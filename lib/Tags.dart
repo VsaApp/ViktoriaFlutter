@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:onesignal/onesignal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:device_id/device_id.dart';
 
 import 'Selection.dart';
 import 'Keys.dart';
@@ -10,8 +11,8 @@ import 'Messageboard/MessageboardModel.dart';
 import 'Network.dart';
 import 'UnitPlan/UnitPlanData.dart';
 
-Future<Map<String, dynamic>> getTags() async {
-  String id = await getPlayerId();
+Future<Map<String, dynamic>> getTags({String idToLoad}) async {
+  String id = idToLoad ?? await DeviceId.getID;
   String url = 'https://api.vsa.2bad2c0.de/tags/$id';
   try {
     return json.decode((await http.Client().get(url).timeout(maxTime)).body);
@@ -25,6 +26,27 @@ Future sendTag(String key, dynamic value) async {
   sendTags({key: value});
 }
 
+Future<Map<String, dynamic>> isInitialized() async {
+  Map<String, dynamic> deviceId = await getTags(idToLoad: await DeviceId.getID);
+  //Map<String, dynamic> oneSignalId = await getTags(idToLoad: await getPlayerId());
+  if (deviceId.keys.length > 0) return deviceId;
+  //if (oneSignalId.keys.length > 0) return oneSignalId;
+  return null;
+}
+
+Future syncWithTags() async {
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  Map<String, dynamic> tags = await getTags();
+  tags.forEach((key, value) {
+    key = key.toString();
+    if (key.contains('unitPlan')) {
+      sharedPreferences.setStringList(key, value == null ? null : value.cast<String>());
+    }
+    else if (key.contains('exam')) sharedPreferences.setBool(Keys.exams(key.split('-')[1], key.split('-')[2].toUpperCase()), value);
+    else if (key == 'dev') sharedPreferences.setBool(key, value);
+  });
+}
+
 Future initTags() async {
   if ((await checkOnline) == -1) return;
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -35,7 +57,7 @@ Future initTags() async {
 }
 
 Future sendTags(Map<String, dynamic> tags) async {
-  String id = await getPlayerId();
+  String id = await DeviceId.getID;
   await post('https://api.vsa.2bad2c0.de/tags/$id/add', body: tags);
 }
 
@@ -44,7 +66,7 @@ Future deleteTag(String key) async {
 }
 
 Future deleteTags(List<String> tags) async {
-  String id = await getPlayerId();
+  String id = await DeviceId.getID;
   String url = 'https://api.vsa.2bad2c0.de/tags/$id/remove';
   post(url, body: tags);
 }
@@ -132,14 +154,18 @@ Future syncTags() async {
       newTags[Keys.messageboardGroupTag(group.name)] =
           notifications.contains(group));
 
+  // Add current OneSignal id...
+  newTags['onesignalId'] = await getPlayerId();
+  print(await DeviceId.getID);
+
   // Compare new and old tags...
   Map<String, dynamic> tagsToUpdate = {};
-  List<String> tagsToRemove = [];
+  Map<String, dynamic> tagsToRemove = {};
 
   // Get all removed and changed tags...
   allTags.forEach((key, value) {
     if (!newTags.containsKey(key))
-      tagsToRemove.add(key);
+      tagsToRemove[key] = value;
     else if (value.toString() != newTags[key].toString()) {
       tagsToUpdate[key] = newTags[key];
     }
@@ -149,6 +175,6 @@ Future syncTags() async {
       .where((key) => !allTags.containsKey(key))
       .forEach((key) => tagsToUpdate[key] = newTags[key]);
 
-  if (tagsToRemove.length > 0) await deleteTags(tagsToRemove);
+  if (tagsToRemove.length > 0) await deleteTags(tagsToRemove.keys.toList());
   if (tagsToUpdate.length > 0) await sendTags(tagsToUpdate);
 }

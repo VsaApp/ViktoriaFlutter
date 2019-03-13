@@ -4,6 +4,7 @@
 
 #import "GeneratedPluginRegistrant.h"
 #import <add_2_calendar/Add2CalendarPlugin.h>
+#import <device_id/DeviceIdPlugin.h>
 #import <flutter_mobile_vision/FlutterMobileVisionPlugin.h>
 #import <fluttertoast/FluttertoastPlugin.h>
 #import <onesignal/OneSignalPlugin.h>
@@ -14,6 +15,7 @@
 
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
   [Add2CalendarPlugin registerWithRegistrar:[registry registrarForPlugin:@"Add2CalendarPlugin"]];
+  [DeviceIdPlugin registerWithRegistrar:[registry registrarForPlugin:@"DeviceIdPlugin"]];
   [FlutterMobileVisionPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterMobileVisionPlugin"]];
   [FluttertoastPlugin registerWithRegistrar:[registry registrarForPlugin:@"FluttertoastPlugin"]];
   [OneSignalPlugin registerWithRegistrar:[registry registrarForPlugin:@"OneSignalPlugin"]];
