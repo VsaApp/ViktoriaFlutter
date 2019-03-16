@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../Cafetoria/CafetoriaModel.dart';
+import '../Cafetoria/DayCard/DayCardWidget.dart';
+import '../Calendar/CalendarModel.dart';
+import '../Calendar/EventCard/EventCard.dart';
+import '../Keys.dart';
 import '../Localizations.dart';
 import '../ReplacementPlan/ReplacementPlanModel.dart';
 import '../ReplacementPlan/ReplacementPlanRow/ReplacementPlanRowWidget.dart';
 import '../SectionWidget.dart';
 import '../UnitPlan/UnitPlanModel.dart';
 import '../UnitPlan/UnitPlanRow/UnitPlanRowWidget.dart';
-import '../Calendar/CalendarModel.dart';
-import '../Calendar/EventCard/EventCard.dart';
-import '../Cafetoria/CafetoriaModel.dart';
-import '../Cafetoria/DayCard/DayCardWidget.dart';
-import '../WorkGroups/WorkGroupsModel.dart';
 import '../WorkGroups/DayCard/DayCardWidget.dart';
+import '../WorkGroups/WorkGroupsModel.dart';
 import 'IntroPage.dart';
 import 'IntroSlider/IntroSliderWidget.dart';
 import 'Slide/SlideWidget.dart';
@@ -199,6 +200,19 @@ class IntroPageView extends IntroPageState {
       title: AppLocalizations.of(context).introCoursesTitle,
       description: AppLocalizations.of(context).introCoursesDescription,
     ));
+
+    String grade = sharedPreferences.getString(Keys.grade);
+    if (grade == 'EF' || grade == 'Q1' || grade == 'Q2') {
+      slides.add(Slide(
+        title: AppLocalizations
+            .of(context)
+            .introScannerTitle,
+        description: AppLocalizations
+            .of(context)
+            .introScannerDescription,
+      ));
+    }
+
     slides.add(Slide(
       title: AppLocalizations.of(context).introVsaAppTitle,
       description: AppLocalizations.of(context).introVsaAppDescription,

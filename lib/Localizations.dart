@@ -189,6 +189,9 @@ class AppLocalizations {
       'loadOldDataDescription':
       'Es werden die ausgewählten Stunden und die Schriftlichkeiten vom letzten mal übernommen.',
       'cancel': 'Abbrechen',
+      'introScannerTitle': 'Scanner',
+      'introScannerDescription':
+      'Damit du nicht deinen ganzen Stundenplan von Hand eingeben musst, kannst du ihn auch einfach mit deinem Handy einscannen',
     },
   };
 
@@ -841,6 +844,14 @@ class AppLocalizations {
 
   String get cancel {
     return _localizedValues[locale.languageCode]['cancel'];
+  }
+
+  String get introScannerTitle {
+    return _localizedValues[locale.languageCode]['introScannerTitle'];
+  }
+
+  String get introScannerDescription {
+    return _localizedValues[locale.languageCode]['introScannerDescription'];
   }
 }
 
