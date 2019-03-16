@@ -6,15 +6,13 @@ import '../../Calendar/EventCard/EventCard.dart';
 import '../../Courses/CourseEdit/CourseEditWidget.dart';
 import '../../Keys.dart';
 import '../../Localizations.dart';
-import '../../ReplacementPlan/ReplacementPlanData.dart' as Replacementplan;
 import '../../ReplacementPlan/ReplacementPlanRow/ReplacementPlanRowWidget.dart';
 import '../../Selection.dart';
-import '../UnitPlanSelectDialog/UnitPlanSelectDialogWidget.dart';
-import '../../Tags.dart';
 import '../../WorkGroups/DayCard/DayCardWidget.dart';
 import '../../WorkGroups/WorkGroupsModel.dart';
 import '../UnitPlanModel.dart';
 import '../UnitPlanRow/UnitPlanRowWidget.dart';
+import '../UnitPlanSelectDialog/UnitPlanSelectDialogWidget.dart';
 import 'UnitPlanDayListWidget.dart';
 
 class UnitPlanDayListView extends UnitPlanDayListState {
@@ -55,7 +53,8 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                     sharedPreferences,
                     lesson.subjects,
                     widget.days.indexOf(day),
-                    day.lessons.indexOf(lesson), week: day.showWeek);
+                    day.lessons.indexOf(lesson),
+                    week: day.showWeek);
                 bool nothingSelected = _selected == null;
                 if (nothingSelected) _selected = 0;
                 return GestureDetector(
@@ -63,17 +62,16 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                     if (lesson.subjects.length > 1) {
                       // Show subject select dialog
                       showDialog<String>(
-                        context: context,
-                        barrierDismissible: true,
-                        builder: (BuildContext context1) {
-                          return UnitPlanSelectDialog(
-                            day: day, 
-                            lesson: lesson, 
-                            subject: lesson.subjects[_selected], 
-                            sharedPreferences: sharedPreferences,
-                            onSelected: () => setState(() => null),
-                          );
-                        });
+                          context: context,
+                          barrierDismissible: true,
+                          builder: (BuildContext context1) {
+                            return UnitPlanSelectDialog(
+                              day: day,
+                              lesson: lesson,
+                              sharedPreferences: sharedPreferences,
+                              onSelected: () => setState(() => null),
+                            );
+                          });
                     }
                   },
                   onLongPress: () {
@@ -145,7 +143,9 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                           :
                           // Show list of changes
                           lesson.subjects[_selected]
-                                      .getChanges(day.replacementPlanForWeektype , sharedPreferences)
+                              .getChanges(
+                              day.replacementPlanForWeektype,
+                              sharedPreferences)
                                       .length >
                                   0
                               ? Card(
@@ -166,13 +166,17 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                               )
                                             : Container())
                                       ]..addAll(lesson.subjects[_selected]
-                                          .getChanges(day.replacementPlanForWeektype, sharedPreferences)
+                                          .getChanges(
+                                          day.replacementPlanForWeektype,
+                                          sharedPreferences)
                                           .map((change) {
                                             return ReplacementPlanRow(
                                               change: change,
                                               changes: lesson
                                                   .subjects[_selected]
-                                                  .getChanges(day.replacementPlanForWeektype,
+                                                  .getChanges(
+                                                  day
+                                                      .replacementPlanForWeektype,
                                                       sharedPreferences),
                                               weekday: widget.days.indexOf(day),
                                               sharedPreferences:

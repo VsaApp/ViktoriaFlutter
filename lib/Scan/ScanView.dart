@@ -8,7 +8,7 @@ import '../Selection.dart';
 import '../Subjects/SubjectsModel.dart';
 import '../Teachers/TeachersModel.dart';
 import '../UnitPlan/UnitPlanModel.dart';
-import '../UnitPlan/UnitPlanRow/UnitPlanRowWidget.dart';
+import '../UnitPlan/UnitPlanSelectDialog/UnitPlanSelectDialogWidget.dart';
 import 'ScanPage.dart';
 
 class ScanPageView extends ScanPageState {
@@ -191,6 +191,52 @@ class ScanPageView extends ScanPageState {
       ),
       body: unidentifiedLessons.length > 0
           ? ListView(
+        shrinkWrap: true,
+        children: unidentifiedLessons.map((lesson) {
+          return Section(
+            title: [
+              'Montag',
+              'Dienstag',
+              'Mittwoch',
+              'Donnerstag',
+              'Freitag'
+            ][lesson.weekday] +
+                ' ' +
+                (lesson.unit + 1).toString() +
+                '. Stunde' +
+                (lesson.lesson.subjects[0].block != ''
+                    ? ' (' + lesson.lesson.subjects[0].block + ')'
+                    : ''),
+            children: <Widget>[
+              Container(
+                child: UnitPlanSelectDialog(
+                  day: UnitPlan.days[lesson.weekday],
+                  lesson: lesson.lesson,
+                  sharedPreferences: sharedPreferences,
+                  onSelected: () => setState(() => null),
+                  enableWrapper: false,
+                ),
+              ),
+            ],
+          );
+        }).toList(),
+      )
+          : Container(
+        alignment: Alignment(0.0, -1.0),
+        padding: EdgeInsets.all(10.0),
+        child: Text(AppLocalizations
+            .of(context)
+            .scanUnitPlanAllDetected),
+      ),
+    );
+
+    /*return Scaffold(
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context).scanUnitPlan),
+        elevation: 0.0,
+      ),
+      body: unidentifiedLessons.length > 0
+          ? ListView(
               shrinkWrap: true,
               children: unidentifiedLessons.map((lesson) {
                 return Section(
@@ -231,7 +277,7 @@ class ScanPageView extends ScanPageState {
               padding: EdgeInsets.all(10.0),
               child: Text(AppLocalizations.of(context).scanUnitPlanAllDetected),
             ),
-    );
+    );*/
   }
 }
 
