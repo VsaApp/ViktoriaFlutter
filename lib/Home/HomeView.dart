@@ -23,7 +23,8 @@ class HomePageView extends HomePageState {
     // List of pages
     List<Page> pages = [
       Page(AppLocalizations.of(context).unitPlan, Icons.event_note,
-          UnitPlanPage(), url: 'https://www.viktoriaschule-aachen.de/sundvplan/sps/index.html'),
+          UnitPlanPage(),
+          url: 'https://www.viktoriaschule-aachen.de/sundvplan/sps/index.html'),
       Page(AppLocalizations.of(context).replacementPlan,
           Icons.format_list_numbered, ReplacementPlanPage(),
           url: 'https://www.viktoriaschule-aachen.de/sundvplan/vps/index.html'),
@@ -32,7 +33,8 @@ class HomePageView extends HomePageState {
       Page(AppLocalizations.of(context).calendar, Icons.calendar_today,
           CalendarPage()),
       Page(AppLocalizations.of(context).cafetoria, Icons.fastfood,
-          CafetoriaPage(), url: 'https://www.opc-asp.de/vs-aachen/'),
+          CafetoriaPage(),
+          url: 'https://www.opc-asp.de/vs-aachen/'),
       Page(AppLocalizations.of(context).workGroups, MdiIcons.soccer,
           WorkGroupsPage()),
       Page(AppLocalizations.of(context).courses, Icons.person, CoursesPage()),
@@ -41,8 +43,9 @@ class HomePageView extends HomePageState {
     ];
 
     // Map pages to drawer items
-    List<DrawerItem> drawerItems =
-        pages.map((Page page) => DrawerItem(page.name, page.icon, page.url)).toList();
+    List<DrawerItem> drawerItems = pages
+        .map((Page page) => DrawerItem(page.name, page.icon, page.url))
+        .toList();
 
     // Create list of widget options
     var drawerOptions = <Widget>[];
@@ -122,16 +125,35 @@ class HomePageView extends HomePageState {
         // Current page's title
         title: FlatButton(
           padding: EdgeInsets.only(left: 0),
-          child: Text(drawerItems[selectedDrawerIndex].title, style: TextStyle(color: Colors.white, fontSize: 20)),
+          child: Text(drawerItems[selectedDrawerIndex].title,
+              style: TextStyle(color: Colors.white, fontSize: 20)),
           onPressed: () => launchURL(drawerItems[selectedDrawerIndex].url),
         ),
         elevation: 0.0,
         actions: <Widget>[
-          showWeek ?
-          FlatButton(
-            child: Text(currentWeek, style: TextStyle(color: Colors.white, fontSize: 20)),
-            onPressed: weekPressed
-          ) : Container()
+          showWeek
+              ? Container(
+            margin: EdgeInsets.all(10),
+            child: OutlineButton(
+                borderSide: BorderSide(
+                  color: Colors.white,
+                  width: 1.0,
+                ),
+                color: Colors.white,
+                highlightedBorderColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                child: Text(
+                  currentWeek,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                ),
+                onPressed: weekPressed),
+          )
+              : Container()
         ],
       ),
       drawer: Drawer(
