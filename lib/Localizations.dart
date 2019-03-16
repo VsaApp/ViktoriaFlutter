@@ -186,7 +186,9 @@ class AppLocalizations {
       'introVsaAppDescription': 'Viel Spaß beim Nutzen!',
       'viewIntro': 'Einführung nochmal anschauen',
       'loadOldData': 'Alte Daten laden?',
-      'loadOldDataDescription': 'Es werden die ausgewählten Stunden und die Schriftlichkeiten vom letzten mal übernommen.',
+      'loadOldDataDescription':
+      'Es werden die ausgewählten Stunden und die Schriftlichkeiten vom letzten mal übernommen.',
+      'cancel': 'Abbrechen',
     },
   };
 
@@ -835,6 +837,10 @@ class AppLocalizations {
 
   String get viewIntro {
     return _localizedValues[locale.languageCode]['viewIntro'];
+  }
+
+  String get cancel {
+    return _localizedValues[locale.languageCode]['cancel'];
   }
 }
 

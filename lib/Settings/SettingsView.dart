@@ -186,31 +186,61 @@ class SettingsPageView extends SettingsPageState {
                   title: Text(
                       AppLocalizations.of(context).showCafetoriaInUnitPlan),
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
+                grade == 'EF' || grade == 'Q1' || grade == 'Q2'
+                    ? Container(
+                  margin:
+                  EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
                   child: SizedBox(
                     width: double.infinity,
                     child: FlatButton(
-                      color: Theme.of(context).accentColor,
-                      child: Text(AppLocalizations.of(context).scanUnitPlan),
+                      color: Theme
+                          .of(context)
+                          .accentColor,
+                      child:
+                      Text(AppLocalizations
+                          .of(context)
+                          .scanUnitPlan),
                       onPressed: () {
                         showDialog(
                             context: context,
                             barrierDismissible: true,
                             builder: (BuildContext context1) {
                               return AlertDialog(
-                                title: Text(
-                                    AppLocalizations.of(context).scanUnitPlan),
-                                content: Text(AppLocalizations.of(context)
+                                title: Text(AppLocalizations
+                                    .of(context)
+                                    .scanUnitPlan),
+                                content: Text(AppLocalizations
+                                    .of(context)
                                     .scanUnitPlanExplanation),
                                 actions: <Widget>[
                                   FlatButton(
-                                    color: Theme.of(context).accentColor,
-                                    child: Text(AppLocalizations.of(context).ok,
-                                        style: TextStyle(color: Colors.black)),
+                                    color: Theme
+                                        .of(context)
+                                        .accentColor,
+                                    child: Text(
+                                        AppLocalizations
+                                            .of(context)
+                                            .cancel,
+                                        style: TextStyle(
+                                            color: Colors.black)),
                                     onPressed: () {
                                       Navigator.of(context).pop();
-                                      Navigator.of(context).pushNamed('/scan');
+                                    },
+                                  ),
+                                  FlatButton(
+                                    color: Theme
+                                        .of(context)
+                                        .accentColor,
+                                    child: Text(
+                                        AppLocalizations
+                                            .of(context)
+                                            .ok,
+                                        style: TextStyle(
+                                            color: Colors.black)),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context)
+                                          .pushNamed('/scan');
                                     },
                                   )
                                 ],
@@ -219,7 +249,8 @@ class SettingsPageView extends SettingsPageState {
                       },
                     ),
                   ),
-                ),
+                )
+                    : Container(),
                 // Unit plan reset button
                 Container(
                   margin: EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
