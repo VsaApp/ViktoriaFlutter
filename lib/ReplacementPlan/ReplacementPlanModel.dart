@@ -20,7 +20,7 @@ class ReplacementPlanDay {
   final List<Change> myChanges;
   final List<Change> undefinedChanges;
   final List<Change> otherChanges;
-  final List<UnparsedChange> unparsed;
+  final List<Change> unparsed;
 
   ReplacementPlanDay({
     @required this.date,
@@ -64,6 +64,8 @@ class Change {
   String teacher;
   final Changed changed;
   bool sure;
+  List<dynamic> original;
+  List<dynamic> change;
 
   Color get color {
     if (changed.info.toLowerCase().contains('klausur'))
@@ -157,6 +159,8 @@ class Change {
     @required this.teacher,
     @required this.changed,
     @required this.sure,
+    this.original,
+    this.change
   });
 
   factory Change.fromJson(Map<String, dynamic> json) {
@@ -168,6 +172,8 @@ class Change {
       teacher: json['participant'] as String,
       changed: Changed.fromJson(json['change']),
       sure: json['sure'] as bool,
+      original: !json.keys.contains('participant') ? json['unparsedOriginal'].map((line) => line.toString()).toList() : null,
+      change: !json.keys.contains('participant') ? json['unparsedChange'].map((line) => line.toString()).toList(): null,
     );
   }
 }

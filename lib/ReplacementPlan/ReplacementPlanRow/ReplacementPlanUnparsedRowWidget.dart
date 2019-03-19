@@ -6,7 +6,7 @@ class ReplacementPlanUnparsedRow extends StatelessWidget {
   const ReplacementPlanUnparsedRow({Key key, this.change, this.changes})
       : super(key: key);
 
-  final UnparsedChange change;
+  final Change change;
   final List<dynamic> changes;
 
   @override

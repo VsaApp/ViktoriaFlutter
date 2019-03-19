@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Keys.dart';
 import '../Selection.dart';
 import '../ReplacementPlan/ReplacementPlanModel.dart';
 
@@ -88,29 +87,34 @@ class UnitPlanDay {
 
   ReplacementPlanDay getReplacementPlanDay(
       SharedPreferences sharedPreferences) {
+    List<Change> unparsedChanges = [];
     List<Change> myChanges = [];
     List<Change> undefinedChanges = [];
     List<Change> otherChanges = [];
-    int weekday = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag']
-        .indexOf(name);
+    int weekday = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag'].indexOf(name);
     lessons.forEach((lesson) {
       int unit = lessons.indexOf(lesson);
       int s = getSelectedIndex(sharedPreferences, lesson.subjects, weekday, unit, week: replacementPlanForWeektype) ?? 0;
       lesson.subjects.forEach((subject) {
         int i = lesson.subjects.indexOf(subject);
         subject.changes.forEach((change) {
-          if (i == s) {
-            if (change.isExam) {
-              int isMy = change.isMyExam(sharedPreferences, replacementPlanForWeektype);
-              (isMy == 1
-                      ? myChanges
-                      : (isMy == -1 ? undefinedChanges : otherChanges))
-                  .add(change);
+          if (change.original != null) {
+            unparsedChanges.add(change);
+          }
+          else {
+            if (i == s) {
+              if (change.isExam) {
+                int isMy = change.isMyExam(sharedPreferences, replacementPlanForWeektype);
+                (isMy == 1
+                        ? myChanges
+                        : (isMy == -1 ? undefinedChanges : otherChanges))
+                    .add(change);
+              } else {
+                (change.sure ? myChanges : undefinedChanges).add(change);
+              }
             } else {
-              (change.sure ? myChanges : undefinedChanges).add(change);
+              otherChanges.add(change);
             }
-          } else {
-            otherChanges.add(change);
           }
         });
       });
@@ -159,7 +163,7 @@ class UnitPlanDay {
       weekday: replacementPlanForWeekday,
       weektype: replacementPlanForWeektype,
       update: replacementPlanUpdatedDate,
-      unparsed: [],
+      unparsed: unparsedChanges,
       myChanges: myChanges,
       undefinedChanges: undefinedChanges,
       otherChanges: otherChanges,

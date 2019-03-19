@@ -156,7 +156,6 @@ Future syncTags() async {
 
   // Add current OneSignal id...
   newTags['onesignalId'] = await getPlayerId();
-  print(await DeviceId.getID);
 
   // Compare new and old tags...
   Map<String, dynamic> tagsToUpdate = {};
