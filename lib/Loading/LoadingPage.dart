@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,11 +21,19 @@ class LoadingPage extends StatefulWidget {
   State<StatefulWidget> createState() => LoadingPageView();
 }
 
-abstract class LoadingPageState extends State<LoadingPage> {
-  int allDownloadsCount = 0;
-  int countCurrentDownloads;
+abstract class LoadingPageState extends State<LoadingPage>
+    with TickerProviderStateMixin {
+  int allDownloadsCount = 9;
+  int countCurrentDownloads = 9;
+  double centerWidgetDimensions = 150;
   SharedPreferences instance;
   List<String> texts = [];
+  bool showTexts = false;
+  bool animationForward = true;
+  Timer textTimer;
+  Animation animation;
+  AnimationController controller;
+  Stopwatch stopwatch;
 
   @override
   void initState() {
@@ -41,15 +49,42 @@ abstract class LoadingPageState extends State<LoadingPage> {
       texts.add(AppLocalizations.of(context).teachers);
       texts.add(AppLocalizations.of(context).cafetoria);
       texts.shuffle();
+      textTimer = Timer(Duration(seconds: 3), () {
+        setState(() {
+          showTexts = true;
+        });
+      });
+      controller = AnimationController(
+        duration: Duration(milliseconds: 500),
+        vsync: this,
+      );
+      setState(() {
+        animation = Tween<double>(begin: -0.01, end: 0.01).animate(controller)
+          ..addStatusListener((status) {
+            if (status == AnimationStatus.completed) {
+              controller.reverse();
+            } else if (status == AnimationStatus.dismissed) {
+              controller.forward();
+            }
+          });
+        controller.forward();
+      });
+      stopwatch = Stopwatch()
+        ..start();
       downloadAll();
     });
     super.initState();
   }
 
+  @override
+  void dispose() {
+    textTimer.cancel();
+    controller.dispose();
+    super.dispose();
+  }
+
   // Download all data
   Future downloadAll() async {
-    allDownloadsCount = 9;
-    countCurrentDownloads = allDownloadsCount;
     download(() async {
       await UnitPlan.download(instance.getString(Keys.grade), false);
       texts.remove(AppLocalizations.of(context).unitPlan);
@@ -57,7 +92,10 @@ abstract class LoadingPageState extends State<LoadingPage> {
     }, 2, AppLocalizations.of(context).replacementPlan);
     download(WorkGroups.download, 1, AppLocalizations.of(context).workGroups);
     download(Calendar.download, 1, AppLocalizations.of(context).calendar);
-    download(Messageboard.download, 1, AppLocalizations.of(context).messageboard);
+    download(
+        Messageboard.download, 1, AppLocalizations
+        .of(context)
+        .messageboard);
     download(Subjects.download, 1, AppLocalizations.of(context).subjects);
     download(Rooms.download, 1, AppLocalizations.of(context).rooms);
     download(Teachers.download, 1, AppLocalizations.of(context).teachers);
@@ -79,15 +117,21 @@ abstract class LoadingPageState extends State<LoadingPage> {
     }
     if (countCurrentDownloads == 0) {
       // After download show app
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        int storedVersion = instance.getInt(Keys.slidesVersion) ?? 0;
-        int currentVersion = 3;
-        if (currentVersion != storedVersion) {
-          instance.setInt(Keys.slidesVersion, currentVersion);
-          Navigator.of(context).pushReplacementNamed('/intro');
-        } else {
-          Navigator.of(context).pushReplacementNamed('/home');
-        }
+      int wait = 0;
+      if (stopwatch.elapsedMilliseconds < 500) {
+        wait = 500 - stopwatch.elapsedMilliseconds;
+      }
+      Timer(Duration(milliseconds: wait), () {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          int storedVersion = instance.getInt(Keys.slidesVersion) ?? 0;
+          int currentVersion = 3;
+          if (currentVersion != storedVersion) {
+            instance.setInt(Keys.slidesVersion, currentVersion);
+            Navigator.of(context).pushReplacementNamed('/intro');
+          } else {
+            Navigator.of(context).pushReplacementNamed('/home');
+          }
+        });
       });
     }
   }

@@ -1,4 +1,7 @@
+import 'dart:math' show pi;
+
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import 'LoadingPage.dart';
 
@@ -9,7 +12,7 @@ class LoadingPageView extends LoadingPageState {
     List<Widget> items = texts.map((text) => Text(text)).toList();
     List<int> itemCharacters = texts.map((text) => text.length).toList();
     itemCharacters.sort((a, b) => b.compareTo(a));
-    if (allDownloadsCount == 0) {
+    if (animation == null) {
       return Container();
     }
     return Scaffold(
@@ -21,39 +24,73 @@ class LoadingPageView extends LoadingPageState {
               padding: EdgeInsets.only(
                   top: height -
                       ((allDownloadsCount - (allDownloadsCount > 0 ? 1 : 0)) *
-                              16)
+                          16)
                           .toDouble() -
-                      100 -
+                      (centerWidgetDimensions + 25) -
                       height / 5),
               child: SizedBox(
-                child: CircularProgressIndicator(strokeWidth: 5.0),
-                height: 75.0,
-                width: 75.0,
+                child: PivotTransition(
+                  turns: animation,
+                  alignment: FractionalOffset(0.815, 0.835),
+                  child: SvgPicture.asset(
+                    'assets/images/logo.svg',
+                  ),
+                ),
+                height: centerWidgetDimensions,
+                width: centerWidgetDimensions,
               ),
             ),
           ),
           itemCharacters.length > 0
               ? Align(
-                  alignment: Alignment.topCenter,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      top: height -
-                          ((allDownloadsCount - 1) * 16).toDouble() -
-                          height / 5,
-                    ),
-                    child: SizedBox(
-                      height: ((texts.length + 1) * 16).toDouble(),
-                      width: (itemCharacters[0] * 7).toDouble(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: items,
-                      ),
-                    ),
-                  ),
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: height -
+                    ((allDownloadsCount - 1) * 16).toDouble() -
+                    height / 5,
+              ),
+              child: SizedBox(
+                height: ((texts.length + 1) * 16).toDouble(),
+                width: (itemCharacters[0] * 7).toDouble(),
+                child: showTexts
+                    ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: items,
                 )
+                    : Container(),
+              ),
+            ),
+          )
               : Container(),
         ],
       ),
+    );
+  }
+}
+
+class PivotTransition extends AnimatedWidget {
+  PivotTransition({
+    Key key,
+    this.alignment: FractionalOffset.center,
+    @required Animation<double> turns,
+    this.child,
+  }) : super(key: key, listenable: turns);
+
+  Animation<double> get turns => listenable;
+
+  final FractionalOffset alignment;
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final double turnsValue = turns.value;
+    final Matrix4 transform = Matrix4.rotationZ(turnsValue * pi * 2.0);
+    return new Transform(
+      transform: transform,
+      alignment: alignment,
+      child: child,
     );
   }
 }
