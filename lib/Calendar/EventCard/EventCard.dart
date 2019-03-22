@@ -1,6 +1,5 @@
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../CalendarModel.dart';
 
@@ -10,6 +9,48 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String startDate = event.start != null
+        ? event.start.day.toString() +
+        '.' +
+        event.start.month.toString() +
+        '.' +
+        event.start.year.toString()
+        : '';
+    String startTime = event.start != null
+        ? (event.start.hour
+        .toString()
+        .length == 1 ? '0' : '') +
+        event.start.hour.toString() +
+        ':' +
+        (event.start.minute
+            .toString()
+            .length == 1 ? '0' : '') +
+        event.start.minute.toString()
+        : '';
+    if (startTime == '00:00') {
+      startTime = '';
+    }
+    String endDate = event.end != null
+        ? event.end.day.toString() +
+        '.' +
+        event.end.month.toString() +
+        '.' +
+        event.end.year.toString()
+        : '';
+    String endTime = event.end != null
+        ? (event.end.hour
+        .toString()
+        .length == 1 ? '0' : '') +
+        event.end.hour.toString() +
+        ':' +
+        (event.end.hour
+            .toString()
+            .length == 1 ? '0' : '') +
+        event.end.minute.toString()
+        : '';
+    if (endTime == '23:59') {
+      endTime = '';
+    }
     return Padding(
       padding: EdgeInsets.only(bottom: 5),
       child: Card(
@@ -18,16 +59,11 @@ class EventCard extends StatelessWidget {
           children: <Widget>[
             GestureDetector(
               onTap: () {
-                DateFormat format = DateFormat('dd.MM.yyyy HH:mm');
                 Add2Calendar.addEvent2Cal(Event(
                   title: event.name,
                   description: event.info,
-                  startDate: format.parse(event.start.date +
-                      ' ' +
-                      (event.start.time != '' ? event.start.time : '00:00')),
-                  endDate: format.parse(event.end.date +
-                      ' ' +
-                      (event.end.time != '' ? event.end.time : '23:59')),
+                  startDate: event.start,
+                  endDate: event.end,
                 ));
               },
               child: ListTile(
@@ -41,19 +77,14 @@ class EventCard extends StatelessWidget {
                       Container(
                         margin: EdgeInsets.only(bottom: 10),
                         child:
-                            event.info != '' ? Text(event.info) : Container(),
+                        event.info != '' ? Text(event.info) : Container(),
                       ),
-                      Text((event.start.date) +
-                          (event.start.time != ''
-                              ? ' (' + (event.start.time) + ' Uhr)'
-                              : '')),
-                      (event.start.date) + (event.start.time) !=
-                              (event.end.date ?? '') + (event.end.time ?? '')
+                      Text(startDate +
+                          (startTime != '' ? ' (' + startTime + ' Uhr)' : '')),
+                      startDate + startTime != endDate + endTime
                           ? Text('bis ' +
-                              (event.end.date) +
-                              (event.end.time != ''
-                                  ? ' (' + (event.end.time) + ' Uhr)'
-                                  : ''))
+                          endDate +
+                          (endTime != '' ? ' (' + endTime + ' Uhr)' : ''))
                           : Container()
                     ],
                   ),

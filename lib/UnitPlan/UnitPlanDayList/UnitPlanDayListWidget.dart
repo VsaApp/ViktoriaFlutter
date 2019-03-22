@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../Home/HomePage.dart';
 import '../../Calendar/CalendarModel.dart';
+import '../../Home/HomePage.dart';
 import '../../Keys.dart';
 import '../../Localizations.dart';
-import '../../ReplacementPlan/ReplacementPlanModel.dart';
 import '../../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
+import '../../ReplacementPlan/ReplacementPlanModel.dart';
 import '../../UnitPlan/UnitPlanData.dart' as unitplan;
 import '../UnitPlanModel.dart';
 import 'UnitPlanDayListView.dart';
@@ -164,20 +164,9 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
     DateTime targetDay = today
         .subtract(Duration(days: today.weekday))
         .add(Duration(days: weekday + (!thisWeek ? 7 : 0) + 1));
-    int date = dateToInt(targetDay.day.toString() +
-        '.' +
-        targetDay.month.toString() +
-        '.' +
-        targetDay.year.toString());
     return Calendar.events.where((event) {
-      return dateToInt(event.start.date) <= date &&
-          date <= dateToInt(event.end.date);
+      return (event.start.isBefore(targetDay) || event.start == targetDay) &&
+          (event.end.isAfter(targetDay) || event.end == targetDay);
     }).toList();
-  }
-
-  int dateToInt(String date) {
-    return int.parse(date.split('.')[0]) +
-        int.parse(date.split('.')[1]) * 31 +
-        int.parse(date.split('.')[2]) * 365;
   }
 }

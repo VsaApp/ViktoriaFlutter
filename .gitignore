@@ -75,3 +75,5 @@ build/
 .project
 .settings
 ios/Flutter/Generated.xcconfig
+
+key.properties

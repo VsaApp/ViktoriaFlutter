@@ -10,7 +10,7 @@ class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static Map<String, Map<String, String>> _localizedValues = {
+  static Map<String, Map<String, dynamic>> _localizedValues = {
     // List of all germans Strings...
     'de': {
       'title': 'Viktoria',
@@ -192,10 +192,24 @@ class AppLocalizations {
       'introScannerTitle': 'Scanner',
       'introScannerDescription':
       'Damit du nicht deinen ganzen Stundenplan von Hand eingeben musst, kannst du ihn auch einfach mit deinem Handy einscannen',
+      'months': [
+        'Januar',
+        'Februar',
+        'März',
+        'April',
+        'Mai',
+        'Juni',
+        'Juli',
+        'August',
+        'September',
+        'Oktober',
+        'November',
+        'Dezember',
+      ],
     },
   };
 
-  // All getter defined...
+// All getter defined...
   String get loadOldData {
     return _localizedValues[locale.languageCode]['loadOldData'];
   }
@@ -852,6 +866,10 @@ class AppLocalizations {
 
   String get introScannerDescription {
     return _localizedValues[locale.languageCode]['introScannerDescription'];
+  }
+
+  List<String> get months {
+    return _localizedValues[locale.languageCode]['months'];
   }
 }
 

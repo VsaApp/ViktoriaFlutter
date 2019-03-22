@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'CalendarData.dart';
+import 'CalendarGrid/CalendarGridWidget.dart';
 import 'CalendarModel.dart';
 import 'EventCard/EventCard.dart';
 
@@ -11,10 +12,11 @@ class CalendarPage extends StatefulWidget {
   CalendarPageState createState() => CalendarPageState();
 }
 
-class CalendarPageState extends State<CalendarPage> {
+class CalendarPageState extends State<CalendarPage>
+    with SingleTickerProviderStateMixin {
   List<CalendarEvent> events;
-  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
+  List<String> types = ['Liste', 'Monatsansicht'];
+  TabController tabController;
 
   Future update() async {
     await download();
@@ -23,54 +25,70 @@ class CalendarPageState extends State<CalendarPage> {
 
   void setEvents() {
     List<CalendarEvent> events = getCalendar();
-    events = events.where((event) {
-      bool ok = true;
-      DateTime d1 = DateTime(
-          int.parse(event.start.date.split('.')[2]),
-          int.parse(event.start.date.split('.')[1]),
-          int.parse(event.start.date.split('.')[0]));
-      ok = d1.isAfter(DateTime.now());
-      if (event.end.date != '' && event.end.date != null) {
-        DateTime d2 = DateTime(
-            int.parse(event.end.date.split('.')[2]),
-            int.parse(event.end.date.split('.')[1]),
-            int.parse(event.end.date.split('.')[0]));
-        if (!ok) {
-          ok = d2.isAfter(DateTime.now());
-        }
-      }
-      return ok;
-    }).toList();
-    events.sort((a, b) {
-      DateTime d1 = DateTime(
-          int.parse(a.start.date.split('.')[2]),
-          int.parse(a.start.date.split('.')[1]),
-          int.parse(a.start.date.split('.')[0]));
-      DateTime d2 = DateTime(
-          int.parse(b.start.date.split('.')[2]),
-          int.parse(b.start.date.split('.')[1]),
-          int.parse(b.start.date.split('.')[0]));
-      return d1.isAfter(d2) ? 1 : -1;
-    });
-
+    events = events
+        .where((event) =>
+    event.start.isAfter(DateTime.now()) ||
+        event.end.isAfter(DateTime.now()))
+        .toList();
+    events.sort((a, b) => a.start.isAfter(b.start) ? 1 : -1);
     this.events = events;
   }
 
   @override
   void initState() {
     setEvents();
+    tabController = TabController(vsync: this, length: types.length);
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: update,
-      key: refreshIndicatorKey,
-      child: ListView(
-        padding: EdgeInsets.all(10),
-        shrinkWrap: true,
-        children: events.map((event) => EventCard(event: event)).toList(),
+    return DefaultTabController(
+      length: types.length,
+      child: Scaffold(
+        backgroundColor: Theme
+            .of(context)
+            .primaryColor,
+        // Tab bar views
+        appBar: TabBar(
+          controller: tabController,
+          indicatorColor: Theme
+              .of(context)
+              .accentColor,
+          indicatorWeight: 2.5,
+          tabs: types.map((type) {
+            return Container(
+              padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
+              child: Text(type),
+            );
+          }).toList(),
+        ),
+        body: TabBarView(
+          controller: tabController,
+          children: types.map((type) {
+            GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
+            GlobalKey<RefreshIndicatorState>();
+            return Container(
+              width: double.infinity,
+              height: double.infinity,
+              color: Colors.white,
+              child: RefreshIndicator(
+                onRefresh: update,
+                key: refreshIndicatorKey,
+                child: type == types[0]
+                    ? ListView(
+                  padding: EdgeInsets.all(10),
+                  shrinkWrap: true,
+                  children: events
+                      .map((event) => EventCard(event: event))
+                      .toList(),
+                )
+                    : CalendarGrid(events: events),
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }

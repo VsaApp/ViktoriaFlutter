@@ -104,11 +104,8 @@ class IntroPageView extends IntroPageState {
     CalendarEvent event = CalendarEvent(
       name: 'Elternsprechtag',
       info: '',
-      start: CalendarEventDate(
-        date: '12.3.2019',
-        time: '15:00',
-      ),
-      end: CalendarEventDate(date: '12.3.2019', time: '19:00'),
+      start: DateTime(2019, 3, 12, 15),
+      end: DateTime(2019, 3, 12, 19),
     );
     slides.add(Slide(
       title: AppLocalizations.of(context).introCalendarTitle,
