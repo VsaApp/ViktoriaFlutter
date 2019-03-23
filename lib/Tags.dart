@@ -37,7 +37,6 @@ Future syncWithTags() async {
   Map<String, dynamic> tags = await getTags();
   tags.forEach((key, value) {
     key = key.toString();
-    print(key);
     if (key.contains('unitPlan')) {
       Storage.setStringList(key, value == null ? null : value.cast<String>());
     } else if (key.contains('exam')) {
@@ -47,8 +46,6 @@ Future syncWithTags() async {
     } else if (key == 'dev') {
       Storage.setBool(key, value);
     } else if (key.contains('room')) {
-      print(key);
-      print(value);
       Storage.setString(key, value);
     }
   });

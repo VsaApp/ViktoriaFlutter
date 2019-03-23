@@ -104,6 +104,7 @@ class Storage {
     } else {
       _sharedPreferences.remove(key);
     }
+    _save();
   }
 
   static Set<String> getKeys() {

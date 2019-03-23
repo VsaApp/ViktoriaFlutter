@@ -189,4 +189,8 @@ class Keys {
   static String get showCafetoriaInUnitPlan {
     return 'showCafetoriaInUnitPlan';
   }
+
+  static String get id {
+    return 'id';
+  }
 }

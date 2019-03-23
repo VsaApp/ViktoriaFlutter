@@ -206,6 +206,11 @@ class AppLocalizations {
         'November',
         'Dezember',
       ],
+      'syncPhoneId': 'Synchronisierungs-ID',
+      'syncPhone': 'Mit Handy synchronisieren',
+      'syncPhoneDescription':
+      'Wenn du auf deinem Handy und in dieser Anwendung immer die selben Sachen sehen möchtest, dann musst die Synchronisierungs-ID aus deine Einstellungen deiner App nehmen und hier eingeben:',
+      'skip': 'Überspringen',
     },
   };
 
@@ -870,6 +875,22 @@ class AppLocalizations {
 
   List<String> get months {
     return _localizedValues[locale.languageCode]['months'];
+  }
+
+  String get syncPhone {
+    return _localizedValues[locale.languageCode]['syncPhone'];
+  }
+
+  String get syncPhoneId {
+    return _localizedValues[locale.languageCode]['syncPhoneId'];
+  }
+
+  String get syncPhoneDescription {
+    return _localizedValues[locale.languageCode]['syncPhoneDescription'];
+  }
+
+  String get skip {
+    return _localizedValues[locale.languageCode]['skip'];
   }
 }
 

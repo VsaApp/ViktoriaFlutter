@@ -11,6 +11,7 @@ import '../ReplacementPlan/ReplacementPlanData.dart' as ReplacementPlan;
 import '../Rooms/RoomsData.dart' as Rooms;
 import '../Storage.dart';
 import '../Subjects/SubjectsData.dart' as Subjects;
+import '../Tags.dart';
 import '../Teachers/TeachersData.dart' as Teachers;
 import '../UnitPlan/UnitPlanData.dart' as UnitPlan;
 import '../WorkGroups/WorkGroupsData.dart' as WorkGroups;
@@ -23,8 +24,8 @@ class LoadingPage extends StatefulWidget {
 
 abstract class LoadingPageState extends State<LoadingPage>
     with TickerProviderStateMixin {
-  int allDownloadsCount = 9;
-  int countCurrentDownloads = 9;
+  int allDownloadsCount = 10;
+  int countCurrentDownloads = 10;
   double centerWidgetDimensions = 150;
   List<String> texts = [];
   bool showTexts = false;
@@ -46,6 +47,9 @@ abstract class LoadingPageState extends State<LoadingPage>
       texts.add(AppLocalizations.of(context).rooms);
       texts.add(AppLocalizations.of(context).teachers);
       texts.add(AppLocalizations.of(context).cafetoria);
+      texts.add(AppLocalizations
+          .of(context)
+          .settings);
       texts.shuffle();
       downloadAll();
     });
@@ -104,6 +108,9 @@ abstract class LoadingPageState extends State<LoadingPage>
         password: 'null',
       );
     }, 1, AppLocalizations.of(context).cafetoria);
+    download(syncWithTags, 1, AppLocalizations
+        .of(context)
+        .settings);
   }
 
   Future download(Function() process, int count, String text) async {

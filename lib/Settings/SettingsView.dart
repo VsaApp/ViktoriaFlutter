@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 
+import '../Id.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
 import '../SectionWidget.dart';
@@ -22,6 +23,15 @@ class SettingsPageView extends SettingsPageState {
           Section(
             title: AppLocalizations.of(context).appSettings.toUpperCase(),
             children: <Widget>[
+              Text(
+                AppLocalizations
+                    .of(context)
+                    .syncPhoneId + ': ' + Id.id,
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
               // Show short cut dialog option
               CheckboxListTile(
                 value: showShortCutDialog,
@@ -317,6 +327,7 @@ class SettingsPageView extends SettingsPageState {
                       Storage.remove(Keys.username);
                       Storage.remove(Keys.password);
                       Storage.remove(Keys.grade);
+                      Storage.remove(Keys.id);
                       // Reload app
                       deleteTags((await getTags()).keys.toList());
                       Navigator.of(context).pushReplacementNamed('/login');

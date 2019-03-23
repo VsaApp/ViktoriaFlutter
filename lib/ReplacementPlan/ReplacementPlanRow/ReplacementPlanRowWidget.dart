@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:viktoriaflutter/Rooms.dart';
 
+import '../../Rooms.dart';
 import '../ReplacementPlanModel.dart';
 
 class ReplacementPlanRow extends StatelessWidget {
@@ -19,80 +19,99 @@ class ReplacementPlanRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String nTeacher = change.teacher;
-    String cTeacher = change.changed.teacher;
     bool showUnit = true;
-    if (changes.indexOf(change) !=
-        0) if (changes[changes.indexOf(change) - 1].unit == change.unit)
+    if (changes.indexOf(change) != 0 &&
+        changes[changes.indexOf(change) - 1].unit == change.unit) {
       showUnit = false;
-    double width = MediaQuery
-        .of(context)
-        .size
-        .width - (isDialog ? 168 : 40);
+    }
     return Container(
-      padding: EdgeInsets.only(
-          // Add padding if unit not shown
-          top: showUnit ? (changes.indexOf(change) == 0 ? 10 : 20) : 5,
-          // Add padding if row is last row
-          bottom: 0,
-          left: 10,
-          right: 10),
+      margin: EdgeInsets.only(top: 2.5, bottom: 2.5),
       child: Row(
         children: <Widget>[
-          Column(children: <Widget>[
-            // Show unit of change
-            Container(
-              width: width * 0.07,
+          Expanded(
+            flex: 8,
+            child: Center(
               child: Text(
                 (showUnit) ? '${change.unit + 1}' : '',
                 style: TextStyle(
-                  color: Colors.black54,
+                  color: Colors.black,
                 ),
               ),
             ),
-          ]),
-          Container(
-            padding: EdgeInsets.only(left: width * 0.03 - 2, top: 5, bottom: 5),
-            decoration: BoxDecoration(
-              border: Border(
-                left: BorderSide(
-                    width: 2,
-                    color: (change.color == null)
-                        ?
-                    // Default color
-                    Theme
-                        .of(context)
-                        .primaryColor
-                        :
-                    // Changed color
-                    change.color),
+          ),
+          Expanded(
+            flex: 2,
+            child: Container(
+              height: 45,
+              alignment: Alignment.centerRight,
+              decoration: BoxDecoration(
+                border: Border(
+                  left: BorderSide(
+                      width: 2,
+                      color: (change.color == null)
+                          ? Theme
+                          .of(context)
+                          .primaryColor
+                          : change.color),
+                ),
               ),
             ),
-            child: Row(
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    // Original subject
-                    (change.lesson.length > 0 ||
-                        change.room.length > 0 ||
-                        change.teacher.length > 0)
-                        ? Container(
-                      width: width * 0.60,
-                      child: Text(
-                        change.lesson,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15.0,
-                          color: Theme
-                              .of(context)
-                              .primaryColor,
+          ),
+          Expanded(
+            flex: 90,
+            child: Container(
+              height: 33,
+              margin: EdgeInsets.only(top: 5, bottom: 5),
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        flex: 60,
+                        child: Text(
+                          change.lesson,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15.0,
+                            color: Theme
+                                .of(context)
+                                .primaryColor,
+                          ),
                         ),
                       ),
-                    )
-                        : Container(),
-                    // Information
-                    Container(
-                        width: width * 0.60,
+                      Expanded(
+                        flex: 20,
+                        child: Text(
+                          getRoom(
+                            weekday,
+                            change.unit,
+                            change.lesson,
+                            change.room,
+                          ),
+                          style: TextStyle(
+                            color: Theme
+                                .of(context)
+                                .primaryColor,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 20,
+                        child: Text(
+                          change.teacher,
+                          style: TextStyle(
+                            color: Theme
+                                .of(context)
+                                .primaryColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        flex: 60,
                         child: Text(
                           (change.changed.subject != ''
                               ? change.changed.subject
@@ -107,79 +126,35 @@ class ReplacementPlanRow extends StatelessWidget {
                           style: TextStyle(
                             color: Colors.black54,
                           ),
-                        )),
-                  ],
-                ),
-                Column(
-                  children: <Widget>[
-                    // Original room
-                    (change.lesson.length > 0 ||
-                        change.room.length > 0 ||
-                        change.teacher.length > 0)
-                        ? Container(
-                      width: width * 0.15,
-                      child: Text(
-                        getRoom(
-                          weekday,
-                          change.unit,
-                          change.lesson,
-                          change.room,
-                        ),
-                        style: TextStyle(
-                          color: Theme
-                              .of(context)
-                              .primaryColor,
                         ),
                       ),
-                    )
-                        : Container(),
-                    // Changed room
-                    Container(
-                      width: width * 0.15,
-                      child: Text(
-                        change.changed.room == change.room
-                            ? ''
-                            : change.changed.room,
-                        style: TextStyle(
-                          color: Colors.black54,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: <Widget>[
-                    // Original teacher
-                    (change.lesson.length > 0 ||
-                        change.room.length > 0 ||
-                        change.teacher.length > 0)
-                        ? Container(
-                      width: width * 0.15,
-                      child: Text(
-                        nTeacher,
-                        style: TextStyle(
-                          color: Theme
-                              .of(context)
-                              .primaryColor,
-                        ),
-                      ),
-                    )
-                        : Container(),
-                    // Changed teacher
-                    Container(
-                        width: width * 0.15,
+                      Expanded(
+                        flex: 20,
                         child: Text(
-                          nTeacher == cTeacher &&
+                          change.changed.room == change.room
+                              ? ''
+                              : change.changed.room,
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 20,
+                        child: Text(
+                          change.teacher == change.changed.teacher &&
                               change.changed.info != 'Klausur'
                               ? ''
-                              : cTeacher,
+                              : change.changed.teacher,
                           style: TextStyle(
-                            color: Colors.black54,
+                            color: Colors.black,
                           ),
-                        )),
-                  ],
-                ),
-              ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],
