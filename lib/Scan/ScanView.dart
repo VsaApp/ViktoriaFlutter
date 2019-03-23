@@ -7,6 +7,7 @@ import '../SectionWidget.dart';
 import '../Selection.dart';
 import '../Storage.dart';
 import '../Subjects/SubjectsModel.dart';
+import '../Tags.dart';
 import '../Teachers/TeachersModel.dart';
 import '../UnitPlan/UnitPlanModel.dart';
 import '../UnitPlan/UnitPlanSelectDialog/UnitPlanSelectDialogWidget.dart';
@@ -125,6 +126,7 @@ class ScanPageView extends ScanPageState {
     if (!scanCompleted) {
       return Container();
     }
+    syncTags();
     String text = texts
         .map((text) => text.value)
         .toList()

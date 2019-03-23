@@ -47,30 +47,30 @@ abstract class LoadingPageState extends State<LoadingPage>
       texts.add(AppLocalizations.of(context).teachers);
       texts.add(AppLocalizations.of(context).cafetoria);
       texts.shuffle();
-      textTimer = Timer(Duration(seconds: 3), () {
-        setState(() {
-          showTexts = true;
-        });
-      });
-      controller = AnimationController(
-        duration: Duration(milliseconds: 500),
-        vsync: this,
-      );
-      setState(() {
-        animation = Tween<double>(begin: -0.01, end: 0.01).animate(controller)
-          ..addStatusListener((status) {
-            if (status == AnimationStatus.completed) {
-              controller.reverse();
-            } else if (status == AnimationStatus.dismissed) {
-              controller.forward();
-            }
-          });
-        controller.forward();
-      });
-      stopwatch = Stopwatch()
-        ..start();
       downloadAll();
     });
+    textTimer = Timer(Duration(seconds: 3), () {
+      setState(() {
+        showTexts = true;
+      });
+    });
+    controller = AnimationController(
+      duration: Duration(milliseconds: 500),
+      vsync: this,
+    );
+    setState(() {
+      animation = Tween<double>(begin: -0.01, end: 0.01).animate(controller)
+        ..addStatusListener((status) {
+          if (status == AnimationStatus.completed) {
+            controller.reverse();
+          } else if (status == AnimationStatus.dismissed) {
+            controller.forward();
+          }
+        });
+      controller.forward();
+    });
+    stopwatch = Stopwatch()
+      ..start();
     super.initState();
   }
 

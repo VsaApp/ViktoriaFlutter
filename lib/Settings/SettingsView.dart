@@ -127,7 +127,10 @@ class SettingsPageView extends SettingsPageState {
           ),
           Section(
               title:
-              AppLocalizations.of(context).unitPlanSettings.toUpperCase(),
+              AppLocalizations
+                  .of(context)
+                  .unitPlanSettings
+                  .toUpperCase(),
               children: <Widget>[
                 // Show replacement plan in unit plan option
                 CheckboxListTile(
@@ -164,7 +167,9 @@ class SettingsPageView extends SettingsPageState {
                     });
                   },
                   title:
-                  Text(AppLocalizations.of(context).showCalendarInUnitPlan),
+                  Text(AppLocalizations
+                      .of(context)
+                      .showCalendarInUnitPlan),
                 ),
                 // Show cafetoria in unit plan option
                 CheckboxListTile(
@@ -257,12 +262,15 @@ class SettingsPageView extends SettingsPageState {
                             .where((key) =>
                         ((key.startsWith('unitPlan') ||
                             key.startsWith('room')) &&
-                            key.split('-').length >= 3 &&
+                            key
+                                .split('-')
+                                .length >= 3 &&
                             !key.endsWith('-5')) ||
                             key.startsWith('exams'))
                             .forEach((key) {
                           Storage.remove(key);
                         });
+                        syncTags();
                       },
                     ),
                   ),
@@ -320,7 +328,8 @@ class SettingsPageView extends SettingsPageState {
           ),
           dev
               ? Section(
-            title: AppLocalizations.of(context)
+            title: AppLocalizations
+                .of(context)
                 .developerOptions
                 .toUpperCase(),
             children: <Widget>[
@@ -330,14 +339,18 @@ class SettingsPageView extends SettingsPageState {
                 child: SizedBox(
                   width: double.infinity,
                   child: FlatButton(
-                    color: Theme.of(context).accentColor,
-                    child: Text(AppLocalizations.of(context)
+                    color: Theme
+                        .of(context)
+                        .accentColor,
+                    child: Text(AppLocalizations
+                        .of(context)
                         .replacementplanVersion),
-                    onPressed: () => showDialog<String>(
-                        context: context,
-                        barrierDismissible: true,
-                        builder: (BuildContext context1) =>
-                            HistoryDialog(type: 'replacementplan')),
+                    onPressed: () =>
+                        showDialog<String>(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (BuildContext context1) =>
+                                HistoryDialog(type: 'replacementplan')),
                   ),
                 ),
               ),
@@ -347,14 +360,19 @@ class SettingsPageView extends SettingsPageState {
                 child: SizedBox(
                   width: double.infinity,
                   child: FlatButton(
-                      color: Theme.of(context).accentColor,
+                      color: Theme
+                          .of(context)
+                          .accentColor,
                       child: Text(
-                          AppLocalizations.of(context).unitplanVersion),
-                      onPressed: () => showDialog<String>(
-                          context: context,
-                          barrierDismissible: true,
-                          builder: (BuildContext context1) =>
-                              HistoryDialog(type: 'unitplan'))),
+                          AppLocalizations
+                              .of(context)
+                              .unitplanVersion),
+                      onPressed: () =>
+                          showDialog<String>(
+                              context: context,
+                              barrierDismissible: true,
+                              builder: (BuildContext context1) =>
+                                  HistoryDialog(type: 'unitplan'))),
                 ),
               ),
             ],

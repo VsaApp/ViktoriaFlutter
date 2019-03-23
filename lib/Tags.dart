@@ -29,9 +29,7 @@ Future sendTag(String key, dynamic value) async {
 
 Future<Map<String, dynamic>> isInitialized() async {
   Map<String, dynamic> deviceId = await getTags(idToLoad: await Id.id);
-  //Map<String, dynamic> oneSignalId = await getTags(idToLoad: await getPlayerId());
   if (deviceId.keys.length > 0) return deviceId;
-  //if (oneSignalId.keys.length > 0) return oneSignalId;
   return null;
 }
 
@@ -39,13 +37,20 @@ Future syncWithTags() async {
   Map<String, dynamic> tags = await getTags();
   tags.forEach((key, value) {
     key = key.toString();
+    print(key);
     if (key.contains('unitPlan')) {
       Storage.setStringList(key, value == null ? null : value.cast<String>());
-    } else if (key.contains('exam'))
+    } else if (key.contains('exam')) {
       Storage.setBool(
           Keys.exams(key.split('-')[1], key.split('-')[2].toUpperCase()),
           value);
-    else if (key == 'dev') Storage.setBool(key, value);
+    } else if (key == 'dev') {
+      Storage.setBool(key, value);
+    } else if (key.contains('room')) {
+      print(key);
+      print(value);
+      Storage.setString(key, value);
+    }
   });
 }
 
@@ -96,88 +101,93 @@ Future getPlayerId() async {
 
 // Sync the onesignal tags...
 Future syncTags() async {
-  if (Platform.isIOS || Platform.isAndroid) {
-    if ((await checkOnline) == -1) return;
+  if ((await checkOnline) == -1) return;
 
-    String grade = Storage.getString(Keys.grade);
+  String grade = Storage.getString(Keys.grade);
 
-    // Get all unitplan and exams tags...
-    Map<String, dynamic> allTags = await getTags();
-    if (allTags == null) return;
-    allTags.removeWhere((key, value) =>
-    !key.startsWith('unitPlan') && !key.startsWith('exams'));
+  // Get all unitplan and exams tags...
+  Map<String, dynamic> allTags = await getTags();
+  if (allTags == null) return;
+  allTags.removeWhere((key, value) =>
+  !key.startsWith('unitPlan') &&
+      !key.startsWith('exams') &&
+      !key.startsWith('room'));
 
-    // Get all selected subjects...
-    List<String> subjects = [];
+  // Get all selected subjects...
+  List<String> subjects = [];
+  getUnitPlan().forEach((day) {
+    day.lessons.forEach((lesson) {
+      int selected = getSelectedIndex(lesson.subjects,
+          getUnitPlan().indexOf(day), day.lessons.indexOf(lesson));
+      if (selected == null) {
+        return;
+      }
+      subjects.add(lesson.subjects[selected].lesson);
+    });
+  });
+
+  // Remove all lunch times...
+  subjects = subjects.where((subject) {
+    return subject != 'Mittagspause' && subject != 'Freistunde';
+  }).toList();
+
+  // Remove double subjects...
+  subjects = subjects.toSet().toList();
+
+  // Get all new exams tags...
+  Map<String, dynamic> newTags = {};
+  subjects.forEach((subject) =>
+  newTags[Keys.exams(grade, subject)] =
+      Storage.getBool(Keys.exams(grade, subject.toUpperCase())) ?? true);
+
+  // Only set tags when the user activated notifications...
+  if (Storage.getBool(Keys.getReplacementPlanNotifications) ?? true) {
+    // Set all new unitplan tags...
     getUnitPlan().forEach((day) {
       day.lessons.forEach((lesson) {
-        int selected = getSelectedIndex(lesson.subjects,
-            getUnitPlan().indexOf(day), day.lessons.indexOf(lesson));
-        if (selected == null) {
-          return;
-        }
-        subjects.add(lesson.subjects[selected].lesson);
+        newTags[Keys.unitPlan(grade,
+            block: lesson.subjects[0].block,
+            day: getUnitPlan().indexOf(day),
+            unit: day.lessons.indexOf(lesson))] =
+            Storage.getStringList(Keys.unitPlan(grade,
+                block: lesson.subjects[0].block,
+                day: getUnitPlan().indexOf(day),
+                unit: day.lessons.indexOf(lesson)));
       });
     });
+  }
 
-    // Remove all lunch times...
-    subjects = subjects.where((subject) {
-      return subject != 'Mittagspause' && subject != 'Freistunde';
-    }).toList();
+  Storage.getKeys().where((key) => key.startsWith('room-')).forEach((key) {
+    newTags[key] = Storage.getString(key);
+  });
 
-    // Remove double subjects...
-    subjects = subjects.toSet().toList();
+  // Add all messageboard tags...
+  List<Group> notifications = Messageboard.notifications;
+  Messageboard.following.forEach((group) =>
+  newTags[Keys.messageboardGroupTag(group.name)] =
+      notifications.contains(group));
 
-    // Get all new exams tags...
-    Map<String, dynamic> newTags = {};
-    subjects.forEach((subject) =>
-    newTags[Keys.exams(grade, subject)] =
-        Storage.getBool(Keys.exams(grade, subject.toUpperCase())) ?? true);
-
-    // Only set tags when the user activated notifications...
-    if (Storage.getBool(Keys.getReplacementPlanNotifications) ?? true) {
-      // Set all new unitplan tags...
-      getUnitPlan().forEach((day) {
-        day.lessons.forEach((lesson) {
-          newTags[Keys.unitPlan(grade,
-              block: lesson.subjects[0].block,
-              day: getUnitPlan().indexOf(day),
-              unit: day.lessons.indexOf(lesson))] =
-              Storage.getStringList(Keys.unitPlan(grade,
-                  block: lesson.subjects[0].block,
-                  day: getUnitPlan().indexOf(day),
-                  unit: day.lessons.indexOf(lesson)));
-        });
-      });
-    }
-
-    // Add all messageboard tags...
-    List<Group> notifications = Messageboard.notifications;
-    Messageboard.following.forEach((group) =>
-    newTags[Keys.messageboardGroupTag(group.name)] =
-        notifications.contains(group));
-
+  if (Platform.isIOS || Platform.isAndroid) {
     // Add current OneSignal id...
     newTags['onesignalId'] = await getPlayerId();
-
-    // Compare new and old tags...
-    Map<String, dynamic> tagsToUpdate = {};
-    Map<String, dynamic> tagsToRemove = {};
-
-    // Get all removed and changed tags...
-    allTags.forEach((key, value) {
-      if (!newTags.containsKey(key))
-        tagsToRemove[key] = value;
-      else if (value.toString() != newTags[key].toString()) {
-        tagsToUpdate[key] = newTags[key];
-      }
-    });
-    // Get all new tags...
-    newTags.keys
-        .where((key) => !allTags.containsKey(key))
-        .forEach((key) => tagsToUpdate[key] = newTags[key]);
-
-    if (tagsToRemove.length > 0) await deleteTags(tagsToRemove.keys.toList());
-    if (tagsToUpdate.length > 0) await sendTags(tagsToUpdate);
   }
+  // Compare new and old tags...
+  Map<String, dynamic> tagsToUpdate = {};
+  Map<String, dynamic> tagsToRemove = {};
+
+  // Get all removed and changed tags...
+  allTags.forEach((key, value) {
+    if (!newTags.containsKey(key))
+      tagsToRemove[key] = value;
+    else if (value.toString() != newTags[key].toString()) {
+      tagsToUpdate[key] = newTags[key];
+    }
+  });
+  // Get all new tags...
+  newTags.keys
+      .where((key) => !allTags.containsKey(key))
+      .forEach((key) => tagsToUpdate[key] = newTags[key]);
+
+  if (tagsToRemove.length > 0) await deleteTags(tagsToRemove.keys.toList());
+  if (tagsToUpdate.length > 0) await sendTags(tagsToUpdate);
 }
