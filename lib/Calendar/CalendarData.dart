@@ -2,10 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../Keys.dart';
 import '../Network.dart';
+import '../Storage.dart';
 import 'CalendarModel.dart';
 
 // Download calendar data...
@@ -25,8 +24,7 @@ List<CalendarEvent> getCalendar() {
 
 // Load calendar from preferences...
 Future<List<CalendarEvent>> fetchEvents() async {
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  return parseEvents(sharedPreferences.getString(Keys.calendar));
+  return parseEvents(Storage.getString(Keys.calendar));
 }
 
 // Returns parse calendar events...

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Keys.dart';
-import './HistoryDialogModel.dart';
-import './HistoryDialogView.dart';
-import './HistoryDialogData.dart';
+import '../../Storage.dart';
 import '../../UnitPlan/UnitPlanData.dart' as Unitplan;
+import 'HistoryDialogData.dart';
+import 'HistoryDialogModel.dart';
+import 'HistoryDialogView.dart';
 
 class HistoryDialog extends StatefulWidget {
   final String type;
@@ -17,7 +17,6 @@ class HistoryDialog extends StatefulWidget {
 }
 
 abstract class HistoryDialogState extends State<HistoryDialog> {
-  SharedPreferences sharedPreferences;
   List<Year> data;
   bool loadNewestData = true;
   String currentYear;
@@ -100,37 +99,33 @@ abstract class HistoryDialogState extends State<HistoryDialog> {
   @override
   void initState() {
     download(widget.type).then((List<Year> years) {
-      setState(() => data = years);
-      SharedPreferences.getInstance().then((instance) {
-        setState(() {
-          sharedPreferences = instance;
-          List<String> currentDate =
-              sharedPreferences.getStringList(Keys.historyDate(widget.type));
-          if (currentDate != null) {
-            currentYear = currentDate[0];
-            currentMonth = currentDate[1];
-            currentDay = currentDate[2];
-            currentTime = currentDate[3];
-            loadNewestData = false;
-          } else if (widget.type == 'unitplan') {
-            Unitplan.fetchDate(sharedPreferences.getString(Keys.grade))
-                .then((String date) {
-              setState(() {
-                currentYear = '20' + date.split('.')[2];
-                currentMonth = date.split('.')[1];
-                currentDay = date.split('.')[0];
-                currentTime = null;
-              });
-            });
-          } else {
+      setState(() {
+        data = years;
+        List<String> currentDate =
+        Storage.getStringList(Keys.historyDate(widget.type));
+        if (currentDate != null) {
+          currentYear = currentDate[0];
+          currentMonth = currentDate[1];
+          currentDay = currentDate[2];
+          currentTime = currentDate[3];
+          loadNewestData = false;
+        } else if (widget.type == 'unitplan') {
+          Unitplan.fetchDate(Storage.getString(Keys.grade)).then((String date) {
             setState(() {
-              currentYear = years[years.length - 1].name;
-              currentMonth = months[months.length - 1].name;
-              currentDay = days[days.length - 1].name;
-              currentTime = times[times.length - 1].time;
+              currentYear = '20' + date.split('.')[2];
+              currentMonth = date.split('.')[1];
+              currentDay = date.split('.')[0];
+              currentTime = null;
             });
-          }
-        });
+          });
+        } else {
+          setState(() {
+            currentYear = years[years.length - 1].name;
+            currentMonth = months[months.length - 1].name;
+            currentDay = days[days.length - 1].name;
+            currentTime = times[times.length - 1].time;
+          });
+        }
       });
     });
     super.initState();

@@ -2,10 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../Keys.dart';
 import '../Network.dart';
+import '../Storage.dart';
 import 'WorkGroupsModel.dart';
 
 // Download work groups data...
@@ -25,8 +24,7 @@ List<WorkGroupsDay> getWorkGroups() {
 
 // Load work groups from preferences...
 Future<List<WorkGroupsDay>> fetchGroups() async {
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  return parseGroups(sharedPreferences.getString(Keys.workGroups));
+  return parseGroups(Storage.getString(Keys.workGroups));
 }
 
 // Returns parse work groups days...

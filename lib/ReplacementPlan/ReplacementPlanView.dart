@@ -6,6 +6,7 @@ import '../Localizations.dart';
 import '../Network.dart';
 import '../ReplacementPlan/ReplacementPlanData.dart';
 import '../ReplacementPlan/ReplacementPlanModel.dart';
+import '../Storage.dart';
 import 'GradeFAB/GradeFABWidget.dart';
 import 'ReplacementPlanDayList/ReplacementPlanDayListWidget.dart';
 import 'ReplacementPlanPage.dart';
@@ -14,14 +15,12 @@ class ReplacementPlanPageView extends ReplacementPlanPageState {
   @override
   Widget build(BuildContext context) {
     List<ReplacementPlanDay> data = getReplacementPlan();
-    if (sharedPreferences == null) return Container();
     return Scaffold(
       body: Stack(children: <Widget>[
         Column(
           children: <Widget>[
             ReplacementPlanDayList(
-                days: data,
-                sort: sharedPreferences.getBool(Keys.sortReplacementPlan))
+                days: data, sort: Storage.getBool(Keys.sortReplacementPlan))
           ],
         ),
         // FAB

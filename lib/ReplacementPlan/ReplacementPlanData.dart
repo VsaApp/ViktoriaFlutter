@@ -1,14 +1,10 @@
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../UnitPlan/UnitPlanModel.dart';
 import 'ReplacementPlanModel.dart';
 
-Future<List<ReplacementPlanDay>> load(
-    List<UnitPlanDay> _days, bool temp) async {
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+List<ReplacementPlanDay> load(List<UnitPlanDay> _days, bool temp) {
   List<ReplacementPlanDay> days = _days
       .where((day) => day.replacementPlanForWeekday != '')
-      .map((day) => day.getReplacementPlanDay(sharedPreferences))
+      .map((day) => day.getReplacementPlanDay())
       .toList();
 
   // Return or set the data in a static object...

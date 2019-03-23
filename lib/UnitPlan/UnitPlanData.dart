@@ -2,36 +2,33 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
-import './UnitPlanModel.dart';
 import '../Keys.dart';
-import '../Selection.dart';
 import '../Network.dart';
+import '../Selection.dart';
+import '../Storage.dart';
+import 'UnitPlanModel.dart';
 
 // Download the unit plan...
 Future<List<UnitPlanDay>> download(String grade, bool temp) async {
   // Get the selected grade...
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
   // Check if a date is selected...
-  List<String> uVersion =
-      sharedPreferences.getStringList(Keys.historyDate('unitplan'));
+  List<String> uVersion = Storage.getStringList(Keys.historyDate('unitplan'));
   List<String> rVersion =
-      sharedPreferences.getStringList(Keys.historyDate('replacementplan'));
+  Storage.getStringList(Keys.historyDate('replacementplan'));
 
   String url;
   Map<String, dynamic> body;
 
   if (uVersion == null && rVersion == null ||
-      !(sharedPreferences.getBool(Keys.dev) ?? false)) {
+      !(Storage.getBool(Keys.dev) ?? false)) {
     url =
         'https://api.vsa.2bad2c0.de/unitplan/$grade.json?v=${Random().nextInt(99999999)}';
   } else {
     url = 'https://history.api.vsa.2bad2c0.de/injectedunitplan/$grade';
     if (rVersion != null) {
       List<String> date =
-          sharedPreferences.getStringList(Keys.historyDate('replacementplan'));
+      Storage.getStringList(Keys.historyDate('replacementplan'));
       body = {
         'replacementplanFile': '${date[0]}/${date[1]}/${date[2]}/${date[4]}'
       };
@@ -45,10 +42,10 @@ Future<List<UnitPlanDay>> download(String grade, bool temp) async {
     UnitPlan.days = await fetchDays(grade);
 
     // Set default selections...
-    await UnitPlan.setAllSelections(sharedPreferences);
+    UnitPlan.setAllSelections();
 
     // Convert old selection format...
-    await convertFromOldVerion(sharedPreferences);
+    convertFromOldVerion();
 
     return null;
   } else {
@@ -63,13 +60,11 @@ List<UnitPlanDay> getUnitPlan() {
 
 // Get unit plan from preferences...
 Future<List<UnitPlanDay>> fetchDays(String grade) async {
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  return parseDays(sharedPreferences.getString(Keys.unitPlan(grade)));
+  return parseDays(Storage.getString(Keys.unitPlan(grade)));
 }
 
 Future<String> fetchDate(String grade) async {
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  return parseDate(sharedPreferences.getString(Keys.unitPlan(grade)));
+  return parseDate(Storage.getString(Keys.unitPlan(grade)));
 }
 
 String parseDate(String responseBody) {

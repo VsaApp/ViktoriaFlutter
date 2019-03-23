@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Calendar/CalendarModel.dart';
 import '../../Home/HomePage.dart';
@@ -7,6 +6,7 @@ import '../../Keys.dart';
 import '../../Localizations.dart';
 import '../../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
 import '../../ReplacementPlan/ReplacementPlanModel.dart';
+import '../../Storage.dart';
 import '../../UnitPlan/UnitPlanData.dart' as unitplan;
 import '../UnitPlanModel.dart';
 import 'UnitPlanDayListView.dart';
@@ -22,7 +22,6 @@ class UnitPlanDayList extends StatefulWidget {
 
 abstract class UnitPlanDayListState extends State<UnitPlanDayList>
     with SingleTickerProviderStateMixin {
-  SharedPreferences sharedPreferences;
   String grade = '';
   TabController tabController;
   String originalWeek;
@@ -32,7 +31,7 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
   bool thisWeek = true;
 
   Future update() async {
-    await unitplan.download(sharedPreferences.getString(Keys.grade), false);
+    await unitplan.download(Storage.getString(Keys.grade), false);
     await replacementplan.load(unitplan.getUnitPlan(), false);
     setWeeks();
     setState(() => widget.days = unitplan.getUnitPlan());
@@ -88,17 +87,11 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
         DateTime.now().day,
         8,
       ).add(Duration(
-          minutes: [
-        60,
-        130,
-        210,
-        280,
-        360,
-        420,
-        480,
-        545
-      ][widget.days[weekday].getUserLesseonsCount(
-                  sharedPreferences, AppLocalizations.of(context).freeLesson) -
+          minutes: [60, 130, 210, 280, 360, 420, 480, 545][widget.days[weekday]
+              .getUserLesseonsCount(
+              AppLocalizations
+                  .of(context)
+                  .freeLesson) -
               1])))) {
         over = true;
       }
@@ -117,14 +110,13 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
 
   @override
   void initState() {
-    SharedPreferences.getInstance().then((instance) {
-      sharedPreferences = instance;
-      setState(() {
-        grade = sharedPreferences.getString(Keys.grade);
-        showWorkGroups = sharedPreferences.get(Keys.showWorkGroupsInUnitPlan);
-        showCalendar = sharedPreferences.get(Keys.showCalendarInUnitPlan);
-        showCafetoria = sharedPreferences.get(Keys.showCafetoriaInUnitPlan);
-      });
+    setState(() {
+      grade = Storage.getString(Keys.grade);
+      showWorkGroups = Storage.get(Keys.showWorkGroupsInUnitPlan);
+      showCalendar = Storage.get(Keys.showCalendarInUnitPlan);
+      showCafetoria = Storage.get(Keys.showCafetoriaInUnitPlan);
+    });
+    WidgetsBinding.instance.addPostFrameCallback((a) {
       // Select correct tab
       tabController = TabController(vsync: this, length: widget.days.length);
 

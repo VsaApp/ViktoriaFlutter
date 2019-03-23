@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Selection.dart';
 import '../ReplacementPlan/ReplacementPlanModel.dart';
+import '../Selection.dart';
 
 // Describes the whole unit plan...
 class UnitPlan {
   static List<UnitPlanDay> days;
 
   // Set all default selections...
-  static Future setAllSelections(SharedPreferences sharedPreferences) async {
+  static void setAllSelections() {
     for (int i = 0; i < days.length; i++) {
-      await days[i].setSelections(days.indexOf(days[i]), sharedPreferences);
+      days[i].setSelections(days.indexOf(days[i]));
     }
   }
 }
@@ -46,8 +45,10 @@ class UnitPlanDay {
           .map((i) => UnitPlanLesson.fromJson(i))
           .toList(),
       replacementPlanForDate: json['replacementplan']['for']['date'] as String,
-      replacementPlanForWeekday: json['replacementplan']['for']['weekday'] as String,
-      replacementPlanForWeektype: json['replacementplan']['for']['weektype'] as String,
+      replacementPlanForWeekday:
+      json['replacementplan']['for']['weekday'] as String,
+      replacementPlanForWeektype:
+      json['replacementplan']['for']['weektype'] as String,
       replacementPlanUpdatedDate:
           json['replacementplan']['updated']['date'] as String,
       replacementPlanUpdatedTime:
@@ -55,15 +56,12 @@ class UnitPlanDay {
     );
   }
 
-  int getUserLesseonsCount(
-      SharedPreferences sharedPreferences, String freeLesson) {
+  int getUserLesseonsCount(String freeLesson) {
     for (int i = lessons.length - 1; i >= 0; i--) {
       UnitPlanLesson lesson = lessons[i];
       UnitPlanSubject selected = getSelectedSubject(
-          sharedPreferences,
-          lesson.subjects,
-          UnitPlan.days.indexOf(this),
-          lessons.indexOf(lesson), week: replacementPlanForWeektype);
+          lesson.subjects, UnitPlan.days.indexOf(this), lessons.indexOf(lesson),
+          week: replacementPlanForWeektype);
 
       // If nothing  or a subject (not lunchtime and free lesson) selected return the index...
       if ((selected == null || selected.lesson != freeLesson) && i != 5) {
@@ -74,9 +72,9 @@ class UnitPlanDay {
   }
 
   // Set the default selections...
-  Future setSelections(int day, SharedPreferences sharedPreferences) async {
+  Future setSelections(int day) async {
     for (int i = 0; i < lessons.length; i++) {
-      await lessons[i].setSelection(day, i, sharedPreferences);
+      await lessons[i].setSelection(day, i);
     }
   }
 
@@ -85,26 +83,27 @@ class UnitPlanDay {
     return changes.where((Change c) => change.equals(c)).toList();
   }
 
-  ReplacementPlanDay getReplacementPlanDay(
-      SharedPreferences sharedPreferences) {
+  ReplacementPlanDay getReplacementPlanDay() {
     List<Change> unparsedChanges = [];
     List<Change> myChanges = [];
     List<Change> undefinedChanges = [];
     List<Change> otherChanges = [];
-    int weekday = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag'].indexOf(name);
+    int weekday = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag']
+        .indexOf(name);
     lessons.forEach((lesson) {
       int unit = lessons.indexOf(lesson);
-      int s = getSelectedIndex(sharedPreferences, lesson.subjects, weekday, unit, week: replacementPlanForWeektype) ?? 0;
+      int s = getSelectedIndex(lesson.subjects, weekday, unit,
+          week: replacementPlanForWeektype) ??
+          0;
       lesson.subjects.forEach((subject) {
         int i = lesson.subjects.indexOf(subject);
         subject.changes.forEach((change) {
           if (change.original != null) {
             unparsedChanges.add(change);
-          }
-          else {
+          } else {
             if (i == s) {
               if (change.isExam) {
-                int isMy = change.isMyExam(sharedPreferences, replacementPlanForWeektype);
+                int isMy = change.isMyExam(replacementPlanForWeektype);
                 (isMy == 1
                         ? myChanges
                         : (isMy == -1 ? undefinedChanges : otherChanges))
@@ -186,10 +185,9 @@ class UnitPlanLesson {
   }
 
   // Set the default selection...
-  Future setSelection(
-      int day, int unit, SharedPreferences sharedPreferences) async {
+  Future setSelection(int day, int unit) async {
     if (subjects.length == 1) {
-      await setSelectedSubject(sharedPreferences, subjects[0], day, unit);
+      await setSelectedSubject(subjects[0], day, unit);
     }
   }
 }
@@ -216,15 +214,13 @@ class UnitPlanSubject {
     @required this.unsures,
   });
 
-  List<Change> getChanges(String week, SharedPreferences sharedPreferences) {
+  List<Change> getChanges(String week) {
     List<Change> changes =
         this.changes.where((Change change) => !change.isExam).toList();
     List<Change> exams =
         this.changes.where((Change change) => change.isExam).toList();
     return changes
-      ..addAll(exams
-          .where((Change exam) => exam.isMyExam(sharedPreferences, week) != 0)
-          .toList());
+      ..addAll(exams.where((Change exam) => exam.isMyExam(week) != 0).toList());
   }
 
   factory UnitPlanSubject.fromJson(Map<String, dynamic> json) {

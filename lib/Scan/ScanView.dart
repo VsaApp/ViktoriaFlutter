@@ -5,6 +5,7 @@ import '../Localizations.dart';
 import '../Rooms/RoomsModel.dart';
 import '../SectionWidget.dart';
 import '../Selection.dart';
+import '../Storage.dart';
 import '../Subjects/SubjectsModel.dart';
 import '../Teachers/TeachersModel.dart';
 import '../UnitPlan/UnitPlanModel.dart';
@@ -97,8 +98,7 @@ class ScanPageView extends ScanPageState {
         print('');
       } else {
         matchingSubjects.forEach((match) {
-          setSelectedSubject(
-              sharedPreferences, match.subject, match.weekday, match.unit);
+          setSelectedSubject(match.subject, match.weekday, match.unit);
         });
       }
     });
@@ -122,7 +122,7 @@ class ScanPageView extends ScanPageState {
 
   @override
   Widget build(BuildContext context) {
-    if (sharedPreferences == null || !scanCompleted) {
+    if (!scanCompleted) {
       return Container();
     }
     String text = texts
@@ -156,12 +156,12 @@ class ScanPageView extends ScanPageState {
     UnitPlan.days.forEach((day) {
       day.lessons.forEach((lesson) {
         String key = Keys.unitPlan(
-          sharedPreferences.getString(Keys.grade),
+          Storage.getString(Keys.grade),
           block: lesson.subjects[0].block,
           day: UnitPlan.days.indexOf(day),
           unit: day.lessons.indexOf(lesson),
         );
-        if (!sharedPreferences.getKeys().contains(key)) {
+        if (!Storage.getKeys().contains(key)) {
           unidentifiedLessonsT.add(UnidentifiedLesson(
             lesson: lesson,
             weekday: UnitPlan.days.indexOf(day),
@@ -212,63 +212,11 @@ class ScanPageView extends ScanPageState {
                 child: UnitPlanSelectDialog(
                   day: UnitPlan.days[lesson.weekday],
                   lesson: lesson.lesson,
-                  sharedPreferences: sharedPreferences,
                   onSelected: () => setState(() => null),
                   enableWrapper: false,
                 ),
               ),
             ],
-          );
-        }).toList(),
-      )
-          : Container(
-        alignment: Alignment(0.0, -1.0),
-        padding: EdgeInsets.all(10.0),
-        child: Text(AppLocalizations
-            .of(context)
-            .scanUnitPlanAllDetected),
-      ),
-    );
-
-    /*return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context).scanUnitPlan),
-        elevation: 0.0,
-      ),
-      body: unidentifiedLessons.length > 0
-          ? ListView(
-              shrinkWrap: true,
-              children: unidentifiedLessons.map((lesson) {
-                return Section(
-                  title: [
-                        'Montag',
-                        'Dienstag',
-                        'Mittwoch',
-                        'Donnerstag',
-                        'Freitag'
-                      ][lesson.weekday] +
-                      ' ' +
-                      (lesson.unit + 1).toString() +
-                      '. Stunde' +
-                      (lesson.lesson.subjects[0].block != ''
-                          ? ' (' + lesson.lesson.subjects[0].block + ')'
-                          : ''),
-                  children: lesson.lesson.subjects.map((subject) {
-                    return GestureDetector(
-                      onTap: () {
-                        setSelectedSubject(sharedPreferences, subject,
-                                lesson.weekday, lesson.unit)
-                            .then((_) => setState(() {}));
-                      },
-                      child: UnitPlanRow(
-                        subject: subject,
-                        weekday: 0,
-                        unit: 0,
-                        showUnit: false,
-                        sharedPreferences: sharedPreferences,
-                      ),
-                    );
-                  }).toList(),
                 );
               }).toList(),
             )
@@ -277,7 +225,7 @@ class ScanPageView extends ScanPageState {
               padding: EdgeInsets.all(10.0),
               child: Text(AppLocalizations.of(context).scanUnitPlanAllDetected),
             ),
-    );*/
+    );
   }
 }
 

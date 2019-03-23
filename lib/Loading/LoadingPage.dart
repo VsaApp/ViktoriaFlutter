@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Cafetoria/CafetoriaData.dart' as Cafetoria;
 import '../Calendar/CalendarData.dart' as Calendar;
@@ -10,6 +9,7 @@ import '../Localizations.dart';
 import '../Messageboard/MessageboardData.dart' as Messageboard;
 import '../ReplacementPlan/ReplacementPlanData.dart' as ReplacementPlan;
 import '../Rooms/RoomsData.dart' as Rooms;
+import '../Storage.dart';
 import '../Subjects/SubjectsData.dart' as Subjects;
 import '../Teachers/TeachersData.dart' as Teachers;
 import '../UnitPlan/UnitPlanData.dart' as UnitPlan;
@@ -26,7 +26,6 @@ abstract class LoadingPageState extends State<LoadingPage>
   int allDownloadsCount = 9;
   int countCurrentDownloads = 9;
   double centerWidgetDimensions = 150;
-  SharedPreferences instance;
   List<String> texts = [];
   bool showTexts = false;
   bool animationForward = true;
@@ -37,8 +36,7 @@ abstract class LoadingPageState extends State<LoadingPage>
 
   @override
   void initState() {
-    SharedPreferences.getInstance().then((instance) {
-      this.instance = instance;
+    WidgetsBinding.instance.addPostFrameCallback((a) {
       texts.add(AppLocalizations.of(context).unitPlan);
       texts.add(AppLocalizations.of(context).replacementPlan);
       texts.add(AppLocalizations.of(context).workGroups);
@@ -83,10 +81,11 @@ abstract class LoadingPageState extends State<LoadingPage>
     super.dispose();
   }
 
+  @override
   // Download all data
   Future downloadAll() async {
     download(() async {
-      await UnitPlan.download(instance.getString(Keys.grade), false);
+      await UnitPlan.download(Storage.getString(Keys.grade), false);
       texts.remove(AppLocalizations.of(context).unitPlan);
       await ReplacementPlan.load(UnitPlan.getUnitPlan(), false);
     }, 2, AppLocalizations.of(context).replacementPlan);
@@ -123,10 +122,10 @@ abstract class LoadingPageState extends State<LoadingPage>
       }
       Timer(Duration(milliseconds: wait), () {
         WidgetsBinding.instance.addPostFrameCallback((_) async {
-          int storedVersion = instance.getInt(Keys.slidesVersion) ?? 0;
+          int storedVersion = Storage.getInt(Keys.slidesVersion) ?? 0;
           int currentVersion = 3;
           if (currentVersion != storedVersion) {
-            instance.setInt(Keys.slidesVersion, currentVersion);
+            Storage.setInt(Keys.slidesVersion, currentVersion);
             Navigator.of(context).pushReplacementNamed('/intro');
           } else {
             Navigator.of(context).pushReplacementNamed('/home');

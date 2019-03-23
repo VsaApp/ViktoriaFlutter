@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Home/HomePage.dart';
 import 'ReplacementPlanView.dart';
@@ -10,7 +9,6 @@ class ReplacementPlanPage extends StatefulWidget {
 }
 
 abstract class ReplacementPlanPageState extends State<ReplacementPlanPage> {
-  SharedPreferences sharedPreferences;
   Function() listener;
   static List<String> grades = [
     '5a',
@@ -35,11 +33,6 @@ abstract class ReplacementPlanPageState extends State<ReplacementPlanPage> {
 
   @override
   void initState() {
-    SharedPreferences.getInstance().then((instance) {
-      setState(() {
-        sharedPreferences = instance;
-      });
-    });
     listener = () => setState(() => null);
     HomePageState.replacementplanUpdatedListeners.add(listener);
     HomePageState.setWeekChangeable(false);

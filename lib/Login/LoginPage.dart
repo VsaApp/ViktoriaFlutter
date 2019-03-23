@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Localizations.dart';
-import '../Tags.dart';
 import '../Keys.dart';
+import '../Localizations.dart';
+import '../Storage.dart';
+import '../Tags.dart';
 import 'LoginView.dart';
 
 class LoginPage extends StatefulWidget {
@@ -60,44 +60,49 @@ abstract class LoginPageState extends State<LoginPage> {
     pupilCredentialsCorrect = json.decode(response.body)['status'];
     if (pupilFormKey.currentState.validate()) {
       // Save correct credentials
-      SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
-      sharedPreferences.setString(Keys.username, usernameController.text);
-      sharedPreferences.setString(Keys.password, passwordController.text);
-      sharedPreferences.setString(Keys.grade, grade);
-      sharedPreferences.commit();
+      Storage.setString(Keys.username, usernameController.text);
+      Storage.setString(Keys.password, passwordController.text);
+      Storage.setString(Keys.grade, grade);
 
       Map<String, dynamic> alreadyInitialized = await isInitialized();
       if (alreadyInitialized != null) {
         showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(AppLocalizations.of(context).loadOldData),
-              content: Text(AppLocalizations.of(context).loadOldDataDescription),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text(AppLocalizations.of(context).yes),
-                  onPressed: () async {
-                    await syncWithTags();
-                    Navigator.of(context).pop();
-                    Navigator.pushReplacementNamed(context, '/');
-                  },
-                ),
-                FlatButton(
-                  child: Text(AppLocalizations.of(context).no),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.pushReplacementNamed(context, '/');
-                  }
-                ),
-              ],
-            );
-          }
-        );
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text(AppLocalizations
+                    .of(context)
+                    .loadOldData),
+                content:
+                Text(AppLocalizations
+                    .of(context)
+                    .loadOldDataDescription),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text(AppLocalizations
+                        .of(context)
+                        .yes),
+                    onPressed: () async {
+                      await syncWithTags();
+                      Navigator.of(context).pop();
+                      Navigator.pushReplacementNamed(context, '/');
+                    },
+                  ),
+                  FlatButton(
+                      child: Text(AppLocalizations
+                          .of(context)
+                          .no),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.pushReplacementNamed(context, '/');
+                      }),
+                ],
+              );
+            });
       }
       // Show app
-      else Navigator.pushReplacementNamed(context, '/');
+      else
+        Navigator.pushReplacementNamed(context, '/');
     } else {
       passwordController.clear();
     }

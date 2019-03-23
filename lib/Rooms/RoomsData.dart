@@ -1,17 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../Keys.dart';
 import '../Network.dart';
-
+import '../Storage.dart';
 import 'RoomsModel.dart';
 
 // Download the unit plan...
 Future<Map<String, String>> download() async {
   // Get the selected grade...
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String url = 'https://api.vsa.2bad2c0.de/rooms';
   await fetchDataAndSave(url, Keys.rooms, '{}');
 
@@ -26,8 +23,7 @@ Map<String, String> getRooms() {
 
 // Get rooms from preferences...
 Future<Map<String, String>> fetchRooms() async {
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  return parseRooms(sharedPreferences.getString(Keys.rooms));
+  return parseRooms(Storage.getString(Keys.rooms));
 }
 
 // Returns parsed rooms...

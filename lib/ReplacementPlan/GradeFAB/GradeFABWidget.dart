@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Keys.dart';
+import '../../Storage.dart';
 import 'GradeFABView.dart';
 
 class GradeFab extends StatefulWidget {
@@ -37,21 +37,17 @@ abstract class GradeFabState extends State<GradeFab>
     'Q2'
   ];
 
-  SharedPreferences sharedPreferences;
   bool isOpened = false;
   List<String> shownGrades;
   String grade;
 
   @override
   initState() {
-    SharedPreferences.getInstance().then((instance) {
-      setState(() {
-        sharedPreferences = instance;
-        grade = instance.getString(Keys.grade);
-        shownGrades = (instance.getString(Keys.lastGrades) ?? '').split(':');
-        if (shownGrades.length > 0) if (shownGrades[0].length == 0)
-          shownGrades = [];
-      });
+    setState(() {
+      grade = Storage.getString(Keys.grade);
+      shownGrades = (Storage.getString(Keys.lastGrades) ?? '').split(':');
+      if (shownGrades.length > 0) if (shownGrades[0].length == 0)
+        shownGrades = [];
     });
     super.initState();
   }
@@ -61,15 +57,13 @@ abstract class GradeFabState extends State<GradeFab>
     if (!shownGrades.contains(grade)) {
       setState(() {
         if (shownGrades.length == 0) {
-          sharedPreferences.setString(Keys.lastGrades, grade);
+          Storage.setString(Keys.lastGrades, grade);
           shownGrades.add(grade);
         } else if (shownGrades.length == 1) {
-          sharedPreferences.setString(
-              Keys.lastGrades, shownGrades[0] + ':' + grade);
+          Storage.setString(Keys.lastGrades, shownGrades[0] + ':' + grade);
           shownGrades.add(grade);
         } else {
-          sharedPreferences.setString(
-              Keys.lastGrades, shownGrades[1] + ':' + grade);
+          Storage.setString(Keys.lastGrades, shownGrades[1] + ':' + grade);
           shownGrades[0] = shownGrades[1];
           shownGrades[1] = grade;
         }

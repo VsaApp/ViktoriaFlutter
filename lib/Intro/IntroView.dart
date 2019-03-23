@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 
 import '../Cafetoria/CafetoriaModel.dart';
@@ -9,6 +11,7 @@ import '../Localizations.dart';
 import '../ReplacementPlan/ReplacementPlanModel.dart';
 import '../ReplacementPlan/ReplacementPlanRow/ReplacementPlanRowWidget.dart';
 import '../SectionWidget.dart';
+import '../Storage.dart';
 import '../UnitPlan/UnitPlanModel.dart';
 import '../UnitPlan/UnitPlanRow/UnitPlanRowWidget.dart';
 import '../WorkGroups/DayCard/DayCardWidget.dart';
@@ -24,9 +27,6 @@ class IntroPageView extends IntroPageState {
 
   @override
   Widget build(BuildContext context) {
-    if (sharedPreferences == null) {
-      return Container();
-    }
     slides.clear();
     UnitPlanSubject subject = UnitPlanSubject(
       teacher: 'STA',
@@ -39,17 +39,20 @@ class IntroPageView extends IntroPageState {
       week: 'AB',
     );
     Change change = Change(
-        unit: 1,
-        lesson: 'Deutsch',
-        room: '516',
-        course: '',
-        teacher: 'KLU',
-        changed: Changed(
-            info: AppLocalizations.of(context).freeLesson,
-            subject: 'Deutsch',
-            teacher: '',
-            room: ''),
-        sure: true);
+      unit: 1,
+      lesson: 'Deutsch',
+      room: '516',
+      course: '',
+      teacher: 'KLU',
+      changed: Changed(
+          info: AppLocalizations
+              .of(context)
+              .freeLesson,
+          subject: 'Deutsch',
+          teacher: '',
+          room: ''),
+      sure: true,
+    );
     slides.add(
       Slide(
         title: AppLocalizations.of(context).introUnitPlanTitle,
@@ -64,13 +67,13 @@ class IntroPageView extends IntroPageState {
                   weekday: 0,
                   subject: subject,
                   unit: 0,
-                  sharedPreferences: sharedPreferences,
+                  isDialog: !(Platform.isIOS || Platform.isAndroid),
                 ),
                 ReplacementPlanRow(
                   change: change,
                   changes: [change],
                   weekday: 0,
-                  sharedPreferences: sharedPreferences,
+                  isDialog: !(Platform.isIOS || Platform.isAndroid),
                 )
               ]),
             ),
@@ -82,7 +85,7 @@ class IntroPageView extends IntroPageState {
       Slide(
         title: AppLocalizations.of(context).introReplacementPlanTitle,
         description:
-            AppLocalizations.of(context).introReplacementPlanDescription,
+        AppLocalizations.of(context).introReplacementPlanDescription,
         centerWidget: Section(
           isLast: false,
           title: AppLocalizations.of(context).myChanges,
@@ -91,16 +94,21 @@ class IntroPageView extends IntroPageState {
               change: change,
               changes: [change],
               weekday: 0,
-              sharedPreferences: sharedPreferences,
             ),
           ],
         ),
       ),
     );
-    slides.add(Slide(
-      title: AppLocalizations.of(context).introNotificationsTitle,
-      description: AppLocalizations.of(context).introNotificationsDescription,
-    ));
+    if (Platform.isIOS || Platform.isAndroid) {
+      slides.add(Slide(
+        title: AppLocalizations
+            .of(context)
+            .introNotificationsTitle,
+        description: AppLocalizations
+            .of(context)
+            .introNotificationsDescription,
+      ));
+    }
     CalendarEvent event = CalendarEvent(
       name: 'Elternsprechtag',
       info: '',
@@ -191,15 +199,16 @@ class IntroPageView extends IntroPageState {
     slides.add(Slide(
       title: AppLocalizations.of(context).introExtendedUnitplanTitle,
       description:
-          AppLocalizations.of(context).introExtendedUnitplanDescription,
+      AppLocalizations.of(context).introExtendedUnitplanDescription,
     ));
     slides.add(Slide(
       title: AppLocalizations.of(context).introCoursesTitle,
       description: AppLocalizations.of(context).introCoursesDescription,
     ));
 
-    String grade = sharedPreferences.getString(Keys.grade);
-    if (grade == 'EF' || grade == 'Q1' || grade == 'Q2') {
+    String grade = Storage.getString(Keys.grade);
+    if ((grade == 'EF' || grade == 'Q1' || grade == 'Q2') &&
+        (Platform.isIOS || Platform.isAndroid)) {
       slides.add(Slide(
         title: AppLocalizations
             .of(context)

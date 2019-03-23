@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../Keys.dart';
 import '../../Localizations.dart';
 import '../../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
+import '../../Storage.dart';
 import '../../Tags.dart';
 import '../../UnitPlan/UnitPlanData.dart' as unitplan;
 import 'CourseEditWidget.dart';
@@ -11,9 +12,6 @@ import 'RoomEdit/RoomEditView.dart';
 class CourseEditView extends CourseEditState {
   @override
   Widget build(BuildContext context) {
-    if (sharedPreferences == null) {
-      return Container();
-    }
     return SimpleDialog(
       title: Text(widget.subject.lesson + ' ' + widget.subject.teacher),
       children: <Widget>[
@@ -23,11 +21,10 @@ class CourseEditView extends CourseEditState {
           onChanged: (bool value) {
             setState(() {
               // Save change
-              sharedPreferences.setBool(
-                  Keys.exams(sharedPreferences.getString(Keys.grade),
+              Storage.setBool(
+                  Keys.exams(Storage.getString(Keys.grade),
                       widget.subject.lesson.toUpperCase()),
                   value);
-              sharedPreferences.commit();
               syncTags();
               exams = value;
               if (widget.onExamChange != null) {
@@ -56,11 +53,10 @@ class CourseEditView extends CourseEditState {
             child: RaisedButton(
               color: Theme.of(context).accentColor,
               onPressed: () {
-                sharedPreferences.setBool(
-                    Keys.exams(sharedPreferences.getString(Keys.grade),
+                Storage.setBool(
+                    Keys.exams(Storage.getString(Keys.grade),
                         widget.subject.lesson.toUpperCase()),
                     exams);
-                sharedPreferences.commit();
                 syncTags();
                 if (widget.onExamChange != null) {
                   widget.onExamChange(exams);

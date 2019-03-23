@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Home/HomePage.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
 import '../Network.dart';
+import '../Storage.dart';
 import 'MessageboardData.dart' as api;
 import 'MessageboardModel.dart';
 
@@ -18,8 +18,6 @@ class MessageboardPage extends StatefulWidget {
 }
 
 class MessageboardView extends State<MessageboardPage> {
-  SharedPreferences sharedPreferences;
-
   @override
   void initState() {
     HomePageState.messageBoardUpdated =
@@ -41,11 +39,6 @@ class MessageboardView extends State<MessageboardPage> {
         }
       }
     };
-    SharedPreferences.getInstance().then((instance) {
-      setState(() {
-        sharedPreferences = instance;
-      });
-    });
 
     super.initState();
   }
@@ -88,8 +81,7 @@ class MessageboardView extends State<MessageboardPage> {
               child: GradeFab(
             onAddGroup: () {
               List<String> waitingGroups =
-                  (sharedPreferences.getStringList(Keys.waitingGroups) ?? [])
-                      .toList();
+              (Storage.getStringList(Keys.waitingGroups) ?? []).toList();
               if (waitingGroups.length < 3) {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (_) => AddGroupPage(onFinished: () {
@@ -140,17 +132,11 @@ class MessageboardViews extends StatefulWidget {
 
 class MessageboardViewsState extends State<MessageboardViews>
     with SingleTickerProviderStateMixin {
-  SharedPreferences sharedPreferences;
   TabController _tabController;
   int pagesCount = 2;
 
   @override
   void initState() {
-    SharedPreferences.getInstance().then((instance) {
-      setState(() {
-        sharedPreferences = instance;
-      });
-    });
     // Select the correct tab
     _tabController = TabController(vsync: this, length: pagesCount);
     _tabController.animateTo(Messageboard.feed.posts.length > 0 ? 0 : 1);
@@ -164,9 +150,6 @@ class MessageboardViewsState extends State<MessageboardViews>
       AppLocalizations.of(context).feed,
       AppLocalizations.of(context).groups
     ];
-    if (sharedPreferences == null) {
-      return Container();
-    }
     return DefaultTabController(
       length: pagesCount,
       child: Expanded(
@@ -413,18 +396,12 @@ class FeedPage extends StatefulWidget {
 
 class FeedView extends State<FeedPage> {
   ScrollController _scrollController;
-  SharedPreferences sharedPreferences;
   List<Post> posts = Messageboard.feed.posts;
   bool isUpdating = false;
   bool isAdding = false;
   bool active = true;
 
   void initState() {
-    SharedPreferences.getInstance().then((instance) {
-      setState(() {
-        sharedPreferences = instance;
-      });
-    });
     // Select the correct tab
     _scrollController = ScrollController();
     _scrollController.addListener(() {
@@ -640,7 +617,6 @@ class GradeFab extends StatefulWidget {
 
 class _GradeFabState extends State<GradeFab>
     with SingleTickerProviderStateMixin {
-  SharedPreferences sharedPreferences;
   bool isOpened = false;
   AnimationController _animationController;
   Animation<Color> _buttonColor;
@@ -650,11 +626,6 @@ class _GradeFabState extends State<GradeFab>
 
   @override
   initState() {
-    SharedPreferences.getInstance().then((instance) {
-      setState(() {
-        sharedPreferences = instance;
-      });
-    });
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 250))
           ..addListener(() {
@@ -708,18 +679,15 @@ class _GradeFabState extends State<GradeFab>
   // Smaller add group FAB
   Widget addGroup() {
     return Container(
-      child: Hero(
-        tag: 'hero-addGroupPage',
-        child: FloatingActionButton(
-          heroTag: 'addGroup',
-          mini: true,
-          onPressed: () {
-            animate();
-            widget.onAddGroup();
-          },
-          tooltip: 'add group',
-          child: Icon(Icons.group_add, color: Colors.white),
-        ),
+      child: FloatingActionButton(
+        heroTag: 'hero-addGroupPage',
+        mini: true,
+        onPressed: () {
+          animate();
+          widget.onAddGroup();
+        },
+        tooltip: 'add group',
+        child: Icon(Icons.group_add, color: Colors.white),
       ),
     );
   }
@@ -727,18 +695,15 @@ class _GradeFabState extends State<GradeFab>
   // Smaller write post FAB
   Widget writePost() {
     return Container(
-      child: Hero(
-        tag: 'hero-addPost',
-        child: FloatingActionButton(
-          heroTag: 'writePost',
-          mini: true,
-          onPressed: () {
-            animate();
-            widget.onWritePost();
-          },
-          tooltip: 'write post',
-          child: Icon(Icons.create, color: Colors.white),
-        ),
+      child: FloatingActionButton(
+        heroTag: 'hero-addPost',
+        mini: true,
+        onPressed: () {
+          animate();
+          widget.onWritePost();
+        },
+        tooltip: 'write post',
+        child: Icon(Icons.create, color: Colors.white),
       ),
     );
   }
@@ -757,9 +722,7 @@ class _GradeFabState extends State<GradeFab>
 
   @override
   Widget build(BuildContext context) {
-    if (sharedPreferences == null ||
-        _translateButton == null ||
-        _buttonColor == null) return Container();
+    if (_translateButton == null || _buttonColor == null) return Container();
     return Column(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
       Transform(
         transform: Matrix4.translationValues(
@@ -802,7 +765,6 @@ class GroupView extends State<GroupPage> {
   TextEditingController currentPasswordController;
   TextEditingController newPasswordController;
   TextEditingController repeatNewPasswordController;
-  SharedPreferences sharedPreferences;
   Map<String, IconData> appBarIcons = {};
   Function() updatedListener;
   final _formKey = GlobalKey<FormState>();
@@ -813,12 +775,6 @@ class GroupView extends State<GroupPage> {
 
   @override
   void initState() {
-    SharedPreferences.getInstance().then((instance) {
-      setState(() {
-        sharedPreferences = instance;
-      });
-    });
-
     updatedListener = () => setState(() => null);
     widget.group.updatedListeners.add(updatedListener);
 
@@ -847,7 +803,6 @@ class GroupView extends State<GroupPage> {
   /// Check the login
   void checkEditPassword() async {
     String group = widget.group.name;
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     _passwordsAreEqual =
         newPasswordController.text == repeatNewPasswordController.text;
     String _password =
@@ -858,9 +813,7 @@ class GroupView extends State<GroupPage> {
       // Save correct credentials
       String _newPassword =
           sha256.convert(utf8.encode(newPasswordController.text)).toString();
-      widget.group
-          .update(sharedPreferences, newPassword: _newPassword)
-          .then((updated) {
+      widget.group.update(newPassword: _newPassword).then((updated) {
         if (!updated) {
           Fluttertoast.showToast(
               msg: AppLocalizations.of(context).errorEditGroup,
@@ -874,8 +827,7 @@ class GroupView extends State<GroupPage> {
           Navigator.of(context).pop();
         }
       });
-      sharedPreferences.setString(Keys.groupEditPassword(group), _newPassword);
-      sharedPreferences.commit();
+      Storage.setString(Keys.groupEditPassword(group), _newPassword);
     } else {
       currentPasswordController.clear();
     }
@@ -1003,8 +955,7 @@ class GroupView extends State<GroupPage> {
                     onPressed: () {
                       if (editingController.text != widget.group.info) {
                         widget.group
-                            .update(sharedPreferences,
-                                newInfo: editingController.text)
+                            .update(newInfo: editingController.text)
                             .then((updated) {
                           if (!updated) {
                             Fluttertoast.showToast(
@@ -1058,8 +1009,7 @@ class GroupView extends State<GroupPage> {
   void getCorrectPassword(Function(String password) finished) async {
     bool correctLogin = await api.checkLogin(
         username: widget.group.name,
-        password: sharedPreferences
-            .getString(Keys.groupEditPassword(widget.group.name)));
+        password: Storage.getString(Keys.groupEditPassword(widget.group.name)));
     if (!correctLogin) {
       showDialog<String>(
         context: context,
@@ -1071,16 +1021,15 @@ class GroupView extends State<GroupPage> {
               LoginDialog(
                   group: widget.group.name,
                   onFinished: () {
-                    finished(sharedPreferences
-                        .getString(Keys.groupEditPassword(widget.group.name)));
+                    finished(Storage.getString(
+                        Keys.groupEditPassword(widget.group.name)));
                   }),
             ],
           );
         },
       );
     } else
-      finished(sharedPreferences
-          .getString(Keys.groupEditPassword(widget.group.name)));
+      finished(Storage.getString(Keys.groupEditPassword(widget.group.name)));
   }
 
   /// Asks user if he really wants to delete the group
@@ -1428,7 +1377,6 @@ class PostsList extends StatefulWidget {
 
 class PostsListView extends State<PostsList> {
   ScrollController _scrollController;
-  SharedPreferences sharedPreferences;
   List<Post> posts = [];
   bool show = false;
   Function() addedListener;
@@ -1440,11 +1388,6 @@ class PostsListView extends State<PostsList> {
         });
     widget.group.addedListeners.add(addedListener);
     posts = widget.group.posts;
-    SharedPreferences.getInstance().then((instance) {
-      setState(() {
-        sharedPreferences = instance;
-      });
-    });
 
     // Load the first posts...
     if (posts.length == 0) loadNewPosts();
@@ -1555,7 +1498,6 @@ class PostView extends State<PostPage> {
   TextEditingController editTitleController = TextEditingController();
   TextEditingController editTextController = TextEditingController();
   final _textFocus = FocusNode();
-  SharedPreferences sharedPreferences;
   Map<String, IconData> appBarIcons = {};
   Function() updatedListener;
   final _formKey = GlobalKey<FormState>();
@@ -1564,11 +1506,6 @@ class PostView extends State<PostPage> {
 
   @override
   void initState() {
-    SharedPreferences.getInstance().then((instance) {
-      setState(() {
-        sharedPreferences = instance;
-      });
-    });
     username = widget.post.username == '' ? widget.group : widget.post.username;
     updatedListener = () => setState(() => null);
     widget.post.updatedListeners.add(updatedListener);
@@ -1709,8 +1646,7 @@ class PostView extends State<PostPage> {
   void getCorrectPassword(Function(String password) finished) async {
     bool correctLogin = await api.checkLogin(
         username: username,
-        password:
-            sharedPreferences.getString(Keys.groupEditPassword(username)));
+        password: Storage.getString(Keys.groupEditPassword(username)));
     if (!correctLogin) {
       showDialog<String>(
         context: context,
@@ -1722,15 +1658,15 @@ class PostView extends State<PostPage> {
               LoginDialog(
                   group: username,
                   onFinished: () {
-                    finished(sharedPreferences
-                        .getString(Keys.groupEditPassword(username)));
+                    finished(
+                        Storage.getString(Keys.groupEditPassword(username)));
                   }),
             ],
           );
         },
       );
     } else
-      finished(sharedPreferences.getString(Keys.groupEditPassword(username)));
+      finished(Storage.getString(Keys.groupEditPassword(username)));
   }
 
   /// Asks user if he really wants to delete the group
@@ -2082,7 +2018,6 @@ class AddGroupView extends State<AddGroupPage> {
 
   /// Check the login
   void checkForm() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     if (_formKey.currentState.validate()) {
       // Save correct credentials
       String _username = _usernameController.text;
@@ -2311,7 +2246,6 @@ class LoginView extends State<LoginDialog> {
   /// Check the login
   void checkForm() async {
     String group = widget.group;
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     _credentialsCorrect = await api.checkLogin(
         username: group,
         password:
@@ -2321,8 +2255,7 @@ class LoginView extends State<LoginDialog> {
       String _password =
           sha256.convert(utf8.encode(_passwordController.text)).toString();
       Messageboard.toogleLoginGroup(group, login: true);
-      sharedPreferences.setString(Keys.groupEditPassword(group), _password);
-      sharedPreferences.commit();
+      Storage.setString(Keys.groupEditPassword(group), _password);
       Navigator.pop(context);
       // Update UI
       widget.onFinished();

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Keys.dart';
 import '../Selection.dart';
+import '../Storage.dart';
 import '../UnitPlan/UnitPlanModel.dart';
 
 // Describes the replacement plan
@@ -84,11 +84,11 @@ class Change {
     return isExam && changed.info.toLowerCase().contains('nachschreiber');
   }
 
-  int isMyExam(SharedPreferences sharedPreferences, String week) {
+  int isMyExam(String week) {
     if (isRewriteExam) return -1;
-    String grade = sharedPreferences.getString(Keys.grade) ?? '';
-    if (!(sharedPreferences.getBool(Keys.exams(grade, lesson.toUpperCase())) ??
-        true)) return 0;
+    String grade = Storage.getString(Keys.grade) ?? '';
+    if (!(Storage.getBool(Keys.exams(grade, lesson.toUpperCase())) ?? true))
+      return 0;
 
     Map<String, List<int>> courseCount = {};
     int selected = 0;
@@ -99,8 +99,9 @@ class Change {
       UnitPlanDay day = UnitPlan.days[i];
       for (int j = 0; j < day.lessons.length; j++) {
         UnitPlanLesson lesson = day.lessons[j];
-        int _selected = getSelectedIndex(sharedPreferences, lesson.subjects,
-            UnitPlan.days.indexOf(day), day.lessons.indexOf(lesson), week: week);
+        int _selected = getSelectedIndex(lesson.subjects,
+            UnitPlan.days.indexOf(day), day.lessons.indexOf(lesson),
+            week: week);
         for (int k = 0; k < lesson.subjects.length; k++) {
           UnitPlanSubject subject = lesson.subjects[k];
           if ((subject.lesson == this.lesson &&
@@ -151,8 +152,7 @@ class Change {
         changed.equals(c.changed);
   }
 
-  Change({
-    @required this.unit,
+  Change({@required this.unit,
     @required this.lesson,
     @required this.course,
     @required this.room,
@@ -160,8 +160,7 @@ class Change {
     @required this.changed,
     @required this.sure,
     this.original,
-    this.change
-  });
+    this.change});
 
   factory Change.fromJson(Map<String, dynamic> json) {
     return Change(
@@ -172,8 +171,12 @@ class Change {
       teacher: json['participant'] as String,
       changed: Changed.fromJson(json['change']),
       sure: json['sure'] as bool,
-      original: !json.keys.contains('participant') ? json['unparsedOriginal'].map((line) => line.toString()).toList() : null,
-      change: !json.keys.contains('participant') ? json['unparsedChange'].map((line) => line.toString()).toList(): null,
+      original: !json.keys.contains('participant')
+          ? json['unparsedOriginal'].map((line) => line.toString()).toList()
+          : null,
+      change: !json.keys.contains('participant')
+          ? json['unparsedChange'].map((line) => line.toString()).toList()
+          : null,
     );
   }
 }

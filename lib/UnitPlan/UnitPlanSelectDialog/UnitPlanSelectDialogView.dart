@@ -17,7 +17,6 @@ class UnitPlanSelectDialogView extends UnitPlanSelectDialogState {
                   day: day,
                   lesson: lesson,
                   subject: subject,
-                  sharedPreferences: sharedPreferences,
                   onSelected: optionSelected)),
           [
             (getASubjects().length > 0)
@@ -31,7 +30,6 @@ class UnitPlanSelectDialogView extends UnitPlanSelectDialogState {
                       day: day,
                       lesson: lesson,
                       subject: subject,
-                      sharedPreferences: sharedPreferences,
                       onSelected: optionSelected))
                   .cast<Widget>()
                   .toList(),
@@ -51,7 +49,6 @@ class UnitPlanSelectDialogView extends UnitPlanSelectDialogState {
                       day: day,
                       lesson: lesson,
                       subject: subject,
-                      sharedPreferences: sharedPreferences,
                       onSelected: optionSelected))
                   .cast<Widget>()
                   .toList(),

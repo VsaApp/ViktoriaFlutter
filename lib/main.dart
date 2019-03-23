@@ -1,41 +1,46 @@
+import 'package:flutter/foundation.dart'
+    show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Home/HomePage.dart';
+import 'Id.dart';
 import 'Intro/IntroPage.dart';
 import 'Keys.dart';
 import 'Loading/LoadingPage.dart';
 import 'Localizations.dart';
 import 'Login/LoginPage.dart';
 import 'Scan/ScanPage.dart';
+import 'Storage.dart';
 
 // This is the first functions which is called in the app...
 void main() async {
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
+  await Storage.init();
+  await Id.init();
 
   // Default init is the loading screen...
   String _initialRoute = '/';
 
   // Set default options
-  if (sharedPreferences.get(Keys.sortReplacementPlan) == null ||
-      sharedPreferences.get(Keys.showReplacementPlanInUnitPlan) == null ||
-      sharedPreferences.get(Keys.getReplacementPlanNotifications) == null ||
-      sharedPreferences.get(Keys.showWorkGroupsInUnitPlan) == null ||
-      sharedPreferences.get(Keys.showCalendarInUnitPlan) == null ||
-      sharedPreferences.get(Keys.showCafetoriaInUnitPlan) == null) {
-    sharedPreferences.setBool(Keys.sortReplacementPlan, true);
-    sharedPreferences.setBool(Keys.showReplacementPlanInUnitPlan, true);
-    sharedPreferences.setBool(Keys.getReplacementPlanNotifications, true);
-    sharedPreferences.setBool(Keys.showWorkGroupsInUnitPlan, false);
-    sharedPreferences.setBool(Keys.showCalendarInUnitPlan, true);
-    sharedPreferences.setBool(Keys.showCafetoriaInUnitPlan, false);
+  if (Storage.get(Keys.sortReplacementPlan) == null ||
+      Storage.get(Keys.showReplacementPlanInUnitPlan) == null ||
+      Storage.get(Keys.getReplacementPlanNotifications) == null ||
+      Storage.get(Keys.showWorkGroupsInUnitPlan) == null ||
+      Storage.get(Keys.showCalendarInUnitPlan) == null ||
+      Storage.get(Keys.showCafetoriaInUnitPlan) == null) {
+    Storage.setBool(Keys.sortReplacementPlan, true);
+    Storage.setBool(Keys.showReplacementPlanInUnitPlan, true);
+    Storage.setBool(Keys.getReplacementPlanNotifications, true);
+    Storage.setBool(Keys.showWorkGroupsInUnitPlan, false);
+    Storage.setBool(Keys.showCalendarInUnitPlan, true);
+    Storage.setBool(Keys.showCafetoriaInUnitPlan, false);
   }
 
   // Check if logged in
-  if (sharedPreferences.get(Keys.grade) == null ||
-      sharedPreferences.get(Keys.username) == null ||
-      sharedPreferences.get(Keys.password) == null) {
+  if (Storage.get(Keys.grade) == null ||
+      Storage.get(Keys.username) == null ||
+      Storage.get(Keys.password) == null) {
     _initialRoute = '/login';
   }
 

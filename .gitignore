@@ -77,3 +77,4 @@ build/
 ios/Flutter/Generated.xcconfig
 
 key.properties
+.data.json

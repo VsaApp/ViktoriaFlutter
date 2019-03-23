@@ -1,18 +1,18 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 
-import './HistoryDialog/HistoryDialogWidget.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
 import '../SectionWidget.dart';
+import '../Storage.dart';
 import '../Tags.dart';
+import 'HistoryDialog/HistoryDialogWidget.dart';
 import 'SettingsPage.dart';
 
 class SettingsPageView extends SettingsPageState {
   @override
   Widget build(BuildContext context) {
-    if (sharedPreferences == null) {
-      return Container();
-    }
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -27,8 +27,7 @@ class SettingsPageView extends SettingsPageState {
                 value: showShortCutDialog,
                 onChanged: (bool value) {
                   setState(() {
-                    sharedPreferences.setBool(Keys.showShortCutDialog, value);
-                    sharedPreferences.commit();
+                    Storage.setBool(Keys.showShortCutDialog, value);
                     showShortCutDialog = value;
                   });
                 },
@@ -64,9 +63,8 @@ class SettingsPageView extends SettingsPageState {
                           onChanged: (p) async {
                             setState(() {
                               page = p;
-                              sharedPreferences.setInt(
+                              Storage.setInt(
                                   Keys.initialPage, pages.indexOf(page));
-                              sharedPreferences.commit();
                             });
                           },
                         ),
@@ -100,8 +98,7 @@ class SettingsPageView extends SettingsPageState {
                 value: sortReplacementPlan,
                 onChanged: (bool value) {
                   setState(() {
-                    sharedPreferences.setBool(Keys.sortReplacementPlan, value);
-                    sharedPreferences.commit();
+                    Storage.setBool(Keys.sortReplacementPlan, value);
                     sortReplacementPlan = value;
                   });
                 },
@@ -109,35 +106,36 @@ class SettingsPageView extends SettingsPageState {
                 controlAffinity: ListTileControlAffinity.trailing,
               ),
               // Get replacementplan notifications option
-              CheckboxListTile(
+              (Platform.isIOS || Platform.isAndroid)
+                  ? CheckboxListTile(
                 value: getReplacementPlanNotifications,
                 onChanged: (bool value) {
                   setState(() {
-                    sharedPreferences.setBool(
+                    Storage.setBool(
                         Keys.getReplacementPlanNotifications, value);
-                    sharedPreferences.commit();
                     getReplacementPlanNotifications = value;
                     // Synchronise tags for notifications
                     syncTags();
                   });
                 },
-                title: Text(AppLocalizations.of(context)
+                title: Text(AppLocalizations
+                    .of(context)
                     .getReplacementPlanNotifications),
-              ),
+              )
+                  : Container(),
             ],
           ),
           Section(
               title:
-                  AppLocalizations.of(context).unitPlanSettings.toUpperCase(),
+              AppLocalizations.of(context).unitPlanSettings.toUpperCase(),
               children: <Widget>[
                 // Show replacement plan in unit plan option
                 CheckboxListTile(
                   value: showReplacementPlanInUnitPlan,
                   onChanged: (bool value) {
                     setState(() {
-                      sharedPreferences.setBool(
+                      Storage.setBool(
                           Keys.showReplacementPlanInUnitPlan, value);
-                      sharedPreferences.commit();
                       showReplacementPlanInUnitPlan = value;
                     });
                   },
@@ -149,9 +147,7 @@ class SettingsPageView extends SettingsPageState {
                   value: showWorkGroupsInUnitPlan,
                   onChanged: (bool value) {
                     setState(() {
-                      sharedPreferences.setBool(
-                          Keys.showWorkGroupsInUnitPlan, value);
-                      sharedPreferences.commit();
+                      Storage.setBool(Keys.showWorkGroupsInUnitPlan, value);
                       showWorkGroupsInUnitPlan = value;
                     });
                   },
@@ -163,30 +159,27 @@ class SettingsPageView extends SettingsPageState {
                   value: showCalendarInUnitPlan,
                   onChanged: (bool value) {
                     setState(() {
-                      sharedPreferences.setBool(
-                          Keys.showCalendarInUnitPlan, value);
-                      sharedPreferences.commit();
+                      Storage.setBool(Keys.showCalendarInUnitPlan, value);
                       showCalendarInUnitPlan = value;
                     });
                   },
                   title:
-                      Text(AppLocalizations.of(context).showCalendarInUnitPlan),
+                  Text(AppLocalizations.of(context).showCalendarInUnitPlan),
                 ),
                 // Show cafetoria in unit plan option
                 CheckboxListTile(
                   value: showCafetoriaInUnitPlan,
                   onChanged: (bool value) {
                     setState(() {
-                      sharedPreferences.setBool(
-                          Keys.showCafetoriaInUnitPlan, value);
-                      sharedPreferences.commit();
+                      Storage.setBool(Keys.showCafetoriaInUnitPlan, value);
                       showCafetoriaInUnitPlan = value;
                     });
                   },
                   title: Text(
                       AppLocalizations.of(context).showCafetoriaInUnitPlan),
                 ),
-                grade == 'EF' || grade == 'Q1' || grade == 'Q2'
+                (grade == 'EF' || grade == 'Q1' || grade == 'Q2') &&
+                    (Platform.isIOS || Platform.isAndroid)
                     ? Container(
                   margin:
                   EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
@@ -260,16 +253,15 @@ class SettingsPageView extends SettingsPageState {
                       color: Theme.of(context).accentColor,
                       child: Text(AppLocalizations.of(context).resetUnitPlan),
                       onPressed: () async {
-                        sharedPreferences
-                            .getKeys()
+                        Storage.getKeys()
                             .where((key) =>
-                                ((key.startsWith('unitPlan') ||
-                                        key.startsWith('room')) &&
-                                    key.split('-').length >= 3 &&
-                                    !key.endsWith('-5')) ||
-                                key.startsWith('exams'))
+                        ((key.startsWith('unitPlan') ||
+                            key.startsWith('room')) &&
+                            key.split('-').length >= 3 &&
+                            !key.endsWith('-5')) ||
+                            key.startsWith('exams'))
                             .forEach((key) {
-                          sharedPreferences.remove(key);
+                          Storage.remove(key);
                         });
                       },
                     ),
@@ -296,11 +288,9 @@ class SettingsPageView extends SettingsPageState {
                       value: grade,
                       onChanged: (grade) async {
                         setState(() {
-                          sharedPreferences.setString(Keys.grade, grade);
-                          sharedPreferences.commit().then((_) {
-                            // Reload app
-                            Navigator.of(context).pushReplacementNamed('/');
-                          });
+                          Storage.setString(Keys.grade, grade);
+                          // Reload app
+                          Navigator.of(context).pushReplacementNamed('/');
                         });
                       },
                     ),
@@ -316,14 +306,12 @@ class SettingsPageView extends SettingsPageState {
                     color: Theme.of(context).accentColor,
                     child: Text(AppLocalizations.of(context).logout),
                     onPressed: () async {
-                      sharedPreferences.remove(Keys.username);
-                      sharedPreferences.remove(Keys.password);
-                      sharedPreferences.remove(Keys.grade);
-                      sharedPreferences.commit().then((_) async {
-                        // Reload app
-                        deleteTags((await getTags()).keys.toList());
-                        Navigator.of(context).pushReplacementNamed('/login');
-                      });
+                      Storage.remove(Keys.username);
+                      Storage.remove(Keys.password);
+                      Storage.remove(Keys.grade);
+                      // Reload app
+                      deleteTags((await getTags()).keys.toList());
+                      Navigator.of(context).pushReplacementNamed('/login');
                     },
                   ),
                 ),
@@ -332,45 +320,45 @@ class SettingsPageView extends SettingsPageState {
           ),
           dev
               ? Section(
-                  title: AppLocalizations.of(context)
-                      .developerOptions
-                      .toUpperCase(),
-                  children: <Widget>[
-                    Container(
-                      margin:
-                          EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: FlatButton(
-                          color: Theme.of(context).accentColor,
-                          child: Text(AppLocalizations.of(context)
-                              .replacementplanVersion),
-                          onPressed: () => showDialog<String>(
-                              context: context,
-                              barrierDismissible: true,
-                              builder: (BuildContext context1) =>
-                                  HistoryDialog(type: 'replacementplan')),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin:
-                          EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: FlatButton(
-                            color: Theme.of(context).accentColor,
-                            child: Text(
-                                AppLocalizations.of(context).unitplanVersion),
-                            onPressed: () => showDialog<String>(
-                                context: context,
-                                barrierDismissible: true,
-                                builder: (BuildContext context1) =>
-                                    HistoryDialog(type: 'unitplan'))),
-                      ),
-                    ),
-                  ],
-                )
+            title: AppLocalizations.of(context)
+                .developerOptions
+                .toUpperCase(),
+            children: <Widget>[
+              Container(
+                margin:
+                EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: FlatButton(
+                    color: Theme.of(context).accentColor,
+                    child: Text(AppLocalizations.of(context)
+                        .replacementplanVersion),
+                    onPressed: () => showDialog<String>(
+                        context: context,
+                        barrierDismissible: true,
+                        builder: (BuildContext context1) =>
+                            HistoryDialog(type: 'replacementplan')),
+                  ),
+                ),
+              ),
+              Container(
+                margin:
+                EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: FlatButton(
+                      color: Theme.of(context).accentColor,
+                      child: Text(
+                          AppLocalizations.of(context).unitplanVersion),
+                      onPressed: () => showDialog<String>(
+                          context: context,
+                          barrierDismissible: true,
+                          builder: (BuildContext context1) =>
+                              HistoryDialog(type: 'unitplan'))),
+                ),
+              ),
+            ],
+          )
               : Container()
         ],
       ),

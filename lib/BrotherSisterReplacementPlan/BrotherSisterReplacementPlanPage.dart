@@ -23,10 +23,8 @@ abstract class BrotherSisterReplacementPlanPageState
   @override
   void initState() {
     unitplan.download(widget.grade, true).then((days1) {
-      replacementplan.load(days1, true).then((days2) {
-        setState(() {
-          days = days2;
-        });
+      setState(() {
+        days = replacementplan.load(days1, true);
       });
     });
     super.initState();

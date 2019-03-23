@@ -1,20 +1,16 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'Keys.dart';
+import 'Storage.dart';
 
-import './Keys.dart';
-
-String getRoom(SharedPreferences sharedPreferences, int weekday, int unit,
-    String subject, String room) {
+String getRoom(int weekday, int unit, String subject, String room) {
   subject = subject.toUpperCase();
-  if (sharedPreferences.getString(Keys.room(weekday, unit, subject)) == null) {
+  if (Storage.getString(Keys.room(weekday, unit, subject)) == null) {
     return room;
   } else {
-    return sharedPreferences.getString(Keys.room(weekday, unit, subject));
+    return Storage.getString(Keys.room(weekday, unit, subject));
   }
 }
 
-void setRoom(SharedPreferences sharedPreferences, int weekday, int unit,
-    String subject, String room) {
+void setRoom(int weekday, int unit, String subject, String room) {
   subject = subject.toUpperCase();
-  sharedPreferences.setString(Keys.room(weekday, unit, subject), room);
-  sharedPreferences.commit();
+  Storage.setString(Keys.room(weekday, unit, subject), room);
 }

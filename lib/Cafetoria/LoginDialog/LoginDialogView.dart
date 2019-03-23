@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Keys.dart';
 import '../../Localizations.dart';
+import '../../Storage.dart';
 import '../CafetoriaData.dart';
 import 'LoginDialogWidget.dart';
 
@@ -15,15 +15,12 @@ class LoginDialogView extends LoginDialogState {
 
   // Check the login
   void checkForm() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     credentialsCorrect = await checkLogin(
         id: idController.text, password: passwordController.text);
     if (formKey.currentState.validate()) {
       // Save correct credentials
-      sharedPreferences.setString(Keys.cafetoriaId, idController.text);
-      sharedPreferences.setString(
-          Keys.cafetoriaPassword, passwordController.text);
-      sharedPreferences.commit();
+      Storage.setString(Keys.cafetoriaId, idController.text);
+      Storage.setString(Keys.cafetoriaPassword, passwordController.text);
       Navigator.pop(context);
       // Update UI
       widget.onFinished();

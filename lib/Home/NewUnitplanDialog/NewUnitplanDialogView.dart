@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 
-import './NewUnitplanDialogModel.dart';
 import '../../Localizations.dart';
+import 'NewUnitplanDialogModel.dart';
 
 class NewUnitplanDialogDialogView extends NewUnitplanDialogState {
   @override
   Widget build(BuildContext context) {
-    if (sharedPreferences == null) {
-      return Container();
-    }
     // Show the shortcut dialog
     return SimpleDialog(
         title: Text(AppLocalizations.of(context).newUnitplan,

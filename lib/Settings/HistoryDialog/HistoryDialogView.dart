@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../../UnitPlan/UnitPlanData.dart' as unitplan;
-import '../../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
 import '../../Keys.dart';
 import '../../Localizations.dart';
-import './HistoryDialogWidget.dart';
-import './HistoryDialogModel.dart';
+import '../../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
+import '../../Storage.dart';
+import '../../UnitPlan/UnitPlanData.dart' as unitplan;
+import 'HistoryDialogModel.dart';
+import 'HistoryDialogWidget.dart';
 
 class HistoryDialogView extends HistoryDialogState {
   @override
@@ -16,8 +17,7 @@ class HistoryDialogView extends HistoryDialogState {
         data == null ||
                 currentYear == null ||
                 currentMonth == null ||
-                currentDay == null ||
-                sharedPreferences == null
+            currentDay == null
             ?
             // Show loader
             Center(
@@ -202,11 +202,10 @@ class HistoryDialogView extends HistoryDialogState {
                           style: TextStyle(color: Colors.black)),
                       onPressed: () {
                         if (loadNewestData &&
-                            sharedPreferences.getStringList(
+                            Storage.getStringList(
                                     Keys.historyDate(widget.type)) !=
                                 null) {
-                          sharedPreferences
-                              .remove(Keys.historyDate(widget.type));
+                          Storage.remove(Keys.historyDate(widget.type));
                         } else if (!loadNewestData) {
                           String fileName;
                           if (widget.type == 'unitplan') {
@@ -223,8 +222,7 @@ class HistoryDialogView extends HistoryDialogState {
                                 .files[index]
                                 .name;
                           }
-                          sharedPreferences.setStringList(
-                              Keys.historyDate(widget.type), [
+                          Storage.setStringList(Keys.historyDate(widget.type), [
                             currentYear,
                             currentMonth,
                             currentDay,
@@ -235,7 +233,7 @@ class HistoryDialogView extends HistoryDialogState {
                         Navigator.of(context).pop();
                         Function() update = () async {
                           await unitplan.download(
-                              sharedPreferences.getString(Keys.grade), false);
+                              Storage.getString(Keys.grade), false);
                           await replacementplan.load(
                               unitplan.getUnitPlan(), false);
                         };

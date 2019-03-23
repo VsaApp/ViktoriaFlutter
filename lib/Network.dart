@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+
+import 'Storage.dart';
 
 Duration maxTime = Duration(seconds: 4);
 
@@ -26,19 +27,17 @@ Future<int> get checkOnline async {
 
 Future fetchDataAndSave(String url, String key, String defaultValue,
     {Map<String, dynamic> body}) async {
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   try {
     dynamic response;
     if (body != null) {
       response = await post(url, body: body);
     } else
       response = (await http.Client().get(url).timeout(maxTime)).body;
-    sharedPreferences.setString(key, response);
-    await sharedPreferences.commit();
+    Storage.setString(key, response);
   } catch (e) {
     print("Error during downloading \'$key\': " + e.toString());
-    if (sharedPreferences.getString(key) == null) {
-      sharedPreferences.setString(key, defaultValue);
+    if (Storage.getString(key) == null) {
+      Storage.setString(key, defaultValue);
     }
   }
 }

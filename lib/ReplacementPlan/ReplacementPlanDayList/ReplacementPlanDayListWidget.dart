@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Home/HomePage.dart';
 import '../../Keys.dart';
 import '../../Localizations.dart';
 import '../../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
+import '../../Storage.dart';
 import '../../UnitPlan/UnitPlanData.dart' as unitplan;
 import '../../UnitPlan/UnitPlanModel.dart';
 import '../ReplacementPlanModel.dart';
@@ -30,7 +30,6 @@ class ReplacementPlanDayList extends StatefulWidget {
 
 abstract class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
     with SingleTickerProviderStateMixin {
-  SharedPreferences sharedPreferences;
   TabController tabController;
   static List<String> grades = [
     '5a',
@@ -55,20 +54,16 @@ abstract class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
 
   Future update() async {
     if (widget.temp) {
-      replacementplan
-          .load(
-              await unitplan.download(
-                  widget.grade ?? sharedPreferences.getString(Keys.grade),
-                  true),
-              true)
+      unitplan
+          .download(widget.grade ?? Storage.getString(Keys.grade), true)
           .then((days) {
         setState(() {
-          widget.days = days;
+          widget.days = replacementplan.load(days, true);
         });
       });
     } else {
       await unitplan.download(
-          widget.grade ?? sharedPreferences.getString(Keys.grade), false);
+          widget.grade ?? Storage.getString(Keys.grade), false);
       await replacementplan.load(unitplan.getUnitPlan(), false);
       setState(() => widget.days = ReplacementPlan.days);
     }
@@ -86,10 +81,8 @@ abstract class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
 
   @override
   void initState() {
-    SharedPreferences.getInstance().then((instance) {
+    WidgetsBinding.instance.addPostFrameCallback((a) {
       setState(() {
-        sharedPreferences = instance;
-
         // Select the correct tab
         tabController = TabController(vsync: this, length: widget.days.length);
         int day = 0;
@@ -102,7 +95,7 @@ abstract class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
                       DateTime.now().month, DateTime.now().day, 8)
                   .add(Duration(
                       minutes: [60, 130, 210, 280, 360, 420, 480, 545][
-                          UnitPlan.days[weekday].getUserLesseonsCount(instance,
+                      UnitPlan.days[weekday].getUserLesseonsCount(
                                   AppLocalizations.of(context).freeLesson) -
                               1])))) {
                 over = true;
@@ -126,7 +119,9 @@ abstract class ReplacementPlanDayListState extends State<ReplacementPlanDayList>
           tabController.animateTo(day);
         }
         HomePageState.updateWeek(widget.days[tabController.index].weektype);
-        tabController.addListener(() => HomePageState.updateWeek(widget.days[tabController.index].weektype));
+        tabController.addListener(() =>
+            HomePageState.updateWeek(
+                widget.days[tabController.index].weektype));
       });
     });
 

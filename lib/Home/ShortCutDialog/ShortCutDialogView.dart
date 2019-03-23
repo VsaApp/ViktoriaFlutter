@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../../Keys.dart';
 import '../../Localizations.dart';
+import '../../Storage.dart';
 import 'ShortCutDialogWidget.dart';
 
 class ShortCutDialogView extends ShortCutDialogState {
   @override
   Widget build(BuildContext context) {
-    if (sharedPreferences == null) {
-      return Container();
-    }
     // Show the shortcut dialog
     return SimpleDialog(
         title: Text(AppLocalizations.of(context).whatDoFirst),
@@ -40,8 +38,7 @@ class ShortCutDialogView extends ShortCutDialogState {
           CheckboxListTile(
             value: showDialog1,
             onChanged: (value) {
-              sharedPreferences.setBool(Keys.showShortCutDialog, value);
-              sharedPreferences.commit();
+              Storage.setBool(Keys.showShortCutDialog, value);
               setState(() {
                 showDialog1 = value;
               });

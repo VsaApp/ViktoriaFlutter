@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../ReplacementPlan/ReplacementPlanData.dart' as Replacementplan;
 import '../../Selection.dart';
@@ -11,7 +10,6 @@ class UnitPlanSelectDialog extends StatefulWidget {
   final UnitPlanDay day;
   final UnitPlanLesson lesson;
   final Function() onSelected;
-  final SharedPreferences sharedPreferences;
   final bool enableWrapper;
 
   UnitPlanSelectDialog({
@@ -19,7 +17,6 @@ class UnitPlanSelectDialog extends StatefulWidget {
     @required this.day,
     @required this.lesson,
     @required this.onSelected,
-    @required this.sharedPreferences,
     this.enableWrapper = true,
   }) : super(key: key);
 
@@ -29,8 +26,6 @@ class UnitPlanSelectDialog extends StatefulWidget {
 
 abstract class UnitPlanSelectDialogState extends State<UnitPlanSelectDialog>
     with SingleTickerProviderStateMixin {
-  SharedPreferences sharedPreferences;
-
   UnitPlanSubject lastSelected = null;
 
   bool hideABSubjects = false;
@@ -78,8 +73,8 @@ abstract class UnitPlanSelectDialogState extends State<UnitPlanSelectDialog>
 
   void optionSelected(UnitPlanSubject subject) {
     if (subject.week == 'AB') {
-      setSelectedSubject(sharedPreferences, subject, UnitPlan.days.indexOf(day),
-          day.lessons.indexOf(lesson));
+      setSelectedSubject(
+          subject, UnitPlan.days.indexOf(day), day.lessons.indexOf(lesson));
     } else {
       // Hide some sections of the list...
       setState(() => hideABSubjects = true);
@@ -89,27 +84,20 @@ abstract class UnitPlanSelectDialogState extends State<UnitPlanSelectDialog>
         setState(() => hideASubjects = true);
 
       if (lastSelected != null) {
-        setSelectedSubject(
-            sharedPreferences,
-            (subject.week == 'A' ? subject : lastSelected),
-            UnitPlan.days.indexOf(day),
-            day.lessons.indexOf(lesson),
+        setSelectedSubject((subject.week == 'A' ? subject : lastSelected),
+            UnitPlan.days.indexOf(day), day.lessons.indexOf(lesson),
             selectedB: (subject.week == 'A' ? lastSelected : subject));
       }
       // When only one other option is possible...
       else if ((subject.week == 'A' ? getBSubjects() : getASubjects()).length ==
           1) {
-        setSelectedSubject(
-            sharedPreferences,
-            (subject.week == 'A' ? subject : getASubjects()[0]),
-            UnitPlan.days.indexOf(day),
-            day.lessons.indexOf(lesson),
+        setSelectedSubject((subject.week == 'A' ? subject : getASubjects()[0]),
+            UnitPlan.days.indexOf(day), day.lessons.indexOf(lesson),
             selectedB: (subject.week == 'A' ? getBSubjects()[0] : subject));
       }
       // When there is the same lesson and only the room is diffrent...
       else if (isOnlyRoomDiffrent(subject) != null) {
         setSelectedSubject(
-            sharedPreferences,
             (subject.week == 'A' ? subject : isOnlyRoomDiffrent(subject)),
             UnitPlan.days.indexOf(day),
             day.lessons.indexOf(lesson),
@@ -131,7 +119,6 @@ abstract class UnitPlanSelectDialogState extends State<UnitPlanSelectDialog>
 
   @override
   void initState() {
-    sharedPreferences = widget.sharedPreferences;
     day = widget.day;
     lesson = widget.lesson;
 

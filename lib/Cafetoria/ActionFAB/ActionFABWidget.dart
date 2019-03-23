@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Localizations.dart';
 
@@ -22,7 +21,6 @@ class ActionFab extends StatefulWidget {
 
 class ActionFabState extends State<ActionFab>
     with SingleTickerProviderStateMixin {
-  SharedPreferences sharedPreferences;
   bool isOpened = false;
   AnimationController animationController;
   Animation<Color> buttonColor;
@@ -33,11 +31,6 @@ class ActionFabState extends State<ActionFab>
 
   @override
   initState() {
-    SharedPreferences.getInstance().then((instance) {
-      setState(() {
-        sharedPreferences = instance;
-      });
-    });
     animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 250))
           ..addListener(() {
@@ -45,28 +38,32 @@ class ActionFabState extends State<ActionFab>
           });
     // Create animations
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      buttonColor = ColorTween(
-        begin: Theme.of(context).primaryColor,
-        end: Color(0xFF275600),
-      ).animate(CurvedAnimation(
-        parent: animationController,
-        curve: Interval(
-          0.00,
-          1.00,
-          curve: Curves.linear,
-        ),
-      ));
-      translateButton = Tween<double>(
-        begin: fabHeight,
-        end: 0,
-      ).animate(CurvedAnimation(
-        parent: animationController,
-        curve: Interval(
-          0.0,
-          0.75,
-          curve: curve,
-        ),
-      ));
+      setState(() {
+        buttonColor = ColorTween(
+          begin: Theme
+              .of(context)
+              .primaryColor,
+          end: Color(0xFF275600),
+        ).animate(CurvedAnimation(
+          parent: animationController,
+          curve: Interval(
+            0.00,
+            1.00,
+            curve: Curves.linear,
+          ),
+        ));
+        translateButton = Tween<double>(
+          begin: fabHeight,
+          end: 0,
+        ).animate(CurvedAnimation(
+          parent: animationController,
+          curve: Interval(
+            0.0,
+            0.75,
+            curve: curve,
+          ),
+        ));
+      });
     });
     super.initState();
   }
@@ -148,7 +145,9 @@ class ActionFabState extends State<ActionFab>
 
   @override
   Widget build(BuildContext context) {
-    if (sharedPreferences == null) return Container();
+    if (translateButton == null) {
+      return Container();
+    }
     // List of FABs
     return Column(
         crossAxisAlignment: CrossAxisAlignment.end,

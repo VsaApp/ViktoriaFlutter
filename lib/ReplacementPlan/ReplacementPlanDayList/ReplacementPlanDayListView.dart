@@ -9,9 +9,6 @@ import 'ReplacementPlanDayListWidget.dart';
 class ReplacementPlanDayListView extends ReplacementPlanDayListState {
   @override
   Widget build(BuildContext context) {
-    if (sharedPreferences == null) {
-      return Container();
-    }
     return DefaultTabController(
       length: widget.days.length,
       child: Expanded(
@@ -127,7 +124,6 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
                                   'Donnerstag',
                                   'Freitag'
                                 ].indexOf(day.weekday),
-                                sharedPreferences: sharedPreferences,
                               );
                             }).toList()
                           :
@@ -151,7 +147,6 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
                                             'Donnerstag',
                                             'Freitag'
                                           ].indexOf(day.weekday),
-                                          sharedPreferences: sharedPreferences,
                                         );
                                       }).toList()
                                     :
@@ -189,7 +184,6 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
                                             'Donnerstag',
                                             'Freitag'
                                           ].indexOf(day.weekday),
-                                          sharedPreferences: sharedPreferences,
                                         );
                                       }).toList())
                                   : Container(),
@@ -211,7 +205,6 @@ class ReplacementPlanDayListView extends ReplacementPlanDayListState {
                                             'Donnerstag',
                                             'Freitag'
                                           ].indexOf(day.weekday),
-                                          sharedPreferences: sharedPreferences,
                                         );
                                       }).toList())
                                   : Container(),

@@ -1,13 +1,11 @@
-import 'package:shared_preferences/shared_preferences.dart';
-
-import './HistoryDialogModel.dart';
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
 import '../../Keys.dart';
 import '../../Network.dart';
+import '../../Storage.dart';
+import 'HistoryDialogModel.dart';
 
 // Download the unit plan...
 Future<List<Year>> download(String type) async {
@@ -20,8 +18,7 @@ Future<List<Year>> download(String type) async {
 
 // Get unit plan from preferences...
 Future<List<Year>> fetchDays(String type) async {
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  return parseDays(sharedPreferences.getString(Keys.history(type)));
+  return parseDays(Storage.getString(Keys.history(type)));
 }
 
 // Returns parsed unit plan...

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Keys.dart';
 import '../Localizations.dart';
 import '../SectionWidget.dart';
 import '../Selection.dart';
+import '../Storage.dart';
 import '../Subjects/SubjectsModel.dart';
 import '../UnitPlan/UnitPlanData.dart' as UnitPlan;
 import '../UnitPlan/UnitPlanModel.dart';
@@ -14,27 +14,23 @@ import 'CoursesPage.dart';
 class CoursesPageView extends CoursesPageState {
   @override
   Widget build(BuildContext context) {
-    if (sharedPreferences == null) {
-      return Container();
-    }
-
     List<UnitPlanSubject> selectedSubjects = [];
 
     // Get all selected subjects...
     UnitPlan.getUnitPlan().forEach((day) => day.lessons.forEach((lesson) {
           if (lesson.subjects.length > 0) {
             int selectedA = getSelectedIndex(
-                    sharedPreferences,
                     lesson.subjects,
                     UnitPlan.getUnitPlan().indexOf(day),
-                    day.lessons.indexOf(lesson), week: 'A') ??
+                day.lessons.indexOf(lesson),
+                week: 'A') ??
                 lesson.subjects.length;
             int selectedB = getSelectedIndex(
-                sharedPreferences,
                 lesson.subjects,
                 UnitPlan.getUnitPlan().indexOf(day),
-                day.lessons.indexOf(lesson), week: 'B') ??
-            lesson.subjects.length;
+                day.lessons.indexOf(lesson),
+                week: 'B') ??
+                lesson.subjects.length;
             if (selectedA < lesson.subjects.length)
               selectedSubjects.add(lesson.subjects[selectedA]);
             if (selectedB != selectedA && selectedB < lesson.subjects.length)
@@ -75,8 +71,8 @@ class CoursesPageView extends CoursesPageState {
           lesson == Subjects.subjects['UC'] ||
           lesson == Subjects.subjects['SG']) {
         section0Items.add(CourseRow(
-            subjects: courses[key].toList(),
-            sharedPreferences: sharedPreferences));
+          subjects: courses[key].toList(),
+        ));
       } else if (lesson == Subjects.subjects['EK'] ||
           lesson == Subjects.subjects['GE'] ||
           lesson == Subjects.subjects['PL'] ||
@@ -84,8 +80,8 @@ class CoursesPageView extends CoursesPageState {
           lesson == Subjects.subjects['DP'] ||
           lesson == Subjects.subjects['PK']) {
         section1Items.add(CourseRow(
-            subjects: courses[key].toList(),
-            sharedPreferences: sharedPreferences));
+          subjects: courses[key].toList(),
+        ));
       } else if (lesson == Subjects.subjects['BI'] ||
           lesson == Subjects.subjects['CH'] ||
           lesson == Subjects.subjects['NW'] ||
@@ -94,12 +90,12 @@ class CoursesPageView extends CoursesPageState {
           lesson == Subjects.subjects['M'] ||
           lesson == Subjects.subjects['PH']) {
         section2Items.add(CourseRow(
-            subjects: courses[key].toList(),
-            sharedPreferences: sharedPreferences));
+          subjects: courses[key].toList(),
+        ));
       } else {
         section3Items.add(CourseRow(
-            subjects: courses[key].toList(),
-            sharedPreferences: sharedPreferences));
+          subjects: courses[key].toList(),
+        ));
       }
     });
     sections.add(Section(
@@ -138,9 +134,11 @@ class CoursesPageView extends CoursesPageState {
 
 class CourseRow extends StatefulWidget {
   final List<UnitPlanSubject> subjects;
-  final SharedPreferences sharedPreferences;
 
-  CourseRow({Key key, this.subjects, this.sharedPreferences}) : super(key: key);
+  CourseRow({
+    Key key,
+    this.subjects,
+  }) : super(key: key);
 
   @override
   CourseRowView createState() => CourseRowView();
@@ -159,8 +157,7 @@ class CourseRowView extends State<CourseRow> {
     teacher = widget.subjects[0].teacher;
     course = '';
     blocks = [];
-    _exams = widget.sharedPreferences.getBool(Keys.exams(
-            widget.sharedPreferences.getString(Keys.grade),
+    _exams = Storage.getBool(Keys.exams(Storage.getString(Keys.grade),
             widget.subjects[0].lesson.toUpperCase())) ??
         true;
 

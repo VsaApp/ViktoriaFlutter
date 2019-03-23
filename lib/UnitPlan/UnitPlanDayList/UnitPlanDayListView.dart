@@ -8,6 +8,7 @@ import '../../Keys.dart';
 import '../../Localizations.dart';
 import '../../ReplacementPlan/ReplacementPlanRow/ReplacementPlanRowWidget.dart';
 import '../../Selection.dart';
+import '../../Storage.dart';
 import '../../WorkGroups/DayCard/DayCardWidget.dart';
 import '../../WorkGroups/WorkGroupsModel.dart';
 import '../UnitPlanModel.dart';
@@ -18,9 +19,6 @@ import 'UnitPlanDayListWidget.dart';
 class UnitPlanDayListView extends UnitPlanDayListState {
   @override
   Widget build(BuildContext context) {
-    if (sharedPreferences == null) {
-      return Container();
-    }
     return DefaultTabController(
       length: widget.days.length,
       child: Expanded(
@@ -49,11 +47,8 @@ class UnitPlanDayListView extends UnitPlanDayListState {
               List<Widget> items = [];
               items.addAll(day.lessons.map((lesson) {
                 // Check which subject is selected
-                int _selected = getSelectedIndex(
-                    sharedPreferences,
-                    lesson.subjects,
-                    widget.days.indexOf(day),
-                    day.lessons.indexOf(lesson),
+                int _selected = getSelectedIndex(lesson.subjects,
+                    widget.days.indexOf(day), day.lessons.indexOf(lesson),
                     week: day.showWeek);
                 bool nothingSelected = _selected == null;
                 if (nothingSelected) _selected = 0;
@@ -68,7 +63,6 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                             return UnitPlanSelectDialog(
                               day: day,
                               lesson: lesson,
-                              sharedPreferences: sharedPreferences,
                               onSelected: () => setState(() => null),
                             );
                           });
@@ -81,18 +75,17 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                         lesson.subjects[_selected].lesson !=
                             AppLocalizations.of(context).lunchBreak &&
                         !nothingSelected) {
-                      if (sharedPreferences.getBool(Keys.exams(
-                              sharedPreferences.getString(Keys.grade),
+                      if (Storage.getBool(Keys.exams(
+                          Storage.getString(Keys.grade),
                               lesson.subjects[_selected].lesson
                                   .toUpperCase())) ==
                           null) {
-                        sharedPreferences.setBool(
+                        Storage.setBool(
                             Keys.exams(
-                                sharedPreferences.getString(Keys.grade),
+                                Storage.getString(Keys.grade),
                                 lesson.subjects[_selected].lesson
                                     .toUpperCase()),
                             true);
-                        sharedPreferences.commit();
                       }
                       // Show writing option dialog
                       showDialog<String>(
@@ -104,7 +97,7 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                             blocks: [lesson.subjects[_selected].block],
                             onExamChange: (_) {
                               setState(() {
-                                UnitPlan.setAllSelections(sharedPreferences);
+                                UnitPlan.setAllSelections();
                               });
                             },
                           );
@@ -127,25 +120,22 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                               changes: [],
                               week: 'AB'),
                           unit: day.lessons.indexOf(lesson),
-                          sharedPreferences: sharedPreferences,
                         )
                       : (lesson.subjects[_selected].changes.length == 0 ||
-                              !sharedPreferences
-                                  .getBool(Keys.showReplacementPlanInUnitPlan)
+                      !Storage.getBool(
+                          Keys.showReplacementPlanInUnitPlan)
                           ?
                           // Show normal subject
                           UnitPlanRow(
                               weekday: widget.days.indexOf(day),
                               subject: lesson.subjects[_selected],
                               unit: day.lessons.indexOf(lesson),
-                              sharedPreferences: sharedPreferences,
                             )
                           :
                           // Show list of changes
                           lesson.subjects[_selected]
                               .getChanges(
-                              day.replacementPlanForWeektype,
-                              sharedPreferences)
+                              day.replacementPlanForWeektype)
                                       .length >
                                   0
                               ? Card(
@@ -161,26 +151,19 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                                     lesson.subjects[_selected],
                                                 unit:
                                                     day.lessons.indexOf(lesson),
-                                                sharedPreferences:
-                                                    sharedPreferences,
                                               )
                                             : Container())
                                       ]..addAll(lesson.subjects[_selected]
                                           .getChanges(
-                                          day.replacementPlanForWeektype,
-                                          sharedPreferences)
+                                          day.replacementPlanForWeektype)
                                           .map((change) {
                                             return ReplacementPlanRow(
                                               change: change,
                                               changes: lesson
                                                   .subjects[_selected]
-                                                  .getChanges(
-                                                  day
-                                                      .replacementPlanForWeektype,
-                                                      sharedPreferences),
+                                                  .getChanges(day
+                                                  .replacementPlanForWeektype),
                                               weekday: widget.days.indexOf(day),
-                                              sharedPreferences:
-                                                  sharedPreferences,
                                             );
                                           })
                                           .toList()
@@ -192,7 +175,6 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                   weekday: widget.days.indexOf(day),
                                   subject: lesson.subjects[_selected],
                                   unit: day.lessons.indexOf(lesson),
-                                  sharedPreferences: sharedPreferences,
                                 ))),
                 );
               }).toList());

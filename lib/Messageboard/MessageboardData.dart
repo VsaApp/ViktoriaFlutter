@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Keys.dart';
 import '../Network.dart';
+import '../Storage.dart';
 import 'MessageboardModel.dart';
 
 String urlGroupList = 'https://api.vsa.2bad2c0.de/messageboard/groups/list?v=' +
@@ -38,18 +38,15 @@ Future download() async {
 
 // Download messageboard data...
 Future downloadGroups() async {
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  Messageboard.sharedPreferences = sharedPreferences;
   try {
     final response = await http.Client().get(urlGroupList).timeout(maxTime);
     // Save loaded data...
-    sharedPreferences.setString(Keys.messageboardGroups, response.body);
-    await sharedPreferences.commit();
+    Storage.setString(Keys.messageboardGroups, response.body);
   } catch (e) {
     print("Error in download groups: " + e.toString());
-    if (sharedPreferences.getString(Keys.messageboardGroups) == null) {
+    if (Storage.getString(Keys.messageboardGroups) == null) {
       // Set default data...
-      sharedPreferences.setString(Keys.messageboardGroups, '[]');
+      Storage.setString(Keys.messageboardGroups, '[]');
     }
   }
 
@@ -74,24 +71,17 @@ Future downloadFeed({int start = 0, int end = 10, bool addFeed = false}) async {
     Messageboard.status = 'updating';
   }
 
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  Messageboard.sharedPreferences = sharedPreferences;
   try {
     final response =
         await post('$urlFeed/$start/$end', body: {"groups": feedGroups});
     // Save loaded data...
-    sharedPreferences.setString(
-        Keys.messageboardFeed(start, end, feedGroups), response);
-
-    await sharedPreferences.commit();
+    Storage.setString(Keys.messageboardFeed(start, end, feedGroups), response);
   } catch (e) {
     print("Error in download feed: " + e.toString());
-    if (sharedPreferences
-            .getString(Keys.messageboardFeed(start, end, feedGroups)) ==
+    if (Storage.getString(Keys.messageboardFeed(start, end, feedGroups)) ==
         null) {
       // Set default data...
-      sharedPreferences.setString(
-          Keys.messageboardFeed(start, end, feedGroups), '[]');
+      Storage.setString(Keys.messageboardFeed(start, end, feedGroups), '[]');
     }
   }
 
@@ -133,22 +123,16 @@ Future downloadPosts(Group group,
     {int start, int end, bool addPosts = false}) async {
   String name = group.name;
 
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  Messageboard.sharedPreferences = sharedPreferences;
   try {
     String url = '$urlGroupPosts/$name/$start/$end';
     final response = await http.Client().get(url).timeout(maxTime);
     // Save loaded data...
-    sharedPreferences.setString(
-        Keys.messageboardPosts(name, start, end), response.body);
-    await sharedPreferences.commit();
+    Storage.setString(Keys.messageboardPosts(name, start, end), response.body);
   } catch (e) {
     print("Error during downloading posts: " + e.toString());
-    if (sharedPreferences.getString(Keys.messageboardPosts(name, start, end)) ==
-        null) {
+    if (Storage.getString(Keys.messageboardPosts(name, start, end)) == null) {
       // Set default data...
-      sharedPreferences.setString(
-          Keys.messageboardPosts(name, start, end), '[]');
+      Storage.setString(Keys.messageboardPosts(name, start, end), '[]');
     }
   }
 
@@ -274,22 +258,19 @@ List<Group> getGroups() {
 
 // Load posts of a group from preferences...
 Future<List<Post>> fetchPosts(String name, int start, int end) async {
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   return parsePosts(
-      sharedPreferences.getString(Keys.messageboardPosts(name, start, end)));
+      Storage.getString(Keys.messageboardPosts(name, start, end)));
 }
 
 // Load feed from preferences...
 Future<Feed> fetchFeed(int start, int end, List<String> groups) async {
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   return parseFeed(
-      sharedPreferences.getString(Keys.messageboardFeed(start, end, groups)));
+      Storage.getString(Keys.messageboardFeed(start, end, groups)));
 }
 
 // Load groups from preferences...
 Future<List<Group>> fetchGroups() async {
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  return parseGroups(sharedPreferences.getString(Keys.messageboardGroups));
+  return parseGroups(Storage.getString(Keys.messageboardGroups));
 }
 
 // Returns parsed posts...

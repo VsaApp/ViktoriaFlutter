@@ -1,14 +1,12 @@
 import 'dart:convert';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../Keys.dart';
+import '../Storage.dart';
 import '../Tags.dart' as Tags;
 import 'MessageboardData.dart' as data;
 
 /// Defines the messageboard...
 class Messageboard {
-  static SharedPreferences sharedPreferences;
   static List<Group> allGroups;
   static Feed feed;
   static Function(String status) statusListener;
@@ -44,7 +42,7 @@ class Messageboard {
 
   static List<Group> get myBlockedGroups {
     List<Group> blockedGroups =
-        (sharedPreferences.getStringList(Keys.blockedGroups) ?? [])
+    (Storage.getStringList(Keys.blockedGroups) ?? [])
             .map((group) {
               List<Group> g = allGroups.where((i) => i.name == group).toList();
 
@@ -73,24 +71,23 @@ class Messageboard {
   /// Get all logged in groups...
   static List<Group> get loggedIn {
     List<String> deletedGroups = [];
-    List<Group> groups =
-        (sharedPreferences.getStringList(Keys.loggedInGroups) ?? [])
-            .map((group) {
-              List<Group> g = allGroups.where((i) => i.name == group).toList();
+    List<Group> groups = (Storage.getStringList(Keys.loggedInGroups) ?? [])
+        .map((group) {
+      List<Group> g = allGroups.where((i) => i.name == group).toList();
 
-              // If the group exist, return the group...
-              if (g.length == 1)
-                return g[0];
-              else
-                deletedGroups.add(group);
-              return null;
-            })
-            .where((group) => group != null)
-            .toList();
+      // If the group exist, return the group...
+      if (g.length == 1)
+        return g[0];
+      else
+        deletedGroups.add(group);
+      return null;
+    })
+        .where((group) => group != null)
+        .toList();
 
     // Delete all deleted groups in the preferences...
     if (deletedGroups.length > 0)
-      sharedPreferences.setStringList(
+      Storage.setStringList(
           Keys.loggedInGroups, groups.map((i) => i.name).toList());
 
     return groups;
@@ -99,25 +96,24 @@ class Messageboard {
   /// Get all groups which the user follow...
   static List<Group> get following {
     List<String> deletedGroups = [];
-    List<Group> following =
-        (sharedPreferences.getStringList(Keys.feedGroups) ?? [])
-            .map((group) {
-              List<Group> g = allGroups.where((i) => i.name == group).toList();
+    List<Group> following = (Storage.getStringList(Keys.feedGroups) ?? [])
+        .map((group) {
+      List<Group> g = allGroups.where((i) => i.name == group).toList();
 
-              // If the group exist, return the group...
-              if (g.length == 1)
-                return g[0];
-              else
-                deletedGroups.add(group);
-              return null;
-            })
-            .toList()
-            .where((group) => group != null)
-            .toList();
+      // If the group exist, return the group...
+      if (g.length == 1)
+        return g[0];
+      else
+        deletedGroups.add(group);
+      return null;
+    })
+        .toList()
+        .where((group) => group != null)
+        .toList();
 
     // Delete all deleted groups in the preferences...
     if (deletedGroups.length > 0)
-      sharedPreferences.setStringList(
+      Storage.setStringList(
           Keys.feedGroups, following.map((i) => i.name).toList());
 
     return following;
@@ -127,7 +123,7 @@ class Messageboard {
   static List<Group> get notifications {
     List<String> deletedGroups = [];
     List<Group> notifications =
-        (sharedPreferences.getStringList(Keys.notificationGroups) ?? [])
+    (Storage.getStringList(Keys.notificationGroups) ?? [])
             .map((group) {
               List<Group> g = allGroups.where((i) => i.name == group).toList();
 
@@ -144,7 +140,7 @@ class Messageboard {
 
     /// Delete all deleted groups in the preferences...
     if (deletedGroups.length > 0)
-      sharedPreferences.setStringList(
+      Storage.setStringList(
           Keys.notificationGroups, notifications.map((i) => i.name).toList());
 
     return notifications;
@@ -173,7 +169,7 @@ class Messageboard {
   /// Get all groups which the user is waiting for a confirmation...
   static List<Group> get waiting {
     List<Group> waitingGroups =
-        (sharedPreferences.getStringList(Keys.waitingGroups) ?? [])
+    (Storage.getStringList(Keys.waitingGroups) ?? [])
             .map((group) {
               List<Group> g = allGroups.where((i) => i.name == group).toList();
 
@@ -211,13 +207,12 @@ class Messageboard {
       {Function() onAdded, Function(int error) onFailed}) {
     // Count the current waiting groups...
     List<String> currentList =
-        (sharedPreferences.getStringList(Keys.waitingGroups) ?? []).toList();
+    (Storage.getStringList(Keys.waitingGroups) ?? []).toList();
 
     // If there are max 2 waiting groups, add this group...
     if (currentList.length < 3) {
       // Add the group in the preferences...
-      sharedPreferences.setStringList(
-          Keys.waitingGroups, currentList..add(username));
+      Storage.setStringList(Keys.waitingGroups, currentList..add(username));
       // Add group to the api...
       data
           .addGroup(username: username, password: password, info: info)
@@ -225,8 +220,7 @@ class Messageboard {
         if (successfully) {
           // Save login data for this group...
           toogleLoginGroup(username, login: true);
-          sharedPreferences.setString(
-              Keys.groupEditPassword(username), password);
+          Storage.setString(Keys.groupEditPassword(username), password);
           // Update groups list...
           data.downloadGroups().then((_) {
             setFollowGroup(username, follow: true, notifications: true);
@@ -247,9 +241,9 @@ class Messageboard {
     setFollowGroup(group.name, follow: false, notifications: false);
     if (group.status == 'waiting') {
       List<String> currentWaitingGroups =
-          sharedPreferences.getStringList(Keys.waitingGroups) ?? [];
+          Storage.getStringList(Keys.waitingGroups) ?? [];
       if (currentWaitingGroups.contains(group.name)) {
-        sharedPreferences.setStringList(
+        Storage.setStringList(
             Keys.waitingGroups, currentWaitingGroups..remove(group.name));
       }
     }
@@ -259,7 +253,7 @@ class Messageboard {
         .then((successfully) {
       if (successfully) {
         // Remove login data for this group...
-        sharedPreferences.remove(Keys.groupEditPassword(group.name));
+        Storage.remove(Keys.groupEditPassword(group.name));
         // Update groups list...
         data.downloadGroups().then((_) {
           feed.update().then((_) {
@@ -277,8 +271,7 @@ class Messageboard {
     data
         .addPost(
             username: username,
-            password:
-                sharedPreferences.getString(Keys.groupEditPassword(username)),
+        password: Storage.getString(Keys.groupEditPassword(username)),
             title: title,
             text: text)
         .then((successfully) async {
@@ -298,45 +291,41 @@ class Messageboard {
   /// Switchs a group from the waiting list to the activated list...
   static void confirmWaitingGroup(String username) {
     List<String> currentList =
-        (sharedPreferences.getStringList(Keys.waitingGroups) ?? []).toList();
+    (Storage.getStringList(Keys.waitingGroups) ?? []).toList();
     if (!currentList.contains(username))
       throw 'confirmWaitingGroup: "$username" do not exist!';
-    sharedPreferences.setStringList(
+    Storage.setStringList(
         Keys.waitingGroups, currentList..remove(currentList..remove(username)));
   }
 
   /// Switchs a group from the waiting list to the blocked list...
   static void blockWaitingGroup(String username) {
     List<String> currentList =
-        (sharedPreferences.getStringList(Keys.waitingGroups) ?? []).toList();
+    (Storage.getStringList(Keys.waitingGroups) ?? []).toList();
     if (!currentList.contains(username))
       throw 'blockWaitingGroup: "$username" do not exist!';
 
     // Add this group to the blocked groups and remove it from the waiting groups...
-    sharedPreferences.setStringList(
-        Keys.blockedGroups,
-        (sharedPreferences.getStringList(Keys.blockedGroups) ?? [])
+    Storage.setStringList(Keys.blockedGroups,
+        (Storage.getStringList(Keys.blockedGroups) ?? [])
           ..add(username));
-    sharedPreferences.setStringList(
-        Keys.waitingGroups, currentList..remove(username));
+    Storage.setStringList(Keys.waitingGroups, currentList..remove(username));
   }
 
   /// Removes a group from the blocked list...
   static void confirmBolckedGroup(String username) {
     List<String> currentList =
-        (sharedPreferences.getStringList(Keys.blockedGroups) ?? []).toList();
+    (Storage.getStringList(Keys.blockedGroups) ?? []).toList();
     if (!currentList.contains(username))
       throw 'confirmBolckedGroup: "$username" do not exist!';
-    sharedPreferences.setStringList(
-        Keys.blockedGroups, currentList..remove(username));
+    Storage.setStringList(Keys.blockedGroups, currentList..remove(username));
   }
 
   /// Sets the login state of a group
   ///
   /// bool login sets the must value
   static void toogleLoginGroup(String username, {bool login}) {
-    List<String> groups =
-        (sharedPreferences.getStringList(Keys.loggedInGroups) ?? []);
+    List<String> groups = (Storage.getStringList(Keys.loggedInGroups) ?? []);
 
     if (login != null) {
       if (login && !groups.contains(username))
@@ -348,8 +337,7 @@ class Messageboard {
       groups.add(username);
 
     // Save new groups list in the preferences...
-    sharedPreferences.setStringList(Keys.loggedInGroups, groups);
-    sharedPreferences.commit();
+    Storage.setStringList(Keys.loggedInGroups, groups);
   }
 
   static setFollowGroup(String group,
@@ -362,9 +350,9 @@ class Messageboard {
 
     // Get current lists...
     List<String> currentFollowingList =
-        sharedPreferences.getStringList(Keys.feedGroups) ?? [];
+        Storage.getStringList(Keys.feedGroups) ?? [];
     List<String> currentNotificationList =
-        sharedPreferences.getStringList(Keys.notificationGroups) ?? [];
+        Storage.getStringList(Keys.notificationGroups) ?? [];
 
     // Update following if it's a new state...
     if (follow && !currentFollowingList.contains(group)) {
@@ -388,9 +376,8 @@ class Messageboard {
     }
 
     // Set new lists...
-    sharedPreferences.setStringList(
-        Keys.feedGroups, currentFollowingList.toList());
-    sharedPreferences.setStringList(
+    Storage.setStringList(Keys.feedGroups, currentFollowingList.toList());
+    Storage.setStringList(
         Keys.notificationGroups, currentNotificationList.toList());
 
     // Update tags if required...
@@ -474,14 +461,12 @@ class Group {
   }
 
   /// Updates the object and the group on the api...
-  Future<bool> update(SharedPreferences sharedPreferences,
-      {String newInfo, String newPassword}) async {
+  Future<bool> update({String newInfo, String newPassword}) async {
     info = newInfo ?? info;
-    password = newPassword ??
-        sharedPreferences.getString(Keys.groupEditPassword(name));
+    password = newPassword ?? Storage.getString(Keys.groupEditPassword(name));
     bool updated = await data.updateGroup(
         username: name,
-        password: sharedPreferences.getString(Keys.groupEditPassword(name)),
+        password: Storage.getString(Keys.groupEditPassword(name)),
         newInfo: info,
         newPassword: password);
     if (newInfo != null) {

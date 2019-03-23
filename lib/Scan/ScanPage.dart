@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile_vision/flutter_mobile_vision.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ScanView.dart';
 
@@ -12,7 +11,6 @@ class ScanPage extends StatefulWidget {
 }
 
 abstract class ScanPageState extends State<ScanPage> {
-  SharedPreferences sharedPreferences;
   int cameraOcr = FlutterMobileVision.CAMERA_BACK;
   Size previewOcr;
   List<OcrText> texts = [];
@@ -46,11 +44,6 @@ abstract class ScanPageState extends State<ScanPage> {
   @override
   void initState() {
     super.initState();
-    SharedPreferences.getInstance().then((instance) {
-      setState(() {
-        sharedPreferences = instance;
-      });
-    });
     FlutterMobileVision.start().then((previewSizes) {
       setState(() {
         previewOcr = previewSizes[cameraOcr].first;

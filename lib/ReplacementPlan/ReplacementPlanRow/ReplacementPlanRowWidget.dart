@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:viktoriaflutter/Rooms.dart';
 
 import '../ReplacementPlanModel.dart';
@@ -10,13 +9,13 @@ class ReplacementPlanRow extends StatelessWidget {
     @required this.change,
     @required this.changes,
     @required this.weekday,
-    @required this.sharedPreferences,
+    this.isDialog = false,
   }) : super(key: key);
 
   final Change change;
   final List<dynamic> changes;
   final int weekday;
-  final SharedPreferences sharedPreferences;
+  final bool isDialog;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +25,10 @@ class ReplacementPlanRow extends StatelessWidget {
     if (changes.indexOf(change) !=
         0) if (changes[changes.indexOf(change) - 1].unit == change.unit)
       showUnit = false;
+    double width = MediaQuery
+        .of(context)
+        .size
+        .width - (isDialog ? 168 : 40);
     return Container(
       padding: EdgeInsets.only(
           // Add padding if unit not shown
@@ -34,150 +37,152 @@ class ReplacementPlanRow extends StatelessWidget {
           bottom: 0,
           left: 10,
           right: 10),
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          return Row(
-            children: <Widget>[
-              Column(children: <Widget>[
-                // Show unit of change
-                Container(
-                  width: constraints.maxWidth * 0.07,
-                  child: Text(
-                    (showUnit) ? '${change.unit + 1}' : '',
-                    style: TextStyle(
-                      color: Colors.black54,
-                    ),
-                  ),
+      child: Row(
+        children: <Widget>[
+          Column(children: <Widget>[
+            // Show unit of change
+            Container(
+              width: width * 0.07,
+              child: Text(
+                (showUnit) ? '${change.unit + 1}' : '',
+                style: TextStyle(
+                  color: Colors.black54,
                 ),
-              ]),
-              Container(
-                padding: EdgeInsets.only(
-                    left: constraints.maxWidth * 0.03 - 2, top: 5, bottom: 5),
-                decoration: BoxDecoration(
-                  border: Border(
-                    left: BorderSide(
-                        width: 2,
-                        color: (change.color == null)
-                            ?
-                            // Default color
-                            Theme.of(context).primaryColor
-                            :
-                            // Changed color
-                            change.color),
-                  ),
-                ),
-                child: Row(
+              ),
+            ),
+          ]),
+          Container(
+            padding: EdgeInsets.only(left: width * 0.03 - 2, top: 5, bottom: 5),
+            decoration: BoxDecoration(
+              border: Border(
+                left: BorderSide(
+                    width: 2,
+                    color: (change.color == null)
+                        ?
+                    // Default color
+                    Theme
+                        .of(context)
+                        .primaryColor
+                        :
+                    // Changed color
+                    change.color),
+              ),
+            ),
+            child: Row(
+              children: <Widget>[
+                Column(
                   children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                        // Original subject
-                        (change.lesson.length > 0 ||
-                                change.room.length > 0 ||
-                                change.teacher.length > 0)
-                            ? Container(
-                                width: constraints.maxWidth * 0.60,
-                                child: Text(
-                                  change.lesson,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15.0,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                ),
-                              )
-                            : Container(),
-                        // Information
-                        Container(
-                            width: constraints.maxWidth * 0.60,
-                            child: Text(
-                              (change.changed.subject != ''
-                                      ? change.changed.subject
-                                      : '') +
-                                  (change.changed.info != '' &&
-                                          change.changed.subject != ''
-                                      ? ': '
-                                      : '') +
-                                  (change.changed.info != ''
-                                      ? change.changed.info
-                                      : ''),
-                              style: TextStyle(
-                                color: Colors.black54,
-                              ),
-                            )),
-                      ],
-                    ),
-                    Column(
-                      children: <Widget>[
-                        // Original room
-                        (change.lesson.length > 0 ||
-                                change.room.length > 0 ||
-                                change.teacher.length > 0)
-                            ? Container(
-                                width: constraints.maxWidth * 0.15,
-                                child: Text(
-                                  getRoom(
-                                    sharedPreferences,
-                                    weekday,
-                                    change.unit,
-                                    change.lesson,
-                                    change.room,
-                                  ),
-                                  style: TextStyle(
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                ),
-                              )
-                            : Container(),
-                        // Changed room
-                        Container(
-                          width: constraints.maxWidth * 0.15,
-                          child: Text(
-                            change.changed.room == change.room
-                                ? ''
-                                : change.changed.room,
-                            style: TextStyle(
-                              color: Colors.black54,
-                            ),
-                          ),
+                    // Original subject
+                    (change.lesson.length > 0 ||
+                        change.room.length > 0 ||
+                        change.teacher.length > 0)
+                        ? Container(
+                      width: width * 0.60,
+                      child: Text(
+                        change.lesson,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15.0,
+                          color: Theme
+                              .of(context)
+                              .primaryColor,
                         ),
-                      ],
-                    ),
-                    Column(
-                      children: <Widget>[
-                        // Original teacher
-                        (change.lesson.length > 0 ||
-                                change.room.length > 0 ||
-                                change.teacher.length > 0)
-                            ? Container(
-                                width: constraints.maxWidth * 0.15,
-                                child: Text(
-                                  nTeacher,
-                                  style: TextStyle(
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                ),
-                              )
-                            : Container(),
-                        // Changed teacher
-                        Container(
-                            width: constraints.maxWidth * 0.15,
-                            child: Text(
-                              nTeacher == cTeacher &&
-                                      change.changed.info != 'Klausur'
-                                  ? ''
-                                  : cTeacher,
-                              style: TextStyle(
-                                color: Colors.black54,
-                              ),
-                            )),
-                      ],
+                      ),
+                    )
+                        : Container(),
+                    // Information
+                    Container(
+                        width: width * 0.60,
+                        child: Text(
+                          (change.changed.subject != ''
+                              ? change.changed.subject
+                              : '') +
+                              (change.changed.info != '' &&
+                                  change.changed.subject != ''
+                                  ? ': '
+                                  : '') +
+                              (change.changed.info != ''
+                                  ? change.changed.info
+                                  : ''),
+                          style: TextStyle(
+                            color: Colors.black54,
+                          ),
+                        )),
+                  ],
+                ),
+                Column(
+                  children: <Widget>[
+                    // Original room
+                    (change.lesson.length > 0 ||
+                        change.room.length > 0 ||
+                        change.teacher.length > 0)
+                        ? Container(
+                      width: width * 0.15,
+                      child: Text(
+                        getRoom(
+                          weekday,
+                          change.unit,
+                          change.lesson,
+                          change.room,
+                        ),
+                        style: TextStyle(
+                          color: Theme
+                              .of(context)
+                              .primaryColor,
+                        ),
+                      ),
+                    )
+                        : Container(),
+                    // Changed room
+                    Container(
+                      width: width * 0.15,
+                      child: Text(
+                        change.changed.room == change.room
+                            ? ''
+                            : change.changed.room,
+                        style: TextStyle(
+                          color: Colors.black54,
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          );
-        },
+                Column(
+                  children: <Widget>[
+                    // Original teacher
+                    (change.lesson.length > 0 ||
+                        change.room.length > 0 ||
+                        change.teacher.length > 0)
+                        ? Container(
+                      width: width * 0.15,
+                      child: Text(
+                        nTeacher,
+                        style: TextStyle(
+                          color: Theme
+                              .of(context)
+                              .primaryColor,
+                        ),
+                      ),
+                    )
+                        : Container(),
+                    // Changed teacher
+                    Container(
+                        width: width * 0.15,
+                        child: Text(
+                          nTeacher == cTeacher &&
+                              change.changed.info != 'Klausur'
+                              ? ''
+                              : cTeacher,
+                          style: TextStyle(
+                            color: Colors.black54,
+                          ),
+                        )),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

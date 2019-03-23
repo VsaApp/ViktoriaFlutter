@@ -1,7 +1,8 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Cafetoria/CafetoriaPage.dart';
 import '../Calendar/CalendarPage.dart';
@@ -11,6 +12,7 @@ import '../Localizations.dart';
 import '../Messageboard/MessageboardView.dart';
 import '../ReplacementPlan/ReplacementPlanPage.dart';
 import '../Settings/SettingsPage.dart';
+import '../Storage.dart';
 import '../UnitPlan/UnitPlanPage.dart';
 import '../WorkGroups/WorkGroupsPage.dart';
 import 'HomePage.dart';
@@ -68,17 +70,15 @@ class HomePageView extends HomePageState {
       dialogShown = true;
 
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        SharedPreferences sharedPreferences =
-            await SharedPreferences.getInstance();
-        bool selectedSubjects = sharedPreferences.getKeys().where((key) {
-              if (key.startsWith(
-                  'unitPlan-${sharedPreferences.getString(Keys.grade)}-')) {
-                if ('-'.allMatches(key).length == 3)
-                  return key.split('-')[key.split('-').length - 1] != '5';
-                return true;
-              }
-              return false;
-            }).length >
+        bool selectedSubjects = Storage.getKeys().where((key) {
+          if (key
+              .startsWith('unitPlan-${Storage.getString(Keys.grade)}-')) {
+            if ('-'.allMatches(key).length == 3)
+              return key.split('-')[key.split('-').length - 1] != '5';
+            return true;
+          }
+          return false;
+        }).length >
             0;
         // Check if user selected anything in the unit plan (setup)
         if (selectedSubjects) {
@@ -95,8 +95,9 @@ class HomePageView extends HomePageState {
                 });
           }
         } else {
-          String grade = sharedPreferences.getString(Keys.grade);
-          if (grade == 'EF' || grade == 'Q1' || grade == 'Q2') {
+          String grade = Storage.getString(Keys.grade);
+          if ((grade == 'EF' || grade == 'Q1' || grade == 'Q2') &&
+              (Platform.isIOS || Platform.isAndroid)) {
             showDialog(
                 context: context,
                 barrierDismissible: true,
