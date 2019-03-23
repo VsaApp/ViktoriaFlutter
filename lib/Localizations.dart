@@ -211,6 +211,13 @@ class AppLocalizations {
       'syncPhoneDescription':
       'Wenn du auf deinem Handy und in dieser Anwendung immer die selben Sachen sehen möchtest, dann musst die Synchronisierungs-ID aus deine Einstellungen deiner App nehmen und hier eingeben:',
       'skip': 'Überspringen',
+      'weekdays': [
+        'Montag',
+        'Dienstag',
+        'Mittwoch',
+        'Donnerstag',
+        'Freitag',
+      ],
     },
   };
 
@@ -891,6 +898,10 @@ class AppLocalizations {
 
   String get skip {
     return _localizedValues[locale.languageCode]['skip'];
+  }
+
+  List<String> get weekdays {
+    return _localizedValues[locale.languageCode]['weekdays'];
   }
 }
 

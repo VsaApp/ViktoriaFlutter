@@ -1,22 +1,154 @@
 import 'package:flutter/material.dart';
 
 import '../Home/HomePage.dart';
-import 'UnitPlanData.dart';
+import '../Keys.dart';
+import '../Localizations.dart';
+import '../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
+import '../ReplacementPlan/ReplacementPlanModel.dart';
+import '../Storage.dart';
+import '../TabProxy.dart';
+import 'UnitPlanData.dart' as unitplan;
 import 'UnitPlanDayList/UnitPlanDayListWidget.dart';
+import 'UnitPlanModel.dart';
 
 class UnitPlanPage extends StatefulWidget {
   @override
   UnitPlanView createState() => UnitPlanView();
 }
 
-class UnitPlanView extends State<UnitPlanPage> {
+class UnitPlanView extends State<UnitPlanPage>
+    with SingleTickerProviderStateMixin {
   Function() listener;
+  bool thisWeek = true;
+  List<UnitPlanDay> days;
+  TabController controller;
+  String originalWeek;
+  List<String> weekdays;
+
+  void setWeeks() {
+    // Get the week number of the shown week...
+    DateTime today = DateTime(
+        DateTime
+            .now()
+            .year, DateTime
+        .now()
+        .month, DateTime
+        .now()
+        .day + 1);
+    DateTime startOfYear = DateTime(today.year, 1, 1, 0, 0);
+    int firstMonday = startOfYear.weekday;
+    int daysInFirstWeek = 8 - firstMonday;
+    Duration diff = today.difference(startOfYear);
+    int weeks = ((diff.inDays - daysInFirstWeek) / 7).ceil();
+    if (daysInFirstWeek > 3) weeks++;
+    if (!thisWeek) weeks++;
+    String currentWeek = weeks % 2 == 0 ? 'A' : 'B';
+
+    // Set all days to this week...
+    UnitPlan.days.forEach((UnitPlanDay day) => day.showWeek = currentWeek);
+
+    // If there are changes for other weeks, set that days to this week...
+    DateTime dateOfMonday = today.add(Duration(
+        days: thisWeek ? -today.weekday : DateTime.sunday + 1 - today.weekday));
+    for (int i = 0; i < ReplacementPlan.days.length; i++) {
+      ReplacementPlanDay day = ReplacementPlan.days[i];
+      if (day.weektype != currentWeek) {
+        DateTime date = DateTime(
+            int.parse(day.date.split('.')[2]),
+            int.parse(day.date.split('.')[1]),
+            int.parse(day.date.split('.')[0]));
+        for (int j = 0; j < UnitPlan.days.length; j++) {
+          DateTime dateOfDay = dateOfMonday.add(Duration(days: j));
+          if (date.isAfter(today) && dateOfDay.weekday <= date.weekday)
+            UnitPlan.days[j].showWeek = day.weektype;
+          else if (date.isBefore(today) && dateOfDay.weekday >= date.weekday)
+            UnitPlan.days[j].showWeek = day.weektype;
+        }
+      }
+    }
+  }
+
+  int getCurrentWeekday() {
+    int weekday = DateTime
+        .now()
+        .weekday - 1;
+    bool over = false;
+    if (weekday > 4) {
+      weekday = 0;
+      thisWeek = false;
+    } else if (days[weekday].lessons.length > 0) {
+      if (DateTime.now().isAfter(DateTime(
+        DateTime
+            .now()
+            .year,
+        DateTime
+            .now()
+            .month,
+        DateTime
+            .now()
+            .day,
+        8,
+      ).add(Duration(
+          minutes: [60, 130, 210, 280, 360, 420, 480, 545][days[weekday]
+              .getUserLesseonsCount(
+              AppLocalizations
+                  .of(context)
+                  .freeLesson) -
+              1])))) {
+        over = true;
+      }
+    }
+    if (over) {
+      weekday++;
+    }
+    // If weekend select Monday
+    if (weekday > 4) {
+      weekday = 0;
+      thisWeek = false;
+    }
+
+    return weekday;
+  }
 
   @override
   void initState() {
     listener = () => setState(() => null);
     HomePageState.replacementplanUpdatedListeners.add(listener);
     HomePageState.setWeekChangeable(true);
+    WidgetsBinding.instance.addPostFrameCallback((a) {
+      setState(() {
+        weekdays = AppLocalizations
+            .of(context)
+            .weekdays
+            .map((day) => day.substring(0, 2).toUpperCase())
+            .toList();
+      });
+
+      // Select correct tab
+      controller = TabController(vsync: this, length: days.length);
+
+      int weekday = getCurrentWeekday();
+      controller.animateTo(weekday);
+      setWeeks();
+
+      HomePageState.updateWeek(UnitPlan.days[weekday].showWeek);
+      controller.addListener(() {
+        if (originalWeek != null) {
+          UnitPlan.days[controller.previousIndex].showWeek = originalWeek;
+          originalWeek = null;
+        }
+        HomePageState.updateWeek(UnitPlan.days[controller.index].showWeek);
+      });
+
+      // Add week listener...
+      HomePageState.weekChanged = (String week) {
+        if (originalWeek == null)
+          originalWeek = UnitPlan.days[controller.index].showWeek;
+        if (mounted)
+          setState(() => UnitPlan.days[controller.index].showWeek = week);
+      };
+    });
+    setState(() => days = unitplan.getUnitPlan());
     super.initState();
   }
 
@@ -28,6 +160,24 @@ class UnitPlanView extends State<UnitPlanPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[UnitPlanDayList(days: getUnitPlan())]);
+    if (days.length == 0 || weekdays == null) {
+      return Container();
+    }
+    return TabProxy(
+        weekdays: weekdays,
+        tabs: days
+            .map((day) =>
+            UnitPlanDayList(
+              day: day,
+              dayIndex: days.indexOf(day),
+            ))
+            .toList(),
+        controller: controller,
+        onUpdate: () async {
+          await unitplan.download(Storage.getString(Keys.grade), false);
+          replacementplan.load(unitplan.getUnitPlan(), false);
+          setWeeks();
+          setState(() => days = unitplan.getUnitPlan());
+        });
   }
 }

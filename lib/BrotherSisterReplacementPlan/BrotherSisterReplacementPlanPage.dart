@@ -17,14 +17,17 @@ class BrotherSisterReplacementPlanPage extends StatefulWidget {
 }
 
 abstract class BrotherSisterReplacementPlanPageState
-    extends State<BrotherSisterReplacementPlanPage> {
+    extends State<BrotherSisterReplacementPlanPage>
+    with SingleTickerProviderStateMixin {
   List<ReplacementPlanDay> days;
+  TabController controller;
 
   @override
   void initState() {
     unitplan.download(widget.grade, true).then((days1) {
       setState(() {
         days = replacementplan.load(days1, true);
+        controller = TabController(vsync: this, length: days.length);
       });
     });
     super.initState();

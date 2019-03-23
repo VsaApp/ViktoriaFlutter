@@ -42,17 +42,18 @@ class ReplacementPlanRow extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Container(
-              height: 45,
+              height: 35,
               alignment: Alignment.centerRight,
               decoration: BoxDecoration(
                 border: Border(
                   left: BorderSide(
-                      width: 2,
-                      color: (change.color == null)
-                          ? Theme
-                          .of(context)
-                          .primaryColor
-                          : change.color),
+                    width: 2,
+                    color: (change.color == null)
+                        ? Theme
+                        .of(context)
+                        .primaryColor
+                        : change.color,
+                  ),
                 ),
               ),
             ),
@@ -60,7 +61,6 @@ class ReplacementPlanRow extends StatelessWidget {
           Expanded(
             flex: 90,
             child: Container(
-              height: 33,
               margin: EdgeInsets.only(top: 5, bottom: 5),
               child: Column(
                 children: <Widget>[

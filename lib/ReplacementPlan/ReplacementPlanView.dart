@@ -4,24 +4,39 @@ import '../BrotherSisterReplacementPlan/BrotherSisterReplacementPlanPage.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
 import '../Network.dart';
-import '../ReplacementPlan/ReplacementPlanData.dart';
-import '../ReplacementPlan/ReplacementPlanModel.dart';
 import '../Storage.dart';
+import '../TabProxy.dart';
+import '../UnitPlan/UnitPlanData.dart' as unitplan;
 import 'GradeFAB/GradeFABWidget.dart';
+import 'ReplacementPlanData.dart' as replacementplan;
 import 'ReplacementPlanDayList/ReplacementPlanDayListWidget.dart';
 import 'ReplacementPlanPage.dart';
 
 class ReplacementPlanPageView extends ReplacementPlanPageState {
   @override
   Widget build(BuildContext context) {
-    List<ReplacementPlanDay> data = getReplacementPlan();
+    if (days == null) {
+      return Container();
+    }
     return Scaffold(
       body: Stack(children: <Widget>[
-        Column(
-          children: <Widget>[
-            ReplacementPlanDayList(
-                days: data, sort: Storage.getBool(Keys.sortReplacementPlan))
-          ],
+        TabProxy(
+          weekdays: weekdays,
+          tabs: days
+              .map((day) =>
+              ReplacementPlanDayList(
+                day: day,
+                dayIndex: days.indexOf(day),
+                grade: Storage.getString(Keys.grade),
+                sort: Storage.getBool(Keys.sortReplacementPlan),
+              ))
+              .toList(),
+          controller: controller,
+          onUpdate: () async {
+            await unitplan.download(Storage.getString(Keys.grade), false);
+            replacementplan.load(unitplan.getUnitPlan(), false);
+            setState(() => days = replacementplan.getReplacementPlan());
+          },
         ),
         // FAB
         Positioned(

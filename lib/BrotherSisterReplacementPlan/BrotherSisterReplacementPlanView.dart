@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../Keys.dart';
+import '../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
 import '../ReplacementPlan/ReplacementPlanDayList/ReplacementPlanDayListWidget.dart';
+import '../Storage.dart';
+import '../TabProxy.dart';
+import '../UnitPlan/UnitPlanData.dart' as unitplan;
 import 'BrotherSisterReplacementPlanPage.dart';
 
 class BrotherSisterReplacementPlanPageView
@@ -17,15 +22,28 @@ class BrotherSisterReplacementPlanPageView
       ),
       body: Hero(
         tag: 'replacementplan-' + widget.grade,
-        child: Column(
-          children: <Widget>[
-            ReplacementPlanDayList(
-              days: days,
-              sort: false,
-              temp: true,
-              grade: widget.grade,
-            ),
-          ],
+        child: TabProxy(
+          weekdays: days.map((day) => day.weekday).toList(),
+          tabs: days
+              .map((day) =>
+              ReplacementPlanDayList(
+                day: day,
+                dayIndex: days.indexOf(day),
+                temp: true,
+                grade: widget.grade,
+                sort: false,
+              ))
+              .toList(),
+          controller: controller,
+          onUpdate: () async {
+            unitplan
+                .download(widget.grade ?? Storage.getString(Keys.grade), true)
+                .then((days1) {
+              setState(() {
+                days = replacementplan.load(days1, true);
+              });
+            });
+          },
         ),
       ),
     );
