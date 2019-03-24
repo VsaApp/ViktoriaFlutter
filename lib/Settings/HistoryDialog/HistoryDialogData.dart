@@ -11,7 +11,8 @@ import 'HistoryDialogModel.dart';
 Future<List<Year>> download(String type) async {
   String url =
       'https://history.api.vsa.2bad2c0.de/$type?v=${Random().nextInt(99999999)}';
-  await fetchDataAndSave(url, Keys.history(type), '[]');
+  await fetchDataAndSave(url, Keys.history(type), '[]',
+      timeout: Duration(minutes: 1));
 
   return await fetchDays(type);
 }

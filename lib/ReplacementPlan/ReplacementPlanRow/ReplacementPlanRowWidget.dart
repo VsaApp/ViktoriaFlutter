@@ -10,19 +10,21 @@ class ReplacementPlanRow extends StatelessWidget {
     @required this.changes,
     @required this.weekday,
     this.isDialog = false,
+    this.showUnit = true,
   }) : super(key: key);
 
   final Change change;
   final List<dynamic> changes;
   final int weekday;
   final bool isDialog;
+  final bool showUnit;
 
   @override
   Widget build(BuildContext context) {
-    bool showUnit = true;
+    bool show = showUnit;
     if (changes.indexOf(change) != 0 &&
         changes[changes.indexOf(change) - 1].unit == change.unit) {
-      showUnit = false;
+      show = false;
     }
     return Container(
       margin: EdgeInsets.only(top: 2.5, bottom: 2.5),
@@ -32,7 +34,7 @@ class ReplacementPlanRow extends StatelessWidget {
             flex: 8,
             child: Center(
               child: Text(
-                (showUnit) ? '${change.unit + 1}' : '',
+                (show) ? '${change.unit + 1}' : '',
                 style: TextStyle(
                   color: Colors.black,
                 ),

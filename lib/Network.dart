@@ -25,14 +25,21 @@ Future<int> get checkOnline async {
   }
 }
 
-Future fetchDataAndSave(String url, String key, String defaultValue,
-    {Map<String, dynamic> body}) async {
+Future fetchDataAndSave(String url,
+    String key,
+    String defaultValue, {
+      Map<String, dynamic> body,
+      Duration timeout,
+    }) async {
+  if (timeout == null) {
+    timeout = maxTime;
+  }
   try {
     dynamic response;
     if (body != null) {
       response = await post(url, body: body);
     } else
-      response = (await http.Client().get(url).timeout(maxTime)).body;
+      response = (await http.Client().get(url).timeout(timeout)).body;
     Storage.setString(key, response);
   } catch (e) {
     print("Error during downloading \'$key\': " + e.toString());
@@ -42,9 +49,14 @@ Future fetchDataAndSave(String url, String key, String defaultValue,
   }
 }
 
-Future<String> fetchData(String url) async {
+Future<String> fetchData(String url, {
+  Duration timeout,
+}) async {
+  if (timeout == null) {
+    timeout = maxTime;
+  }
   try {
-    final response = await http.Client().get(url).timeout(maxTime);
+    final response = await http.Client().get(url).timeout(timeout);
     return response.body;
   } catch (e) {
     print("Error druing fetching date ($url): " + e.toString());
