@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../Rooms.dart';
 import '../../../Rooms/RoomsModel.dart';
+import '../../../Tags.dart';
 
 class RoomEdit extends StatefulWidget {
   final subject;
@@ -72,6 +73,7 @@ class RoomEditView extends State<RoomEdit> {
                       widget.subject['subject'].lesson,
                       value,
                     );
+                    syncTags();
                   });
                 },
               ),
