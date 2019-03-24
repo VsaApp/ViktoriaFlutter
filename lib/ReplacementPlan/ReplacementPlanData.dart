@@ -9,6 +9,11 @@ List<ReplacementPlanDay> load(List<UnitPlanDay> _days, bool temp) {
 
   // Return or set the data in a static object...
   if (!(temp ?? false)) {
+    days.sort((a, b) =>
+        DateTime(int.parse(a.date.split('.')[2]),
+            int.parse(a.date.split('.')[1]), int.parse(a.date.split('.')[0]))
+            .compareTo(DateTime(int.parse(b.date.split('.')[2]),
+            int.parse(b.date.split('.')[1]), int.parse(b.date.split('.')[0]))));
     ReplacementPlan.days = days;
     return null;
   } else {
