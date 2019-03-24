@@ -43,7 +43,7 @@ class HomePage extends StatefulWidget {
 
 abstract class HomePageState extends State<HomePage> {
   String currentWeek = 'A';
-  bool showWeek = true;
+  bool showWeek = false;
   static bool weekChangeable = true;
   Scaffold appScaffold;
   int selectedDrawerIndex = 0;
@@ -95,6 +95,9 @@ abstract class HomePageState extends State<HomePage> {
     checkUntiplanData();
     HomePageState.updateWeek = _updateWeek;
     HomePageState.setShowWeek = _showWeek;
+    if (selectedDrawerIndex <= 1) {
+      setShowWeek(true);
+    }
     // Default follow VsaApp in messageboard...
     if (Storage.getStringList(Keys.feedGroups) == null)
       Messageboard.setFollowGroup('VsaApp');
@@ -194,7 +197,9 @@ abstract class HomePageState extends State<HomePage> {
       List<String> keysToReset = keys
           .where((String key) => ((key.startsWith('room') ||
           key.startsWith('exams') ||
-          (key.startsWith('unitPlan') && key.split('-').length > 2))))
+          (key.startsWith('unitPlan') && key
+              .split('-')
+              .length > 2))))
           .toList();
       keysToReset.forEach((String key) => Storage.remove(key));
       unitplanChanged = true;
