@@ -35,7 +35,8 @@ class ReplacementPlanPageView extends ReplacementPlanPageState {
           onUpdate: () async {
             await unitplan.download(Storage.getString(Keys.grade), false);
             replacementplan.load(unitplan.getUnitPlan(), false);
-            setState(() => days = replacementplan.getReplacementPlan());
+            setState(() =>
+            days = generateDays(replacementplan.getReplacementPlan()));
           },
         ),
         // FAB

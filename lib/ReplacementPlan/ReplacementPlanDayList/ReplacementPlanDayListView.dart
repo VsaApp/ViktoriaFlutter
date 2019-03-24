@@ -9,6 +9,42 @@ import 'ReplacementPlanDayListWidget.dart';
 class ReplacementPlanDayListView extends ReplacementPlanDayListState {
   @override
   Widget build(BuildContext context) {
+    if (widget.day.isEmpty) {
+      return Stack(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(top: 10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(AppLocalizations
+                    .of(context)
+                    .replacementplanFor),
+                Text('${widget.day.weekday}',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(AppLocalizations
+                    .of(context)
+                    .replacementplanThe),
+                Text('${widget.day.date}',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+          Container(
+            alignment: Alignment.center,
+            child: Text(
+              AppLocalizations
+                  .of(context)
+                  .notYetExistingOnServer,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
     // List of replacement plan days
     return Container(
       width: double.infinity,

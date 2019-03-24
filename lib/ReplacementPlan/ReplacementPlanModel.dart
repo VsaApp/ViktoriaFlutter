@@ -21,17 +21,19 @@ class ReplacementPlanDay {
   final List<Change> undefinedChanges;
   final List<Change> otherChanges;
   final List<Change> unparsed;
+  final isEmpty;
 
   ReplacementPlanDay({
     @required this.date,
-    @required this.time,
-    @required this.update,
     @required this.weekday,
     @required this.weektype,
-    @required this.myChanges,
-    @required this.undefinedChanges,
-    @required this.otherChanges,
-    @required this.unparsed,
+    this.time,
+    this.update,
+    this.myChanges,
+    this.undefinedChanges,
+    this.otherChanges,
+    this.unparsed,
+    this.isEmpty = false,
   });
 }
 

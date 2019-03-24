@@ -218,6 +218,7 @@ class AppLocalizations {
         'Donnerstag',
         'Freitag',
       ],
+      'notYetExistingOnServer': 'Noch nicht auf dem Schulserver vorhanden!',
     },
   };
 
@@ -902,6 +903,10 @@ class AppLocalizations {
 
   List<String> get weekdays {
     return _localizedValues[locale.languageCode]['weekdays'];
+  }
+
+  String get notYetExistingOnServer {
+    return _localizedValues[locale.languageCode]['notYetExistingOnServer'];
   }
 }
 
