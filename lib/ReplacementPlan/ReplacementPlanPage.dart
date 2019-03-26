@@ -55,7 +55,7 @@ abstract class ReplacementPlanPageState extends State<ReplacementPlanPage>
       bool over = false;
       int weekday = DateTime
           .now()
-          .weekday;
+          .weekday - 1;
       if (weekday <= 4) {
         if (unitplan.getUnitPlan()[weekday].lessons.length > 0) {
           if (DateTime.now().isAfter(DateTime(DateTime
