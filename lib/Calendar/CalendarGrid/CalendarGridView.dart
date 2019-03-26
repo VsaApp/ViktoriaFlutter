@@ -32,7 +32,9 @@ class CalendarGridView extends CalendarGridState {
             }
             int l = 0;
             while (items.length < 42) {
-              DateTime date = firstDayInMonth.add(Duration(days: l++));
+              DateTime date =
+              DateTime(firstDayInMonth.year, firstDayInMonth.month + 1, 1)
+                  .add(Duration(days: l++));
               items.add(CalendarGridItem(date: date, main: false));
             }
             List<List<Widget>> rows = [];
