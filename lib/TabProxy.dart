@@ -54,8 +54,7 @@ class TabProxyState extends State<TabProxy> {
                             ),
                           ),
                           Container(
-                            margin: EdgeInsets.only(
-                                right: 5, bottom: 5, left: 5, top: 25),
+                            margin: EdgeInsets.only(top: 25),
                             alignment: Alignment.topCenter,
                             child: tab,
                           ),
