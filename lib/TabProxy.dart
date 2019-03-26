@@ -90,6 +90,7 @@ class TabProxyState extends State<TabProxy> {
               return RefreshIndicator(
                 onRefresh: widget.onUpdate,
                 child: Container(
+                  height: double.infinity,
                   color: Colors.white,
                   child: tab,
                 ),
