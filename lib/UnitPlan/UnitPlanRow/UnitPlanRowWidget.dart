@@ -23,36 +23,34 @@ class UnitPlanRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 2.5, bottom: 2.5),
-      padding: EdgeInsets.all(1),
+      padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 10),
       child: Row(
         children: <Widget>[
           Expanded(
-            flex: 10,
+            flex: showUnit ? 10 : 0,
             child: Center(
               child: Text(
                 (showUnit)
                     ? '${((unit != 5 && showUnit)
                     ? (unit + 1).toString()
                     : '')}'
-                    : '',
-                style: TextStyle(
-                  color: Colors.black,
+                    : '',                  
+                  style: TextStyle(
+                    color: Colors.black54,
+                  ),
                 ),
               ),
-            ),
           ),
           Expanded(
-            flex: 90,
+            flex: showUnit ? 90 : 100,
             child: Container(
-              height: 33,
               margin: EdgeInsets.only(top: 5, bottom: 5, left: 2.5),
               child: Column(
                 children: <Widget>[
                   Row(
                     children: <Widget>[
                       Expanded(
-                        flex: 80,
+                        flex: 84,
                         child: (unit != 5
                             ?
                         // Normal name
@@ -78,20 +76,20 @@ class UnitPlanRow extends StatelessWidget {
                         )),
                       ),
                       Expanded(
-                        flex: 20,
+                        flex: 16,
                         child: Text(
                           subject.teacher,
                           style: TextStyle(
                             color: Colors.black,
-                          ),
-                        ),
                       ),
-                    ],
+                    ),
                   ),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        flex: 80,
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                        flex: 84,
                         child: Text(
                           (unit != 5 ? times[unit] : ''),
                           style: TextStyle(
@@ -100,7 +98,7 @@ class UnitPlanRow extends StatelessWidget {
                         ),
                       ),
                       Expanded(
-                        flex: 20,
+                        flex: 16,
                         child: Text(
                           getRoom(weekday, unit, subject.lesson, subject.room),
                           style: TextStyle(

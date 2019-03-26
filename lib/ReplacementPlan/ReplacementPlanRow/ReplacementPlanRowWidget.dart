@@ -26,50 +26,59 @@ class ReplacementPlanRow extends StatelessWidget {
         changes[changes.indexOf(change) - 1].unit == change.unit) {
       show = false;
     }
+
     return Container(
-      margin: EdgeInsets.only(top: 2.5, bottom: 2.5),
+      padding: EdgeInsets.only(
+          // Add padding if unit not shown
+          top: show ? (changes.indexOf(change) == 0 ? 10 : 20) : 5,
+          // Add padding if row is last row
+          bottom: 0,
+          left: 10,
+          right: 10),
       child: Row(
-        children: <Widget>[
-          Expanded(
-            flex: 8,
-            child: Center(
-              child: Text(
-                (show) ? '${change.unit + 1}' : '',
-                style: TextStyle(
-                  color: Colors.black,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Container(
-              height: 35,
-              alignment: Alignment.centerRight,
-              decoration: BoxDecoration(
-                border: Border(
-                  left: BorderSide(
-                    width: 2,
-                    color: (change.color == null)
-                        ? Theme
-                        .of(context)
-                        .primaryColor
-                        : change.color,
+            children: <Widget>[
+              Expanded(
+                flex: 8,
+                child: Center(
+                  child: Text(
+                    (show) ? '${change.unit + 1}' : '',
+                    style: TextStyle(
+                      color: Colors.black54,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-          Expanded(
-            flex: 90,
-            child: Container(
-              margin: EdgeInsets.only(top: 5, bottom: 5),
-              child: Column(
-                children: <Widget>[
-                  Row(
+              Expanded(
+                flex: 2,
+                child: Container(
+                  height: 42,
+                  alignment: Alignment.centerRight,               
+                  decoration: BoxDecoration(
+                    border: Border(
+                      left: BorderSide(
+                        width: 2,
+                        color: (change.color == null)
+                            ?
+                            // Default color
+                            Theme.of(context).primaryColor
+                            :
+                            // Changed color
+                            change.color
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 90,
+                child: Container(
+                  padding: EdgeInsets.only(top: 5, bottom: 5, left: 5),
+                  child: Column(
+                      children: <Widget>[
+                        Row(
                     children: <Widget>[
                       Expanded(
-                        flex: 60,
+                        flex: 70,
                         child: Text(
                           change.lesson,
                           style: TextStyle(
@@ -82,7 +91,7 @@ class ReplacementPlanRow extends StatelessWidget {
                         ),
                       ),
                       Expanded(
-                        flex: 20,
+                        flex: 17,
                         child: Text(
                           getRoom(
                             weekday,
@@ -98,7 +107,7 @@ class ReplacementPlanRow extends StatelessWidget {
                         ),
                       ),
                       Expanded(
-                        flex: 20,
+                        flex: 13,
                         child: Text(
                           change.teacher,
                           style: TextStyle(
@@ -113,7 +122,7 @@ class ReplacementPlanRow extends StatelessWidget {
                   Row(
                     children: <Widget>[
                       Expanded(
-                        flex: 60,
+                        flex: 70,
                         child: Text(
                           (change.changed.subject != ''
                               ? change.changed.subject
@@ -131,25 +140,25 @@ class ReplacementPlanRow extends StatelessWidget {
                         ),
                       ),
                       Expanded(
-                        flex: 20,
+                        flex: 17,
                         child: Text(
                           change.changed.room == change.room
                               ? ''
                               : change.changed.room,
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Colors.black54,
                           ),
                         ),
                       ),
                       Expanded(
-                        flex: 20,
+                        flex: 13,
                         child: Text(
                           change.teacher == change.changed.teacher &&
                               change.changed.info != 'Klausur'
                               ? ''
                               : change.changed.teacher,
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Colors.black54,
                           ),
                         ),
                       ),
