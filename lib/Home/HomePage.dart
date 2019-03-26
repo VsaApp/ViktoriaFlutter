@@ -3,8 +3,8 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:onesignal/onesignal.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import '../Keys.dart';
 import '../Localizations.dart';
@@ -42,6 +42,7 @@ class HomePage extends StatefulWidget {
 }
 
 abstract class HomePageState extends State<HomePage> {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String currentWeek = 'A';
   bool showWeek = false;
   static bool weekChangeable = true;
@@ -89,94 +90,99 @@ abstract class HomePageState extends State<HomePage> {
     }
   }
 
+  void handleMessageboardNotification(Map msg) {
+    print("received messageboard notification");
+    if (messageBoardUpdated != null)
+      messageBoardUpdated(msg['action'], msg['type'], msg['group']);
+      else {
+        if (msg['type'] == 'messageboard-post')
+          Messageboard.postsChanged(msg['data']['group']);
+        else if (msg['type'] == 'messageboard-group')
+          Messageboard.groupsChanged(msg['group']);
+      }
+  }
+
+  Future handleReplacementplanNotification(Map msg) async {
+    print("received replacementplan notification");
+    String grade = Storage.getString(Keys.grade);
+    await unitplan.download(grade, false);
+    await replacementplan.load(unitplan.getUnitPlan(), false);
+    if (appScaffold != null) {
+      replacementplanUpdatedListeners.forEach(
+          (replacementplanUpdated) => replacementplanUpdated());
+      Fluttertoast.showToast(
+          msg: AppLocalizations.of(context)
+              .replacementPlanUpdated
+              .replaceAll('%s', msg['weekday']),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Color(0xAA333333),
+          textColor: Colors.white);
+    }
+  }
+
+  Future handleUnitplanNotification(Map msg) async {
+    print("received unitplan notification");
+    String grade = Storage.getString(Keys.grade);
+    await unitplan.download(grade, false);
+    await replacementplan.load(unitplan.getUnitPlan(), false);
+    if (appScaffold != null) {
+      replacementplanUpdatedListeners.forEach(
+          (replacementplanUpdated) => replacementplanUpdated());
+    }
+    checkUntiplanData();
+  }
+
+  Future notificationOpenedHandler(String msg) async {
+    print("opened: $msg");
+    platform.invokeMethod('clearNotifications');
+    if (msg == 'replacementplan_channel') setState(() => selectedDrawerIndex = 1);
+    else if (msg == 'messageboard_channel') setState(() => selectedDrawerIndex = 2);
+  }
+
+  Future<dynamic> _handleNotification(MethodCall call) async {
+    if (call.method.startsWith('messageboard')) handleMessageboardNotification(call.arguments);
+    else if (call.method == 'replacementplan') handleReplacementplanNotification(call.arguments);
+    else if (call.method == 'unitplan') handleUnitplanNotification(call.arguments);
+    else if (call.method == 'opened') notificationOpenedHandler(call.arguments);
+  }
+
   @override
   void initState() {
     loadData();
     checkUntiplanData();
     HomePageState.updateWeek = _updateWeek;
     HomePageState.setShowWeek = _showWeek;
+    
     if (selectedDrawerIndex <= 1) {
       setShowWeek(true);
-    }
+    } 
+
     // Default follow VsaApp in messageboard...
     if (Storage.getStringList(Keys.feedGroups) == null)
       Messageboard.setFollowGroup('VsaApp');
     checkUntiplanData();
-    if (Platform.isIOS || Platform.isAndroid) {
-      // Update replacement plan if new message received
-      OneSignal.shared.setNotificationReceivedHandler((osNotification) async {
-        Map<String, dynamic> msg = osNotification.payload.additionalData;
-        print("Received Notification: " + msg.toString());
-        // If it's a silent notification, update parts of the app...
-        if (msg['type'] == 'silent') {
-          // If it's for the messageboard, update messageboard...
-          if (msg['data']['type'].startsWith('messageboard')) {
-            if (messageBoardUpdated != null)
-              messageBoardUpdated(msg['data']['action'], msg['data']['type'],
-                  msg['data']['group']);
-            else {
-              if (msg['data']['type'] == 'messageboard-post')
-                Messageboard.postsChanged(msg['data']['group']);
-              else if (msg['data']['type'] == 'messageboard-group')
-                Messageboard.groupsChanged(msg['data']['group']);
-            }
-          }
-          // If it's for the replacementplan, update replacementplan...
-          else if (msg['data']['type'].toString() ==
-              'replacementplan'.toString()) {
-            String grade = Storage.getString(Keys.grade);
-            await unitplan.download(grade, false);
-            await replacementplan.load(unitplan.getUnitPlan(), false);
-            if (appScaffold != null) {
-              replacementplanUpdatedListeners.forEach(
-                      (replacementplanUpdated) => replacementplanUpdated());
-              Fluttertoast.showToast(
-                  msg: AppLocalizations.of(context)
-                      .replacementPlanUpdated
-                      .replaceAll('%s', msg['data']['weekday']),
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  backgroundColor: Color(0xAA333333),
-                  textColor: Colors.white);
-            }
-          } else if (msg['data']['type'].toString() == 'unitplan'.toString()) {
-            String grade = Storage.getString(Keys.grade);
-            await unitplan.download(grade, false);
-            await replacementplan.load(unitplan.getUnitPlan(), false);
-            if (appScaffold != null) {
-              replacementplanUpdatedListeners.forEach(
-                      (replacementplanUpdated) => replacementplanUpdated());
-            }
-            checkUntiplanData();
-          }
-        }
+
+    // Set the listener for android functions (Currently for incoming notifications and intents)...
+    platform.setMethodCallHandler(_handleNotification);
+      if (Platform.isIOS || Platform.isAndroid) {
+      _firebaseMessaging.requestNotificationPermissions(
+          const IosNotificationSettings(sound: true, badge: true, alert: true));
+      _firebaseMessaging.onIosSettingsRegistered.listen((IosNotificationSettings settings) {
+        print("Settings registered: $settings");
       });
+      _firebaseMessaging.getToken().then((String token) {
+        assert(token != null);
 
-      OneSignal.shared.setNotificationOpenedHandler((osNotification) {
-        platform.invokeMethod('clearNotifications');
-        if (osNotification.notification.payload.additionalData['type'] ==
-            'replacementplan') {
-          setState(() => selectedDrawerIndex = 1);
-        } else if (osNotification.notification.payload.additionalData['type'] ==
-            'messageboard') {
-          setState(() => selectedDrawerIndex = 2);
-        }
-      });
-
-      // Initialize onesignal
-      OneSignal.shared.init('1d7b8ef7-9c9d-4843-a833-8a1e9999818c');
-
-      OneSignal.shared
-          .setInFocusDisplayType(OSNotificationDisplayType.notification);
-      // Synchronise tags for notifications
-      deleteOldTags().then((_) async {
-        await initTags();
-
-        await syncTags();
-
-        messageboard.Messageboard.syncTags();
+        // Synchronise tags for notifications
+        deleteOldTags().then((_) async {
+          await initTags(token);
+          await syncTags();
+          messageboard.Messageboard.syncTags();
+        });
       });
     }
+
     super.initState();
   }
 

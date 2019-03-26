@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:http/http.dart' as http;
-import 'package:onesignal/onesignal.dart';
 
 import 'Id.dart';
 import 'Keys.dart';
@@ -53,11 +52,12 @@ Future syncWithTags() async {
   }
 }
 
-Future initTags() async {
+Future initTags(id) async {
   if ((await checkOnline) == -1) return;
   sendTags({
     Keys.grade: Storage.getString(Keys.grade),
-    Keys.dev: Storage.getBool(Keys.dev) ?? false
+    Keys.dev: Storage.getBool(Keys.dev) ?? false,
+    "firebaseId": id
   });
 }
 
@@ -90,12 +90,6 @@ Future deleteOldTags() async {
     }
   });
   if (tagsToDelete.length > 0) deleteTags(tagsToDelete);
-}
-
-Future getPlayerId() async {
-  return (await OneSignal.shared.getPermissionSubscriptionState())
-      .subscriptionStatus
-      .userId;
 }
 
 // Sync the onesignal tags...
@@ -166,17 +160,13 @@ Future syncTags() async {
   newTags[Keys.messageboardGroupTag(group.name)] =
       notifications.contains(group));
 
-  if (Platform.isIOS || Platform.isAndroid) {
-    // Add current OneSignal id...
-    newTags['onesignalId'] = await getPlayerId();
-  }
   // Compare new and old tags...
   Map<String, dynamic> tagsToUpdate = {};
   Map<String, dynamic> tagsToRemove = {};
 
   // Get all removed and changed tags...
   allTags.forEach((key, value) {
-    if (!newTags.containsKey(key))
+    if (!newTags.containsKey(key) && key != 'firebaseId')
       tagsToRemove[key] = value;
     else if (value.toString() != newTags[key].toString()) {
       tagsToUpdate[key] = newTags[key];
