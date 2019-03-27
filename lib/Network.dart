@@ -29,7 +29,7 @@ Future fetchDataAndSave(String url,
     String key,
     String defaultValue, {
       Map<String, dynamic> body,
-      Duration timeout,
+      Duration timeout
     }) async {
   if (timeout == null) {
     timeout = maxTime;
@@ -40,6 +40,9 @@ Future fetchDataAndSave(String url,
       response = await post(url, body: body);
     } else
       response = (await http.Client().get(url).timeout(timeout)).body;
+    if (response.contains('404 Not Found')) {
+      throw "404 Not Found";
+    }
     Storage.setString(key, response);
   } catch (e) {
     print("Error during downloading \'$key\': " + e.toString());
