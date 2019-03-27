@@ -6,6 +6,7 @@ import '../Localizations.dart';
 import '../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
 import '../ReplacementPlan/ReplacementPlanModel.dart';
 import '../Storage.dart';
+import '../Selection.dart';
 import '../TabProxy.dart';
 import 'UnitPlanData.dart' as unitplan;
 import 'UnitPlanDayList/UnitPlanDayListWidget.dart';
@@ -68,6 +69,17 @@ class UnitPlanView extends State<UnitPlanPage>
     }
   }
 
+  int getFirstPageToSelect() {
+    for (int i = 0; i < UnitPlan.days.length; i++) {
+      UnitPlanDay day = UnitPlan.days[i];
+      for (int j = 0; j < day.lessons.length; j++) {
+        UnitPlanLesson lesson = day.lessons[j];
+        if (getSelectedIndex(lesson.subjects, i, j) == null) return i;
+      }
+    }
+    return -1;
+  }
+
   int getCurrentWeekday() {
     int weekday = DateTime
         .now()
@@ -127,11 +139,12 @@ class UnitPlanView extends State<UnitPlanPage>
       // Select correct tab
       controller = TabController(vsync: this, length: days.length);
 
-      int weekday = getCurrentWeekday();
-      controller.animateTo(weekday);
+      int firstPage = getFirstPageToSelect();
+      if (firstPage == -1) firstPage = getCurrentWeekday();
+      controller.animateTo(firstPage);
       setWeeks();
 
-      HomePageState.updateWeek(UnitPlan.days[weekday].showWeek);
+      HomePageState.updateWeek(UnitPlan.days[firstPage].showWeek);
       controller.addListener(() {
         if (originalWeek != null) {
           UnitPlan.days[controller.previousIndex].showWeek = originalWeek;

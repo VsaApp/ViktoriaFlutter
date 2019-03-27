@@ -87,22 +87,32 @@ class UnitPlanDayListView extends UnitPlanDayListState {
             ?
             // Show select lesson information
             Padding(
-              padding: EdgeInsets.only(left: 2.5, right: 2.5),
-              child: UnitPlanRow(
-                weekday: widget.dayIndex,
-                subject: UnitPlanSubject(
-                    teacher: '',
-                    lesson: AppLocalizations
-                        .of(context)
-                        .selectLesson,
-                    room: '',
-                    block: '',
-                    unsures: 0,
-                    course: '',
-                    changes: [],
-                    week: 'AB'),
-                unit: widget.day.lessons.indexOf(lesson),
-              ),
+              padding: EdgeInsets.only(left: 10, right: 10, top: widget.day.lessons.indexOf(lesson) == 0 ? 10 : 0),
+              child: Card(
+                color: Color.fromARGB(230, 255, 255, 255),
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: Column(
+                    children: [
+                      UnitPlanRow(
+                        weekday: widget.dayIndex,
+                        subject: UnitPlanSubject(
+                            teacher: '',
+                            lesson: AppLocalizations
+                                .of(context)
+                                .selectLesson,
+                            room: '',
+                            block: '',
+                            unsures: 0,
+                            course: '',
+                            changes: [],
+                            week: 'AB'),
+                        unit: widget.day.lessons.indexOf(lesson),
+                      ),
+                    ]
+                  )
+                )
+              )
             )
 
             : (lesson.subjects[_selected].changes.length == 0 ||
