@@ -79,3 +79,4 @@ ios/Flutter/Generated.xcconfig
 key.properties
 .data.json
 android/app/google-services.json
+android/key.properties
