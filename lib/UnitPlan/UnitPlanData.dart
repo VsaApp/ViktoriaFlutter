@@ -35,7 +35,7 @@ Future<List<UnitPlanDay>> download(String grade, bool temp) async {
     }
   }
 
-  await fetchDataAndSave(url, Keys.unitPlan(grade), '[]', body: body);
+  await fetchDataAndSave(url, Keys.unitPlan(grade), '{"participant": "5a", "date": "01.01.00", "data": []}', body: body);
 
   // Parse data...
   if (!(temp ?? false)) {
