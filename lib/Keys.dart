@@ -193,4 +193,8 @@ class Keys {
   static String get id {
     return 'id';
   }
+
+  static String get updates {
+    return 'updates';
+  }
 }

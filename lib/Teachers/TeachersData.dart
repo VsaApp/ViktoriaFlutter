@@ -7,10 +7,11 @@ import '../Storage.dart';
 import 'TeachersModel.dart';
 
 // Download the unit plan...
-Future<Map<String, String>> download() async {
-  // Get the selected grade...
-  String url = 'https://api.vsa.2bad2c0.de/teachers/teachers.json';
-  await fetchDataAndSave(url, Keys.teachers, '[]');
+Future<Map<String, String>> download({bool update = true}) async {
+  if (update) {
+    String url = 'https://api.vsa.2bad2c0.de/teachers/teachers.json';
+    await fetchDataAndSave(url, Keys.teachers, '[]');
+  }
 
   // Parse data...
   Teachers.teachers = await fetchTeachers();

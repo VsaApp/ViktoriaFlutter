@@ -8,10 +8,12 @@ import '../Storage.dart';
 import 'CalendarModel.dart';
 
 // Download calendar data...
-Future download() async {
-  String url = 'https://api.vsa.2bad2c0.de/calendar/calendar.json?v=' +
-      Random().nextInt(99999999).toString();
-  await fetchDataAndSave(url, Keys.calendar, '{}');
+Future download({bool update = true}) async {
+  if (update) {
+    String url = 'https://api.vsa.2bad2c0.de/calendar/calendar.json?v=' +
+        Random().nextInt(99999999).toString();
+    await fetchDataAndSave(url, Keys.calendar, '{}');
+  }
 
   // Parse loaded data...
   Calendar.events = await fetchEvents();

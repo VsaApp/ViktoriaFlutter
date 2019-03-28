@@ -219,6 +219,7 @@ class AppLocalizations {
         'Freitag',
       ],
       'notYetExistingOnServer': 'Noch nicht auf dem Schulserver vorhanden!',
+      'updates': 'Aktualisierungen',
     },
   };
 
@@ -907,6 +908,10 @@ class AppLocalizations {
 
   String get notYetExistingOnServer {
     return _localizedValues[locale.languageCode]['notYetExistingOnServer'];
+  }
+
+  String get updates {
+    return _localizedValues[locale.languageCode]['updates'];
   }
 }
 

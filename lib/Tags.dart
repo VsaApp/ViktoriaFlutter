@@ -1,7 +1,4 @@
 import 'dart:convert';
-import 'dart:io' show Platform;
-
-import 'package:http/http.dart' as http;
 
 import 'Id.dart';
 import 'Keys.dart';
@@ -15,7 +12,7 @@ Future<Map<String, dynamic>> getTags({String idToLoad}) async {
   String id = idToLoad ?? Id.id;
   String url = 'https://api.vsa.2bad2c0.de/tags/$id';
   try {
-    return json.decode((await http.Client().get(url).timeout(maxTime)).body);
+    return json.decode(await fetchData(url));
   } on Exception catch (e) {
     print('Error during getting tags: ${e.toString()}');
     return null;

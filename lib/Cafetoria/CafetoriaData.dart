@@ -7,15 +7,17 @@ import '../Storage.dart';
 import 'CafetoriaModel.dart';
 
 // Download cafetoria data from the api...
-Future download({String id, String password}) async {
-  // If id and password is not set, load login data from preferences...
-  String url = 'https://api.vsa.2bad2c0.de/cafetoria/login/' +
-      ((id != null) ? id : Storage.getString(Keys.cafetoriaId) ?? 'null') +
-      '/' +
-      ((password != null)
-          ? password
-          : Storage.getString(Keys.cafetoriaPassword) ?? 'null');
-  await fetchDataAndSave(url, Keys.cafetoria, '{}');
+Future download({String id, String password, bool update = true}) async {
+  if (update) {
+    // If id and password is not set, load login data from preferences...
+    String url = 'https://api.vsa.2bad2c0.de/cafetoria/login/' +
+        ((id != null) ? id : Storage.getString(Keys.cafetoriaId) ?? 'null') +
+        '/' +
+        ((password != null)
+            ? password
+            : Storage.getString(Keys.cafetoriaPassword) ?? 'null');
+    await fetchDataAndSave(url, Keys.cafetoria, '{}');
+  }
 
   Cafetoria.menues = await fetchDays();
 }

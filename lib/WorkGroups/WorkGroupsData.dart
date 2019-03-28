@@ -8,10 +8,12 @@ import '../Storage.dart';
 import 'WorkGroupsModel.dart';
 
 // Download work groups data...
-Future download() async {
-  String url = 'https://api.vsa.2bad2c0.de/workgroups/workgroups.json?v=' +
-      Random().nextInt(99999999).toString();
-  await fetchDataAndSave(url, Keys.workGroups, '[]');
+Future download({bool update = true}) async {
+  if (update) {
+    String url = 'https://api.vsa.2bad2c0.de/workgroups/workgroups.json?v=' +
+        Random().nextInt(99999999).toString();
+    await fetchDataAndSave(url, Keys.workGroups, '[]');
+  }
 
   // Parse loaded data...
   WorkGroups.days = await fetchGroups();

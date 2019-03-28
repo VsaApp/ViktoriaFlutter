@@ -1,10 +1,10 @@
 import 'dart:io' show Platform;
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 import '../Keys.dart';
 import '../Localizations.dart';
@@ -94,12 +94,12 @@ abstract class HomePageState extends State<HomePage> {
     print("received messageboard notification");
     if (messageBoardUpdated != null)
       messageBoardUpdated(msg['action'], msg['type'], msg['group']);
-      else {
-        if (msg['type'] == 'messageboard-post')
-          Messageboard.postsChanged(msg['data']['group']);
-        else if (msg['type'] == 'messageboard-group')
-          Messageboard.groupsChanged(msg['group']);
-      }
+    else {
+      if (msg['type'] == 'messageboard-post')
+        Messageboard.postsChanged(msg['data']['group']);
+      else if (msg['type'] == 'messageboard-group')
+        Messageboard.groupsChanged(msg['group']);
+    }
   }
 
   Future handleReplacementplanNotification(Map msg) async {
@@ -108,8 +108,8 @@ abstract class HomePageState extends State<HomePage> {
     await unitplan.download(grade, false);
     await replacementplan.load(unitplan.getUnitPlan(), false);
     if (appScaffold != null) {
-      replacementplanUpdatedListeners.forEach(
-          (replacementplanUpdated) => replacementplanUpdated());
+      replacementplanUpdatedListeners
+          .forEach((replacementplanUpdated) => replacementplanUpdated());
       Fluttertoast.showToast(
           msg: AppLocalizations.of(context)
               .replacementPlanUpdated
@@ -127,8 +127,8 @@ abstract class HomePageState extends State<HomePage> {
     await unitplan.download(grade, false);
     await replacementplan.load(unitplan.getUnitPlan(), false);
     if (appScaffold != null) {
-      replacementplanUpdatedListeners.forEach(
-          (replacementplanUpdated) => replacementplanUpdated());
+      replacementplanUpdatedListeners
+          .forEach((replacementplanUpdated) => replacementplanUpdated());
     }
     checkUntiplanData();
   }
@@ -136,14 +136,19 @@ abstract class HomePageState extends State<HomePage> {
   Future notificationOpenedHandler(String msg) async {
     print("opened: $msg");
     platform.invokeMethod('clearNotifications');
-    if (msg == 'replacementplan_channel') setState(() => selectedDrawerIndex = 1);
-    else if (msg == 'messageboard_channel') setState(() => selectedDrawerIndex = 2);
+    if (msg == 'replacementplan_channel')
+      setState(() => selectedDrawerIndex = 1);
+    else if (msg == 'messageboard_channel')
+      setState(() => selectedDrawerIndex = 2);
   }
 
   Future<dynamic> _handleNotification(MethodCall call) async {
-    if (call.method.startsWith('messageboard')) handleMessageboardNotification(call.arguments);
-    else if (call.method == 'replacementplan') handleReplacementplanNotification(call.arguments);
-    else if (call.method == 'unitplan') handleUnitplanNotification(call.arguments);
+    if (call.method.startsWith('messageboard'))
+      handleMessageboardNotification(call.arguments);
+    else if (call.method == 'replacementplan')
+      handleReplacementplanNotification(call.arguments);
+    else if (call.method == 'unitplan')
+      handleUnitplanNotification(call.arguments);
     else if (call.method == 'opened') notificationOpenedHandler(call.arguments);
   }
 
@@ -153,10 +158,10 @@ abstract class HomePageState extends State<HomePage> {
     checkUntiplanData();
     HomePageState.updateWeek = _updateWeek;
     HomePageState.setShowWeek = _showWeek;
-    
+
     if (selectedDrawerIndex <= 1) {
       setShowWeek(true);
-    } 
+    }
 
     // Default follow VsaApp in messageboard...
     if (Storage.getStringList(Keys.feedGroups) == null)
@@ -165,10 +170,11 @@ abstract class HomePageState extends State<HomePage> {
 
     // Set the listener for android functions (Currently for incoming notifications and intents)...
     platform.setMethodCallHandler(_handleNotification);
-      if (Platform.isIOS || Platform.isAndroid) {
+    if (Platform.isIOS || Platform.isAndroid) {
       _firebaseMessaging.requestNotificationPermissions(
           const IosNotificationSettings(sound: true, badge: true, alert: true));
-      _firebaseMessaging.onIosSettingsRegistered.listen((IosNotificationSettings settings) {
+      _firebaseMessaging.onIosSettingsRegistered
+          .listen((IosNotificationSettings settings) {
         print("Settings registered: $settings");
       });
       _firebaseMessaging.getToken().then((String token) {
@@ -177,8 +183,11 @@ abstract class HomePageState extends State<HomePage> {
         // Synchronise tags for notifications
         deleteOldTags().then((_) async {
           await initTags(token);
+          await syncWithTags();
           await syncTags();
           messageboard.Messageboard.syncTags();
+          replacementplanUpdatedListeners
+              .forEach((replacementplanUpdated) => replacementplanUpdated());
         });
       });
     }
@@ -187,7 +196,7 @@ abstract class HomePageState extends State<HomePage> {
   }
 
   void checkUntiplanData() async {
-    // If it's a new version of the uniplan...#
+    // If it's a new version of the uniplan...
     String grade = Storage.getString(Keys.grade);
     String currentDate = await unitplan.fetchDate(grade);
     String lastDate = Storage.getString(Keys.unitplanDate);

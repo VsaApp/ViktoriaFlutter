@@ -9,9 +9,8 @@ import '../Storage.dart';
 import 'UnitPlanModel.dart';
 
 // Download the unit plan...
-Future<List<UnitPlanDay>> download(String grade, bool temp) async {
-  // Get the selected grade...
-
+Future<List<UnitPlanDay>> download(String grade, bool temp,
+    {bool update = true}) async {
   // Check if a date is selected...
   List<String> uVersion = Storage.getStringList(Keys.historyDate('unitplan'));
   List<String> rVersion =
@@ -34,8 +33,11 @@ Future<List<UnitPlanDay>> download(String grade, bool temp) async {
       };
     }
   }
-
-  await fetchDataAndSave(url, Keys.unitPlan(grade), '{"participant": "5a", "date": "01.01.00", "data": []}', body: body);
+  if (update) {
+    await fetchDataAndSave(url, Keys.unitPlan(grade),
+        '{"participant": "5a", "date": "01.01.00", "data": []}',
+        body: body);
+  }
 
   // Parse data...
   if (!(temp ?? false)) {
