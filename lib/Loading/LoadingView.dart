@@ -8,6 +8,7 @@ import 'LoadingPage.dart';
 class LoadingPageView extends LoadingPageState {
   @override
   Widget build(BuildContext context) {
+    if (!loggedIn) return Container();
     double height = MediaQuery.of(context).size.height;
     List<Widget> items = texts.map((text) => Text(text)).toList();
     List<int> itemCharacters = texts.map((text) => text.length).toList();

@@ -9,7 +9,6 @@ class UnitPlanSelectDialogView extends UnitPlanSelectDialogState {
   @override
   Widget build(BuildContext context) {
     Widget item = Container(
-      margin: EdgeInsets.all(10),
       child: Column(
         children: [
           getABSubjects().map((subject) =>

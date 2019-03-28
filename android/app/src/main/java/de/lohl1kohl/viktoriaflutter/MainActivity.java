@@ -43,6 +43,11 @@ public class MainActivity extends FlutterActivity {
 
         NotificationService.flutterView = getFlutterView();
 
+        String data = (String) getIntent().getStringExtra("channel");
+        new MethodChannel(getFlutterView(), CHANNEL).invokeMethod("opened", data);
+        System.out.println("Data: " + data);
+
+        // If the android version is high enough, create the notification channels...
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             for (int i = 0; i < channelsIds.length; i++) {
@@ -55,21 +60,21 @@ public class MainActivity extends FlutterActivity {
                 // Register the channel with the system; you can't change the importance
                 // or other notification behaviors after this
                 NotificationManager notificationManager = getSystemService(NotificationManager.class);
-                notificationManager.createNotificationChannel(channel);
+                if (notificationManager != null) notificationManager.createNotificationChannel(channel);
             }
         }
 
         // Remove all notifications when app starting...
         NotificationManager notificationManager = (NotificationManager) getApplicationContext()
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
+        if (notificationManager != null) notificationManager.cancelAll();
         new MethodChannel(getFlutterView(), CHANNEL).setMethodCallHandler(new MethodChannel.MethodCallHandler() {
             @Override
             public void onMethodCall(MethodCall call, MethodChannel.Result result) {
                 if (call.method.equals("clearNotifications")) {
                     NotificationManager notificationManager = (NotificationManager) getApplicationContext()
                             .getSystemService(Context.NOTIFICATION_SERVICE);
-                    notificationManager.cancelAll();
+                    if (notificationManager != null) notificationManager.cancelAll();
                 }
             }
         });

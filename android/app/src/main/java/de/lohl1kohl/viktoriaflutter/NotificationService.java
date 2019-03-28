@@ -4,7 +4,11 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.media.AudioManager;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
@@ -38,7 +42,8 @@ public class NotificationService extends FirebaseMessagingService {
                         changes > 1 ? String.valueOf(changes) + " Änderungen" : remoteMessage.getData().get("notificationBody"),
                         remoteMessage.getData().get("notificationBody"),
                         "replacementplan_channel",
-                        Arrays.asList(new String[]{"Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"}).indexOf(remoteMessage.getData().get("notificationTitle")),
+                          Arrays.asList(new String[]{"Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"}).indexOf(remoteMessage.getData().get("notificationTitle")),
+                        remoteMessage.getData().get("notificationTitle") + " " + remoteMessage.getData().get("notificationBody"),
                         remoteMessage.getData()
                 );
                 System.out.println("notify");
@@ -49,6 +54,7 @@ public class NotificationService extends FirebaseMessagingService {
                         remoteMessage.getData().get("notificationBody"),
                         remoteMessage.getData().get("type") + "_channel",
                         (new Random().nextInt() * 10000 + 5),
+                        remoteMessage.getData().get("notificationTitle"),
                         remoteMessage.getData()
                 );
             }
@@ -62,14 +68,15 @@ public class NotificationService extends FirebaseMessagingService {
         new MethodChannel(flutterView, CHANNEL).invokeMethod(type, data);
     }
 
-    public void showNotification(String title, String body, String bodyLong, String channelId, int notificationId, Map<String, String> data) {
+    public void showNotification(String title, String body, String bodyLong, String channelId, int notificationId, String ticker , Map<String, String> data) {
 
         AudioManager am = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
 
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("channel", channelId);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        int uniqueInt = (int) (System.currentTimeMillis() & 0xfffffff);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, uniqueInt, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext(), channelId)
                 .setContentTitle(title)
@@ -78,15 +85,20 @@ public class NotificationService extends FirebaseMessagingService {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(bodyLong))
                 .setContentIntent(pendingIntent)
-                //.setSound()
+                .setTicker(ticker)
                 .setColor(Color.parseColor("#ff5bc638"))
                 .setGroup("group" + Integer.toString(notificationId))
                 .setAutoCancel(true)
                 .setColorized(true);
 
-        if (am.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
+        if (am != null && am.getRingerMode() != AudioManager.RINGER_MODE_SILENT)  {
             System.out.println("Vibrate");
-            notification.setVibrate(new long[]{500, 500});
+            Vibrator v = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+            if (v != null) {
+                    v.vibrate(300);
+            } else {
+                notification.setVibrate(new long[]{300, 300});
+            }
         } else {
             System.out.println("Silent");
             notification.setVibrate(new long[]{0});

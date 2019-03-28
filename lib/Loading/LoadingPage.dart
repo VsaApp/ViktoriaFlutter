@@ -34,9 +34,16 @@ abstract class LoadingPageState extends State<LoadingPage>
   Animation animation;
   AnimationController controller;
   Stopwatch stopwatch;
+  bool loggedIn = true;
 
   @override
   void initState() {
+    // Check if logged in
+    if (Storage.get(Keys.grade) == null || Storage.get(Keys.username) == null || Storage.get(Keys.password) == null) {
+      setState(() => loggedIn = false);
+      return;
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((a) {
       texts.add(AppLocalizations.of(context).unitPlan);
       texts.add(AppLocalizations.of(context).replacementPlan);
