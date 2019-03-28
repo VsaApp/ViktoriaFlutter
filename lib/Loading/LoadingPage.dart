@@ -66,6 +66,7 @@ abstract class LoadingPageState extends State<LoadingPage>
     textTimer = Timer(Duration(seconds: 3), () {
       setState(() {
         showTexts = true;
+        showLogo = true;
       });
     });
     controller = AnimationController(
