@@ -8,6 +8,7 @@ import '../Cafetoria/CafetoriaData.dart' as Cafetoria;
 import '../Calendar/CalendarData.dart' as Calendar;
 import '../Keys.dart';
 import '../Localizations.dart';
+import '../Messageboard/MessageboardData.dart' as Messageboard;
 import '../ReplacementPlan/ReplacementPlanData.dart' as ReplacementPlan;
 import '../Rooms/RoomsData.dart' as Rooms;
 import '../Storage.dart';
@@ -24,12 +25,11 @@ class LoadingPage extends StatefulWidget {
 
 abstract class LoadingPageState extends State<LoadingPage>
     with TickerProviderStateMixin {
-  int allDownloadsCount = 9;
-  int countCurrentDownloads = 9;
+  int allDownloadsCount = 10;
+  int countCurrentDownloads = 10;
   double centerWidgetDimensions = 150;
   List<String> texts = [];
   bool showTexts = false;
-  bool showLogo = false;
   bool animationForward = true;
   Timer textTimer;
   Animation animation;
@@ -55,7 +55,9 @@ abstract class LoadingPageState extends State<LoadingPage>
       texts.add(AppLocalizations.of(context).replacementPlan);
       texts.add(AppLocalizations.of(context).workGroups);
       texts.add(AppLocalizations.of(context).calendar);
-      //texts.add(AppLocalizations.of(context).messageboard);
+      texts.add(AppLocalizations
+          .of(context)
+          .messageboard);
       texts.add(AppLocalizations.of(context).subjects);
       texts.add(AppLocalizations.of(context).rooms);
       texts.add(AppLocalizations.of(context).teachers);
@@ -66,7 +68,6 @@ abstract class LoadingPageState extends State<LoadingPage>
     textTimer = Timer(Duration(seconds: 3), () {
       setState(() {
         showTexts = true;
-        showLogo = true;
       });
     });
     controller = AnimationController(
@@ -95,9 +96,9 @@ abstract class LoadingPageState extends State<LoadingPage>
   }
 
   Future downloadAll() async {
-    Map<String, String> oldData =
-        json.decode(Storage.getString(Keys.updates)).cast<String, String>() ??
-            {};
+    Map<String, String> oldData = json
+        .decode(Storage.getString(Keys.updates) ?? '{}')
+        .cast<String, String>();
     Map<String, String> newData = {};
     try {
       String raw = await fetchData('https://api.vsa.2bad2c0.de/updates');
@@ -116,8 +117,10 @@ abstract class LoadingPageState extends State<LoadingPage>
         ..start();
     });
 
-    /*download(
-        Messageboard.download, 1, AppLocalizations.of(context).messageboard);*/
+    download(
+        Messageboard.download, 1, AppLocalizations
+        .of(context)
+        .messageboard);
     print('Downloading ' +
         (newData.keys
             .map((key) => newData[key] != oldData[key])
@@ -125,15 +128,6 @@ abstract class LoadingPageState extends State<LoadingPage>
             .length)
             .toString() +
         ' new files');
-    if (newData.keys
-        .map((key) => newData[key] != oldData[key])
-        .where((a) => a)
-        .length >
-        0) {
-      setState(() {
-        showLogo = true;
-      });
-    }
     newData.keys.forEach((key) {
       if (key == 'subjectsDef') {
         download(() async {

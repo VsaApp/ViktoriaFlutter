@@ -19,14 +19,12 @@ class LoadingPageView extends LoadingPageState {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          showLogo
-              ? Align(
+          Align(
             alignment: Alignment.topCenter,
             child: Padding(
               padding: EdgeInsets.only(
                   top: height -
-                      ((allDownloadsCount -
-                          (allDownloadsCount > 0 ? 1 : 0)) *
+                      ((allDownloadsCount - (allDownloadsCount > 0 ? 1 : 0)) *
                           16)
                           .toDouble() -
                       (centerWidgetDimensions + 25) -
@@ -43,8 +41,7 @@ class LoadingPageView extends LoadingPageState {
                 width: centerWidgetDimensions,
               ),
             ),
-          )
-              : Container(),
+          ),
           itemCharacters.length > 0
               ? Align(
             alignment: Alignment.topCenter,
