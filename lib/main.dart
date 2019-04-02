@@ -3,8 +3,11 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'dart:async';
+
 import 'Home/HomePage.dart';
 import 'Id.dart';
+import 'Errors.dart' as bugs;
 import 'Intro/IntroPage.dart';
 import 'Keys.dart';
 import 'Loading/LoadingPage.dart';
@@ -15,9 +18,45 @@ import 'Storage.dart';
 
 // This is the first functions which is called in the app...
 void main() async {
+  // Report all dart errors...
+  try {
+    runZoned<Future<void>>(launch, onError: (error, stackTrace) {
+      if (!isInDebugMode) bugs.reportError(error, stackTrace);
+    });
+  } catch (e) {
+    print("Error: $e");
+  }
+}
+
+bool get isInDebugMode {
+  // Assume you're in production mode
+  bool inDebugMode = false;
+
+  // Assert expressions are only evaluated during development. They are ignored
+  // in production. Therefore, this code only sets `inDebugMode` to true
+  // in a development environment.
+  assert(inDebugMode = true);
+
+  return inDebugMode;
+}
+
+
+Future launch() async {
+  // This captures errors reported by the Flutter framework.
+  FlutterError.onError = (FlutterErrorDetails details) {
+    if (isInDebugMode) {
+      // In development mode, simply print to console.
+      FlutterError.dumpErrorToConsole(details);
+    } else {
+      // In production mode, report to the application zone to report to
+      // Sentry.
+      Zone.current.handleUncaughtError(details.exception, details.stack);
+    }
+  };
   debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
   await Storage.init();
   await Id.init();
+  bugs.init();
 
   // Default init is the loading screen...
   String _initialRoute = '/';

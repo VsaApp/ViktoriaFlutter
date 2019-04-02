@@ -13,6 +13,10 @@ class Keys {
     return 'dev';
   }
 
+  static String get bugs {
+    return 'bugs';
+  }
+
   static String get userId {
     return 'userId';
   }
