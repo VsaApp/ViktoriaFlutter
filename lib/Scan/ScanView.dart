@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../Keys.dart';
@@ -14,6 +16,7 @@ import '../UnitPlan/UnitPlanSelectDialog/UnitPlanSelectDialogWidget.dart';
 import 'ScanPage.dart';
 
 class ScanPageView extends ScanPageState {
+  bool show = true;
   String subjectsRegex = '(' +
       Subjects.subjects.keys
           .toList()
@@ -23,10 +26,10 @@ class ScanPageView extends ScanPageState {
   String teachersRegex = '(' +
       Teachers.teachers
           .map((teacher) => teacher.shortName
-              .toLowerCase()
-              .replaceAll('ä', 'a')
-              .replaceAll('ö', 'o')
-              .replaceAll('ü', 'u'))
+          .toLowerCase()
+          .replaceAll('ä', 'a')
+          .replaceAll('ö', 'o')
+          .replaceAll('ü', 'u'))
           .join('|') +
       ')';
   String roomRegex = '(' +
@@ -38,21 +41,19 @@ class ScanPageView extends ScanPageState {
       String subject = '';
       try {
         subject = Subjects.subjects[RegExp(subjectsRegex)
-                .firstMatch(match)
-                .group(0)
-                .toUpperCase()] ??
+            .firstMatch(match)
+            .group(0)
+            .toUpperCase()] ??
             RegExp(subjectsRegex).firstMatch(match).group(0);
       } catch (e) {}
       String teacher =
-          RegExp(teachersRegex).firstMatch(match).group(0).toUpperCase();
+      RegExp(teachersRegex).firstMatch(match).group(0).toUpperCase();
       String room = Rooms.rooms[match.substring(
-              match.indexOf(RegExp(teachersRegex).firstMatch(match).group(0)) +
-                  3)] ??
+          match.indexOf(RegExp(teachersRegex).firstMatch(match).group(0)) +
+              3)] ??
           match.substring(
               match.indexOf(RegExp(teachersRegex).firstMatch(match).group(0)) +
                   3);
-      String _text = subject + ' ' + teacher + ' ' + room + '\n';
-      print('m: ' + _text);
       List<MatchingSubject> matchingSubjects = [];
       UnitPlan.days.forEach((day) {
         day.lessons.forEach((lesson) {
@@ -83,20 +84,13 @@ class ScanPageView extends ScanPageState {
       });
       if (matchingSubjects.length > 4 || matchingSubjects.length == 0) {
         matchingSubjects.forEach((match) {
-          print(match.weekday.toString() +
-              ' ' +
-              match.unit.toString() +
-              ' ' +
-              match.index.toString());
-          print(match.subject.lesson +
+          print('Unmatched subject: ' +
+              match.subject.lesson +
               ' ' +
               match.subject.teacher +
               ' ' +
-              match.subject.room +
-              ' ' +
-              match.subject.course);
+              match.subject.room);
         });
-        print('');
       } else {
         matchingSubjects.forEach((match) {
           setSelectedSubject(match.subject, match.weekday, match.unit);
@@ -115,16 +109,28 @@ class ScanPageView extends ScanPageState {
   createStringMatches(List<Match> matches) {
     return matches
         .map((match) {
-          return match.group(0).replaceAll(RegExp('sp[0-9]\/'), 'sp/');
-        })
+      return match.group(0).replaceAll(RegExp('sp[0-9]\/'), 'sp/');
+    })
         .toSet()
         .toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!scanCompleted) {
-      return Container();
+    if (!scanCompleted || !show) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(AppLocalizations
+              .of(context)
+              .scanUnitPlan),
+          elevation: 0.0,
+        ),
+        body: Container(
+          color: Colors.white,
+          height: double.infinity,
+          width: double.infinity,
+        ),
+      );
     }
     syncTags();
     String text = texts
@@ -139,9 +145,8 @@ class ScanPageView extends ScanPageState {
         .replaceAll('ä', 'a')
         .replaceAll('ö', 'o')
         .replaceAll('ü', 'u');
-    print(text);
     RegExp regExp =
-        RegExp(subjectsRegex + '([0-9]).{0,2}' + teachersRegex + roomRegex);
+    RegExp(subjectsRegex + '([0-9]).{0,2}' + teachersRegex + roomRegex);
     RegExp maybeRegExp = RegExp(teachersRegex + roomRegex);
     List<Match> matches = regExp.allMatches(text).toList();
     List<Match> maybeMatches = maybeRegExp.allMatches(text).toList();
@@ -175,10 +180,10 @@ class ScanPageView extends ScanPageState {
     unidentifiedLessonsT.forEach((lesson) {
       if (lesson.lesson.subjects[0].block != '') {
         if (unidentifiedLessons
-                .where((l) =>
-                    l.lesson.subjects[0].block ==
-                    lesson.lesson.subjects[0].block)
-                .length >
+            .where((l) =>
+        l.lesson.subjects[0].block ==
+            lesson.lesson.subjects[0].block)
+            .length >
             0) {
           return;
         }
@@ -194,40 +199,59 @@ class ScanPageView extends ScanPageState {
       body: unidentifiedLessons.length > 0
           ? ListView(
         shrinkWrap: true,
-        children: [Padding(padding: EdgeInsets.only(left: 20, right: 20, top: 10), child: Text(AppLocalizations.of(context).scanDescription, textAlign: TextAlign.center,))]..addAll(unidentifiedLessons.map((lesson) {
-          print(lesson.lesson);
-          return Section(
-            title: [
-              'Montag',
-              'Dienstag',
-              'Mittwoch',
-              'Donnerstag',
-              'Freitag'
-            ][lesson.weekday] +
-                ' ' +
-                (lesson.unit + 1).toString() +
-                '. Stunde' +
-                (lesson.lesson.subjects[0].block != ''
-                    ? ' (' + lesson.lesson.subjects[0].block + ')'
-                    : ''),
-            children: <Widget>[
-              Container(
-                child: UnitPlanSelectDialog(
-                  day: UnitPlan.days[lesson.weekday],
-                  lesson: lesson.lesson,
-                  onSelected: () => setState(() => null),
-                  enableWrapper: false,
-                ),
-              ),
-            ],
-                );
-              }).toList()),
-            )
-          : Container(
-              alignment: Alignment(0.0, -1.0),
-              padding: EdgeInsets.all(10.0),
-              child: Text(AppLocalizations.of(context).scanUnitPlanAllDetected),
+        children: [
+          Padding(
+            padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+            child: Text(
+              AppLocalizations
+                  .of(context)
+                  .scanDescription,
+              textAlign: TextAlign.center,
             ),
+          )
+        ]
+          ..addAll(unidentifiedLessons.map((lesson) {
+            return Section(
+              title: [
+                'Montag',
+                'Dienstag',
+                'Mittwoch',
+                'Donnerstag',
+                'Freitag'
+              ][lesson.weekday] +
+                  ' ' +
+                  (lesson.unit + 1).toString() +
+                  '. Stunde' +
+                  (lesson.lesson.subjects[0].block != ''
+                      ? ' (' + lesson.lesson.subjects[0].block + ')'
+                      : ''),
+              children: <Widget>[
+                Container(
+                  child: UnitPlanSelectDialog(
+                    day: UnitPlan.days[lesson.weekday],
+                    lesson: lesson.lesson,
+                    onSelected: () {
+                      setState(() {
+                        show = false;
+                      });
+                      Timer(Duration(milliseconds: 75), () {
+                        setState(() {
+                          show = true;
+                        });
+                      });
+                    },
+                    enableWrapper: false,
+                  ),
+                ),
+              ],
+            );
+          }).toList()),
+      )
+          : Container(
+        alignment: Alignment(0.0, -1.0),
+        padding: EdgeInsets.all(10.0),
+        child: Text(AppLocalizations.of(context).scanUnitPlanAllDetected),
+      ),
     );
   }
 }
