@@ -23,11 +23,8 @@ class UnitPlanDayListView extends UnitPlanDayListState {
     items.addAll(widget.day.lessons.map((lesson) {
       // Check which subject is selected
       int _selected = getSelectedIndex(
-        lesson.subjects, 
-        widget.dayIndex, 
-        widget.day.lessons.indexOf(lesson),
-        week: widget.day.showWeek
-      );
+          lesson.subjects, widget.dayIndex, widget.day.lessons.indexOf(lesson),
+          week: widget.day.showWeek);
       bool nothingSelected = _selected == null;
       if (nothingSelected) _selected = 0;
       return GestureDetector(
@@ -87,34 +84,32 @@ class UnitPlanDayListView extends UnitPlanDayListState {
             ?
             // Show select lesson information
             Padding(
-              padding: EdgeInsets.only(left: 10, right: 10, top: widget.day.lessons.indexOf(lesson) == 0 ? 10 : 0),
-              child: Card(
-                color: Color.fromARGB(230, 255, 255, 255),
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 10),
-                  child: Column(
-                    children: [
-                      UnitPlanRow(
-                        weekday: widget.dayIndex,
-                        subject: UnitPlanSubject(
-                            teacher: '',
-                            lesson: AppLocalizations
-                                .of(context)
-                                .selectLesson,
-                            room: '',
-                            block: '',
-                            unsures: 0,
-                            course: '',
-                            changes: [],
-                            week: 'AB'),
-                        unit: widget.day.lessons.indexOf(lesson),
-                      ),
-                    ]
-                  )
-                )
-              )
-            )
-
+                padding: EdgeInsets.only(
+                    left: 10,
+                    right: 10,
+                    top: widget.day.lessons.indexOf(lesson) == 0 ? 10 : 0),
+                child: Card(
+                    color: Color.fromARGB(230, 255, 255, 255),
+                    child: Padding(
+                        padding: EdgeInsets.only(bottom: 10),
+                        child: Column(children: [
+                          UnitPlanRow(
+                            weekday: widget.dayIndex,
+                            subject: UnitPlanSubject(
+                                teacher: '',
+                                lesson:
+                                AppLocalizations
+                                    .of(context)
+                                    .selectLesson,
+                                room: '',
+                                block: '',
+                                unsures: 0,
+                                course: '',
+                                changes: [],
+                                week: 'AB'),
+                            unit: widget.day.lessons.indexOf(lesson),
+                          ),
+                        ]))))
             : (lesson.subjects[_selected].changes.length == 0 ||
                     !Storage.getBool(Keys.showReplacementPlanInUnitPlan)
                 ?
@@ -127,69 +122,78 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                     unit: widget.day.lessons.indexOf(lesson),
                   ),
                 )
-                    :
+            :
                 // Show list of changes
                 lesson.subjects[_selected]
                     .getChanges(widget.day.replacementPlanForWeektype)
                             .length >
                         0
                     ? Padding(
-                        padding: EdgeInsets.only(left: 10, right: 10, top: widget.day.lessons.indexOf(lesson) == 0 ? 10 : 0),
+                    padding: EdgeInsets.only(
+                        left: 0,
+                        right: 0,
+                        top: widget.day.lessons.indexOf(lesson) == 0
+                            ? 10
+                            : 0),
                         child: Card(
                           child: Padding(
                             padding: EdgeInsets.only(bottom: 10),
                             child: Column(
                               children: [
                                 (lesson.subjects[_selected].unsures > 0 ||
-                      (lesson.subjects[_selected]
-                          .getChanges(widget.day
-                          .replacementPlanForWeektype)
-                          .map((change) => change.isExam)
-                          .toList()
-                          .contains(true) &&
-                          lesson.subjects[_selected]
-                              .getChanges(widget.day
-                              .replacementPlanForWeektype)
-                              .where((change) =>
-                          !change.isExam)
-                              .toList()
-                              .length ==
-                              0)
+                                    (lesson.subjects[_selected]
+                                        .getChanges(widget.day
+                                        .replacementPlanForWeektype)
+                                        .map((change) => change.isExam)
+                                        .toList()
+                                        .contains(true) &&
+                                        lesson.subjects[_selected]
+                                            .getChanges(widget.day
+                                            .replacementPlanForWeektype)
+                                            .where((change) =>
+                                        !change.isExam)
+                                            .toList()
+                                            .length ==
+                                            0)
                                     ? UnitPlanRow(
                                         weekday: widget.dayIndex,
                                         subject: lesson.subjects[_selected],
-                                        unit: widget.day.lessons.indexOf(lesson),
+                                  unit:
+                                  widget.day.lessons.indexOf(lesson),
                                       )
                                     : Container())
-                              ]..addAll(lesson.subjects[_selected].getChanges(
-                                  widget.day.replacementPlanForWeektype)
+                              ]
+                                ..addAll(lesson.subjects[_selected]
+                                    .getChanges(
+                                    widget.day.replacementPlanForWeektype)
                                   .map((change) {
                                     return Padding(
-                                      padding:
-                                      EdgeInsets.only(left: 2.5, right: 2.5),
+                                      padding: EdgeInsets.only(
+                                          left: 2.5, right: 2.5),
                                       child: ReplacementPlanRow(
-                                        showUnit: !(lesson
-                                                  .subjects[_selected].unsures >
-                                                  0 ||
-                                                  (lesson.subjects[_selected]
-                                                      .getChanges(widget.day
-                                                      .replacementPlanForWeektype)
-                                                      .map(
-                                                          (change) => change.isExam)
-                                                      .toList()
-                                                      .contains(true) &&
-                                                      lesson.subjects[_selected]
-                                                          .getChanges(widget.day
-                                                          .replacementPlanForWeektype)
-                                                          .where((change) =>
-                                                      !change.isExam)
-                                                          .toList()
-                                                          .length ==
-                                                          0)),
-                                      change: change,
-                                      changes: lesson.subjects[_selected]
-                                          .getChanges(widget.day.replacementPlanForWeektype),
-                                      weekday: widget.dayIndex,
+                                        showUnit: !(lesson.subjects[_selected]
+                                            .unsures >
+                                            0 ||
+                                            (lesson.subjects[_selected]
+                                                .getChanges(widget.day
+                                                .replacementPlanForWeektype)
+                                                .map((change) =>
+                                            change.isExam)
+                                                .toList()
+                                                .contains(true) &&
+                                                lesson.subjects[_selected]
+                                                    .getChanges(widget.day
+                                                    .replacementPlanForWeektype)
+                                                    .where((change) =>
+                                                !change.isExam)
+                                                    .toList()
+                                                    .length ==
+                                                    0)),
+                                        change: change,
+                                        changes: lesson.subjects[_selected]
+                                            .getChanges(widget.day
+                                            .replacementPlanForWeektype),
+                                        weekday: widget.dayIndex,
                                       ),
                                     );
                                   })
@@ -197,8 +201,7 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                                   .cast<Widget>()),
                             ),
                           ),
-                        )
-                    )
+                        ))
                     : UnitPlanRow(
                         weekday: widget.dayIndex,
                         subject: lesson.subjects[_selected],
