@@ -1,4 +1,8 @@
 import 'dart:convert';
+import 'dart:io' show Platform;
+
+import 'package:device_info/device_info.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 import 'Id.dart';
 import 'Keys.dart';
@@ -51,11 +55,40 @@ Future syncWithTags() async {
 
 Future initTags(id) async {
   if ((await checkOnline) == -1) return;
-  sendTags({
+  String appVersion = (await rootBundle.loadString('pubspec.yaml'))
+      .split('\n')
+      .where((line) => line.startsWith('version'))
+      .toList()[0]
+      .split(':')[1]
+      .trim();
+  String os = '';
+  String deviceName = '';
+  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  if (Platform.isAndroid) {
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    os = 'Android ' + androidInfo.version.release;
+    deviceName = androidInfo.model + ' ' + androidInfo.manufacturer;
+  } else if (Platform.isIOS) {
+    IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+    os = 'iOS ' + iosInfo.systemVersion;
+    deviceName = iosInfo.utsname.machine;
+  }
+  Map<String, dynamic> send = {
     Keys.grade: Storage.getString(Keys.grade),
     Keys.dev: Storage.getBool(Keys.dev) ?? false,
-    "firebaseId": id
-  });
+    'firebaseId': id,
+    'lastSession': DateTime.now().toIso8601String(),
+  };
+  if (appVersion != '') {
+    send['appVersion'] = appVersion;
+  }
+  if (deviceName != '') {
+    send['deviceName'] = deviceName;
+  }
+  if (os != '') {
+    send['os'] = os;
+  }
+  sendTags(send);
 }
 
 Future sendTags(Map<String, dynamic> tags) async {
