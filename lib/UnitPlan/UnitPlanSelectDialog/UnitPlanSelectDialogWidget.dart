@@ -109,7 +109,7 @@ abstract class UnitPlanSelectDialogState extends State<UnitPlanSelectDialog>
       }
     }
 
-    Navigator.pop(context);
+    if (widget.enableWrapper) Navigator.pop(context);
     widget.onSelected();
 
     // Synchronise tags for notifications

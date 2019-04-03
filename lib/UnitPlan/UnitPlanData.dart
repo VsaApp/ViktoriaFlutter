@@ -8,7 +8,11 @@ import '../Selection.dart';
 import '../Storage.dart';
 import 'UnitPlanModel.dart';
 
-// Download the unit plan...
+/// Downloads the unit plan
+/// 
+/// Grade defines for which grade the unitplan should be download.
+/// If temp is true, the downloaded unitplan will be returned and not set in the static class (Default temp is false).
+/// If update is true, the untiplan will be downloaded from the server and if not it only would be loaded from the storage.
 Future<List<UnitPlanDay>> download(String grade, bool temp,
     {bool update = true}) async {
   // Check if a date is selected...
