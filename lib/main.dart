@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'dart:async';
 
+import 'Network.dart';
 import 'Home/HomePage.dart';
 import 'Id.dart';
 import 'Errors.dart' as bugs;

@@ -3,15 +3,17 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
+import 'Keys.dart';
 import 'Storage.dart';
 
 Duration maxTime = Duration(seconds: 4);
+String apiUrl = 'https://api.vsa.2bad2c0.de';
+String historyUrl = 'https://history.api.vsa.2bad2c0.de';
 
-/// Returns 1 if api.vsa.2bad2c0.de is online, 0 if google.com is online and -1 if everthing is offline
+/// Returns 1 if the api is online, 0 if google.com is online and -1 if everthing is offline
 Future<int> get checkOnline async {
   try {
-    final result1 =
-        await InternetAddress.lookup('api.vsa.2bad2c0.de').timeout(maxTime);
+    final result1 = await InternetAddress.lookup(apiUrl.substring(apiUrl.indexOf('://') + 3)).timeout(maxTime);
     if (result1.isNotEmpty && result1[0].rawAddress.isNotEmpty) {
       return 1;
     }
@@ -25,21 +27,36 @@ Future<int> get checkOnline async {
   }
 }
 
+Future<String> httpGet(String url, {Duration timeout, bool auth = true}) async {
+  url = getUrl(url, auth: auth);
+  return (await http.Client().get(url).timeout(timeout ?? maxTime)).body;
+}
+
+String getUrl(String path, {bool auth = true}) {
+  String authString = auth ? '${Storage.getString(Keys.username) ?? ''}:${Storage.getString(Keys.password) ?? ''}@' : '';
+  if (path.contains('http')) return path.replaceFirst('://', '://$authString');
+  if (!path.startsWith('/')) path = '/' + path;
+  return '$apiUrl$path'.replaceFirst('://', '://$authString');
+}
+
 Future fetchDataAndSave(String url,
     String key,
     String defaultValue, {
       Map<String, dynamic> body,
-      Duration timeout
+      Duration timeout,
+      bool auth = true
     }) async {
   if (timeout == null) {
     timeout = maxTime;
   }
+  url = getUrl(url, auth: auth);
   try {
     dynamic response;
     if (body != null) {
       response = await post(url, body: body);
-    } else
+    } else{
       response = (await http.Client().get(url).timeout(timeout)).body;
+    }
     if (response.contains('404 Not Found')) {
       throw "404 Not Found";
     }
@@ -53,11 +70,12 @@ Future fetchDataAndSave(String url,
 }
 
 Future<String> fetchData(String url, {
-  Duration timeout,
+  Duration timeout, bool auth = true
 }) async {
   if (timeout == null) {
     timeout = maxTime;
   }
+  url = getUrl(url, auth: auth);
   try {
     final response = await http.Client().get(url).timeout(timeout);
     return response.body;
@@ -67,7 +85,8 @@ Future<String> fetchData(String url, {
   }
 }
 
-Future<String> post(String url, {dynamic body}) async {
+Future<String> post(String url, {dynamic body, bool auth = true}) async {
+  url = getUrl(url, auth: auth);
   HttpClient httpClient = HttpClient();
   HttpClientRequest request =
       await httpClient.postUrl(Uri.parse(url)).timeout(maxTime);

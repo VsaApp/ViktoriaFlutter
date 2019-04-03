@@ -16,7 +16,7 @@ void init() async {
 void reportError(error, stackTrace) async {
   print("Report new bug ($error)");
   if ((await checkOnline) == 1) {
-    String url = 'https://api.vsa.2bad2c0.de/bugs/report';
+    String url = '/bugs/report';
     post(url, body: {
       "id": Id.id,
       "title": error.toString(),

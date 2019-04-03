@@ -26,10 +26,10 @@ class HomePageView extends HomePageState {
     List<Page> pages = [
       Page(AppLocalizations.of(context).unitPlan, Icons.event_note,
           UnitPlanPage(),
-          url: 'https://www.viktoriaschule-aachen.de/sundvplan/sps/index.html'),
+          url: 'https://${Storage.getString(Keys.username)}:${Storage.getString(Keys.password)}@www.viktoriaschule-aachen.de/sundvplan/sps/index.html'),
       Page(AppLocalizations.of(context).replacementPlan,
           Icons.format_list_numbered, ReplacementPlanPage(),
-          url: 'https://www.viktoriaschule-aachen.de/sundvplan/vps/index.html'),
+          url: 'https://${Storage.getString(Keys.username)}:${Storage.getString(Keys.password)}@www.viktoriaschule-aachen.de/sundvplan/vps/index.html'),
       Page(AppLocalizations.of(context).messageboard, Icons.message,
           MessageboardPage()),
       Page(AppLocalizations.of(context).calendar, Icons.calendar_today,

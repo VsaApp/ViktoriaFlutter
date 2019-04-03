@@ -26,9 +26,9 @@ Future<List<UnitPlanDay>> download(String grade, bool temp,
   if (uVersion == null && rVersion == null ||
       !(Storage.getBool(Keys.dev) ?? false)) {
     url =
-        'https://api.vsa.2bad2c0.de/unitplan/$grade.json?v=${Random().nextInt(99999999)}';
+        '/unitplan/$grade.json?v=${Random().nextInt(99999999)}';
   } else {
-    url = 'https://history.api.vsa.2bad2c0.de/injectedunitplan/$grade';
+    url = '/injectedunitplan/$grade';
     if (rVersion != null) {
       List<String> date =
       Storage.getStringList(Keys.historyDate('replacementplan'));

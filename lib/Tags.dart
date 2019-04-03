@@ -14,7 +14,7 @@ import 'UnitPlan/UnitPlanData.dart';
 
 Future<Map<String, dynamic>> getTags({String idToLoad}) async {
   String id = idToLoad ?? Id.id;
-  String url = 'https://api.vsa.2bad2c0.de/tags/$id';
+  String url = '/tags/$id';
   try {
     return json.decode(await fetchData(url));
   } on Exception catch (e) {
@@ -93,7 +93,7 @@ Future initTags(id) async {
 
 Future sendTags(Map<String, dynamic> tags) async {
   String id = Id.id;
-  await post('https://api.vsa.2bad2c0.de/tags/$id/add', body: tags);
+  await post('/tags/$id/add', body: tags);
 }
 
 Future deleteTag(String key) async {
@@ -102,7 +102,7 @@ Future deleteTag(String key) async {
 
 Future deleteTags(List<String> tags) async {
   String id = Id.id;
-  String url = 'https://api.vsa.2bad2c0.de/tags/$id/remove';
+  String url = '/tags/$id/remove';
   post(url, body: tags);
 }
 

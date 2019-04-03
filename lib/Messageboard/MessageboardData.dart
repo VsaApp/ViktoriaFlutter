@@ -2,34 +2,24 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:http/http.dart' as http;
-
 import '../Keys.dart';
 import '../Network.dart';
 import '../Storage.dart';
 import 'MessageboardModel.dart';
 
-String urlGroupList = 'https://api.vsa.2bad2c0.de/messageboard/groups/list?v=' +
+String urlGroupList = '/messageboard/groups/list?v=' +
     Random().nextInt(99999999).toString();
-String urlGroupAdd = 'https://api.vsa.2bad2c0.de/messageboard/groups/add?v=' +
+String urlGroupAdd = '/messageboard/groups/add?v=' +
     Random().nextInt(99999999).toString();
-String urlGroupInfo =
-    'https://api.vsa.2bad2c0.de/messageboard/groups/info/'; // + GROUPNAME
-String urlGroupLogin =
-    'https://api.vsa.2bad2c0.de/messageboard/groups/login'; // + GROUPNAME/PASSWORD
-String urlGroupUpdate =
-    'https://api.vsa.2bad2c0.de/messageboard/groups/update'; // + GROUPNAME/PASSWORD
-String urlGroupDelete =
-    'https://api.vsa.2bad2c0.de/messageboard/groups/delete'; // + GROUPNAME/PASSWORD
-String urlGroupPosts =
-    'https://api.vsa.2bad2c0.de/messageboard/posts/list'; // + GROUPNAME/START/END
-String urlPostAdd =
-    'https://api.vsa.2bad2c0.de/messageboard/posts/add'; // + GROUPNAME/PASSWORD
-String urlPostUpdate =
-    'https://api.vsa.2bad2c0.de/messageboard/posts/update'; // + POSTID/PASSWORD
-String urlPostDelete =
-    'https://api.vsa.2bad2c0.de/messageboard/posts/delete'; // + POSTID/PASSWORD
-String urlFeed = 'https://api.vsa.2bad2c0.de/messageboard/feed';
+String urlGroupInfo = '/messageboard/groups/info/'; // + GROUPNAME
+String urlGroupLogin = '/messageboard/groups/login'; // + GROUPNAME/PASSWORD
+String urlGroupUpdate = '/messageboard/groups/update'; // + GROUPNAME/PASSWORD
+String urlGroupDelete = '/messageboard/groups/delete'; // + GROUPNAME/PASSWORD
+String urlGroupPosts = '/messageboard/posts/list'; // + GROUPNAME/START/END
+String urlPostAdd = '/messageboard/posts/add'; // + GROUPNAME/PASSWORD
+String urlPostUpdate = '/messageboard/posts/update'; // + POSTID/PASSWORD
+String urlPostDelete = '/messageboard/posts/delete'; // + POSTID/PASSWORD
+String urlFeed = '/messageboard/feed';
 
 Future download() async {
   await downloadGroups();
@@ -39,9 +29,9 @@ Future download() async {
 // Download messageboard data...
 Future downloadGroups() async {
   try {
-    final response = await http.Client().get(urlGroupList).timeout(maxTime);
+    final response = await httpGet(urlGroupList);
     // Save loaded data...
-    Storage.setString(Keys.messageboardGroups, response.body);
+    Storage.setString(Keys.messageboardGroups, response);
   } catch (e) {
     print("Error in download groups: " + e.toString());
     if (Storage.getString(Keys.messageboardGroups) == null) {
@@ -125,9 +115,9 @@ Future downloadPosts(Group group,
 
   try {
     String url = '$urlGroupPosts/$name/$start/$end';
-    final response = await http.Client().get(url).timeout(maxTime);
+    final response = await httpGet(url);
     // Save loaded data...
-    Storage.setString(Keys.messageboardPosts(name, start, end), response.body);
+    Storage.setString(Keys.messageboardPosts(name, start, end), response);
   } catch (e) {
     print("Error during downloading posts: " + e.toString());
     if (Storage.getString(Keys.messageboardPosts(name, start, end)) == null) {
@@ -188,8 +178,8 @@ Future<bool> updatePost(
 Future<bool> deletePost({String id, String password}) async {
   try {
     String _url = '$urlPostDelete/$id/$password';
-    final response = await http.Client().get(_url).timeout(maxTime);
-    final parsed = json.decode(response.body);
+    final response = await httpGet(_url);
+    final parsed = json.decode(response);
     return MessageboardError.fromJson(parsed).error == null;
   } catch (e) {
     print("Error during deleting post: " + e.toString());
@@ -202,8 +192,8 @@ Future<bool> removeGroup({String username, String password}) async {
   try {
     String _url = '$urlGroupDelete/$username/$password';
 
-    final response = await http.Client().get(_url).timeout(maxTime);
-    final parsed = json.decode(response.body);
+    final response = await httpGet(_url);
+    final parsed = json.decode(response);
     return MessageboardError.fromJson(parsed).error == null;
   } catch (e) {
     print("Error during remove group: " + e.toString());
@@ -242,8 +232,8 @@ Future<bool> checkLogin({String username, String password}) async {
   try {
     String _url = '$urlGroupLogin/$username/$password';
 
-    final response = await http.Client().get(_url).timeout(maxTime);
-    final parsed = json.decode(response.body);
+    final response = await httpGet(_url);
+    final parsed = json.decode(response);
     return MessageboardError.fromJson(parsed).error == null;
   } catch (e) {
     print("Error during checking group login: " + e.toString());

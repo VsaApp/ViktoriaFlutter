@@ -9,7 +9,7 @@ import 'RoomsModel.dart';
 // Download the unit plan...
 Future<Map<String, String>> download({bool update = true}) async {
   if (update) {
-    String url = 'https://api.vsa.2bad2c0.de/rooms';
+    String url = '/rooms';
     await fetchDataAndSave(url, Keys.rooms, '{}');
   }
 

@@ -20,6 +20,7 @@ class AppLocalizations {
       'teacher': 'Lehrer*In',
       'pleaseSelect': 'Bitte auswählen',
       'login': 'Anmelden',
+      'checkLogin': 'Anmeldedaten überprüfen',
       'developerOptions': 'Entwickler',
       'fieldCantBeEmpty': 'Das Feld darf nicht leer sein',
       'pupilUsername': 'Nutzername der Homepage',
@@ -889,6 +890,10 @@ class AppLocalizations {
 
   List<String> get months {
     return _localizedValues[locale.languageCode]['months'];
+  }
+
+  String get checkLogin {
+    return _localizedValues[locale.languageCode]['checkLogin'];
   }
 
   String get syncPhone {

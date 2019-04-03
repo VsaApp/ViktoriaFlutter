@@ -5,6 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../Network.dart';
 import '../Id.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
@@ -53,12 +54,8 @@ abstract class LoginPageState extends State<LoginPage> {
         sha256.convert(utf8.encode(usernameController.text)).toString();
     String _password =
         sha256.convert(utf8.encode(passwordController.text)).toString();
-    final response = await http.get('https://api.vsa.2bad2c0.de/login/' +
-        _username +
-        '/' +
-        _password +
-        '/');
-    pupilCredentialsCorrect = json.decode(response.body)['status'];
+    final response = await httpGet('/login/$_username/$_password/', auth: false);
+    pupilCredentialsCorrect = json.decode(response)['status'];
     if (pupilFormKey.currentState.validate()) {
       // Save correct credentials
       Storage.setString(Keys.username, usernameController.text);

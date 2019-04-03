@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:viktoriaflutter/Network.dart';
+import 'package:http/http.dart' as http;
 
 import '../Cafetoria/CafetoriaData.dart' as Cafetoria;
 import '../Calendar/CalendarData.dart' as Calendar;
@@ -16,6 +18,7 @@ import '../Subjects/SubjectsData.dart' as Subjects;
 import '../Teachers/TeachersData.dart' as Teachers;
 import '../UnitPlan/UnitPlanData.dart' as UnitPlan;
 import '../WorkGroups/WorkGroupsData.dart' as WorkGroups;
+import '../Network.dart';
 import 'LoadingView.dart';
 
 class LoadingPage extends StatefulWidget {
@@ -25,8 +28,8 @@ class LoadingPage extends StatefulWidget {
 
 abstract class LoadingPageState extends State<LoadingPage>
     with TickerProviderStateMixin {
-  int allDownloadsCount = 10;
-  int countCurrentDownloads = 10;
+  int allDownloadsCount = 11;
+  int countCurrentDownloads = 11;
   double centerWidgetDimensions = 150;
   List<String> texts = [];
   bool showTexts = false;
@@ -39,6 +42,11 @@ abstract class LoadingPageState extends State<LoadingPage>
 
   @override
   void initState() {
+    checkOnline.then((online) async {
+      if (online == 1) {
+        
+      }
+    });
     // Check if logged in
     if (Storage.get(Keys.grade) == null ||
         Storage.get(Keys.username) == null ||
@@ -52,6 +60,7 @@ abstract class LoadingPageState extends State<LoadingPage>
           .of(context)
           .updates);
       texts.add(AppLocalizations.of(context).unitPlan);
+      texts.add(AppLocalizations.of(context).checkLogin);
       texts.add(AppLocalizations.of(context).replacementPlan);
       texts.add(AppLocalizations.of(context).workGroups);
       texts.add(AppLocalizations.of(context).calendar);
@@ -100,8 +109,17 @@ abstract class LoadingPageState extends State<LoadingPage>
         .decode(Storage.getString(Keys.updates) ?? '{}')
         .cast<String, String>();
     Map<String, String> newData = {};
+    bool loggedIn = false;
+    await download(() async {
+      String _username = sha256.convert(utf8.encode(Storage.getString(Keys.username))).toString();
+      String _password = sha256.convert(utf8.encode(Storage.getString(Keys.password))).toString();
+      final response = await httpGet('/login/$_username/$_password/', auth: false);
+      loggedIn = json.decode(response)['status'];
+      if (!loggedIn) Navigator.of(context).pushReplacementNamed('/login');
+    }, 1, AppLocalizations.of(context).checkLogin);
+    if (!loggedIn) return;
     try {
-      String raw = await fetchData('https://api.vsa.2bad2c0.de/updates');
+      String raw = await fetchData('/updates');
       newData = json.decode(raw).cast<String, String>();
       Storage.setString(Keys.updates, raw);
     } catch (e) {

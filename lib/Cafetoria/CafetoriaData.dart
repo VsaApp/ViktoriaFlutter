@@ -10,7 +10,7 @@ import 'CafetoriaModel.dart';
 Future download({String id, String password, bool update = true}) async {
   if (update) {
     // If id and password is not set, load login data from preferences...
-    String url = 'https://api.vsa.2bad2c0.de/cafetoria/login/' +
+    String url = '/cafetoria/login/' +
         ((id != null) ? id : Storage.getString(Keys.cafetoriaId) ?? 'null') +
         '/' +
         ((password != null)
@@ -25,7 +25,7 @@ Future download({String id, String password, bool update = true}) async {
 // Check the login data of the keyfob...
 Future<bool> checkLogin({String id, String password}) async {
   try {
-    String url = 'https://api.vsa.2bad2c0.de/cafetoria/login/' +
+    String url = '/cafetoria/login/' +
         id +
         '/' +
         password +
