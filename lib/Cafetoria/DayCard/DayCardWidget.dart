@@ -22,7 +22,9 @@ class CafetoriaDayCard extends StatelessWidget {
               children: <Widget>[
                 Text(
                   menu.name +
-                      (menu.price > 0 ? ' (${menu.price.toString()}€)' : ''),
+                      (menu.price > 0
+                          ? ' (${menu.price.toString().replaceAll('.0', '')}€)'
+                          : ''),
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
