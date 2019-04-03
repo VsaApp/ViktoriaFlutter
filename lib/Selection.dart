@@ -107,12 +107,12 @@ UnitPlanSubject getSelectedSubject(
   return index == null ? null : subjects[index];
 }
 
-void setSelectedSubject(UnitPlanSubject selected, int day, int unit,
+Future setSelectedSubject(UnitPlanSubject selected, int day, int unit,
     {UnitPlanSubject selectedB}) async {
   List<String> weeks = selected.week == 'AB' || selectedB == null
       ? [getKey(selected)]
       : [getKey(selected), getKey(selectedB)];
   String key = Keys.unitPlan(Storage.getString(Keys.grade),
       block: selected.block, day: day, unit: unit);
-  Storage.setStringList(key, weeks);
+  await Storage.setStringList(key, weeks);
 }

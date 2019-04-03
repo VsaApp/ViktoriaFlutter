@@ -143,6 +143,7 @@ class AppLocalizations {
           'Du musst die Kamera deines Handys auf deinen Stundenplan halten und warten bis der Text erscheint. Wenn du meinst, dass alles erkannt wurde, dann kannst du einfach irgendwo auf den Bildschirm klicken. Danach musst du möglicherweise noch Fächer auswählen, wenn diese nicht erkannt werden konnten.',
       'scanUnitPlanAllDetected': 'Alles erkannt',
       'resetUnitPlan': 'Stundenplan zurücksetzen',
+      'scanDescription': 'Hier siehst du eine Liste der Stunden die beim Fotografieren nicht erkannt werden konnten. Wähle für jede Stunde immer deinen Kurs aus!',
       'year': 'Jahr',
       'month': 'Monat',
       'day': 'Tag',
@@ -224,6 +225,10 @@ class AppLocalizations {
   };
 
 // All getter defined...
+  String get scanDescription {
+    return _localizedValues[locale.languageCode]['scanDescription'];
+  }
+
   String get loadOldData {
     return _localizedValues[locale.languageCode]['loadOldData'];
   }

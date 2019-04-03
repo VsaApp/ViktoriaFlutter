@@ -194,7 +194,8 @@ class ScanPageView extends ScanPageState {
       body: unidentifiedLessons.length > 0
           ? ListView(
         shrinkWrap: true,
-        children: unidentifiedLessons.map((lesson) {
+        children: [Padding(padding: EdgeInsets.only(left: 20, right: 20, top: 10), child: Text(AppLocalizations.of(context).scanDescription, textAlign: TextAlign.center,))]..addAll(unidentifiedLessons.map((lesson) {
+          print(lesson.lesson);
           return Section(
             title: [
               'Montag',
@@ -220,7 +221,7 @@ class ScanPageView extends ScanPageState {
               ),
             ],
                 );
-              }).toList(),
+              }).toList()),
             )
           : Container(
               alignment: Alignment(0.0, -1.0),
