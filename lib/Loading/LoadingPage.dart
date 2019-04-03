@@ -117,17 +117,8 @@ abstract class LoadingPageState extends State<LoadingPage>
         ..start();
     });
 
-    download(
-        Messageboard.download, 1, AppLocalizations
-        .of(context)
-        .messageboard);
-    print('Downloading ' +
-        (newData.keys
-            .map((key) => newData[key] != oldData[key])
-            .where((a) => a)
-            .length)
-            .toString() +
-        ' new files');
+    download(Messageboard.download, 1, AppLocalizations.of(context).messageboard);
+    print('Downloading ' + (newData.keys.map((key) => newData[key] != oldData[key]).where((a) => a).length).toString() + ' new files');
     newData.keys.forEach((key) {
       if (key == 'subjectsDef') {
         download(() async {
@@ -176,11 +167,9 @@ abstract class LoadingPageState extends State<LoadingPage>
           await UnitPlan.download(
             Storage.getString(Keys.grade),
             false,
-            update: oldData[key] != newData[key],
+            update: oldData[key] != newData[key] || oldData['replacementplantoday'] != newData['replacementplantoday'] || oldData['replacementplantomorrow'] != newData['replacementplantomorrow'],
           );
-          texts.remove(AppLocalizations
-              .of(context)
-              .unitPlan);
+          texts.remove(AppLocalizations.of(context).unitPlan);
           ReplacementPlan.load(UnitPlan.getUnitPlan(), false);
         }, 2, AppLocalizations
             .of(context)

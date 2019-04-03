@@ -106,10 +106,9 @@ abstract class HomePageState extends State<HomePage> {
     print("received replacementplan notification");
     String grade = Storage.getString(Keys.grade);
     await unitplan.download(grade, false);
-    await replacementplan.load(unitplan.getUnitPlan(), false);
+    replacementplan.load(unitplan.getUnitPlan(), false);
     if (appScaffold != null) {
-      replacementplanUpdatedListeners
-          .forEach((replacementplanUpdated) => replacementplanUpdated());
+      replacementplanUpdatedListeners.forEach((replacementplanUpdated) => replacementplanUpdated());
       Fluttertoast.showToast(
           msg: AppLocalizations.of(context)
               .replacementPlanUpdated

@@ -58,6 +58,7 @@ class Storage {
     _save();
   }
 
+  /// Returns the saved string for the given key
   static String getString(String key) {
     if (_isDesktop) {
       return data[key];
