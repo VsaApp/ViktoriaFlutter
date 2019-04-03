@@ -192,8 +192,14 @@ class AppLocalizations {
       'Es werden die ausgewählten Stunden und die Schriftlichkeiten vom letzten mal übernommen.',
       'cancel': 'Abbrechen',
       'introScannerTitle': 'Scanner',
-      'introScannerDescription':
-      'Damit du nicht deinen ganzen Stundenplan von Hand eingeben musst, kannst du ihn auch einfach mit deinem Handy einscannen',
+      'oldApp': 'Die aktuell installierte App version (VERSION) ist zu alt und wird nicht mehr unterstützt.\n\nBitte sorge dafür, dass du die aktuelle App erhälst! Einfach im Store die aktuelle \'VsaApp\' installieren.',
+      'accecptDseAndAgb': 'Mit der Nutzung unserer App akzeptieren sie unsere AGB und unsere Datenschutzerklärung.',
+      'accept': 'Akzeptieren',
+      'reject': 'Ablehenen',
+      'readAgbDse': 'AGB/DSE Lesen',
+      'agbDse': 'AGB/DSE',
+      'appTooOld': 'App zu alt!',
+      'introScannerDescription': 'Damit du nicht deinen ganzen Stundenplan von Hand eingeben musst, kannst du ihn auch einfach mit deinem Handy einscannen',
       'months': [
         'Januar',
         'Februar',
@@ -228,6 +234,35 @@ class AppLocalizations {
 // All getter defined...
   String get scanDescription {
     return _localizedValues[locale.languageCode]['scanDescription'];
+  }
+
+  String get accept {
+    return _localizedValues[locale.languageCode]['accept'];
+  }
+
+  String get accecptDseAndAgb {
+    return _localizedValues[locale.languageCode]['accecptDseAndAgb'];
+  }
+
+  String get reject {
+    return _localizedValues[locale.languageCode]['reject'];
+  }
+
+  String get readAgbDse {
+    return _localizedValues[locale.languageCode]['readAgbDse'];
+  }
+
+  String get agbDse {
+    return _localizedValues[locale.languageCode]['agbDse'];
+  }
+
+  String get appTooOld {
+    return _localizedValues[locale.languageCode]['appTooOld'];
+  }
+
+
+  String get oldApp {
+    return _localizedValues[locale.languageCode]['oldApp'];
   }
 
   String get loadOldData {

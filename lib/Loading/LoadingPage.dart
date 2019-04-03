@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:viktoriaflutter/Network.dart';
-import 'package:http/http.dart' as http;
 
 import '../Cafetoria/CafetoriaData.dart' as Cafetoria;
 import '../Calendar/CalendarData.dart' as Calendar;
@@ -104,6 +104,22 @@ abstract class LoadingPageState extends State<LoadingPage>
     super.dispose();
   }
 
+  void showOldAppDialog(String version) {
+    showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context1) {
+        return SimpleDialog(
+          title: Text(AppLocalizations.of(context).appTooOld, style: TextStyle(color: Theme.of(context).accentColor)),
+          children: <Widget>[
+            Padding(padding: EdgeInsets.only(left: 20, right: 20), child: Text(AppLocalizations.of(context).oldApp.replaceAll('VERSION', version)))
+          ]
+        );
+      }
+    );
+          
+  }
+
   Future downloadAll() async {
     Map<String, String> oldData = json
         .decode(Storage.getString(Keys.updates) ?? '{}')
@@ -134,6 +150,17 @@ abstract class LoadingPageState extends State<LoadingPage>
       stopwatch = Stopwatch()
         ..start();
     });
+
+    String appVersion = (await rootBundle.loadString('pubspec.yaml'))
+      .split('\n')
+      .where((line) => line.startsWith('version'))
+      .toList()[0]
+      .split(':')[1]
+      .trim();
+    if (int.parse(newData['app']) > int.parse(appVersion.split('+')[1])) {
+      showOldAppDialog(appVersion);
+      return;
+    }
 
     download(Messageboard.download, 1, AppLocalizations.of(context).messageboard);
     print('Downloading ' + (newData.keys.map((key) => newData[key] != oldData[key]).where((a) => a).length).toString() + ' new files');

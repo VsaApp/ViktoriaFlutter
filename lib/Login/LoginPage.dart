@@ -3,7 +3,7 @@ import 'dart:io' show Platform;
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 import '../Network.dart';
 import '../Id.dart';
@@ -58,21 +58,82 @@ abstract class LoginPageState extends State<LoginPage> {
     pupilCredentialsCorrect = json.decode(response)['status'];
     if (pupilFormKey.currentState.validate()) {
       // Save correct credentials
-      Storage.setString(Keys.username, usernameController.text);
-      Storage.setString(Keys.password, passwordController.text);
-      Storage.setString(Keys.grade, grade);
 
-      Map<String, dynamic> alreadyInitialized = await isInitialized();
-      if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-        askSync();
-      } else if (alreadyInitialized != null) {
-        askOldDataLoading();
-      } else {
-        Navigator.pushReplacementNamed(context, '/');
-      }
+      askAgbDse(() async {
+        Storage.setString(Keys.username, usernameController.text);
+        Storage.setString(Keys.password, passwordController.text);
+        Storage.setString(Keys.grade, grade);
+
+        Map<String, dynamic> alreadyInitialized = await isInitialized();
+        if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+          askSync();
+        } else if (alreadyInitialized != null) {
+          askOldDataLoading();
+        } else {
+          Navigator.pushReplacementNamed(context, '/');
+        }
+      });
+
+      
     } else {
       passwordController.clear();
     }
+  }
+
+  launchURL(String url) async {
+    if (url == null) return;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  void askAgbDse(Function onOk) {
+    showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context1) {
+        return SimpleDialog(
+          title: Text(AppLocalizations.of(context).agbDse, style: TextStyle(color: Theme.of(context).accentColor)),
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(left: 20, right: 20), 
+              child: Text(AppLocalizations.of(context).accecptDseAndAgb)
+            ),
+            Padding(
+              padding: EdgeInsets.only(right: 20),
+              child:  Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[FlatButton(
+                    padding: EdgeInsets.all(0),
+                    child: Text(AppLocalizations.of(context).readAgbDse, style: TextStyle(color: Theme.of(context).accentColor), textAlign: TextAlign.end,),
+                    onPressed: () => launchURL(agbUrl),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                    FlatButton(
+                      padding: EdgeInsets.all(0),
+                      child: Text(AppLocalizations.of(context).reject, style: TextStyle(color: Theme.of(context).accentColor), textAlign: TextAlign.end),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      padding: EdgeInsets.all(0),
+                      child: Text(AppLocalizations.of(context).accept, style: TextStyle(color: Theme.of(context).accentColor), textAlign: TextAlign.end),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        onOk();
+                      }
+                    ),
+                  ])
+                ]
+              )
+            )
+          ]
+        );
+      }
+    );
   }
 
   void askSync() {

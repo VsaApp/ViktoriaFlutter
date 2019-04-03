@@ -19,7 +19,9 @@ class UnitPlanSelectDialogView extends UnitPlanSelectDialogState {
                   onSelected: optionSelected)),
           [
             (getASubjects().length > 0)
-                ? Section(
+                ? Padding(
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  child: Section(
               title: AppLocalizations
                   .of(context)
                   .aWeek,
@@ -35,10 +37,12 @@ class UnitPlanSelectDialogView extends UnitPlanSelectDialogState {
               paddingTop: 0,
               paddingBottom: 0,
               margin: 0,
-            )
+            ))
                 : Container(),
             getBSubjects().length > 0
-                ? Section(
+                ? Padding(
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  child: Section(
               title: AppLocalizations
                   .of(context)
                   .bWeek,
@@ -54,7 +58,7 @@ class UnitPlanSelectDialogView extends UnitPlanSelectDialogState {
               paddingTop: 0,
               paddingBottom: 0,
               margin: 0,
-            )
+            ))
                 : Container()
           ]
         ].expand((i) => i).cast<Widget>().toList(),

@@ -8,6 +8,7 @@ import 'Storage.dart';
 
 Duration maxTime = Duration(seconds: 4);
 String apiUrl = 'https://api.vsa.2bad2c0.de';
+String agbUrl = 'https://vsa.2bad2c0.de/agb.html';
 String historyUrl = 'https://history.api.vsa.2bad2c0.de';
 
 /// Returns 1 if the api is online, 0 if google.com is online and -1 if everthing is offline
