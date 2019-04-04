@@ -194,7 +194,7 @@ class AppLocalizations {
       'cancel': 'Abbrechen',
       'introScannerTitle': 'Scanner',
       'oldApp': 'Die aktuell installierte App version (VERSION) ist zu alt und wird nicht mehr unterstützt.\n\nBitte sorge dafür, dass du die aktuelle App erhälst! Einfach im Store die aktuelle \'VsaApp\' installieren.',
-      'accecptDseAndAgb': 'Mit der Nutzung unserer App akzeptieren sie unsere AGB und unsere Datenschutzerklärung.',
+      'accecptDseAndAgb': 'Mit der Nutzung unserer App akzeptieren Sie unsere AGB und unsere Datenschutzerklärung.',
       'accept': 'Akzeptieren',
       'reject': 'Ablehenen',
       'readAgbDse': 'AGB/DSE Lesen',
