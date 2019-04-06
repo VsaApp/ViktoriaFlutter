@@ -18,7 +18,6 @@ dependencies:
   flutter_svg: ^0.12.0
   firebase_core: ^0.2.5
   firebase_messaging: ^4.0.0+1
-  flutter_crashlytics: ^0.3.0
   url_launcher: ^5.0.2
   fluttertoast: ^3.0.3
   material_design_icons_flutter: ^3.2.3595
