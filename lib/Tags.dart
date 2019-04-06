@@ -145,22 +145,21 @@ Future syncTags() async {
   newTags[Keys.exams(grade, subject)] =
       Storage.getBool(Keys.exams(grade, subject.toUpperCase())) ?? true);
 
-  // Only set tags when the user activated notifications...
-  if (Storage.getBool(Keys.getReplacementPlanNotifications) ?? true) {
-    // Set all new unitplan tags...
-    getUnitPlan().forEach((day) {
-      day.lessons.forEach((lesson) {
-        newTags[Keys.unitPlan(grade,
-            block: lesson.subjects[0].block,
-            day: getUnitPlan().indexOf(day),
-            unit: day.lessons.indexOf(lesson))] =
-            Storage.getStringList(Keys.unitPlan(grade,
-                block: lesson.subjects[0].block,
-                day: getUnitPlan().indexOf(day),
-                unit: day.lessons.indexOf(lesson)));
-      });
+  newTags[Keys.getReplacementPlanNotifications] = Storage.getBool(Keys.getReplacementPlanNotifications) ?? true;
+
+  // Set all new unitplan tags...
+  getUnitPlan().forEach((day) {
+    day.lessons.forEach((lesson) {
+      newTags[Keys.unitPlan(grade,
+          block: lesson.subjects[0].block,
+          day: getUnitPlan().indexOf(day),
+          unit: day.lessons.indexOf(lesson))] =
+          Storage.getStringList(Keys.unitPlan(grade,
+              block: lesson.subjects[0].block,
+              day: getUnitPlan().indexOf(day),
+              unit: day.lessons.indexOf(lesson)));
     });
-  }
+  });
 
   Storage.getKeys().where((key) => key.startsWith('room-')).forEach((key) {
     newTags[key] = Storage.getString(key);
