@@ -122,6 +122,9 @@ abstract class LoadingPageState extends State<LoadingPage>
   Future downloadAll() async {
     stopwatch = Stopwatch()
       ..start();
+    String oldGrade = Storage.getString(Keys.oldGrade) ?? '--';
+    String newGrade = Storage.getString(Keys.grade);
+    Storage.setString(Keys.oldGrade, newGrade);
     Map<String, String> oldData = json
         .decode(Storage.getString(Keys.updates) ?? '{}')
         .cast<String, String>();
@@ -157,7 +160,7 @@ abstract class LoadingPageState extends State<LoadingPage>
 
     print('Downloading ' +
         (newData.keys
-            .map((key) => newData[key] != oldData[key])
+            .map((key) => newData[key] != oldData[key] || oldGrade != newGrade)
             .where((a) => a)
             .length)
             .toString() +
@@ -166,7 +169,7 @@ abstract class LoadingPageState extends State<LoadingPage>
       if (key == 'subjectsDef') {
         download(() async {
           await Subjects.download(
-            update: oldData[key] != newData[key],
+            update: oldData[key] != newData[key] || oldGrade != newGrade,
           );
         }, 1, AppLocalizations
             .of(context)
@@ -174,7 +177,7 @@ abstract class LoadingPageState extends State<LoadingPage>
       } else if (key == 'roomsDef') {
         download(() async {
           await Rooms.download(
-            update: oldData[key] != newData[key],
+            update: oldData[key] != newData[key] || oldGrade != newGrade,
           );
         }, 1, AppLocalizations
             .of(context)
@@ -182,7 +185,7 @@ abstract class LoadingPageState extends State<LoadingPage>
       } else if (key == 'teachersDef') {
         download(() async {
           await Teachers.download(
-            update: oldData[key] != newData[key],
+            update: oldData[key] != newData[key] || oldGrade != newGrade,
           );
         }, 1, AppLocalizations
             .of(context)
@@ -192,7 +195,7 @@ abstract class LoadingPageState extends State<LoadingPage>
           await Cafetoria.download(
             id: 'null',
             password: 'null',
-            update: oldData[key] != newData[key],
+            update: oldData[key] != newData[key] || oldGrade != newGrade,
           );
         }, 1, AppLocalizations
             .of(context)
@@ -200,7 +203,7 @@ abstract class LoadingPageState extends State<LoadingPage>
       } else if (key == 'calendar') {
         download(() async {
           await Calendar.download(
-            update: oldData[key] != newData[key],
+            update: oldData[key] != newData[key] || oldGrade != newGrade,
           );
         }, 1, AppLocalizations
             .of(context)
@@ -214,7 +217,7 @@ abstract class LoadingPageState extends State<LoadingPage>
                 oldData['replacementplantoday'] !=
                     newData['replacementplantoday'] ||
                 oldData['replacementplantomorrow'] !=
-                    newData['replacementplantomorrow'],
+                    newData['replacementplantomorrow'] || oldGrade != newGrade,
           );
           texts.remove(AppLocalizations.of(context).unitPlan);
           ReplacementPlan.load(UnitPlan.getUnitPlan(), false);
@@ -224,13 +227,13 @@ abstract class LoadingPageState extends State<LoadingPage>
       } else if (key == 'workgroups') {
         download(() async {
           await WorkGroups.download(
-            update: oldData[key] != newData[key],
+            update: oldData[key] != newData[key] || oldGrade != newGrade,
           );
         }, 1, AppLocalizations
             .of(context)
             .workGroups);
       }
-      if (oldData[key] != newData[key]) {
+      if (oldData[key] != newData[key] || oldGrade != newGrade) {
         print('Downloading ' + key);
       }
     });

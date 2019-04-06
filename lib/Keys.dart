@@ -161,4 +161,8 @@ class Keys {
   static String get updates {
     return 'updates';
   }
+
+  static String get oldGrade {
+    return 'oldGrade';
+  }
 }
