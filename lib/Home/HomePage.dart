@@ -8,8 +8,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../Keys.dart';
 import '../Localizations.dart';
-import '../Messageboard/MessageboardModel.dart';
-import '../Messageboard/MessageboardModel.dart' as messageboard;
 import '../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
 import '../Storage.dart';
 import '../Tags.dart';
@@ -56,7 +54,6 @@ abstract class HomePageState extends State<HomePage> {
   int logoClickCount = 0;
   bool offlineShown = false;
   static const platform = const MethodChannel('viktoriaflutter');
-  static Function(String action, String type, String group) messageBoardUpdated;
   static Function(String week) weekChanged;
   static Function(String week) updateWeek;
   static Function(bool value) setShowWeek;
@@ -90,25 +87,14 @@ abstract class HomePageState extends State<HomePage> {
     }
   }
 
-  void handleMessageboardNotification(Map msg) {
-    print("received messageboard notification");
-    if (messageBoardUpdated != null)
-      messageBoardUpdated(msg['action'], msg['type'], msg['group']);
-    else {
-      if (msg['type'] == 'messageboard-post')
-        Messageboard.postsChanged(msg['data']['group']);
-      else if (msg['type'] == 'messageboard-group')
-        Messageboard.groupsChanged(msg['group']);
-    }
-  }
-
   Future handleReplacementplanNotification(Map msg) async {
     print("received replacementplan notification");
     String grade = Storage.getString(Keys.grade);
     await unitplan.download(grade, false);
     replacementplan.load(unitplan.getUnitPlan(), false);
     if (appScaffold != null) {
-      replacementplanUpdatedListeners.forEach((replacementplanUpdated) => replacementplanUpdated());
+      replacementplanUpdatedListeners
+          .forEach((replacementplanUpdated) => replacementplanUpdated());
       Fluttertoast.showToast(
           msg: AppLocalizations.of(context)
               .replacementPlanUpdated
@@ -137,14 +123,10 @@ abstract class HomePageState extends State<HomePage> {
     platform.invokeMethod('clearNotifications');
     if (msg == 'replacementplan_channel')
       setState(() => selectedDrawerIndex = 1);
-    else if (msg == 'messageboard_channel')
-      setState(() => selectedDrawerIndex = 2);
   }
 
   Future<dynamic> _handleNotification(MethodCall call) async {
-    if (call.method.startsWith('messageboard'))
-      handleMessageboardNotification(call.arguments);
-    else if (call.method == 'replacementplan')
+    if (call.method == 'replacementplan')
       handleReplacementplanNotification(call.arguments);
     else if (call.method == 'unitplan')
       handleUnitplanNotification(call.arguments);
@@ -162,9 +144,6 @@ abstract class HomePageState extends State<HomePage> {
       setShowWeek(true);
     }
 
-    // Default follow VsaApp in messageboard...
-    if (Storage.getStringList(Keys.feedGroups) == null)
-      Messageboard.setFollowGroup('VsaApp');
     checkUntiplanData();
 
     // Set the listener for android functions (Currently for incoming notifications and intents)...
@@ -184,7 +163,6 @@ abstract class HomePageState extends State<HomePage> {
           await initTags(token);
           await syncWithTags();
           await syncTags();
-          messageboard.Messageboard.syncTags();
           replacementplanUpdatedListeners
               .forEach((replacementplanUpdated) => replacementplanUpdated());
         });

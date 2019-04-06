@@ -6,7 +6,6 @@ import 'package:flutter/services.dart' show rootBundle;
 
 import 'Id.dart';
 import 'Keys.dart';
-import 'Messageboard/MessageboardModel.dart';
 import 'Network.dart';
 import 'Selection.dart';
 import 'Storage.dart';
@@ -111,8 +110,7 @@ Future deleteOldTags() async {
   if (tags == null) return;
   List<String> tagsToDelete = [];
   tags.forEach((tag, value) {
-    if (!(tag.startsWith('messageboard') ||
-        tag.startsWith('unitPlan') ||
+    if (!(tag.startsWith('unitPlan') ||
         tag.startsWith('dev') ||
         tag.startsWith('grade') ||
         tag.startsWith('exam'))) {
@@ -183,12 +181,6 @@ Future syncTags() async {
   Storage.getKeys().where((key) => key.startsWith('room-')).forEach((key) {
     newTags[key] = Storage.getString(key);
   });
-
-  // Add all messageboard tags...
-  List<Group> notifications = Messageboard.notifications;
-  Messageboard.following.forEach((group) =>
-  newTags[Keys.messageboardGroupTag(group.name)] =
-      notifications.contains(group));
 
   // Compare new and old tags...
   Map<String, dynamic> tagsToUpdate = {};

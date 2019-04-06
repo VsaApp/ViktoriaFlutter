@@ -3,13 +3,8 @@ package de.lohl1kohl.viktoriaflutter;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import io.flutter.app.FlutterActivity;
 import io.flutter.plugin.common.MethodCall;
@@ -17,23 +12,20 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugins.GeneratedPluginRegistrant;
 
 public class MainActivity extends FlutterActivity {
+    final static String[] channelsIds = new String[]{
+            "replacementplan_channel",
+            "unitplan_channel",
+            "cafetoria_channel",
+            "calendar_channel"
+    };
+    final static String[] channelsInfos = new String[]{
+            "Vertretungsplan-Änderungen des Vertretungsplans",
+            "Schwarzes Brett-Alle neuen Nachrichten",
+            "Stundenplan-Stundenplanänderungen",
+            "Cafetoria-Neue Menüs",
+            "Kalender-Alle Termiene"
+    };
     private static final String CHANNEL = "viktoriaflutter";
-
-    final static String[] channelsIds = new String[] {
-        "replacementplan_channel",
-        "messageboard_channel",
-        "unitplan_channel",
-        "cafetoria_channel",
-        "calendar_channel"
-    };
-
-    final static String[] channelsInfos = new String[] {
-        "Vertretungsplan-Änderungen des Vertretungsplans",
-        "Schwarzes Brett-Alle neuen Nachrichten",
-        "Stundenplan-Stundenplanänderungen",
-        "Cafetoria-Neue Menüs",
-        "Kalender-Alle Termiene"
-    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,7 +52,8 @@ public class MainActivity extends FlutterActivity {
                 // Register the channel with the system; you can't change the importance
                 // or other notification behaviors after this
                 NotificationManager notificationManager = getSystemService(NotificationManager.class);
-                if (notificationManager != null) notificationManager.createNotificationChannel(channel);
+                if (notificationManager != null)
+                    notificationManager.createNotificationChannel(channel);
             }
         }
 

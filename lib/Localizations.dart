@@ -74,57 +74,9 @@ class AppLocalizations {
       'workGroups': 'AGs',
       'calendar': 'Kalender',
       'dates': 'Termine',
-      'messageboard': 'Schwarzes Brett',
-      'feed': 'Feed',
-      'groups': 'Gruppen',
-      'max3Groups': 'Du hast bereits 3 Gruppen ohne Bestätigung erstellt!',
-      'noLoggedInGroup': 'Du bist noch in keiner Gruppe angemeldet!',
-      'blockedInfo': ' (Blockiert)',
-      'follow': 'Folgen',
-      'doNotFollow': 'Entfolgen',
-      'onlyOnline': 'Du kannst dies nur online tun!',
-      'groupWaiting': 'Warte auf Bestätigung',
-      'feedUpdated': 'Feed aktualisiert!',
-      'noGroups': 'Du folgst noch keinen Gruppen!',
-      'noPosts': 'Es gibt noch keine Posts für dich!',
-      'groupInfo': 'Gruppeninformation',
-      'noPostsAnymore': 'Es gibt keine weiteren Posts!',
-      'noPostsInGroup': 'Hier gibt es noch keine Posts!',
-      'passwordChanged': 'Das Passwort wurde geändert!',
-      'postGroup': 'Gruppe auswählen in der der Post gesendet werden soll',
-      'postText': 'Post Text',
-      'postTitle': 'Post Titel',
-      'addPost': 'Post schreiben',
-      'removeGroup': 'Gruppe löschen',
-      'errorAddingGroup': 'Fehler beim Gruppe hinzufügen!',
-      'addGroup': 'Gruppe erstellen',
-      'groupName': 'Gruppen Name',
-      'groupPassword': 'Gruppen Passwort',
-      'addGroupInfo':
-          'Die Gruppe kannst erstmal nur du sehen, bis sie von den App-Entwicklern bestätigt wurde. Dies könnte etwas Zeit in Anspruch nehmen.',
-      'noSlash': '\'/\' ist nicht erlaubt',
-      'groupAlreadyExist': 'Name ist schon vergeben',
-      'passwordNotCorrect': 'Passwort falsch',
-      'confirmDeleteGroup': 'Wollen sie wirklich die Gruppe löschen?',
-      'confirmDeletePost': 'Wollen sie wirklich den Post löschen?',
-      'removedGroup': 'Gruppe \'%s\' wurde gelöscht!',
-      'editGroupInfo': 'Info bearbeiten',
-      'editGroupPassword': 'Passwort bearbeiten',
-      'errorEditGroup': 'Fehler beim bearbeiten der Gruppe!',
-      'currentPassword': 'Aktuelles Passwort',
-      'newPassword': 'Neues Passwort',
-      'blockedAccepted': 'Gruppe wird ausgeblendet!',
       'selectDate': 'Datum auswählen',
-      'group': 'Gruppe',
-      'deletePost': 'Post löschen',
-      'repeatNewPassword': 'Neues Passwort wiederholen',
-      'passwordNotEqual': 'Die Passwörter sind unterschiedlich!',
-      'noGroupsToShow':
-          'Es gibt aktuell noch keine Gruppen!\nDu kannst aber der erste sein der eine erstellt. Einfach unten rechts auf das Plus und dann auf das Gruppenzeichen klicken und schon kannst du eine Gruppe erstellen!',
       'nowADeveloper': 'Du bist jetzt ein Entwickler!',
       'nowNoDeveloper': 'Du bist kein Entwickler mehr!',
-      'removedPost': 'Post gelöscht!',
-      'updatedGroups': 'Gruppen aktualisiert!',
       'replacementPlanUpdated': 'Neuer Vertretungsplan für %s',
       'goOnline': 'Du musst online sein beim ersten mal laden!',
       'unparsed': 'Nicht erkannt',
@@ -193,14 +145,17 @@ class AppLocalizations {
       'Es werden die ausgewählten Stunden und die Schriftlichkeiten vom letzten mal übernommen.',
       'cancel': 'Abbrechen',
       'introScannerTitle': 'Scanner',
-      'oldApp': 'Die aktuell installierte App version (VERSION) ist zu alt und wird nicht mehr unterstützt.\n\nBitte sorge dafür, dass du die aktuelle App erhälst! Einfach im Store die aktuelle \'VsaApp\' installieren.',
-      'accecptDseAndAgb': 'Mit der Nutzung unserer App akzeptieren Sie unsere AGB und unsere Datenschutzerklärung.',
+      'oldApp':
+      'Die aktuell installierte App version (VERSION) ist zu alt und wird nicht mehr unterstützt.\n\nBitte sorge dafür, dass du die aktuelle App erhälst! Einfach im Store die aktuelle \'VsaApp\' installieren.',
+      'accecptDseAndAgb':
+      'Mit der Nutzung unserer App akzeptieren Sie unsere AGB und unsere Datenschutzerklärung.',
       'accept': 'Akzeptieren',
-      'reject': 'Ablehenen',
+      'reject': 'Ablehnen',
       'readAgbDse': 'AGB/DSE Lesen',
       'agbDse': 'AGB/DSE',
       'appTooOld': 'App zu alt!',
-      'introScannerDescription': 'Damit du nicht deinen ganzen Stundenplan von Hand eingeben musst, kannst du ihn auch einfach mit deinem Handy einscannen',
+      'introScannerDescription':
+      'Damit du nicht deinen ganzen Stundenplan von Hand eingeben musst, kannst du ihn auch einfach mit deinem Handy einscannen',
       'months': [
         'Januar',
         'Februar',
@@ -260,7 +215,6 @@ class AppLocalizations {
   String get appTooOld {
     return _localizedValues[locale.languageCode]['appTooOld'];
   }
-
 
   String get oldApp {
     return _localizedValues[locale.languageCode]['oldApp'];
@@ -342,68 +296,12 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]['failedToConnectToServer'];
   }
 
-  String get updatedGroups {
-    return _localizedValues[locale.languageCode]['updatedGroups'];
-  }
-
   String get serverIsOffline {
     return _localizedValues[locale.languageCode]['serverIsOffline'];
   }
 
-  String get messageboard {
-    return _localizedValues[locale.languageCode]['messageboard'];
-  }
-
-  String get confirmDeletePost {
-    return _localizedValues[locale.languageCode]['confirmDeletePost'];
-  }
-
-  String get removedPost {
-    return _localizedValues[locale.languageCode]['removedPost'];
-  }
-
-  String get blockedAccepted {
-    return _localizedValues[locale.languageCode]['blockedAccepted'];
-  }
-
-  String get deletePost {
-    return _localizedValues[locale.languageCode]['deletePost'];
-  }
-
-  String get group {
-    return _localizedValues[locale.languageCode]['group'];
-  }
-
-  String get passwordNotEqual {
-    return _localizedValues[locale.languageCode]['passwordNotEqual'];
-  }
-
   String get currentPassword {
     return _localizedValues[locale.languageCode]['currentPassword'];
-  }
-
-  String get newPassword {
-    return _localizedValues[locale.languageCode]['newPassword'];
-  }
-
-  String get repeatNewPassword {
-    return _localizedValues[locale.languageCode]['repeatNewPassword'];
-  }
-
-  String get errorEditGroup {
-    return _localizedValues[locale.languageCode]['errorEditGroup'];
-  }
-
-  String get editGroupInfo {
-    return _localizedValues[locale.languageCode]['editGroupInfo'];
-  }
-
-  String get editGroupPassword {
-    return _localizedValues[locale.languageCode]['editGroupPassword'];
-  }
-
-  String get removedGroup {
-    return _localizedValues[locale.languageCode]['removedGroup'];
   }
 
   String get yes {
@@ -414,128 +312,8 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]['no'];
   }
 
-  String get confirmDeleteGroup {
-    return _localizedValues[locale.languageCode]['confirmDeleteGroup'];
-  }
-
-  String get removeGroup {
-    return _localizedValues[locale.languageCode]['removeGroup'];
-  }
-
-  String get groupWaiting {
-    return _localizedValues[locale.languageCode]['groupWaiting'];
-  }
-
-  String get groupName {
-    return _localizedValues[locale.languageCode]['groupName'];
-  }
-
-  String get groupPassword {
-    return _localizedValues[locale.languageCode]['groupPassword'];
-  }
-
-  String get passwordNotCorrect {
-    return _localizedValues[locale.languageCode]['passwordNotCorrect'];
-  }
-
-  String get postText {
-    return _localizedValues[locale.languageCode]['postText'];
-  }
-
-  String get postTitle {
-    return _localizedValues[locale.languageCode]['postTitle'];
-  }
-
-  String get errorAddingGroup {
-    return _localizedValues[locale.languageCode]['errorAddingGroup'];
-  }
-
-  String get addGroup {
-    return _localizedValues[locale.languageCode]['addGroup'];
-  }
-
-  String get addGroupInfo {
-    return _localizedValues[locale.languageCode]['addGroupInfo'];
-  }
-
-  String get noSlash {
-    return _localizedValues[locale.languageCode]['noSlash'];
-  }
-
-  String get groupAlreadyExist {
-    return _localizedValues[locale.languageCode]['groupAlreadyExist'];
-  }
-
-  String get feedUpdated {
-    return _localizedValues[locale.languageCode]['feedUpdated'];
-  }
-
-  String get noGroups {
-    return _localizedValues[locale.languageCode]['noGroups'];
-  }
-
-  String get noPosts {
-    return _localizedValues[locale.languageCode]['noPosts'];
-  }
-
-  String get max3Groups {
-    return _localizedValues[locale.languageCode]['max3Groups'];
-  }
-
-  String get noPostsAnymore {
-    return _localizedValues[locale.languageCode]['noPostsAnymore'];
-  }
-
-  String get groupInfo {
-    return _localizedValues[locale.languageCode]['groupInfo'];
-  }
-
-  String get passwordChanged {
-    return _localizedValues[locale.languageCode]['passwordChanged'];
-  }
-
-  String get noPostsInGroup {
-    return _localizedValues[locale.languageCode]['noPostsInGroup'];
-  }
-
-  String get addPost {
-    return _localizedValues[locale.languageCode]['addPost'];
-  }
-
-  String get postGroup {
-    return _localizedValues[locale.languageCode]['postGroup'];
-  }
-
-  String get noLoggedInGroup {
-    return _localizedValues[locale.languageCode]['noLoggedInGroup'];
-  }
-
   String get cafetoria {
     return _localizedValues[locale.languageCode]['cafetoria'];
-  }
-
-  String get feed {
-    return _localizedValues[locale.languageCode]['feed'];
-  }
-
-  String get groups {
-    return _localizedValues[locale.languageCode]['groups'];
-  }
-
-  String get noGroupsToShow {
-    return _localizedValues[locale.languageCode]['noGroupsToShow'];
-  }
-
-  String get blockedInfo {
-    return _localizedValues[locale.languageCode]['blockedInfo'];
-  }
-
-  String get follow {
-    return _localizedValues[locale.languageCode]['follow'];
-  }
-
-  String get doNotFollow {
-    return _localizedValues[locale.languageCode]['doNotFollow'];
   }
 
   String get onlyOnline {

@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:viktoriaflutter/Network.dart';
 
 import '../Cafetoria/CafetoriaData.dart' as Cafetoria;
 import '../Calendar/CalendarData.dart' as Calendar;
 import '../Keys.dart';
 import '../Localizations.dart';
-import '../Messageboard/MessageboardData.dart' as Messageboard;
+import '../Network.dart';
 import '../ReplacementPlan/ReplacementPlanData.dart' as ReplacementPlan;
 import '../Rooms/RoomsData.dart' as Rooms;
 import '../Storage.dart';
@@ -18,7 +18,6 @@ import '../Subjects/SubjectsData.dart' as Subjects;
 import '../Teachers/TeachersData.dart' as Teachers;
 import '../UnitPlan/UnitPlanData.dart' as UnitPlan;
 import '../WorkGroups/WorkGroupsData.dart' as WorkGroups;
-import '../Network.dart';
 import 'LoadingView.dart';
 
 class LoadingPage extends StatefulWidget {
@@ -28,8 +27,8 @@ class LoadingPage extends StatefulWidget {
 
 abstract class LoadingPageState extends State<LoadingPage>
     with TickerProviderStateMixin {
-  int allDownloadsCount = 11;
-  int countCurrentDownloads = 11;
+  int allDownloadsCount = 10;
+  int countCurrentDownloads = 10;
   double centerWidgetDimensions = 150;
   List<String> texts = [];
   bool showTexts = false;
@@ -43,9 +42,7 @@ abstract class LoadingPageState extends State<LoadingPage>
   @override
   void initState() {
     checkOnline.then((online) async {
-      if (online == 1) {
-        
-      }
+      if (online == 1) {}
     });
     // Check if logged in
     if (Storage.get(Keys.grade) == null ||
@@ -64,9 +61,6 @@ abstract class LoadingPageState extends State<LoadingPage>
       texts.add(AppLocalizations.of(context).replacementPlan);
       texts.add(AppLocalizations.of(context).workGroups);
       texts.add(AppLocalizations.of(context).calendar);
-      texts.add(AppLocalizations
-          .of(context)
-          .messageboard);
       texts.add(AppLocalizations.of(context).subjects);
       texts.add(AppLocalizations.of(context).rooms);
       texts.add(AppLocalizations.of(context).teachers);
@@ -106,30 +100,44 @@ abstract class LoadingPageState extends State<LoadingPage>
 
   void showOldAppDialog(String version) {
     showDialog<String>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context1) {
-        return SimpleDialog(
-          title: Text(AppLocalizations.of(context).appTooOld, style: TextStyle(color: Theme.of(context).accentColor)),
-          children: <Widget>[
-            Padding(padding: EdgeInsets.only(left: 20, right: 20), child: Text(AppLocalizations.of(context).oldApp.replaceAll('VERSION', version)))
-          ]
-        );
-      }
-    );
-          
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context1) {
+          return SimpleDialog(
+              title: Text(AppLocalizations
+                  .of(context)
+                  .appTooOld,
+                  style: TextStyle(color: Theme
+                      .of(context)
+                      .accentColor)),
+              children: <Widget>[
+                Padding(
+                    padding: EdgeInsets.only(left: 20, right: 20),
+                    child: Text(AppLocalizations
+                        .of(context)
+                        .oldApp
+                        .replaceAll('VERSION', version)))
+              ]);
+        });
   }
 
   Future downloadAll() async {
+    stopwatch = Stopwatch()
+      ..start();
     Map<String, String> oldData = json
         .decode(Storage.getString(Keys.updates) ?? '{}')
         .cast<String, String>();
     Map<String, String> newData = {};
     bool loggedIn = false;
     await download(() async {
-      String _username = sha256.convert(utf8.encode(Storage.getString(Keys.username))).toString();
-      String _password = sha256.convert(utf8.encode(Storage.getString(Keys.password))).toString();
-      final response = await httpGet('/login/$_username/$_password/', auth: false);
+      String _username = sha256
+          .convert(utf8.encode(Storage.getString(Keys.username)))
+          .toString();
+      String _password = sha256
+          .convert(utf8.encode(Storage.getString(Keys.password)))
+          .toString();
+      final response =
+      await httpGet('/login/$_username/$_password/', auth: false);
       loggedIn = json.decode(response)['status'];
       if (!loggedIn) Navigator.of(context).pushReplacementNamed('/login');
     }, 1, AppLocalizations.of(context).checkLogin);
@@ -147,23 +155,26 @@ abstract class LoadingPageState extends State<LoadingPage>
       texts.remove(AppLocalizations
           .of(context)
           .updates);
-      stopwatch = Stopwatch()
-        ..start();
     });
 
     String appVersion = (await rootBundle.loadString('pubspec.yaml'))
-      .split('\n')
-      .where((line) => line.startsWith('version'))
-      .toList()[0]
-      .split(':')[1]
-      .trim();
+        .split('\n')
+        .where((line) => line.startsWith('version'))
+        .toList()[0]
+        .split(':')[1]
+        .trim();
     if (int.parse(newData['app']) > int.parse(appVersion.split('+')[1])) {
       showOldAppDialog(appVersion);
       return;
     }
 
-    download(Messageboard.download, 1, AppLocalizations.of(context).messageboard);
-    print('Downloading ' + (newData.keys.map((key) => newData[key] != oldData[key]).where((a) => a).length).toString() + ' new files');
+    print('Downloading ' +
+        (newData.keys
+            .map((key) => newData[key] != oldData[key])
+            .where((a) => a)
+            .length)
+            .toString() +
+        ' new files');
     newData.keys.forEach((key) {
       if (key == 'subjectsDef') {
         download(() async {
@@ -212,7 +223,11 @@ abstract class LoadingPageState extends State<LoadingPage>
           await UnitPlan.download(
             Storage.getString(Keys.grade),
             false,
-            update: oldData[key] != newData[key] || oldData['replacementplantoday'] != newData['replacementplantoday'] || oldData['replacementplantomorrow'] != newData['replacementplantomorrow'],
+            update: oldData[key] != newData[key] ||
+                oldData['replacementplantoday'] !=
+                    newData['replacementplantoday'] ||
+                oldData['replacementplantomorrow'] !=
+                    newData['replacementplantomorrow'],
           );
           texts.remove(AppLocalizations.of(context).unitPlan);
           ReplacementPlan.load(UnitPlan.getUnitPlan(), false);
@@ -243,6 +258,8 @@ abstract class LoadingPageState extends State<LoadingPage>
       texts.remove(text);
     });
     if (countCurrentDownloads == 0) {
+      stopwatch.stop();
+      print(stopwatch.elapsedMilliseconds);
       // After download show app
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         int storedVersion = Storage.getInt(Keys.slidesVersion) ?? 0;

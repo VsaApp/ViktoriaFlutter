@@ -9,7 +9,6 @@ import '../Calendar/CalendarPage.dart';
 import '../Courses/CoursesPage.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
-import '../Messageboard/MessageboardView.dart';
 import '../ReplacementPlan/ReplacementPlanPage.dart';
 import '../Settings/SettingsPage.dart';
 import '../Storage.dart';
@@ -26,12 +25,14 @@ class HomePageView extends HomePageState {
     List<Page> pages = [
       Page(AppLocalizations.of(context).unitPlan, Icons.event_note,
           UnitPlanPage(),
-          url: 'https://${Storage.getString(Keys.username)}:${Storage.getString(Keys.password)}@www.viktoriaschule-aachen.de/sundvplan/sps/index.html'),
+          url:
+          'https://${Storage.getString(Keys.username)}:${Storage.getString(Keys
+              .password)}@www.viktoriaschule-aachen.de/sundvplan/sps/index.html'),
       Page(AppLocalizations.of(context).replacementPlan,
           Icons.format_list_numbered, ReplacementPlanPage(),
-          url: 'https://${Storage.getString(Keys.username)}:${Storage.getString(Keys.password)}@www.viktoriaschule-aachen.de/sundvplan/vps/index.html'),
-      Page(AppLocalizations.of(context).messageboard, Icons.message,
-          MessageboardPage()),
+          url:
+          'https://${Storage.getString(Keys.username)}:${Storage.getString(Keys
+              .password)}@www.viktoriaschule-aachen.de/sundvplan/vps/index.html'),
       Page(AppLocalizations.of(context).calendar, Icons.calendar_today,
           CalendarPage()),
       Page(AppLocalizations.of(context).cafetoria, Icons.fastfood,
@@ -73,8 +74,12 @@ class HomePageView extends HomePageState {
         bool selectedSubjects = Storage.getKeys().where((key) {
           if (key
               .startsWith('unitPlan-${Storage.getString(Keys.grade)}-')) {
-            if ('-'.allMatches(key).length == 3)
-              return key.split('-')[key.split('-').length - 1] != '5';
+            if ('-'
+                .allMatches(key)
+                .length == 3)
+              return key.split('-')[key
+                  .split('-')
+                  .length - 1] != '5';
             return true;
           }
           return false;

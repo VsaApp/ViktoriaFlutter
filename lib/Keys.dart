@@ -118,46 +118,6 @@ class Keys {
     return 'room-' + weekday.toString() + '-' + unit.toString() + '-' + subject;
   }
 
-  static String get messageboardGroups {
-    return 'messageboardGroups';
-  }
-
-  static String messageboardFeed(int start, int end, List<String> groups) {
-    return 'messageboardFeed-$start-$end-${groups.toString()}';
-  }
-
-  static String messageboardPosts(String name, int start, int end) {
-    return 'messageboardPosts-$name-$start-$end';
-  }
-
-  static String get blockedGroups {
-    return 'blockedGroups';
-  }
-
-  static String get loggedInGroups {
-    return 'loggedInGroups';
-  }
-
-  static String get feedGroups {
-    return 'feedGroups';
-  }
-
-  static String get notificationGroups {
-    return 'notificationGroups';
-  }
-
-  static String get waitingGroups {
-    return 'waitingGroups';
-  }
-
-  static String groupEditPassword(String group) {
-    return 'groupEditPassword-$group';
-  }
-
-  static String messageboardGroupTag(String group) {
-    return 'messageboard-${group.replaceAll(RegExp(r' '), '-')}';
-  }
-
   static String historyDate(String type) {
     return 'historyDate-$type';
   }
