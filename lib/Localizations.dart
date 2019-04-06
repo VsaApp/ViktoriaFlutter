@@ -29,7 +29,6 @@ class AppLocalizations {
       'teacherPassword': 'Passwort',
       'cafetoriaId': 'ID',
       'cafetoriaPassword': 'Pin',
-      'notImplementedYet': 'Diese Funktion gibt es bislang noch nicht',
       'credentialsNotCorrect': 'Nutzername oder Passwort falsch',
       'lunchBreak': 'Mittagspause',
       'settings': 'Einstellungen',
@@ -148,7 +147,7 @@ class AppLocalizations {
       'oldApp':
       'Die aktuell installierte App Version (VERSION) ist zu alt und wird nicht mehr unterstützt.\n\nBitte sorge dafür, dass du die aktuelle App erhälst! Einfach im Store die aktuelle \'VsaApp\' installieren.',
       'accecptDseAndAgb':
-      'Mit der Nutzung unserer App akzeptieren Sie unsere AGB und unsere Datenschutzerklärung.',
+      'Mit der Nutzung unserer App akzeptierst du unsere AGB und unsere Datenschutzerklärung.',
       'accept': 'Akzeptieren',
       'reject': 'Ablehnen',
       'readAgbDse': 'AGB/DSE Lesen',
@@ -184,7 +183,7 @@ class AppLocalizations {
       ],
       'notYetExistingOnServer': 'Noch nicht auf dem Schulserver vorhanden!',
       'updates': 'Aktualisierungen',
-      'failedToCheckLogin': 'Fehler beim überprüfen der Logindaten! Versuchen sie es später erneut.'
+      'failedToCheckLogin': 'Fehler beim überprüfen der Logindaten! Versuche es später erneut.'
     },
   };
 
@@ -441,10 +440,6 @@ class AppLocalizations {
 
   String get cafetoriaPassword {
     return _localizedValues[locale.languageCode]['cafetoriaPassword'];
-  }
-
-  String get notImplementedYet {
-    return _localizedValues[locale.languageCode]['notImplementedYet'];
   }
 
   String get credentialsNotCorrect {
