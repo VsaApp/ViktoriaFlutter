@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:viktoriaflutter/Network.dart';
@@ -27,8 +26,8 @@ class LoadingPage extends StatefulWidget {
 
 abstract class LoadingPageState extends State<LoadingPage>
     with TickerProviderStateMixin {
-  int allDownloadsCount = 10;
-  int countCurrentDownloads = 10;
+  int allDownloadsCount = 9;
+  int countCurrentDownloads = 9;
   double centerWidgetDimensions = 150;
   List<String> texts = [];
   bool showTexts = false;
@@ -128,26 +127,15 @@ abstract class LoadingPageState extends State<LoadingPage>
         .decode(Storage.getString(Keys.updates) ?? '{}')
         .cast<String, String>();
     Map<String, String> newData = {};
-    bool loggedIn = false;
-    await download(() async {
-      String _username = sha256
-          .convert(utf8.encode(Storage.getString(Keys.username)))
-          .toString();
-      String _password = sha256
-          .convert(utf8.encode(Storage.getString(Keys.password)))
-          .toString();
-      final response =
-      await httpGet('/login/$_username/$_password/', auth: false);
-      loggedIn = json.decode(response)['status'];
-      if (!loggedIn) Navigator.of(context).pushReplacementNamed('/login');
-    }, 1, AppLocalizations.of(context).checkLogin);
-    if (!loggedIn) return;
     try {
       String raw = await fetchData('/updates');
+      if (raw.contains('401 Authorization Required')) {
+        Navigator.of(context).pushReplacementNamed('/login');
+        return;
+      }
       newData = json.decode(raw).cast<String, String>();
       Storage.setString(Keys.updates, raw);
     } catch (e) {
-      print(e);
       newData = oldData;
     }
     setState(() {

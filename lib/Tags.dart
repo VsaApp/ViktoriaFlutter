@@ -17,7 +17,6 @@ Future<Map<String, dynamic>> getTags({String idToLoad}) async {
   try {
     return json.decode(await fetchData(url));
   } on Exception catch (e) {
-    print('Error during getting tags: ${e.toString()}');
     return null;
   }
 }

@@ -5,10 +5,10 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../Network.dart';
 import '../Id.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
+import '../Network.dart';
 import '../Storage.dart';
 import '../Tags.dart';
 import 'LoginView.dart';
@@ -54,7 +54,8 @@ abstract class LoginPageState extends State<LoginPage> {
         sha256.convert(utf8.encode(usernameController.text)).toString();
     String _password =
         sha256.convert(utf8.encode(passwordController.text)).toString();
-    final response = await httpGet('/login/$_username/$_password/', auth: false);
+    final response =
+    await fetchData('/login/$_username/$_password/', auth: false);
     pupilCredentialsCorrect = json.decode(response)['status'];
     if (pupilFormKey.currentState.validate()) {
       // Save correct credentials
@@ -73,8 +74,6 @@ abstract class LoginPageState extends State<LoginPage> {
           Navigator.pushReplacementNamed(context, '/');
         }
       });
-
-      
     } else {
       passwordController.clear();
     }
@@ -91,49 +90,77 @@ abstract class LoginPageState extends State<LoginPage> {
 
   void askAgbDse(Function onOk) {
     showDialog<String>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context1) {
-        return SimpleDialog(
-          title: Text(AppLocalizations.of(context).agbDse, style: TextStyle(color: Theme.of(context).accentColor)),
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(left: 20, right: 20), 
-              child: Text(AppLocalizations.of(context).accecptDseAndAgb)
-            ),
-            Padding(
-              padding: EdgeInsets.only(right: 20),
-              child:  Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[FlatButton(
-                    padding: EdgeInsets.all(0),
-                    child: Text(AppLocalizations.of(context).readAgbDse, style: TextStyle(color: Theme.of(context).accentColor), textAlign: TextAlign.end,),
-                    onPressed: () => launchURL(agbUrl),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                    FlatButton(
-                      padding: EdgeInsets.all(0),
-                      child: Text(AppLocalizations.of(context).reject, style: TextStyle(color: Theme.of(context).accentColor), textAlign: TextAlign.end),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    FlatButton(
-                      padding: EdgeInsets.all(0),
-                      child: Text(AppLocalizations.of(context).accept, style: TextStyle(color: Theme.of(context).accentColor), textAlign: TextAlign.end),
-                      onPressed: () {
-                        Navigator.pop(context);
-                        onOk();
-                      }
-                    ),
-                  ])
-                ]
-              )
-            )
-          ]
-        );
-      }
-    );
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context1) {
+          return SimpleDialog(
+              title: Text(AppLocalizations
+                  .of(context)
+                  .agbDse,
+                  style: TextStyle(color: Theme
+                      .of(context)
+                      .accentColor)),
+              children: <Widget>[
+                Padding(
+                    padding: EdgeInsets.only(left: 20, right: 20),
+                    child: Text(AppLocalizations
+                        .of(context)
+                        .accecptDseAndAgb)),
+                Padding(
+                    padding: EdgeInsets.only(right: 20),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          FlatButton(
+                            padding: EdgeInsets.all(0),
+                            child: Text(
+                              AppLocalizations
+                                  .of(context)
+                                  .readAgbDse,
+                              style: TextStyle(
+                                  color: Theme
+                                      .of(context)
+                                      .accentColor),
+                              textAlign: TextAlign.end,
+                            ),
+                            onPressed: () => launchURL(agbUrl),
+                          ),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                FlatButton(
+                                  padding: EdgeInsets.all(0),
+                                  child: Text(
+                                      AppLocalizations
+                                          .of(context)
+                                          .reject,
+                                      style: TextStyle(
+                                          color: Theme
+                                              .of(context)
+                                              .accentColor),
+                                      textAlign: TextAlign.end),
+                                  onPressed: () => Navigator.pop(context),
+                                ),
+                                FlatButton(
+                                    padding: EdgeInsets.all(0),
+                                    child: Text(
+                                        AppLocalizations
+                                            .of(context)
+                                            .accept,
+                                        style: TextStyle(
+                                            color:
+                                            Theme
+                                                .of(context)
+                                                .accentColor),
+                                        textAlign: TextAlign.end),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      onOk();
+                                    }),
+                              ])
+                        ]))
+              ]);
+        });
   }
 
   void askSync() {

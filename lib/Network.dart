@@ -14,7 +14,9 @@ String historyUrl = 'https://history.api.vsa.2bad2c0.de';
 /// Returns 1 if the api is online, 0 if google.com is online and -1 if everthing is offline
 Future<int> get checkOnline async {
   try {
-    final result1 = await InternetAddress.lookup(apiUrl.substring(apiUrl.indexOf('://') + 3)).timeout(maxTime);
+    final result1 = await InternetAddress.lookup(
+        apiUrl.substring(apiUrl.indexOf('://') + 3))
+        .timeout(maxTime);
     if (result1.isNotEmpty && result1[0].rawAddress.isNotEmpty) {
       return 1;
     }
@@ -28,25 +30,18 @@ Future<int> get checkOnline async {
   }
 }
 
-Future<String> httpGet(String url, {Duration timeout, bool auth = true}) async {
-  url = getUrl(url, auth: auth);
-  return (await http.Client().get(url).timeout(timeout ?? maxTime)).body;
-}
-
 String getUrl(String path, {bool auth = true}) {
-  String authString = auth ? '${Storage.getString(Keys.username) ?? ''}:${Storage.getString(Keys.password) ?? ''}@' : '';
+  String authString = auth
+      ? '${Storage.getString(Keys.username) ?? ''}:${Storage.getString(
+      Keys.password) ?? ''}@'
+      : '';
   if (path.contains('http')) return path.replaceFirst('://', '://$authString');
   if (!path.startsWith('/')) path = '/' + path;
   return '$apiUrl$path'.replaceFirst('://', '://$authString');
 }
 
-Future fetchDataAndSave(String url,
-    String key,
-    String defaultValue, {
-      Map<String, dynamic> body,
-      Duration timeout,
-      bool auth = true
-    }) async {
+Future fetchDataAndSave(String url, String key, String defaultValue,
+    {Map<String, dynamic> body, Duration timeout, bool auth = true}) async {
   if (timeout == null) {
     timeout = maxTime;
   }
@@ -55,7 +50,7 @@ Future fetchDataAndSave(String url,
     dynamic response;
     if (body != null) {
       response = await post(url, body: body);
-    } else{
+    } else {
       response = (await http.Client().get(url).timeout(timeout)).body;
     }
     if (response.contains('404 Not Found')) {
@@ -70,9 +65,8 @@ Future fetchDataAndSave(String url,
   }
 }
 
-Future<String> fetchData(String url, {
-  Duration timeout, bool auth = true
-}) async {
+Future<String> fetchData(String url,
+    {Duration timeout, bool auth = true}) async {
   if (timeout == null) {
     timeout = maxTime;
   }
@@ -81,7 +75,7 @@ Future<String> fetchData(String url, {
     final response = await http.Client().get(url).timeout(timeout);
     return response.body;
   } catch (e) {
-    print("Error druing fetching date ($url): " + e.toString());
+    print("Error during fetching ($url): " + e.toString());
     return "";
   }
 }
