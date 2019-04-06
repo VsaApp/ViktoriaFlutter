@@ -6,6 +6,7 @@ import '../Id.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
 import '../SectionWidget.dart';
+import '../Network.dart';
 import '../Storage.dart';
 import '../Tags.dart';
 import 'HistoryDialog/HistoryDialogWidget.dart';
@@ -305,11 +306,23 @@ class SettingsPageView extends SettingsPageState {
                       }).toList(),
                       value: grade,
                       onChanged: (grade) async {
-                        setState(() {
-                          Storage.setString(Keys.grade, grade);
-                          // Reload app
-                          Navigator.of(context).pushReplacementNamed('/');
-                        });
+                        if (await checkOnline == 1) {
+                          setState(() {
+                            Storage.setString(Keys.grade, grade);
+                            // Reload app
+                            Navigator.of(context).pushReplacementNamed('/');
+                          });
+                        } else {
+                          Scaffold.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(AppLocalizations.of(context).onlyOnline),
+                              action: SnackBarAction(
+                                label: AppLocalizations.of(context).ok,
+                                onPressed: () {},
+                              ),
+                            ),
+                          );
+                        }
                       },
                     ),
                   ),
@@ -329,7 +342,7 @@ class SettingsPageView extends SettingsPageState {
                       Storage.remove(Keys.grade);
                       Storage.remove(Keys.id);
                       // Reload app
-                      deleteTags((await getTags()).keys.toList());
+                      if(await checkOnline == 1) deleteTags((await getTags()).keys.toList());
                       Navigator.of(context).pushReplacementNamed('/login');
                     },
                   ),
