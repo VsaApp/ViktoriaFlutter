@@ -154,7 +154,13 @@ class LoginPageView extends LoginPageState {
                               onPressed: () {
                                 checkForm();
                               },
-                              child: Text(AppLocalizations.of(context).login),
+                              child: !isCheckingForm ? Text(AppLocalizations.of(context).login) : Padding(
+                                padding: EdgeInsets.all(0),
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  strokeWidth: 1,
+                                ),
+                              )
                             ),
                           ),
                         ),

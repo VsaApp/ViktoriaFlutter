@@ -48,9 +48,11 @@ abstract class LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   final idController = TextEditingController();
+  bool isCheckingForm = false;
 
   // Check if credentials entered are correct
   void checkForm() async {
+    setState(() => isCheckingForm = true);
     String _username =
         sha256.convert(utf8.encode(usernameController.text)).toString();
     String _password =
@@ -71,6 +73,7 @@ abstract class LoginPageState extends State<LoginPage> {
           ),
         ),
       );
+      setState(() => isCheckingForm = false);
       return;
     }
 
@@ -94,6 +97,7 @@ abstract class LoginPageState extends State<LoginPage> {
     } else {
       passwordController.clear();
     }
+    setState(() => isCheckingForm = false);
   }
 
   launchURL(String url) async {
