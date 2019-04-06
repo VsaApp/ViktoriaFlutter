@@ -184,10 +184,15 @@ class AppLocalizations {
       ],
       'notYetExistingOnServer': 'Noch nicht auf dem Schulserver vorhanden!',
       'updates': 'Aktualisierungen',
+      'failedToCheckLogin': 'Fehler beim überprüfen der Logindaten! Versuchen sie es später erneut.'
     },
   };
 
 // All getter defined...
+  String get failedToCheckLogin {
+    return _localizedValues[locale.languageCode]['failedToCheckLogin'];
+  }
+
   String get scanDescription {
     return _localizedValues[locale.languageCode]['scanDescription'];
   }

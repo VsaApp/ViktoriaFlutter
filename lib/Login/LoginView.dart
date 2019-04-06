@@ -6,7 +6,6 @@ import '../Network.dart';
 import 'LoginPage.dart';
 
 class LoginPageView extends LoginPageState {
-  int online;
 
   @override
   void dispose() {

@@ -21,6 +21,7 @@ class LoginPage extends StatefulWidget {
 abstract class LoginPageState extends State<LoginPage> {
   final pupilFormKey = GlobalKey<FormState>();
   final pupilFocus = FocusNode();
+  int online;
   bool pupilCredentialsCorrect = true;
   bool teacherCredentialsCorrect = true;
   static List<String> grades = [
@@ -54,9 +55,25 @@ abstract class LoginPageState extends State<LoginPage> {
         sha256.convert(utf8.encode(usernameController.text)).toString();
     String _password =
         sha256.convert(utf8.encode(passwordController.text)).toString();
-    final response =
+    String response =
     await fetchData('/login/$_username/$_password/', auth: false);
-    pupilCredentialsCorrect = json.decode(response)['status'];
+    
+    try {
+      pupilCredentialsCorrect = json.decode(response)['status'];
+    } catch (e) {
+      online = -1; 
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context).failedToCheckLogin),
+          action: SnackBarAction(
+            label: AppLocalizations.of(context).ok,
+            onPressed: () {},
+          ),
+        ),
+      );
+      return;
+    }
+
     if (pupilFormKey.currentState.validate()) {
       // Save correct credentials
 
