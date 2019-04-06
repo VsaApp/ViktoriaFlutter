@@ -169,6 +169,8 @@ abstract class HomePageState extends State<HomePage> {
       });
     }
 
+    platform.invokeMethod('channelRegistered');
+
     super.initState();
   }
 

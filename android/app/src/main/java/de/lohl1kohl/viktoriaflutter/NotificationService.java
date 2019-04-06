@@ -4,11 +4,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.media.AudioManager;
-import android.provider.Settings;
+import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
@@ -42,7 +39,7 @@ public class NotificationService extends FirebaseMessagingService {
                         changes > 1 ? String.valueOf(changes) + " Änderungen" : remoteMessage.getData().get("notificationBody"),
                         remoteMessage.getData().get("notificationBody"),
                         "replacementplan_channel",
-                          Arrays.asList(new String[]{"Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"}).indexOf(remoteMessage.getData().get("notificationTitle")),
+                        Arrays.asList(new String[]{"Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"}).indexOf(remoteMessage.getData().get("notificationTitle")),
                         remoteMessage.getData().get("notificationTitle") + " " + remoteMessage.getData().get("notificationBody"),
                         remoteMessage.getData()
                 );
@@ -68,7 +65,7 @@ public class NotificationService extends FirebaseMessagingService {
         new MethodChannel(flutterView, CHANNEL).invokeMethod(type, data);
     }
 
-    public void showNotification(String title, String body, String bodyLong, String channelId, int notificationId, String ticker , Map<String, String> data) {
+    public void showNotification(String title, String body, String bodyLong, String channelId, int notificationId, String ticker, Map<String, String> data) {
 
         AudioManager am = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
 
@@ -91,11 +88,11 @@ public class NotificationService extends FirebaseMessagingService {
                 .setAutoCancel(true)
                 .setColorized(true);
 
-        if (am != null && am.getRingerMode() != AudioManager.RINGER_MODE_SILENT)  {
+        if (am != null && am.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
             System.out.println("Vibrate");
             Vibrator v = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
             if (v != null) {
-                    v.vibrate(300);
+                v.vibrate(300);
             } else {
                 notification.setVibrate(new long[]{300, 300});
             }

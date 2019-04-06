@@ -56,7 +56,6 @@ abstract class LoadingPageState extends State<LoadingPage>
           .of(context)
           .updates);
       texts.add(AppLocalizations.of(context).unitPlan);
-      texts.add(AppLocalizations.of(context).checkLogin);
       texts.add(AppLocalizations.of(context).replacementPlan);
       texts.add(AppLocalizations.of(context).workGroups);
       texts.add(AppLocalizations.of(context).calendar);

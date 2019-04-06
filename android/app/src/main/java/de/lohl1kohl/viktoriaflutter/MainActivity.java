@@ -3,11 +3,11 @@ package de.lohl1kohl.viktoriaflutter;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
 import io.flutter.app.FlutterActivity;
-import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugins.GeneratedPluginRegistrant;
 
@@ -20,10 +20,9 @@ public class MainActivity extends FlutterActivity {
     };
     final static String[] channelsInfos = new String[]{
             "Vertretungsplan-Änderungen des Vertretungsplans",
-            "Schwarzes Brett-Alle neuen Nachrichten",
             "Stundenplan-Stundenplanänderungen",
             "Cafetoria-Neue Menüs",
-            "Kalender-Alle Termiene"
+            "Kalender-Alle Termine"
     };
     private static final String CHANNEL = "viktoriaflutter";
 
@@ -34,10 +33,6 @@ public class MainActivity extends FlutterActivity {
         GeneratedPluginRegistrant.registerWith(this);
 
         NotificationService.flutterView = getFlutterView();
-
-        String data = (String) getIntent().getStringExtra("channel");
-        new MethodChannel(getFlutterView(), CHANNEL).invokeMethod("opened", data);
-        System.out.println("Data: " + data);
 
         // If the android version is high enough, create the notification channels...
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -61,15 +56,24 @@ public class MainActivity extends FlutterActivity {
         NotificationManager notificationManager = (NotificationManager) getApplicationContext()
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager != null) notificationManager.cancelAll();
-        new MethodChannel(getFlutterView(), CHANNEL).setMethodCallHandler(new MethodChannel.MethodCallHandler() {
-            @Override
-            public void onMethodCall(MethodCall call, MethodChannel.Result result) {
-                if (call.method.equals("clearNotifications")) {
-                    NotificationManager notificationManager = (NotificationManager) getApplicationContext()
-                            .getSystemService(Context.NOTIFICATION_SERVICE);
-                    if (notificationManager != null) notificationManager.cancelAll();
-                }
+        new MethodChannel(getFlutterView(), CHANNEL).setMethodCallHandler((call, result) -> {
+            if (call.method.equals("clearNotifications")) {
+                NotificationManager notificationManager1 = (NotificationManager) getApplicationContext()
+                        .getSystemService(Context.NOTIFICATION_SERVICE);
+                if (notificationManager1 != null) notificationManager1.cancelAll();
+            } else if (call.method.equals("channelRegistered")) {
+                String data = getIntent().getStringExtra("channel");
+                new MethodChannel(getFlutterView(), CHANNEL).invokeMethod("opened", data);
+                System.out.println("Data: " + data);
             }
         });
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        String data = getIntent().getStringExtra("channel");
+        new MethodChannel(getFlutterView(), CHANNEL).invokeMethod("opened", data);
     }
 }
