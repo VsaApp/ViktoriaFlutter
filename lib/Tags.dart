@@ -104,21 +104,6 @@ Future deleteTags(List<String> tags) async {
   post(url, body: tags);
 }
 
-Future deleteOldTags() async {
-  Map<String, dynamic> tags = await getTags();
-  if (tags == null) return;
-  List<String> tagsToDelete = [];
-  tags.forEach((tag, value) {
-    if (!(tag.startsWith('unitPlan') ||
-        tag.startsWith('dev') ||
-        tag.startsWith('grade') ||
-        tag.startsWith('exam'))) {
-      tagsToDelete.add(tag);
-    }
-  });
-  if (tagsToDelete.length > 0) deleteTags(tagsToDelete);
-}
-
 // Sync the onesignal tags...
 Future syncTags() async {
   if ((await checkOnline) == -1) return;

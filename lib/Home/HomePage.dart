@@ -155,17 +155,15 @@ abstract class HomePageState extends State<HomePage> {
           .listen((IosNotificationSettings settings) {
         print("Settings registered: $settings");
       });
-      _firebaseMessaging.getToken().then((String token) {
+      _firebaseMessaging.getToken().then((String token) async {
         assert(token != null);
 
         // Synchronise tags for notifications
-        deleteOldTags().then((_) async {
-          await initTags(token);
-          await syncWithTags();
-          await syncTags();
-          replacementplanUpdatedListeners
-              .forEach((replacementplanUpdated) => replacementplanUpdated());
-        });
+        await initTags(token);
+        await syncWithTags();
+        await syncTags();
+        replacementplanUpdatedListeners
+            .forEach((replacementplanUpdated) => replacementplanUpdated());
       });
     }
 
