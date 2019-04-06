@@ -78,7 +78,7 @@ class AppLocalizations {
       'nowADeveloper': 'Du bist jetzt ein Entwickler!',
       'nowNoDeveloper': 'Du bist kein Entwickler mehr!',
       'replacementPlanUpdated': 'Neuer Vertretungsplan für %s',
-      'goOnline': 'Du musst online sein beim ersten mal laden!',
+      'goOnline': 'Du musst online sein beim ersten Mal laden!',
       'unparsed': 'Nicht erkannt',
       'yes': 'Ja',
       'no': 'Nein',
@@ -142,11 +142,11 @@ class AppLocalizations {
       'viewIntro': 'Einführung nochmal anschauen',
       'loadOldData': 'Alte Daten laden?',
       'loadOldDataDescription':
-      'Es werden die ausgewählten Stunden und die Schriftlichkeiten vom letzten mal übernommen.',
+      'Es werden die ausgewählten Stunden und die Schriftlichkeiten vom letzten Mal übernommen.',
       'cancel': 'Abbrechen',
       'introScannerTitle': 'Scanner',
       'oldApp':
-      'Die aktuell installierte App version (VERSION) ist zu alt und wird nicht mehr unterstützt.\n\nBitte sorge dafür, dass du die aktuelle App erhälst! Einfach im Store die aktuelle \'VsaApp\' installieren.',
+      'Die aktuell installierte App Version (VERSION) ist zu alt und wird nicht mehr unterstützt.\n\nBitte sorge dafür, dass du die aktuelle App erhälst! Einfach im Store die aktuelle \'VsaApp\' installieren.',
       'accecptDseAndAgb':
       'Mit der Nutzung unserer App akzeptieren Sie unsere AGB und unsere Datenschutzerklärung.',
       'accept': 'Akzeptieren',
@@ -173,7 +173,7 @@ class AppLocalizations {
       'syncPhoneId': 'Synchronisierungs-ID',
       'syncPhone': 'Mit Handy synchronisieren',
       'syncPhoneDescription':
-      'Wenn du auf deinem Handy und in dieser Anwendung immer die selben Sachen sehen möchtest, dann musst die Synchronisierungs-ID aus deine Einstellungen deiner App nehmen und hier eingeben:',
+      'Wenn du auf deinem Handy und in dieser Anwendung immer dieselben Sachen sehen möchtest, dann musst die Synchronisierungs-ID aus deine Einstellungen deiner App nehmen und hier eingeben:',
       'skip': 'Überspringen',
       'weekdays': [
         'Montag',
