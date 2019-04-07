@@ -19,8 +19,7 @@ class GradeFabView extends GradeFabState {
           ..addListener(() {
             setState(() {});
           });
-    animateIcon =
-        Tween<double>(begin: 0.0, end: 1.0).animate(animationController);
+    animateIcon = Tween<double>(begin: 0.0, end: 1.0).animate(animationController);
     // Create animations
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       setState(() {
@@ -131,37 +130,41 @@ class GradeFabView extends GradeFabState {
                 ),
                 child: Container(
                   // Create FAB for every grade
-                  child: FloatingActionButton(
-                    heroTag: 'replacementplan-' + grade,
-                    mini: true,
-                    onPressed: () {
-                      animate();
-                      List<String> prefValue =
-                      (Storage.getString(Keys.lastGrades) ?? '').split(':');
-                      if (prefValue.length > 0) if (prefValue[0].length == 0)
-                        prefValue = [];
-                      if (!prefValue.contains(grade)) {
-                        setState(() {
-                          if (prefValue.length == 0) {
-                            Storage.setString(Keys.lastGrades, grade);
-                            GradeFabState.grades[1] = grade;
-                          } else if (prefValue.length == 1) {
-                            Storage.setString(
-                                Keys.lastGrades, prefValue[0] + ':' + grade);
-                            GradeFabState.grades[1] = grade;
-                          } else {
-                            Storage.setString(
-                                Keys.lastGrades, prefValue[1] + ':' + grade);
-                            GradeFabState.grades[0] = GradeFabState.grades[1];
-                            GradeFabState.grades[1] = grade;
-                          }
-                        });
-                      }
-                      widget.onSelected(grade);
-                    },
-                    tooltip: grade,
-                    child: Text(grade, style: TextStyle(color: Colors.white)),
-                  ),
+                  child: Dismissible(
+                    key: Key(grade),
+                    onDismissed: (direction) => removeGrade(grade),
+                    child: FloatingActionButton(
+                      heroTag: 'replacementplan-' + grade,
+                      mini: true,
+                      onPressed: () {
+                        animate();
+                        List<String> prefValue =
+                        (Storage.getString(Keys.lastGrades) ?? '').split(':');
+                        if (prefValue.length > 0) if (prefValue[0].length == 0)
+                          prefValue = [];
+                        if (!prefValue.contains(grade)) {
+                          setState(() {
+                            if (prefValue.length == 0) {
+                              Storage.setString(Keys.lastGrades, grade);
+                              GradeFabState.grades[1] = grade;
+                            } else if (prefValue.length == 1) {
+                              Storage.setString(
+                                  Keys.lastGrades, prefValue[0] + ':' + grade);
+                              GradeFabState.grades[1] = grade;
+                            } else {
+                              Storage.setString(
+                                  Keys.lastGrades, prefValue[1] + ':' + grade);
+                              GradeFabState.grades[0] = GradeFabState.grades[1];
+                              GradeFabState.grades[1] = grade;
+                            }
+                          });
+                        }
+                        widget.onSelected(grade);
+                      },
+                      tooltip: grade,
+                      child: Text(grade, style: TextStyle(color: Colors.white)),
+                    )
+                  )
                 ));
           }).toList(),
         ),

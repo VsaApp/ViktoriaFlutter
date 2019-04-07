@@ -52,6 +52,20 @@ abstract class GradeFabState extends State<GradeFab>
     super.initState();
   }
 
+  void removeGrade(String grade) {
+    setState(() {
+      List<String> currentGrades = (Storage.getString(Keys.lastGrades) ?? '').split(':');
+      print(currentGrades);
+      String grades = '';
+      currentGrades.forEach((String g) {
+        if (g != grade) grades += '$g:';
+      });
+      print(grades);
+      Storage.setString(Keys.lastGrades, grades.length > 0 ? grades.substring(0, grades.length - 1) : grades);
+      shownGrades.remove(grade);
+    });
+  }
+
   // Update last selected grades
   void updatePrefs(String grade) {
     if (!shownGrades.contains(grade)) {
