@@ -106,6 +106,7 @@ class AppLocalizations {
       'unitplanVersion': 'Stundenplan Version',
       'showWorkGroupsInUnitPlan': 'AGs anzeigen',
       'showCalendarInUnitPlan': 'Termine anzeigen',
+      'event': 'Termin',
       'showCafetoriaInUnitPlan': 'Cafetoriamenüs anzeigen',
       'unitPlanSettings': 'Stundenplan',
       'replacementPlanSettings': 'Vertretungsplan',
@@ -191,6 +192,10 @@ class AppLocalizations {
 // All getter defined...
   String get failedToCheckLogin {
     return _localizedValues[locale.languageCode]['failedToCheckLogin'];
+  }
+
+  String get event {
+    return _localizedValues[locale.languageCode]['event'];
   }
 
   String get scanDescription {

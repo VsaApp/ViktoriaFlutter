@@ -17,6 +17,17 @@ class CalendarGridItem extends StatefulWidget {
 }
 
 abstract class CalendarGridItemState extends State<CalendarGridItem> {
+
+  bool isToday() {
+    DateTime today = DateTime.now();
+    return widget.date.year == today.year && widget.date.month == today.month && widget.date.day == today.day;
+  }
+
+  bool isYesterday() {
+    DateTime today = DateTime.now().add(Duration(days: -1));
+    return widget.date.year == today.year && widget.date.month == today.month && widget.date.day == today.day;
+  }
+
   List<CalendarEvent> getEvents() {
     return Calendar.events.where((event) {
       return event.start != null &&

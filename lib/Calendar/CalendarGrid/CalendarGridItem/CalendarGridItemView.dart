@@ -45,48 +45,20 @@ class CalendarGridItemView extends CalendarGridItemState {
       child: Container(
         padding: EdgeInsets.all(2.5),
         decoration: BoxDecoration(
+          color: isToday() ? Colors.blue.shade100 : widget.main ? null : Colors.grey.shade100,
           border: Border(
-            right: BorderSide(color: Colors.grey.shade500),
-            bottom: BorderSide(color: Colors.grey.shade500),
+            right: BorderSide(color: isToday() || isYesterday() ? Colors.blue.shade500 : Colors.grey.shade500),
+            bottom: BorderSide(color: !isToday() ? Colors.grey.shade500 : Colors.blue.shade500),
           ),
         ),
-        child: Stack(
-          children: <Widget>[
-            Text(
-              widget.date.day.toString(),
-              style: TextStyle(
-                color: !widget.main
-                    ? Colors.grey.shade400
-                    : Theme.of(context).primaryColor,
-                fontWeight: widget.main ? FontWeight.bold : null,
-              ),
-            ),
-            getEvents().length == 1
-                ? Center(
-                    child: SizedBox(
-                      height: 12.5,
-                      width: 12.5,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).accentColor,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                  )
-                : getEvents().length > 0
-                    ? Center(
-                        child: Text(
-                          getEvents().length.toString(),
-                          style: TextStyle(
-                            color: Theme.of(context).accentColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      )
-                    : Container(),
-          ],
+        child: Text(
+          widget.date.day.toString(),
+          style: TextStyle(
+            color: !widget.main
+                ? Colors.grey.shade400
+                : isToday() ? Colors.blue : Theme.of(context).primaryColor,
+            fontWeight: widget.main ? FontWeight.bold : null,
+          ),
         ),
       ),
     );
