@@ -49,7 +49,7 @@ class ReplacementPlanRow extends StatelessWidget {
           Expanded(
             flex: 1,
             child: Container(
-              height: 42,
+              height: !change.isRewriteExam ? 42 : 24,
               alignment: Alignment.centerRight,
               decoration: BoxDecoration(
                 border: Border(
@@ -74,6 +74,7 @@ class ReplacementPlanRow extends StatelessWidget {
               padding: EdgeInsets.only(top: 5, bottom: 5, left: 5),
               child: Column(
                 children: <Widget>[
+                  !change.isRewriteExam ?
                   Row(
                     children: <Widget>[
                       Expanded(
@@ -117,7 +118,7 @@ class ReplacementPlanRow extends StatelessWidget {
                         ),
                       ),
                     ],
-                  ),
+                  ) : Container(),
                   Row(
                     children: <Widget>[
                       Expanded(
