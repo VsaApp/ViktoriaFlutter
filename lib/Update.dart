@@ -5,7 +5,7 @@ void dataUpdated(BuildContext context, bool successfully, String name) {
   print("Show snackbar");
   Scaffold.of(context).showSnackBar(
     SnackBar(
-      duration: Duration(milliseconds: 1400),
+      duration: Duration(milliseconds: successfully ?  1400 : 3000),
       content: Text(successfully
           ? name + AppLocalizations.of(context).updated
           : name + AppLocalizations.of(context).updatedFailed),
