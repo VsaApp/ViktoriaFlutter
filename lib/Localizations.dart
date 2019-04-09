@@ -185,11 +185,26 @@ class AppLocalizations {
       ],
       'notYetExistingOnServer': 'Noch nicht auf dem Schulserver vorhanden!',
       'updates': 'Aktualisierungen',
-      'failedToCheckLogin': 'Fehler beim überprüfen der Logindaten! Versuche es später erneut.'
+      'failedToCheckLogin': 'Fehler beim überprüfen der Logindaten! Versuche es später erneut.',
+      'unitAndReplacementplan': 'Stunden- und Vertretungsplan',
+      'updated': ' aktualisiert',
+      'updatedFailed': ' aktualisieren fehlgeschlagen'
     },
   };
 
 // All getter defined...
+  String get updated {
+    return _localizedValues[locale.languageCode]['updated'];
+  }
+
+  String get unitAndReplacementplan {
+    return _localizedValues[locale.languageCode]['unitAndReplacementplan'];
+  }
+
+  String get updatedFailed {
+    return _localizedValues[locale.languageCode]['updatedFailed'];
+  }
+
   String get failedToCheckLogin {
     return _localizedValues[locale.languageCode]['failedToCheckLogin'];
   }

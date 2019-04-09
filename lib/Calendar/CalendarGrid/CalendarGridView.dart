@@ -54,10 +54,9 @@ class CalendarGridView extends CalendarGridState {
               children: <Widget>[
                 Container(
                   width: constraints.maxWidth,
-                  color: Theme.of(context).primaryColor,
                   padding: EdgeInsets.all(10),
                   child: Center(child: Text('${AppLocalizations.of(context).months[month]} ${firstEvent.year}',
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
                   )),
                 ),
                 Container(

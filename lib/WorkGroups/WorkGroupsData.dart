@@ -8,14 +8,16 @@ import '../Storage.dart';
 import 'WorkGroupsModel.dart';
 
 // Download work groups data...
-Future download({bool update = true}) async {
+Future download({bool update = true, Function(bool successfully) onFinished}) async {
+  bool successfully;
   if (update) {
     String url = '/workgroups/workgroups.json?v=' + Random().nextInt(99999999).toString();
-    await fetchDataAndSave(url, Keys.workGroups, '[]');
+    await fetchDataAndSave(url, Keys.workGroups, '[]', onFinished: (v) => successfully = v);
   }
 
   // Parse loaded data...
   WorkGroups.days = await fetchGroups();
+  if (onFinished != null) onFinished(successfully);
 }
 
 // Returns the static work groups data...

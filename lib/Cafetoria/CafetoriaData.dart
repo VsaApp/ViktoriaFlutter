@@ -7,7 +7,8 @@ import '../Storage.dart';
 import 'CafetoriaModel.dart';
 
 // Download cafetoria data from the api...
-Future download({String id, String password, bool update = true}) async {
+Future download({String id, String password, bool update = true, Function(bool successfully) onFinished}) async {
+  bool successfully;
   if (update) {
     // If id and password is not set, load login data from preferences...
     String url = '/cafetoria/login/' +
@@ -16,10 +17,11 @@ Future download({String id, String password, bool update = true}) async {
         ((password != null)
             ? password
             : Storage.getString(Keys.cafetoriaPassword) ?? 'null');
-    await fetchDataAndSave(url, Keys.cafetoria, '{}');
+    await fetchDataAndSave(url, Keys.cafetoria, '{}', onFinished: (bool v) => successfully = v);
   }
 
   Cafetoria.menues = await fetchDays();
+  if (onFinished != null) onFinished(successfully);
 }
 
 // Check the login data of the keyfob...

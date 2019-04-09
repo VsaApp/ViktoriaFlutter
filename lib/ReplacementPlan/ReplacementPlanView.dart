@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../BrotherSisterReplacementPlan/BrotherSisterReplacementPlanPage.dart';
+import '../Update.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
 import '../Network.dart';
@@ -33,7 +34,9 @@ class ReplacementPlanPageView extends ReplacementPlanPageState {
               .toList(),
           controller: controller,
           onUpdate: () async {
-            await unitplan.download(Storage.getString(Keys.grade), false);
+            await unitplan.download(Storage.getString(Keys.grade), false, onFinished: (successfully) {
+              dataUpdated(context, successfully, AppLocalizations.of(context).replacementPlan);
+            });
             replacementplan.load(unitplan.getUnitPlan(), false);
             setState(() =>
             days = generateDays(replacementplan.getReplacementPlan()));

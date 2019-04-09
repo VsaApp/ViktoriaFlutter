@@ -41,7 +41,7 @@ String getUrl(String path, {bool auth = true}) {
 }
 
 Future fetchDataAndSave(String url, String key, String defaultValue,
-    {Map<String, dynamic> body, Duration timeout, bool auth = true}) async {
+    {Map<String, dynamic> body, Duration timeout, bool auth = true, Function(bool successfully) onFinished}) async {
   if (timeout == null) {
     timeout = maxTime;
   }
@@ -57,11 +57,13 @@ Future fetchDataAndSave(String url, String key, String defaultValue,
       throw "404 Not Found";
     }
     Storage.setString(key, response);
+    if (onFinished != null) onFinished(true);
   } catch (e) {
     print("Error during downloading \'$key\': " + e.toString());
     if (Storage.getString(key) == null) {
       Storage.setString(key, defaultValue);
     }
+    if (onFinished != null) onFinished(false);
   }
 }
 

@@ -18,15 +18,18 @@ class CafetoriaPageView extends CafetoriaPageState {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          ListView(
-            padding: EdgeInsets.only(bottom: 70, left: 10, right: 10, top: 10),
-            shrinkWrap: true,
-            children: Cafetoria.menues.days
-                .map((day) => CafetoriaDayCard(
-                      day: day,
-                      showWeekday: true,
-                    ))
-                .toList(),
+          RefreshIndicator(
+            onRefresh: reload,
+            child: ListView(
+              padding: EdgeInsets.only(bottom: 70, left: 10, right: 10, top: 10),
+              shrinkWrap: true,
+              children: Cafetoria.menues.days
+                  .map((day) => CafetoriaDayCard(
+                        day: day,
+                        showWeekday: true,
+                      ))
+                  .toList(),
+            ),
           ),
           Positioned(
             bottom: 16.0,

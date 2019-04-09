@@ -115,19 +115,15 @@ class CoursesPageView extends CoursesPageState {
       children: section3Items,
     ));
 
-    return RefreshIndicator(
-      onRefresh: update,
-      key: refreshIndicatorKey,
-      child: ListView(
-        shrinkWrap: true,
-        children: (courses.keys.toList().length > 0)
-            ? sections
-            :
-            // No subjects are selected in the unit plan
-            <Widget>[
-                Center(child: Text(AppLocalizations.of(context).noCourses))
-              ],
-      ),
+    return ListView(
+      shrinkWrap: true,
+      children: (courses.keys.toList().length > 0)
+          ? sections
+          :
+          // No subjects are selected in the unit plan
+          <Widget>[
+              Center(child: Text(AppLocalizations.of(context).noCourses))
+            ],
     );
   }
 }

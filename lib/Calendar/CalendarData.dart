@@ -8,15 +8,17 @@ import '../Storage.dart';
 import 'CalendarModel.dart';
 
 // Download calendar data...
-Future download({bool update = true}) async {
+Future download({bool update = true, Function(bool successfully) onFinished}) async {
+  bool successfully;
   if (update) {
     String url = '/calendar/calendar.json?v=' +
         Random().nextInt(99999999).toString();
-    await fetchDataAndSave(url, Keys.calendar, '{}');
+    await fetchDataAndSave(url, Keys.calendar, '{}', onFinished: (v) => successfully = v);
   }
 
   // Parse loaded data...
   Calendar.events = await fetchEvents();
+  if (onFinished != null) onFinished(successfully);
 }
 
 // Returns the static calendar data...

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../Home/HomePage.dart';
 import '../Keys.dart';
+import '../Update.dart';
 import '../Localizations.dart';
 import '../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
 import '../ReplacementPlan/ReplacementPlanModel.dart';
@@ -177,20 +178,22 @@ class UnitPlanView extends State<UnitPlanPage>
       return Container();
     }
     return TabProxy(
-        weekdays: weekdays,
-        tabs: days
-            .map((day) =>
-            UnitPlanDayList(
-              day: day,
-              dayIndex: days.indexOf(day),
-            ))
-            .toList(),
-        controller: controller,
-        onUpdate: () async {
-          await unitplan.download(Storage.getString(Keys.grade), false);
-          replacementplan.load(unitplan.getUnitPlan(), false);
-          setWeeks();
-          setState(() => days = unitplan.getUnitPlan());
-        });
+      weekdays: weekdays,
+      tabs: days
+          .map((day) =>
+          UnitPlanDayList(
+            day: day,
+            dayIndex: days.indexOf(day),
+          ))
+          .toList(),
+      controller: controller,
+      onUpdate: () async {
+        await unitplan.download(Storage.getString(Keys.grade), false, onFinished: (successfully) {
+            dataUpdated(context, successfully, AppLocalizations.of(context).unitAndReplacementplan);
+          });
+        replacementplan.load(unitplan.getUnitPlan(), false);
+        setWeeks();
+        setState(() => days = unitplan.getUnitPlan());
+      });
   }
 }

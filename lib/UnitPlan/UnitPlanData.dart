@@ -14,7 +14,7 @@ import 'UnitPlanModel.dart';
 /// If temp is true, the downloaded unitplan will be returned and not set in the static class (Default temp is false).
 /// If update is true, the untiplan will be downloaded from the server and if not it only would be loaded from the storage.
 Future<List<UnitPlanDay>> download(String grade, bool temp,
-    {bool update = true}) async {
+    {bool update = true, Function(bool successfully) onFinished}) async {
   // Check if a date is selected...
   List<String> uVersion = Storage.getStringList(Keys.historyDate('unitplan'));
   List<String> rVersion =
@@ -22,6 +22,7 @@ Future<List<UnitPlanDay>> download(String grade, bool temp,
 
   String url;
   Map<String, dynamic> body;
+  bool successfully;
 
   if (uVersion == null && rVersion == null ||
       !(Storage.getBool(Keys.dev) ?? false)) {
@@ -40,7 +41,7 @@ Future<List<UnitPlanDay>> download(String grade, bool temp,
   if (update) {
     await fetchDataAndSave(url, Keys.unitPlan(grade),
         '{"participant": "5a", "date": "01.01.00", "data": []}',
-        body: body);
+        body: body, onFinished: (bool v) => successfully = v);
   }
 
   // Parse data...
@@ -53,10 +54,12 @@ Future<List<UnitPlanDay>> download(String grade, bool temp,
     // Convert old selection format...
     convertFromOldVerion();
 
-    return null;
   } else {
+    if (onFinished != null) onFinished(successfully);
     return await fetchDays(grade);
   }
+  if (onFinished != null) onFinished(successfully);
+  return null;
 }
 
 // Returns the static unit plan...

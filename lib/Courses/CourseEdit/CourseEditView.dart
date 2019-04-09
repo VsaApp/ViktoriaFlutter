@@ -37,7 +37,7 @@ class CourseEditView extends CourseEditState {
         ),
         Container(
           width: double.infinity,
-          padding: EdgeInsets.all(10),
+          padding: EdgeInsets.only(top: 10, left: 15, right: 15, bottom: 10),
           child: Column(
             children:
                 subjects1.map((subject) => RoomEdit(subject: subject)).toList(),

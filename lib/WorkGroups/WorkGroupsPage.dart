@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../Update.dart';
+import '../Localizations.dart';
 import 'WorkGroupsData.dart';
 import 'WorkGroupsModel.dart';
 import 'WorkGroupsView.dart';
@@ -13,7 +15,9 @@ abstract class WorkGroupsPageState extends State<WorkGroupsPage> {
   WorkGroups data;
 
   Future update() async {
-    data = await download();
+    data = await download(onFinished: (successfully) {
+      dataUpdated(context, successfully, AppLocalizations.of(context).workGroups);
+    });
     setState(() => this.data = data);
   }
 

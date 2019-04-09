@@ -4,6 +4,8 @@ import 'CalendarData.dart';
 import 'CalendarGrid/CalendarGridWidget.dart';
 import 'CalendarModel.dart';
 import 'EventCard/EventCard.dart';
+import '../Localizations.dart';
+import '../Update.dart';
 
 class CalendarPage extends StatefulWidget {
   CalendarPage({Key key}) : super(key: key);
@@ -19,7 +21,9 @@ class CalendarPageState extends State<CalendarPage>
   TabController tabController;
 
   Future update() async {
-    await download();
+    await download(onFinished: (successfully) {
+      dataUpdated(context, successfully, AppLocalizations.of(context).calendar);
+    });
     setState(() => setEvents());
   }
 
