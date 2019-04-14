@@ -187,7 +187,7 @@ class UnitPlanLesson {
   // Set the default selection...
   Future setSelection(int day, int unit) async {
     if (subjects.length == 1) {
-      await setSelectedSubject(subjects[0], day, unit);
+      setSelectedSubject(subjects[0], day, unit);
     }
   }
 }

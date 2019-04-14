@@ -68,8 +68,10 @@ void convertFromOldVerion() {
       subjects = UnitPlan.days[day].lessons[unit].subjects;
     }
 
-    UnitPlanSubject subject = subjects[selected];
-    setSelectedSubject(subject, day, unit);
+    if (selected != null) {
+      UnitPlanSubject subject = subjects[selected];
+      setSelectedSubject(subject, day, unit);
+    }
   }
 }
 
@@ -107,12 +109,12 @@ UnitPlanSubject getSelectedSubject(
   return index == null ? null : subjects[index];
 }
 
-Future setSelectedSubject(UnitPlanSubject selected, int day, int unit,
-    {UnitPlanSubject selectedB}) async {
+void setSelectedSubject(UnitPlanSubject selected, int day, int unit,
+    {UnitPlanSubject selectedB}) {
   List<String> weeks = selected.week == 'AB' || selectedB == null
       ? [getKey(selected)]
       : [getKey(selected), getKey(selectedB)];
   String key = Keys.unitPlan(Storage.getString(Keys.grade),
       block: selected.block, day: day, unit: unit);
-  await Storage.setStringList(key, weeks);
+  Storage.setStringList(key, weeks);
 }

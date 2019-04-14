@@ -171,7 +171,9 @@ abstract class HomePageState extends State<HomePage> {
       });
     }
 
-    platform.invokeMethod('channelRegistered');
+    if (Platform.isAndroid) {
+      platform.invokeMethod('channelRegistered');
+    }
 
     super.initState();
   }

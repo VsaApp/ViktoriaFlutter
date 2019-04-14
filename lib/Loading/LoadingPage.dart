@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show MethodChannel, rootBundle;
@@ -52,15 +53,17 @@ abstract class LoadingPageState extends State<LoadingPage>
     }
 
     WidgetsBinding.instance.addPostFrameCallback((a) {
-      MethodChannel('viktoriaflutter').invokeMethod('applyTheme', {
-        'color': Theme
-            .of(context)
-            .primaryColor
-            .value
-            .toRadixString(16)
-            .substring(2)
-            .toUpperCase(),
-      });
+      if (Platform.isAndroid) {
+        MethodChannel('viktoriaflutter').invokeMethod('applyTheme', {
+          'color': Theme
+              .of(context)
+              .primaryColor
+              .value
+              .toRadixString(16)
+              .substring(2)
+              .toUpperCase(),
+        });
+      }
       texts.add(AppLocalizations
           .of(context)
           .updates);

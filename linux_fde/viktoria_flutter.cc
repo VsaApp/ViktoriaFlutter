@@ -19,7 +19,7 @@
 #include <memory>
 #include <vector>
 
-#include <flutter_desktop_embedding/flutter_window_controller.h>
+#include <flutter/flutter_window_controller.h>
 
 namespace {
 
@@ -60,11 +60,10 @@ int main(int argc, char **argv) {
   arguments.push_back("--disable-dart-asserts");
 #endif
 
-  flutter_desktop_embedding::FlutterWindowController flutter_controller(
-      icu_data_path);
+  flutter::FlutterWindowController flutter_controller(icu_data_path);
 
   // Start the engine.
-  if (!flutter_controller.CreateWindow(960, 600, assets_path, arguments)) {
+  if (!flutter_controller.CreateWindow(960, 600, "VsaApp", assets_path, arguments)) {
     return EXIT_FAILURE;
   }
 

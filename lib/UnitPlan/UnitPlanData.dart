@@ -9,7 +9,7 @@ import '../Storage.dart';
 import 'UnitPlanModel.dart';
 
 /// Downloads the unit plan
-/// 
+///
 /// Grade defines for which grade the unitplan should be download.
 /// If temp is true, the downloaded unitplan will be returned and not set in the static class (Default temp is false).
 /// If update is true, the untiplan will be downloaded from the server and if not it only would be loaded from the storage.
@@ -26,8 +26,7 @@ Future<List<UnitPlanDay>> download(String grade, bool temp,
 
   if (uVersion == null && rVersion == null ||
       !(Storage.getBool(Keys.dev) ?? false)) {
-    url =
-        '/unitplan/$grade.json?v=${Random().nextInt(99999999)}';
+    url = '/unitplan/$grade.json?v=${Random().nextInt(99999999)}';
   } else {
     url = '$historyUrl/injectedunitplan/$grade';
     if (rVersion != null) {
@@ -53,7 +52,6 @@ Future<List<UnitPlanDay>> download(String grade, bool temp,
 
     // Convert old selection format...
     convertFromOldVerion();
-
   } else {
     if (onFinished != null) onFinished(successfully);
     return await fetchDays(grade);

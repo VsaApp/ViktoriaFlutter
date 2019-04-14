@@ -53,17 +53,19 @@ abstract class LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((a) {
-      MethodChannel('viktoriaflutter').invokeMethod('applyTheme', {
-        'color': Theme
-            .of(context)
-            .primaryColor
-            .value
-            .toRadixString(16)
-            .substring(2)
-            .toUpperCase(),
+    if (Platform.isAndroid) {
+      WidgetsBinding.instance.addPostFrameCallback((a) {
+        MethodChannel('viktoriaflutter').invokeMethod('applyTheme', {
+          'color': Theme
+              .of(context)
+              .primaryColor
+              .value
+              .toRadixString(16)
+              .substring(2)
+              .toUpperCase(),
+        });
       });
-    });
+    }
     super.initState();
   }
 
