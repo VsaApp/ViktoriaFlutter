@@ -150,6 +150,7 @@ class HomePageView extends HomePageState {
     }
 
     appScaffold = Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         // Current page's title
         title: FlatButton(

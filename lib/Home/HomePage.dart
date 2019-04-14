@@ -3,7 +3,6 @@ import 'dart:io' show Platform;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../Keys.dart';
@@ -57,6 +56,7 @@ abstract class HomePageState extends State<HomePage> {
   static Function(String week) weekChanged;
   static Function(String week) updateWeek;
   static Function(bool value) setShowWeek;
+  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
   static List<Function()> replacementplanUpdatedListeners = [];
 
@@ -95,14 +95,18 @@ abstract class HomePageState extends State<HomePage> {
     if (appScaffold != null) {
       replacementplanUpdatedListeners
           .forEach((replacementplanUpdated) => replacementplanUpdated());
-      Fluttertoast.showToast(
-          msg: AppLocalizations.of(context)
-              .replacementPlanUpdated
-              .replaceAll('%s', msg['weekday']),
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Color(0xAA333333),
-          textColor: Colors.white);
+      scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text(AppLocalizations
+            .of(context)
+            .replacementPlanUpdated
+            .replaceAll('%s', msg['weekday'])),
+        action: SnackBarAction(
+          label: AppLocalizations
+              .of(context)
+              .ok,
+          onPressed: () {},
+        ),
+      ));
     }
   }
 
@@ -110,7 +114,7 @@ abstract class HomePageState extends State<HomePage> {
     print("received unitplan notification");
     String grade = Storage.getString(Keys.grade);
     await unitplan.download(grade, false);
-    await replacementplan.load(unitplan.getUnitPlan(), false);
+    replacementplan.load(unitplan.getUnitPlan(), false);
     if (appScaffold != null) {
       replacementplanUpdatedListeners
           .forEach((replacementplanUpdated) => replacementplanUpdated());
@@ -220,14 +224,21 @@ abstract class HomePageState extends State<HomePage> {
   void logoClick() {
     logoClickCount++;
     if (logoClickCount >= 7) {
-      Fluttertoast.showToast(
-          msg: (Storage.getBool(Keys.dev) ?? false)
-              ? AppLocalizations.of(context).nowNoDeveloper
-              : AppLocalizations.of(context).nowADeveloper,
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Color(0xAA333333),
-          textColor: Colors.white);
+      scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text((Storage.getBool(Keys.dev) ?? false)
+            ? AppLocalizations
+            .of(context)
+            .nowNoDeveloper
+            : AppLocalizations
+            .of(context)
+            .nowADeveloper),
+        action: SnackBarAction(
+          label: AppLocalizations
+              .of(context)
+              .ok,
+          onPressed: () {},
+        ),
+      ));
 
       logoClickCount = 0;
       Storage.setBool(Keys.dev, !(Storage.getBool(Keys.dev) ?? false));
