@@ -93,8 +93,7 @@ class UnitPlanDay {
     lessons.forEach((lesson) {
       int unit = lessons.indexOf(lesson);
       int s = getSelectedIndex(lesson.subjects, weekday, unit,
-          week: replacementPlanForWeektype) ??
-          0;
+          week: replacementPlanForWeektype);
       lesson.subjects.forEach((subject) {
         int i = lesson.subjects.indexOf(subject);
         subject.changes.forEach((change) {
@@ -104,7 +103,7 @@ class UnitPlanDay {
             if (i == s) {
               if (change.isExam) {
                 int isMy = change.isMyExam(replacementPlanForWeektype);
-                (isMy == 1
+                (isMy == 1 && s != null
                         ? myChanges
                         : (isMy == -1 ? undefinedChanges : otherChanges))
                     .add(change);
