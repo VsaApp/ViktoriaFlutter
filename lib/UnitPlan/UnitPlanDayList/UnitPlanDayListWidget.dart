@@ -52,7 +52,7 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
   List<CalendarEvent> getEventsForWeekday(int weekday) {
     DateTime today = DateTime.now();
     DateTime targetDay = today
-        .subtract(Duration(days: today.weekday))
+        .subtract(Duration(days: today.weekday < 6 ? today.weekday : 0))
         .add(Duration(days: weekday + (!thisWeek ? 7 : 0) + 1));
     return Calendar.events.where((event) {
       return (event.start.isBefore(targetDay) || event.start == targetDay) &&
