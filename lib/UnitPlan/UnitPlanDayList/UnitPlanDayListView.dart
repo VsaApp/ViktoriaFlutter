@@ -89,7 +89,6 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                     right: 10,
                     top: widget.day.lessons.indexOf(lesson) == 0 ? 10 : 0),
                 child: Card(
-                    color: Color.fromARGB(230, 255, 255, 255),
                     child: Padding(
                         padding: EdgeInsets.only(bottom: 10),
                         child: Column(children: [
