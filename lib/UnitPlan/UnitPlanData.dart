@@ -29,7 +29,7 @@ Future<List<UnitPlanDay>> download(String grade, bool temp,
     url =
         '/unitplan/$grade.json?v=${Random().nextInt(99999999)}';
   } else {
-    url = '/injectedunitplan/$grade';
+    url = '$historyUrl/injectedunitplan/$grade';
     if (rVersion != null) {
       List<String> date =
       Storage.getStringList(Keys.historyDate('replacementplan'));

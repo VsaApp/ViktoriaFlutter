@@ -67,13 +67,7 @@ abstract class HistoryDialogState extends State<HistoryDialog> {
           .days
           .where((Day day) => day.name == currentDay)
           .toList()[0]
-          .times
-        ..sort((a, b) {
-          return (int.parse(a.time.split(':')[0]) * 60 +
-                  int.parse(a.time.split(':')[1]))
-              .compareTo((int.parse(b.time.split(':')[0]) * 60 +
-                  int.parse(b.time.split(':')[1])));
-        });
+          .times;
     } catch (e) {
       return [];
     }

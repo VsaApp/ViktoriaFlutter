@@ -31,10 +31,7 @@ Future<int> get checkOnline async {
 }
 
 String getUrl(String path, {bool auth = true}) {
-  String authString = auth
-      ? '${Storage.getString(Keys.username) ?? ''}:${Storage.getString(
-      Keys.password) ?? ''}@'
-      : '';
+  String authString = auth ? '${Storage.getString(Keys.username) ?? ''}:${Storage.getString(Keys.password) ?? ''}@' : '';
   if (path.contains('http')) return path.replaceFirst('://', '://$authString');
   if (!path.startsWith('/')) path = '/' + path;
   return '$apiUrl$path'.replaceFirst('://', '://$authString');
@@ -45,7 +42,7 @@ Future fetchDataAndSave(String url, String key, String defaultValue,
   if (timeout == null) {
     timeout = maxTime;
   }
-  url = getUrl(url, auth: auth);
+  if (body == null) url = getUrl(url, auth: auth);
   try {
     dynamic response;
     if (body != null) {
