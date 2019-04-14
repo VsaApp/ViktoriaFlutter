@@ -1,13 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'dart:async';
-
+import 'Errors.dart' as bugs;
 import 'Home/HomePage.dart';
 import 'Id.dart';
-import 'Errors.dart' as bugs;
 import 'Intro/IntroPage.dart';
 import 'Keys.dart';
 import 'Loading/LoadingPage.dart';
@@ -39,7 +40,6 @@ bool get isInDebugMode {
 
   return inDebugMode;
 }
-
 
 Future launch() async {
   // This captures errors reported by the Flutter framework.
@@ -88,10 +88,11 @@ Future launch() async {
     title: 'VsaApp',
     // Set fontfamily and main colors...
     theme: ThemeData(
-        brightness: Brightness.light,
-        primaryColor: Color(0xFF67A744),
-        accentColor: Color(0xFF5BC638),
-        fontFamily: 'Ubuntu'),
+      brightness: Brightness.light,
+      primaryColor: Color(0xFF64A441),
+      accentColor: Color(0xFF5BC638),
+      fontFamily: 'Ubuntu',
+    ),
     localizationsDelegates: [
       AppLocalizationsDelegate(),
       GlobalMaterialLocalizations.delegate,

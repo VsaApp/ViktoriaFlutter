@@ -43,7 +43,8 @@
             </intent-filter>
         </activity>
         <activity android:name="io.github.edufolly.fluttermobilevision.ocr.OcrCaptureActivity"/>
-        <service 
+
+        <service
                 android:name=".NotificationService"
                 android:permission="android.permission.BIND_JOB_SERVICE">
             <intent-filter>

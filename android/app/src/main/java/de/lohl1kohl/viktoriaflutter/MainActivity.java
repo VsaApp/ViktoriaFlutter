@@ -1,9 +1,12 @@
 package de.lohl1kohl.viktoriaflutter;
 
+import android.app.ActivityManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -65,6 +68,14 @@ public class MainActivity extends FlutterActivity {
                 String data = getIntent().getStringExtra("channel");
                 new MethodChannel(getFlutterView(), CHANNEL).invokeMethod("opened", data);
                 System.out.println("Data: " + data);
+            } else if (call.method.equals("applyTheme")) {
+                if (Build.VERSION.SDK_INT >= 21) {
+                    MainActivity.this.setTaskDescription(new ActivityManager.TaskDescription(
+                            "VsaApp",
+                            BitmapFactory.decodeResource(getResources(), R.drawable.logo_white),
+                            Color.parseColor("#" + call.argument("color"))
+                    ));
+                }
             }
         });
     }

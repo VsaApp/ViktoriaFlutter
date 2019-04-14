@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart' show MethodChannel, rootBundle;
 import 'package:viktoriaflutter/Network.dart';
 
 import '../Cafetoria/CafetoriaData.dart' as Cafetoria;
@@ -52,6 +52,15 @@ abstract class LoadingPageState extends State<LoadingPage>
     }
 
     WidgetsBinding.instance.addPostFrameCallback((a) {
+      MethodChannel('viktoriaflutter').invokeMethod('applyTheme', {
+        'color': Theme
+            .of(context)
+            .primaryColor
+            .value
+            .toRadixString(16)
+            .substring(2)
+            .toUpperCase(),
+      });
       texts.add(AppLocalizations
           .of(context)
           .updates);
@@ -91,8 +100,8 @@ abstract class LoadingPageState extends State<LoadingPage>
 
   @override
   void dispose() {
-    textTimer.cancel();
-    controller.dispose();
+    if (textTimer != null) textTimer.cancel();
+    if (controller != null) controller.dispose();
     super.dispose();
   }
 
@@ -160,7 +169,8 @@ abstract class LoadingPageState extends State<LoadingPage>
 
     print('Downloading ' +
         (newData.keys
-            .map((key) => newData[key] != oldData[key] || oldGrade != newGrade)
+            .map((key) =>
+        newData[key] != oldData[key] || oldGrade != newGrade)
             .where((a) => a)
             .length)
             .toString() +
@@ -217,7 +227,8 @@ abstract class LoadingPageState extends State<LoadingPage>
                 oldData['replacementplantoday'] !=
                     newData['replacementplantoday'] ||
                 oldData['replacementplantomorrow'] !=
-                    newData['replacementplantomorrow'] || oldGrade != newGrade,
+                    newData['replacementplantomorrow'] ||
+                oldGrade != newGrade,
           );
           texts.remove(AppLocalizations.of(context).unitPlan);
           ReplacementPlan.load(UnitPlan.getUnitPlan(), false);

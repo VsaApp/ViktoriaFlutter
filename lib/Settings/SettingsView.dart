@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import '../Id.dart';
 import '../Keys.dart';
 import '../Localizations.dart';
-import '../SectionWidget.dart';
 import '../Network.dart';
+import '../SectionWidget.dart';
 import '../Storage.dart';
 import '../Tags.dart';
 import 'HistoryDialog/HistoryDialogWidget.dart';
@@ -315,7 +315,10 @@ class SettingsPageView extends SettingsPageState {
                         } else {
                           Scaffold.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(AppLocalizations.of(context).onlyOnline),
+                              content:
+                              Text(AppLocalizations
+                                  .of(context)
+                                  .onlyOnline),
                               action: SnackBarAction(
                                 label: AppLocalizations.of(context).ok,
                                 onPressed: () {},
@@ -342,7 +345,6 @@ class SettingsPageView extends SettingsPageState {
                       Storage.remove(Keys.grade);
                       Storage.remove(Keys.id);
                       // Reload app
-                      if(await checkOnline == 1) deleteTags((await getTags()).keys.toList());
                       Navigator.of(context).pushReplacementNamed('/login');
                     },
                   ),

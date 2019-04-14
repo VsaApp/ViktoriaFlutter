@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../Id.dart';
@@ -50,6 +51,22 @@ abstract class LoginPageState extends State<LoginPage> {
   final idController = TextEditingController();
   bool isCheckingForm = false;
 
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((a) {
+      MethodChannel('viktoriaflutter').invokeMethod('applyTheme', {
+        'color': Theme
+            .of(context)
+            .primaryColor
+            .value
+            .toRadixString(16)
+            .substring(2)
+            .toUpperCase(),
+      });
+    });
+    super.initState();
+  }
+
   // Check if credentials entered are correct
   void checkForm() async {
     setState(() => isCheckingForm = true);
@@ -59,11 +76,11 @@ abstract class LoginPageState extends State<LoginPage> {
         sha256.convert(utf8.encode(passwordController.text)).toString();
     String response =
     await fetchData('/login/$_username/$_password/', auth: false);
-    
+
     try {
       pupilCredentialsCorrect = json.decode(response)['status'];
     } catch (e) {
-      online = -1; 
+      online = -1;
       Scaffold.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context).failedToCheckLogin),
