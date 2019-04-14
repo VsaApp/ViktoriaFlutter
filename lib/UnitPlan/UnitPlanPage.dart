@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../Home/HomePage.dart';
 import '../Keys.dart';
-import '../Update.dart';
 import '../Localizations.dart';
 import '../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
 import '../ReplacementPlan/ReplacementPlanModel.dart';
-import '../Storage.dart';
 import '../Selection.dart';
+import '../Storage.dart';
 import '../TabProxy.dart';
+import '../Update.dart';
 import 'UnitPlanData.dart' as unitplan;
 import 'UnitPlanDayList/UnitPlanDayListWidget.dart';
 import 'UnitPlanModel.dart';
@@ -62,7 +62,7 @@ class UnitPlanView extends State<UnitPlanPage>
         for (int j = 0; j < UnitPlan.days.length; j++) {
           DateTime dateOfDay = dateOfMonday.add(Duration(days: j));
           if (date.isAfter(today) && dateOfDay.weekday <= date.weekday)
-            UnitPlan.days[j].showWeek = day.weektype;
+            UnitPlan.days[j - 1].showWeek = day.weektype;
           else if (date.isBefore(today) && dateOfDay.weekday >= date.weekday)
             UnitPlan.days[j].showWeek = day.weektype;
         }
@@ -178,22 +178,26 @@ class UnitPlanView extends State<UnitPlanPage>
       return Container();
     }
     return TabProxy(
-      weekdays: weekdays,
-      tabs: days
-          .map((day) =>
-          UnitPlanDayList(
-            day: day,
-            dayIndex: days.indexOf(day),
-          ))
-          .toList(),
-      controller: controller,
-      onUpdate: () async {
-        await unitplan.download(Storage.getString(Keys.grade), false, onFinished: (successfully) {
-            dataUpdated(context, successfully, AppLocalizations.of(context).unitAndReplacementplan);
+        weekdays: weekdays,
+        tabs: days
+            .map((day) =>
+            UnitPlanDayList(
+              day: day,
+              dayIndex: days.indexOf(day),
+            ))
+            .toList(),
+        controller: controller,
+        onUpdate: () async {
+          await unitplan.download(Storage.getString(Keys.grade), false,
+              onFinished: (successfully) {
+                dataUpdated(context, successfully,
+                    AppLocalizations
+                        .of(context)
+                        .unitAndReplacementplan);
           });
-        replacementplan.load(unitplan.getUnitPlan(), false);
-        setWeeks();
-        setState(() => days = unitplan.getUnitPlan());
-      });
+          replacementplan.load(unitplan.getUnitPlan(), false);
+          setWeeks();
+          setState(() => days = unitplan.getUnitPlan());
+        });
   }
 }
