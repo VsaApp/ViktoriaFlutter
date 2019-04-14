@@ -1,3 +1,5 @@
+import 'package:flutter/services.dart' show rootBundle;
+
 import 'Id.dart';
 import 'Network.dart';
 import 'Storage.dart';
@@ -17,10 +19,17 @@ void reportError(error, stackTrace) async {
   print("Report new bug ($error)");
   if ((await checkOnline) == 1) {
     String url = '/bugs/report';
+    String version = (await rootBundle.loadString('pubspec.yaml'))
+      .split('\n')
+      .where((line) => line.startsWith('version'))
+      .toList()[0]
+      .split(':')[1]
+      .trim();
     post(url, body: {
       "id": Id.id,
       "title": error.toString(),
-      "error": stackTrace.toString()
+      "error": stackTrace.toString(),
+      "version": version == '' ? null : version
     });
   } else {
     Storage.setStringList(Keys.bugs, Storage.getStringList(Keys.bugs)..add('$error:|:$stackTrace'));
