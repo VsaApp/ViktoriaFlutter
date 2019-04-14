@@ -6,7 +6,6 @@ import '../Network.dart';
 import 'LoginPage.dart';
 
 class LoginPageView extends LoginPageState {
-
   @override
   void dispose() {
     usernameController.dispose();
@@ -48,7 +47,9 @@ class LoginPageView extends LoginPageState {
             // App name
             Center(
               child: Text(
-                AppLocalizations.of(context).title,
+                AppLocalizations
+                    .of(context)
+                    .appName,
                 style: TextStyle(fontSize: 25),
               ),
             ),
@@ -150,18 +151,25 @@ class LoginPageView extends LoginPageState {
                           child: SizedBox(
                             width: double.infinity,
                             child: RaisedButton(
-                              color: Theme.of(context).accentColor,
-                              onPressed: () {
-                                checkForm();
-                              },
-                              child: !isCheckingForm ? Text(AppLocalizations.of(context).login) : Padding(
-                                padding: EdgeInsets.all(0),
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                  strokeWidth: 1,
-                                ),
-                              )
-                            ),
+                                color: Theme
+                                    .of(context)
+                                    .accentColor,
+                                onPressed: () {
+                                  checkForm();
+                                },
+                                child: !isCheckingForm
+                                    ? Text(AppLocalizations
+                                    .of(context)
+                                    .login)
+                                    : Padding(
+                                  padding: EdgeInsets.all(0),
+                                  child: CircularProgressIndicator(
+                                    valueColor:
+                                    AlwaysStoppedAnimation<Color>(
+                                        Colors.white),
+                                    strokeWidth: 1,
+                                  ),
+                                )),
                           ),
                         ),
                       ],

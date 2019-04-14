@@ -13,7 +13,7 @@ class AppLocalizations {
   static Map<String, Map<String, dynamic>> _localizedValues = {
     // List of all germans Strings...
     'de': {
-      'title': 'Viktoria',
+      'appName': 'Viktoria',
       'unitPlan': 'Stundenplan',
       'replacementPlan': 'Vertretungsplan',
       'pupil': 'Schüler*In',
@@ -185,10 +185,21 @@ class AppLocalizations {
       ],
       'notYetExistingOnServer': 'Noch nicht auf dem Schulserver vorhanden!',
       'updates': 'Aktualisierungen',
-      'failedToCheckLogin': 'Fehler beim überprüfen der Logindaten! Versuche es später erneut.',
+      'failedToCheckLogin':
+      'Fehler beim überprüfen der Logindaten! Versuche es später erneut.',
       'unitAndReplacementplan': 'Stunden- und Vertretungsplan',
       'updated': ' aktualisiert',
-      'updatedFailed': ' aktualisieren fehlgeschlagen'
+      'updatedFailed': ' aktualisieren fehlgeschlagen',
+      'notices': 'Notizen',
+      'addNotice': 'Notiz hinzufügen',
+      'gallery': 'Galerie',
+      'camera': 'Kamera',
+      'text': 'Text',
+      'title': 'Titel',
+      'description': 'Beschreibung',
+      'textDetectedAddTranscript':
+      'Im Bild der Notiz wurde Text erkannt. Willst du diesen Text zur Notiz hinzufügen? (Dann kannst du in der Notiz suchen; Du kannst die Textreihenfolge durch verschieben ändern)',
+      'deleteNotice': 'Notiz löschen?',
     },
   };
 
@@ -399,8 +410,8 @@ class AppLocalizations {
         ['getReplacementPlanNotifications'];
   }
 
-  String get title {
-    return _localizedValues[locale.languageCode]['title'];
+  String get appName {
+    return _localizedValues[locale.languageCode]['appName'];
   }
 
   String get unitPlan {
@@ -753,6 +764,42 @@ class AppLocalizations {
 
   String get updates {
     return _localizedValues[locale.languageCode]['updates'];
+  }
+
+  String get notices {
+    return _localizedValues[locale.languageCode]['notices'];
+  }
+
+  String get addNotice {
+    return _localizedValues[locale.languageCode]['addNotice'];
+  }
+
+  String get gallery {
+    return _localizedValues[locale.languageCode]['gallery'];
+  }
+
+  String get camera {
+    return _localizedValues[locale.languageCode]['camera'];
+  }
+
+  String get text {
+    return _localizedValues[locale.languageCode]['text'];
+  }
+
+  String get title {
+    return _localizedValues[locale.languageCode]['title'];
+  }
+
+  String get description {
+    return _localizedValues[locale.languageCode]['description'];
+  }
+
+  String get textDetectedAddTranscript {
+    return _localizedValues[locale.languageCode]['textDetectedAddTranscript'];
+  }
+
+  String get deleteNotice {
+    return _localizedValues[locale.languageCode]['deleteNotice'];
   }
 }
 

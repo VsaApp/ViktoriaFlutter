@@ -1,13 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'dart:async';
-
+import 'Errors.dart' as bugs;
 import 'Home/HomePage.dart';
 import 'Id.dart';
-import 'Errors.dart' as bugs;
 import 'Intro/IntroPage.dart';
 import 'Keys.dart';
 import 'Loading/LoadingPage.dart';
@@ -39,7 +39,6 @@ bool get isInDebugMode {
 
   return inDebugMode;
 }
-
 
 Future launch() async {
   // This captures errors reported by the Flutter framework.

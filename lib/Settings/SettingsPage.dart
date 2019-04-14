@@ -81,6 +81,9 @@ abstract class SettingsPageState extends State<SettingsPage> {
       pages = [
         AppLocalizations.of(context).unitPlan,
         AppLocalizations.of(context).replacementPlan,
+        AppLocalizations
+            .of(context)
+            .notices,
         AppLocalizations.of(context).calendar,
         AppLocalizations.of(context).cafetoria,
         AppLocalizations.of(context).workGroups,

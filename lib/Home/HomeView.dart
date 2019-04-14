@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:viktoriaflutter/Notices/NoticesWidget.dart';
 
 import '../Cafetoria/CafetoriaPage.dart';
 import '../Calendar/CalendarPage.dart';
@@ -33,6 +34,10 @@ class HomePageView extends HomePageState {
           url:
           'https://${Storage.getString(Keys.username)}:${Storage.getString(Keys
               .password)}@www.viktoriaschule-aachen.de/sundvplan/vps/index.html'),
+      Page(AppLocalizations
+          .of(context)
+          .notices, MdiIcons.bulletinBoard,
+          NoticesPage()),
       Page(AppLocalizations.of(context).calendar, Icons.calendar_today,
           CalendarPage()),
       Page(AppLocalizations.of(context).cafetoria, Icons.fastfood,

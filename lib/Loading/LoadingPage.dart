@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:viktoriaflutter/Network.dart';
+import 'package:viktoriaflutter/Notices/NoticesData.dart' as Notices;
 
 import '../Cafetoria/CafetoriaData.dart' as Cafetoria;
 import '../Calendar/CalendarData.dart' as Calendar;
@@ -26,8 +27,8 @@ class LoadingPage extends StatefulWidget {
 
 abstract class LoadingPageState extends State<LoadingPage>
     with TickerProviderStateMixin {
-  int allDownloadsCount = 9;
-  int countCurrentDownloads = 9;
+  int allDownloadsCount = 10;
+  int countCurrentDownloads = 10;
   double centerWidgetDimensions = 150;
   List<String> texts = [];
   bool showTexts = false;
@@ -63,6 +64,9 @@ abstract class LoadingPageState extends State<LoadingPage>
       texts.add(AppLocalizations.of(context).rooms);
       texts.add(AppLocalizations.of(context).teachers);
       texts.add(AppLocalizations.of(context).cafetoria);
+      texts.add(AppLocalizations
+          .of(context)
+          .notices);
       texts.shuffle();
       downloadAll();
     });
@@ -140,11 +144,15 @@ abstract class LoadingPageState extends State<LoadingPage>
     } catch (e) {
       newData = oldData;
     }
+    Notices.load();
     setState(() {
-      countCurrentDownloads--;
+      countCurrentDownloads -= 2;
       texts.remove(AppLocalizations
           .of(context)
           .updates);
+      texts.remove(AppLocalizations
+          .of(context)
+          .notices);
     });
 
     String appVersion = (await rootBundle.loadString('pubspec.yaml'))
@@ -160,7 +168,8 @@ abstract class LoadingPageState extends State<LoadingPage>
 
     print('Downloading ' +
         (newData.keys
-            .map((key) => newData[key] != oldData[key] || oldGrade != newGrade)
+            .map((key) =>
+        newData[key] != oldData[key] || oldGrade != newGrade)
             .where((a) => a)
             .length)
             .toString() +
@@ -217,7 +226,8 @@ abstract class LoadingPageState extends State<LoadingPage>
                 oldData['replacementplantoday'] !=
                     newData['replacementplantoday'] ||
                 oldData['replacementplantomorrow'] !=
-                    newData['replacementplantomorrow'] || oldGrade != newGrade,
+                    newData['replacementplantomorrow'] ||
+                oldGrade != newGrade,
           );
           texts.remove(AppLocalizations.of(context).unitPlan);
           ReplacementPlan.load(UnitPlan.getUnitPlan(), false);
