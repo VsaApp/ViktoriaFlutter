@@ -119,7 +119,7 @@ abstract class HomePageState extends State<HomePage> {
       replacementplanUpdatedListeners
           .forEach((replacementplanUpdated) => replacementplanUpdated());
     }
-    checkUntiplanData();
+    checkIfUnitplanUpdated(context);
   }
 
   Future notificationOpenedHandler(String msg) async {
@@ -140,7 +140,6 @@ abstract class HomePageState extends State<HomePage> {
   @override
   void initState() {
     loadData();
-    checkUntiplanData();
     HomePageState.updateWeek = _updateWeek;
     HomePageState.setShowWeek = _showWeek;
 
@@ -148,7 +147,7 @@ abstract class HomePageState extends State<HomePage> {
       setShowWeek(true);
     }
 
-    checkUntiplanData();
+    WidgetsBinding.instance.addPostFrameCallback((_) => checkIfUnitplanUpdated(context));
 
     // Set the listener for android functions (Currently for incoming notifications and intents)...
     platform.setMethodCallHandler(_handleNotification);
@@ -178,38 +177,15 @@ abstract class HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  void checkUntiplanData() async {
-    // If it's a new version of the uniplan...
-    String grade = Storage.getString(Keys.grade);
-    String currentDate = await unitplan.fetchDate(grade);
-    String lastDate = Storage.getString(Keys.unitplanDate);
-    if (lastDate == null) {
-      Storage.setString(Keys.unitplanDate, currentDate);
-      currentDate = lastDate;
-    }
-
-    if (currentDate != lastDate) {
-      print("There is a new unitplan, reset old data");
-      currentUnitplanDate = currentDate;
-      List<String> keys = Storage.getKeys().toList();
-      List<String> keysToReset = keys
-          .where((String key) => ((key.startsWith('room') ||
-          key.startsWith('exams') ||
-          (key.startsWith('unitPlan') && key
-              .split('-')
-              .length > 2))))
-          .toList();
-      keysToReset.forEach((String key) => Storage.remove(key));
-      unitplanChanged = true;
-
+  static void checkIfUnitplanUpdated(BuildContext context) {
+    if (Storage.getBool(Keys.unitPlanIsNew)) {
       showDialog<String>(
           context: context,
           barrierDismissible: true,
           builder: (BuildContext context1) {
             return NewUnitplanDialog();
           });
-      Storage.setString(Keys.unitplanDate, currentUnitplanDate);
-
+      Storage.setBool(Keys.unitPlanIsNew, false);
       syncTags();
     }
   }
