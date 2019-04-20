@@ -62,7 +62,7 @@ class UnitPlanView extends State<UnitPlanPage>
         for (int j = 0; j < UnitPlan.days.length; j++) {
           DateTime dateOfDay = dateOfMonday.add(Duration(days: j));
           if (date.isAfter(today) && dateOfDay.weekday <= date.weekday)
-            UnitPlan.days[j - 1].showWeek = day.weektype;
+            UnitPlan.days[j - 1 > 0 ? j - 1 : 0].showWeek = day.weektype;
           else if (date.isBefore(today) && dateOfDay.weekday >= date.weekday)
             UnitPlan.days[j].showWeek = day.weektype;
         }
@@ -194,7 +194,7 @@ class UnitPlanView extends State<UnitPlanPage>
                     AppLocalizations
                         .of(context)
                         .unitAndReplacementplan);
-              HomePageState.checkIfUnitplanUpdated(context);
+                HomePageState.checkIfUnitplanUpdated(context);
           });
           replacementplan.load(unitplan.getUnitPlan(), false);
           setWeeks();

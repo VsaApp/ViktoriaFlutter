@@ -1,7 +1,7 @@
 name: viktoriaflutter
 description: A new Flutter project.
 
-version: 1.0.19+20
+version: 1.0.20+21
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -31,11 +31,11 @@ dev_dependencies:
 
 flutter:
   fonts:
-  - family: Ubuntu
-    fonts:
-    - asset: assets/fonts/Ubuntu-R.ttf
+    - family: Ubuntu
+      fonts:
+        - asset: assets/fonts/Ubuntu-R.ttf
   uses-material-design: true
   assets:
-  - assets/images/logo.svg
-  - assets/images/logo_white.svg
-  - pubspec.yaml
+    - assets/images/logo.svg
+    - assets/images/logo_white.svg
+    - pubspec.yaml

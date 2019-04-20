@@ -43,7 +43,6 @@ Future<List<UnitPlanDay>> download(String grade, bool temp,
         '{"participant": "5a", "date": "01.01.00", "data": []}',
         body: body, onFinished: (bool v) => successfully = v);
     String newUnitPlan = Storage.getString(Keys.unitPlan(grade));
-    print("download unitplan");
     checkUnitplanUpdated(oldUnitplan, newUnitPlan);
   }
 
@@ -92,10 +91,13 @@ List<UnitPlanDay> parseDays(String responseBody) {
 /// Returns the unitplan without any replacementplan data
 String getFilteredString(String unitPlan) {
   final parsed = json.decode(unitPlan).cast<String, dynamic>()['data'];
-  parsed.forEach((day)  {
+  parsed.forEach((day) {
     day['replacementplan'] = null;
     day['lessons'].keys.toList().forEach((lesson) {
-      day['lessons'][lesson].forEach((subject) => subject['changes'] = null);
+      day['lessons'][lesson].forEach((subject) {
+        subject['course'] = null;
+        subject['changes'] = null;
+      });
     });
   });
   return json.encode(parsed);
@@ -105,10 +107,11 @@ String getFilteredString(String unitPlan) {
 void checkUnitplanUpdated(String version1, String version2) {
   if (getFilteredString(version1) != getFilteredString(version2)) {
     Storage.setBool(Keys.unitPlanIsNew, true);
-    print("There is a new unitplan, reset old data");
+    print('There is a new unitplan, reset old data');
     List<String> keys = Storage.getKeys().toList();
     List<String> keysToReset = keys
-        .where((String key) => ((key.startsWith('room') ||
+        .where((String key) =>
+    ((key.startsWith('room-') ||
         key.startsWith('exams') ||
         (key.startsWith('unitPlan') && key
             .split('-')
