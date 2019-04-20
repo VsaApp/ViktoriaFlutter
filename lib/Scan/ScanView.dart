@@ -64,14 +64,9 @@ class ScanPageView extends ScanPageState {
                 .replaceAll('Ä', 'A')
                 .replaceAll('Ö', 'O')
                 .replaceAll('Ü', 'U');
-            if (subject == s.lesson && room == sRoom && teacher == sTeacher) {
-              matchingSubjects.add(MatchingSubject(
-                subject: s,
-                weekday: UnitPlan.days.indexOf(day),
-                unit: day.lessons.indexOf(lesson),
-                index: lesson.subjects.indexOf(s),
-              ));
-            } else if (room == sRoom && teacher == sTeacher) {
+            if ((subject == s.lesson && room == sRoom && teacher == sTeacher) ||
+                (room == sRoom && teacher == sTeacher) ||
+                (subject == s.lesson && teacher == sTeacher)) {
               matchingSubjects.add(MatchingSubject(
                 subject: s,
                 weekday: UnitPlan.days.indexOf(day),
@@ -234,7 +229,7 @@ class ScanPageView extends ScanPageState {
                       setState(() {
                         show = false;
                       });
-                      Timer(Duration(milliseconds: 75), () {
+                      Timer(Duration(milliseconds: 100), () {
                         setState(() {
                           show = true;
                         });
@@ -250,7 +245,9 @@ class ScanPageView extends ScanPageState {
           : Container(
         alignment: Alignment(0.0, -1.0),
         padding: EdgeInsets.all(10.0),
-        child: Text(AppLocalizations.of(context).scanUnitPlanAllDetected),
+        child: Text(AppLocalizations
+            .of(context)
+            .scanUnitPlanAllDetected),
       ),
     );
   }
