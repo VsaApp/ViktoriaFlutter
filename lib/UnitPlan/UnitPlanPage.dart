@@ -194,6 +194,7 @@ class UnitPlanView extends State<UnitPlanPage>
                     AppLocalizations
                         .of(context)
                         .unitAndReplacementplan);
+              HomePageState.checkIfUnitplanUpdated(context);
           });
           replacementplan.load(unitplan.getUnitPlan(), false);
           setWeeks();

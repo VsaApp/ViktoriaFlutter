@@ -38,9 +38,13 @@ Future<List<UnitPlanDay>> download(String grade, bool temp,
     }
   }
   if (update) {
+    String oldUnitplan = Storage.getString(Keys.unitPlan(grade));
     await fetchDataAndSave(url, Keys.unitPlan(grade),
         '{"participant": "5a", "date": "01.01.00", "data": []}',
         body: body, onFinished: (bool v) => successfully = v);
+    String newUnitPlan = Storage.getString(Keys.unitPlan(grade));
+    print("download unitplan");
+    checkUnitplanUpdated(oldUnitplan, newUnitPlan);
   }
 
   // Parse data...
@@ -79,8 +83,37 @@ String parseDate(String responseBody) {
   return parsed;
 }
 
-// Returns parsed unit plan...
+/// Returns parsed unit plan...
 List<UnitPlanDay> parseDays(String responseBody) {
   final parsed = json.decode(responseBody).cast<String, dynamic>()['data'];
   return parsed.map<UnitPlanDay>((json) => UnitPlanDay.fromJson(json)).toList();
+}
+
+/// Returns the unitplan without any replacementplan data
+String getFilteredString(String unitPlan) {
+  final parsed = json.decode(unitPlan).cast<String, dynamic>()['data'];
+  parsed.forEach((day)  {
+    day['replacementplan'] = null;
+    day['lessons'].keys.toList().forEach((lesson) {
+      day['lessons'][lesson].forEach((subject) => subject['changes'] = null);
+    });
+  });
+  return json.encode(parsed);
+}
+
+/// Resets the selected subjects when the unitplan changed
+void checkUnitplanUpdated(String version1, String version2) {
+  if (getFilteredString(version1) != getFilteredString(version2)) {
+    Storage.setBool(Keys.unitPlanIsNew, true);
+    print("There is a new unitplan, reset old data");
+    List<String> keys = Storage.getKeys().toList();
+    List<String> keysToReset = keys
+        .where((String key) => ((key.startsWith('room') ||
+        key.startsWith('exams') ||
+        (key.startsWith('unitPlan') && key
+            .split('-')
+            .length > 2))))
+        .toList();
+    keysToReset.forEach((String key) => Storage.remove(key));
+  }
 }
