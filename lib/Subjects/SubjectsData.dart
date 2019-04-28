@@ -7,14 +7,16 @@ import '../Storage.dart';
 import 'SubjectsModel.dart';
 
 // Download the unit plan...
-Future<Map<String, String>> download({bool update = true}) async {
+Future<Map<String, String>> download({bool update = true, Function(bool successfully) onFinished}) async {
+  bool successfully;
   if (update) {
     String url = '/subjects';
-    await fetchDataAndSave(url, Keys.subjects, '{}');
+    await fetchDataAndSave(url, Keys.subjects, '{}', onFinished: (bool v) => successfully = v);
   }
 
   // Parse data...
   Subjects.subjects = await fetchSubjects();
+  if (onFinished != null) onFinished(successfully);
 }
 
 // Returns the static subjects...

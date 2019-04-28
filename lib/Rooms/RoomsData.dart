@@ -7,14 +7,16 @@ import '../Storage.dart';
 import 'RoomsModel.dart';
 
 // Download the unit plan...
-Future<Map<String, String>> download({bool update = true}) async {
+Future<Map<String, String>> download({bool update = true, Function(bool successfully) onFinished}) async {
+  bool successfully;
   if (update) {
     String url = '/rooms';
-    await fetchDataAndSave(url, Keys.rooms, '{}');
+    await fetchDataAndSave(url, Keys.rooms, '{}', onFinished: (bool v) => successfully = v);
   }
 
   // Parse data...
   Rooms.rooms = await fetchRooms();
+  if (onFinished != null) onFinished(successfully);
 }
 
 // Returns the static rooms...
