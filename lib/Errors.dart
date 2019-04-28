@@ -19,12 +19,18 @@ void reportError(error, stackTrace) async {
   print("Report new bug ($error)");
   if ((await checkOnline) == 1) {
     String url = '/bugs/report';
-    String version = (await rootBundle.loadString('pubspec.yaml'))
-      .split('\n')
-      .where((line) => line.startsWith('version'))
-      .toList()[0]
-      .split(':')[1]
-      .trim();
+    String version;
+    try {
+      version = (await rootBundle.loadString('pubspec.yaml'))
+        .split('\n')
+        .where((line) => line.startsWith('version'))
+        .toList()[0]
+        .split(':')[1]
+        .trim();
+    }
+    catch (_) {
+      version = '';
+    }
     post(url, body: {
       "id": Id.id,
       "title": error.toString(),

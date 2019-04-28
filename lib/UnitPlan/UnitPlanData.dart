@@ -38,12 +38,12 @@ Future<List<UnitPlanDay>> download(String grade, bool temp,
     }
   }
   if (update) {
+    String defaultUnitplan = '{"participant": "5a", "date": "01.01.00", "data": []}';
     String oldUnitplan = Storage.getString(Keys.unitPlan(grade));
-    await fetchDataAndSave(url, Keys.unitPlan(grade),
-        '{"participant": "5a", "date": "01.01.00", "data": []}',
+    await fetchDataAndSave(url, Keys.unitPlan(grade), defaultUnitplan,
         body: body, onFinished: (bool v) => successfully = v);
     String newUnitPlan = Storage.getString(Keys.unitPlan(grade));
-    checkUnitplanUpdated(oldUnitplan, newUnitPlan);
+    if (oldUnitplan != null) checkUnitplanUpdated(oldUnitplan, newUnitPlan);
   }
 
   // Parse data...
@@ -105,18 +105,22 @@ String getFilteredString(String unitPlan) {
 
 /// Resets the selected subjects when the unitplan changed
 void checkUnitplanUpdated(String version1, String version2) {
-  if (getFilteredString(version1) != getFilteredString(version2)) {
-    Storage.setBool(Keys.unitPlanIsNew, true);
-    print('There is a new unitplan, reset old data');
-    List<String> keys = Storage.getKeys().toList();
-    List<String> keysToReset = keys
-        .where((String key) =>
-    ((key.startsWith('room-') ||
-        key.startsWith('exams') ||
-        (key.startsWith('unitPlan') && key
-            .split('-')
-            .length > 2))))
-        .toList();
-    keysToReset.forEach((String key) => Storage.remove(key));
+  try {
+    if (getFilteredString(version1) != getFilteredString(version2)) {
+      Storage.setBool(Keys.unitPlanIsNew, true);
+      print('There is a new unitplan, reset old data');
+      List<String> keys = Storage.getKeys().toList();
+      List<String> keysToReset = keys
+          .where((String key) =>
+      ((key.startsWith('room-') ||
+          key.startsWith('exams') ||
+          (key.startsWith('unitPlan') && key
+              .split('-')
+              .length > 2))))
+          .toList();
+      keysToReset.forEach((String key) => Storage.remove(key));
+    }
+  } catch (_) {
+    print('Failed to compare untiplan versions');
   }
 }
