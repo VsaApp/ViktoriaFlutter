@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'SectionView.dart';
+import 'package:viktoriaflutter/Utils/SectionView.dart';
 
 class Section extends StatefulWidget {
   final List<Widget> children;

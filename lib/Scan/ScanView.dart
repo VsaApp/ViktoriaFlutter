@@ -2,14 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../Keys.dart';
-import '../Localizations.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
 import '../Rooms/RoomsModel.dart';
-import '../SectionWidget.dart';
-import '../Selection.dart';
-import '../Storage.dart';
+import 'package:viktoriaflutter/Utils/SectionWidget.dart';
+import 'package:viktoriaflutter/Utils/Selection.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
 import '../Subjects/SubjectsModel.dart';
-import '../Tags.dart';
+import 'package:viktoriaflutter/Utils/Tags.dart';
 import '../Teachers/TeachersModel.dart';
 import '../UnitPlan/UnitPlanModel.dart';
 import '../UnitPlan/UnitPlanSelectDialog/UnitPlanSelectDialogWidget.dart';

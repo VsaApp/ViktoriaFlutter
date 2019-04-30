@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../Localizations.dart';
-import '../../SectionWidget.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
+import 'package:viktoriaflutter/Utils/SectionWidget.dart';
 import '../ReplacementPlanRow/ReplacementPlanRowWidget.dart';
 import '../ReplacementPlanRow/ReplacementPlanUnparsedRowWidget.dart';
 import 'ReplacementPlanDayListWidget.dart';

@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
-import '../../Keys.dart';
-import '../../Network.dart';
-import '../../Storage.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Network.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'HistoryDialogModel.dart';
 
 // Download the unit plan...

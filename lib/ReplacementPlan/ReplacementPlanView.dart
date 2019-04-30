@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../BrotherSisterReplacementPlan/BrotherSisterReplacementPlanPage.dart';
-import '../Update.dart';
-import '../Keys.dart';
-import '../Localizations.dart';
-import '../Network.dart';
-import '../Storage.dart';
-import '../TabProxy.dart';
+import 'package:viktoriaflutter/Utils/Update.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
+import 'package:viktoriaflutter/Utils/Network.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
+import 'package:viktoriaflutter/Utils/TabProxy.dart';
 import '../UnitPlan/UnitPlanData.dart' as unitplan;
 import 'GradeFAB/GradeFABWidget.dart';
 import 'ReplacementPlanData.dart' as replacementplan;

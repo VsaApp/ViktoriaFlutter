@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../Home/HomePage.dart';
-import '../Keys.dart';
-import '../Localizations.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
 import '../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
 import '../ReplacementPlan/ReplacementPlanModel.dart';
-import '../Selection.dart';
-import '../Storage.dart';
-import '../TabProxy.dart';
-import '../Update.dart';
+import 'package:viktoriaflutter/Utils/Selection.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
+import 'package:viktoriaflutter/Utils/TabProxy.dart';
+import 'package:viktoriaflutter/Utils/Update.dart';
 import 'UnitPlanData.dart' as unitplan;
 import 'UnitPlanDayList/UnitPlanDayListWidget.dart';
 import 'UnitPlanModel.dart';

@@ -12,12 +12,14 @@ class CalendarEvent {
   final String info;
   final DateTime start;
   final DateTime end;
+  final bool free;
 
   CalendarEvent({
     @required this.name,
     @required this.info,
     @required this.start,
     @required this.end,
+    @required this.free
   });
 
   factory CalendarEvent.fromJson(Map<String, dynamic> json) {
@@ -35,6 +37,7 @@ class CalendarEvent {
           ' ' +
           (json['end']['time'] != '' ? json['end']['time'] : '23:59'))
           : null,
+      free: json['free'] as bool
     );
   }
 }

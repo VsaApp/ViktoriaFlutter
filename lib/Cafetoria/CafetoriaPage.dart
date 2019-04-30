@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../Keys.dart';
-import '../Storage.dart';
-import '../Update.dart';
-import '../Localizations.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
+import 'package:viktoriaflutter/Utils/Update.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'CafetoriaData.dart';
 import 'CafetoriaModel.dart';
 import 'CafetoriaView.dart';

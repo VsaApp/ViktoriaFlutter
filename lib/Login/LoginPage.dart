@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../Id.dart';
-import '../Keys.dart';
-import '../Localizations.dart';
-import '../Network.dart';
-import '../Storage.dart';
-import '../Tags.dart';
+import 'package:viktoriaflutter/Utils/Id.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
+import 'package:viktoriaflutter/Utils/Network.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
+import 'package:viktoriaflutter/Utils/Tags.dart';
 import 'LoginView.dart';
 
 class LoginPage extends StatefulWidget {

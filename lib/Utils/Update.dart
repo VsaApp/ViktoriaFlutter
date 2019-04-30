@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'Localizations.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
 
 void dataUpdated(BuildContext context, bool successfully, String name) {
   print("Show snackbar");

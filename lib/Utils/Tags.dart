@@ -4,19 +4,20 @@ import 'dart:io' show Platform;
 import 'package:device_info/device_info.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
+import 'Times.dart';
 import 'Id.dart';
 import 'Keys.dart';
 import 'Network.dart';
 import 'Selection.dart';
 import 'Storage.dart';
-import 'UnitPlan/UnitPlanData.dart';
+import '../UnitPlan/UnitPlanData.dart';
 
 Future<Map<String, dynamic>> getTags({String idToLoad}) async {
   String id = idToLoad ?? Id.id;
   String url = '/tags/$id';
   try {
     return json.decode(await fetchData(url));
-  } on Exception catch (e) {
+  } on Exception catch (_) {
     return null;
   }
 }
@@ -26,7 +27,7 @@ Future sendTag(String key, dynamic value) async {
 }
 
 Future<Map<String, dynamic>> isInitialized() async {
-  Map<String, dynamic> deviceId = await getTags(idToLoad: await Id.id);
+  Map<String, dynamic> deviceId = await getTags(idToLoad: Id.id);
   if (deviceId.keys.length > 0) return deviceId;
   return null;
 }
@@ -104,10 +105,19 @@ Future deleteTags(List<String> tags) async {
   post(url, body: tags);
 }
 
-// Sync the onesignal tags...
+void syncDaysLength() {
+  String lengths = '';
+  getUnitPlan().forEach((day) {
+    int count = day.getUserLesseonsCount('Freistunde');
+    lengths += times[count].split(' - ')[1] + '|';
+  });
+  Storage.setString(Keys.daysLengths, lengths);
+}
+
+// Sync the tags...
 Future syncTags() async {
   if ((await checkOnline) == -1) return;
-
+  syncDaysLength();
   String grade = Storage.getString(Keys.grade);
 
   // Get all unitplan and exams tags...

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../EventCard/EventCard.dart';
 import '../../CalendarModel.dart';
-import '../../../Localizations.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
 
 class CalendarGridEvent extends StatelessWidget {
 

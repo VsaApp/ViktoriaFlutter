@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../Keys.dart';
-import '../../Selection.dart';
-import '../../Storage.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Selection.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
 import '../../UnitPlan/UnitPlanData.dart' as UnitPlan;
 import '../../UnitPlan/UnitPlanModel.dart';
 import 'CourseEditView.dart';

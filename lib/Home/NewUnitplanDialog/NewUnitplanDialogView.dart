@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../Localizations.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'NewUnitplanDialogModel.dart';
 
 class NewUnitplanDialogDialogView extends NewUnitplanDialogState {

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../Localizations.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'CalendarGridItem/CalendarGridItemWidget.dart';
 import 'CalendarGridWidget.dart';
-import 'CalendarGridEvent/CalendarGridEventWidget.dart';
 
 class CalendarGridView extends CalendarGridState {
   @override

@@ -1,9 +1,9 @@
 import 'package:flutter/services.dart' show rootBundle;
 
-import 'Id.dart';
-import 'Network.dart';
-import 'Storage.dart';
-import 'Keys.dart';
+import 'package:viktoriaflutter/Utils/Id.dart';
+import 'package:viktoriaflutter/Utils/Network.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
 
 void init() async {
   List<String> bugs = Storage.getStringList(Keys.bugs) ?? [];

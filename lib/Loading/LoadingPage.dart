@@ -4,16 +4,16 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show MethodChannel, rootBundle;
-import 'package:viktoriaflutter/Network.dart';
+import 'package:viktoriaflutter/Utils/Network.dart';
 
 import '../Cafetoria/CafetoriaData.dart' as Cafetoria;
 import '../Calendar/CalendarData.dart' as Calendar;
-import '../Keys.dart';
-import '../Localizations.dart';
-import '../Network.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
+import 'package:viktoriaflutter/Utils/Network.dart';
 import '../ReplacementPlan/ReplacementPlanData.dart' as ReplacementPlan;
 import '../Rooms/RoomsData.dart' as Rooms;
-import '../Storage.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
 import '../Subjects/SubjectsData.dart' as Subjects;
 import '../Teachers/TeachersData.dart' as Teachers;
 import '../UnitPlan/UnitPlanData.dart' as UnitPlan;

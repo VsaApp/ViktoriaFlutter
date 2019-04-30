@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../Localizations.dart';
-import '../Network.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
+import 'package:viktoriaflutter/Utils/Network.dart';
 
 class OfflineWidget extends StatelessWidget {
   @override

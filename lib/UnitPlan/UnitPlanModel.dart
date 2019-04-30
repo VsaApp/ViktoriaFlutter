@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../ReplacementPlan/ReplacementPlanModel.dart';
-import '../Selection.dart';
+import 'package:viktoriaflutter/Utils/Selection.dart';
 
 // Describes the whole unit plan...
 class UnitPlan {

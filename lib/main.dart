@@ -6,16 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'Errors.dart' as bugs;
+import 'package:viktoriaflutter/Utils/Errors.dart' as bugs;
 import 'Home/HomePage.dart';
-import 'Id.dart';
+import 'package:viktoriaflutter/Utils/Id.dart';
 import 'Intro/IntroPage.dart';
-import 'Keys.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'Loading/LoadingPage.dart';
-import 'Localizations.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'Login/LoginPage.dart';
 import 'Scan/ScanPage.dart';
-import 'Storage.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
 
 // This is the first functions which is called in the app...
 void main() async {

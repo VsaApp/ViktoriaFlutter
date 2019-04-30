@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../Keys.dart';
-import '../../Localizations.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
 import '../../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
-import '../../Storage.dart';
-import '../../Tags.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
+import 'package:viktoriaflutter/Utils/Tags.dart';
 import '../../UnitPlan/UnitPlanData.dart' as unitplan;
 import 'CourseEditWidget.dart';
 import 'RoomEdit/RoomEditView.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../Keys.dart';
-import '../../Localizations.dart';
-import '../../Storage.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'ShortCutDialogWidget.dart';
 
 class ShortCutDialogView extends ShortCutDialogState {

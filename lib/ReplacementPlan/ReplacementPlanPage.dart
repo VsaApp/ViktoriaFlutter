@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../Home/HomePage.dart';
-import '../Localizations.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
 import '../UnitPlan/UnitPlanData.dart' as unitplan;
 import 'ReplacementPlanData.dart' as replacementplan;
 import 'ReplacementPlanModel.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../ReplacementPlan/ReplacementPlanData.dart' as Replacementplan;
-import '../../Selection.dart';
-import '../../Tags.dart';
+import 'package:viktoriaflutter/Utils/Selection.dart';
+import 'package:viktoriaflutter/Utils/Tags.dart';
 import '../UnitPlanModel.dart';
 import 'UnitPlanSelectDialogView.dart';
 
@@ -26,7 +26,7 @@ class UnitPlanSelectDialog extends StatefulWidget {
 
 abstract class UnitPlanSelectDialogState extends State<UnitPlanSelectDialog>
     with SingleTickerProviderStateMixin {
-  UnitPlanSubject lastSelected = null;
+  UnitPlanSubject lastSelected;
 
   bool hideABSubjects = false;
   bool hideBSubjects = false;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../Localizations.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'ActionFAB/ActionFABWidget.dart';
 import 'CafetoriaData.dart';
 import 'CafetoriaModel.dart';

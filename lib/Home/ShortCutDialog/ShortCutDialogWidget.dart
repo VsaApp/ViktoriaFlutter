@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../Keys.dart';
-import '../../Storage.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
 import '../HomePage.dart';
 import 'ShortCutDialogView.dart';
 

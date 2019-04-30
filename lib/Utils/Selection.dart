@@ -1,6 +1,6 @@
-import 'Keys.dart';
-import 'Storage.dart';
-import 'UnitPlan/UnitPlanModel.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
+import '../UnitPlan/UnitPlanModel.dart';
 
 String getKey(UnitPlanSubject subject) {
   return '${subject.lesson}-${subject.teacher}';

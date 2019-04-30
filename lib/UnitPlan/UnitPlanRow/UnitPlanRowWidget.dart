@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../Rooms.dart';
-import '../../Times.dart';
+import 'package:viktoriaflutter/Utils/Rooms.dart';
+import 'package:viktoriaflutter/Utils/Times.dart';
 import '../UnitPlanModel.dart';
 
 class UnitPlanRow extends StatelessWidget {

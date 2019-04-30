@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../Rooms.dart';
+import 'package:viktoriaflutter/Utils/Rooms.dart';
 import '../ReplacementPlanModel.dart';
 
 class ReplacementPlanRow extends StatelessWidget {

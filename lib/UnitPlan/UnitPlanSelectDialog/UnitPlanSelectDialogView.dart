@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../Localizations.dart';
-import '../../SectionWidget.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
+import 'package:viktoriaflutter/Utils/SectionWidget.dart';
 import 'UnitPlanSelectDialogOption/UnitPlanSelectDialogOptionWidget.dart';
 import 'UnitPlanSelectDialogWidget.dart';
 

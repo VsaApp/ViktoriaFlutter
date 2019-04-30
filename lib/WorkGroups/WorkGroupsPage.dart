@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../Update.dart';
-import '../Localizations.dart';
+import 'package:viktoriaflutter/Utils/Update.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'WorkGroupsData.dart';
 import 'WorkGroupsModel.dart';
 import 'WorkGroupsView.dart';

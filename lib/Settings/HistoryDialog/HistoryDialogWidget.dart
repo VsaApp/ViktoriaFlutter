@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../Keys.dart';
-import '../../Storage.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
 import '../../UnitPlan/UnitPlanData.dart' as Unitplan;
 import 'HistoryDialogData.dart';
 import 'HistoryDialogModel.dart';

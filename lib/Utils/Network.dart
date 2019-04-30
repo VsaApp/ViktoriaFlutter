@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
-import 'Keys.dart';
-import 'Storage.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
 
 Duration maxTime = Duration(seconds: 4);
 String apiUrl = 'https://api.vsa.2bad2c0.de';

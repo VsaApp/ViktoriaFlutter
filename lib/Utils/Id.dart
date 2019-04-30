@@ -2,8 +2,8 @@ import 'dart:io' show File, Platform;
 
 import 'package:device_id/device_id.dart';
 
-import 'Keys.dart';
-import 'Storage.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
 
 class Id {
   static String id;

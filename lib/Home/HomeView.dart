@@ -7,11 +7,11 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import '../Cafetoria/CafetoriaPage.dart';
 import '../Calendar/CalendarPage.dart';
 import '../Courses/CoursesPage.dart';
-import '../Keys.dart';
-import '../Localizations.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
 import '../ReplacementPlan/ReplacementPlanPage.dart';
 import '../Settings/SettingsPage.dart';
-import '../Storage.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
 import '../UnitPlan/UnitPlanPage.dart';
 import '../WorkGroups/WorkGroupsPage.dart';
 import 'HomePage.dart';

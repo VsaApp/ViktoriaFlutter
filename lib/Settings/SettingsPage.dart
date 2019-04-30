@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../Keys.dart';
-import '../Localizations.dart';
-import '../Storage.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'SettingsView.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -45,6 +45,7 @@ abstract class SettingsPageState extends State<SettingsPage> {
   bool showWorkGroupsInUnitPlan = true;
   bool showCalendarInUnitPlan = true;
   bool showCafetoriaInUnitPlan = true;
+  bool muteDevice = false;
   bool dev = false;
 
   @override
@@ -86,6 +87,7 @@ abstract class SettingsPageState extends State<SettingsPage> {
         AppLocalizations.of(context).workGroups,
         AppLocalizations.of(context).courses
       ];
+      muteDevice = Storage.getBool(Keys.muteService);
       page = pages[Storage.getInt(Keys.initialPage) ?? 0];
     });
   }

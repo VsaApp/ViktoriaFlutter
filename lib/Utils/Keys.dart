@@ -9,6 +9,10 @@ class Keys {
     return 'unitplanDate';
   }
 
+  static String get daysLengths {
+    return 'daysLengths';
+  }
+
   static String get dev {
     return 'dev';
   }
@@ -168,5 +172,9 @@ class Keys {
 
   static String get unitPlanIsNew {
     return 'unitPlanIsNew';
+  }
+
+  static String get muteService {
+    return 'muteService';
   }
 }

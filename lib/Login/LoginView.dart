@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../Localizations.dart';
-import '../Network.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
+import 'package:viktoriaflutter/Utils/Network.dart';
 import 'LoginPage.dart';
 
 class LoginPageView extends LoginPageState {

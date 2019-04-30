@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../Network.dart';
+import 'package:viktoriaflutter/Utils/Network.dart';
 import 'LoginDialogView.dart';
 
 class LoginDialog extends StatefulWidget {

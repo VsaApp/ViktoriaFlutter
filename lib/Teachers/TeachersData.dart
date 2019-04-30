@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 
-import '../Keys.dart';
-import '../Network.dart';
-import '../Storage.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Network.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'TeachersModel.dart';
 
 // Download the unit plan...
-Future<Map<String, String>> download({bool update = true, Function(bool successfully) onFinished}) async {
+Future download({bool update = true, Function(bool successfully) onFinished}) async {
   bool successfully;
   if (update) {
     String url = '/teachers/teachers.json';

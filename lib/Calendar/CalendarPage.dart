@@ -4,8 +4,8 @@ import 'CalendarData.dart';
 import 'CalendarGrid/CalendarGridWidget.dart';
 import 'CalendarModel.dart';
 import 'EventCard/EventCard.dart';
-import '../Localizations.dart';
-import '../Update.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
+import 'package:viktoriaflutter/Utils/Update.dart';
 
 class CalendarPage extends StatefulWidget {
   CalendarPage({Key key}) : super(key: key);

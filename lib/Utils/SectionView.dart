@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'SectionWidget.dart';
+import 'package:viktoriaflutter/Utils/SectionWidget.dart';
 
 class SectionView extends State<Section> {
   @override

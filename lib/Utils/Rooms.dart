@@ -1,5 +1,5 @@
-import 'Keys.dart';
-import 'Storage.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
 
 String getRoom(int weekday, int unit, String subject, String room) {
   subject = subject.toUpperCase();

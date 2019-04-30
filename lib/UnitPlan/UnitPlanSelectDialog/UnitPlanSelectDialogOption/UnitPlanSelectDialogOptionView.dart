@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../Courses/CourseEdit/CourseEditWidget.dart';
-import '../../../Keys.dart';
-import '../../../Localizations.dart';
-import '../../../Storage.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
 import '../../UnitPlanModel.dart';
 import '../../UnitPlanRow/UnitPlanRowWidget.dart';
 import 'UnitPlanSelectDialogOptionWidget.dart';
