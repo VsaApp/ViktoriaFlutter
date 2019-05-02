@@ -200,6 +200,7 @@ class AppLocalizations {
       'textDetectedAddTranscript':
       'Im Bild der Notiz wurde Text erkannt. Willst du diesen Text zur Notiz hinzufügen? (Dann kannst du in der Notiz suchen; Du kannst die Textreihenfolge durch verschieben ändern)',
       'deleteNotice': 'Notiz löschen?',
+      'audio': 'Audio',
     },
   };
 
@@ -800,6 +801,10 @@ class AppLocalizations {
 
   String get deleteNotice {
     return _localizedValues[locale.languageCode]['deleteNotice'];
+  }
+
+  String get audio {
+    return _localizedValues[locale.languageCode]['audio'];
   }
 }
 

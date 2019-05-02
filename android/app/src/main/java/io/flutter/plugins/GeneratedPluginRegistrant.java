@@ -11,7 +11,9 @@ import io.github.edufolly.fluttermobilevision.FlutterMobileVisionPlugin;
 import com.example.flutternativeimage.FlutterNativeImagePlugin;
 import io.github.ponnamkarthik.toast.fluttertoast.FluttertoastPlugin;
 import io.flutter.plugins.imagepicker.ImagePickerPlugin;
+import com.ly.permission.PermissionPlugin;
 import io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin;
+import bz.rxla.flutter.speechrecognition.SpeechRecognitionPlugin;
 import io.flutter.plugins.urllauncher.UrlLauncherPlugin;
 
 /**
@@ -32,7 +34,9 @@ public final class GeneratedPluginRegistrant {
     FlutterNativeImagePlugin.registerWith(registry.registrarFor("com.example.flutternativeimage.FlutterNativeImagePlugin"));
     FluttertoastPlugin.registerWith(registry.registrarFor("io.github.ponnamkarthik.toast.fluttertoast.FluttertoastPlugin"));
     ImagePickerPlugin.registerWith(registry.registrarFor("io.flutter.plugins.imagepicker.ImagePickerPlugin"));
+    PermissionPlugin.registerWith(registry.registrarFor("com.ly.permission.PermissionPlugin"));
     SharedPreferencesPlugin.registerWith(registry.registrarFor("io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin"));
+    SpeechRecognitionPlugin.registerWith(registry.registrarFor("bz.rxla.flutter.speechrecognition.SpeechRecognitionPlugin"));
     UrlLauncherPlugin.registerWith(registry.registrarFor("io.flutter.plugins.urllauncher.UrlLauncherPlugin"));
   }
 

@@ -66,17 +66,19 @@ class NoticesView extends NoticesState {
                           notice.title,
                         ),
                       ),
-                      body: Container(
-                        margin: EdgeInsets.all(10),
-                        child: SingleChildScrollView(
-                          child: Hero(
+                      body: ListView(
+                        padding: EdgeInsets.all(10),
+                        shrinkWrap: true,
+                        children: <Widget>[
+                          Hero(
                             tag: Notices.notices.indexOf(notice).toString(),
                             child: NoticeWidget(
                               notice: notice,
                               showExtended: true,
                             ),
                           ),
-                        ),
+                          Container(),
+                        ],
                       ),
                     );
                   }));
@@ -107,10 +109,12 @@ class NoticesView extends NoticesState {
       context: context,
       builder: (BuildContext context) => AddNoticeSelectTypeDialog(),
     );
+    if (data == null) return;
     final information = await showDialog(
       context: context,
       builder: (BuildContext context) => AddNoticeSetInformationDialog(),
     );
+    if (information == null) return;
     if (data['type'] == 'file') {
       final TextRecognizer textRecognizer =
           FirebaseVision.instance.textRecognizer();

@@ -13,7 +13,9 @@
 #import <flutter_native_image/FlutterNativeImagePlugin.h>
 #import <fluttertoast/FluttertoastPlugin.h>
 #import <image_picker/ImagePickerPlugin.h>
+#import <permission/PermissionPlugin.h>
 #import <shared_preferences/SharedPreferencesPlugin.h>
+#import <speech_recognition/SpeechRecognitionPlugin.h>
 #import <url_launcher/UrlLauncherPlugin.h>
 
 @implementation GeneratedPluginRegistrant
@@ -29,7 +31,9 @@
   [FlutterNativeImagePlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterNativeImagePlugin"]];
   [FluttertoastPlugin registerWithRegistrar:[registry registrarForPlugin:@"FluttertoastPlugin"]];
   [FLTImagePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTImagePickerPlugin"]];
+  [PermissionPlugin registerWithRegistrar:[registry registrarForPlugin:@"PermissionPlugin"]];
   [FLTSharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharedPreferencesPlugin"]];
+  [SpeechRecognitionPlugin registerWithRegistrar:[registry registrarForPlugin:@"SpeechRecognitionPlugin"]];
   [FLTUrlLauncherPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTUrlLauncherPlugin"]];
 }
 

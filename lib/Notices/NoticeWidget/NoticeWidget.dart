@@ -46,8 +46,18 @@ class NoticeWidget extends StatelessWidget {
                     margin: EdgeInsets.all(5),
                     child: Image.memory(
                       base64Decode(notice.image),
+                      width: MediaQuery
+                          .of(context)
+                          .size
+                          .width,
                     ),
-                  )
+            )
+                : Container(),
+            showExtended && notice.transcript != null
+                ? Container(
+              margin: EdgeInsets.all(5),
+              child: Text(notice.transcript),
+            )
                 : Container(),
           ],
         ),

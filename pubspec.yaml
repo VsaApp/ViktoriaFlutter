@@ -31,6 +31,8 @@ dependencies:
   flutter_native_image:
     git: https://github.com/btastic/flutter_native_image.git
   flutter_reorderable_list: ^0.1.3
+  speech_recognition: ^0.3.0+1
+  permission: ^0.1.1
 
 dev_dependencies:
   flutter_test:
@@ -38,12 +40,12 @@ dev_dependencies:
 
 flutter:
   fonts:
-  - family: Ubuntu
-    fonts:
-    - asset: assets/fonts/Ubuntu-R.ttf
+    - family: Ubuntu
+      fonts:
+        - asset: assets/fonts/Ubuntu-R.ttf
   uses-material-design: true
   assets:
-  - assets/images/logo.svg
-  - assets/images/logo_white.svg
-  - assets/images/ginkgobewegt.gif
-  - pubspec.yaml
+    - assets/images/logo.svg
+    - assets/images/logo_white.svg
+    - assets/images/ginkgobewegt.gif
+    - pubspec.yaml
