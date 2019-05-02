@@ -2,7 +2,6 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 
-import '../Utils/MuteService.dart' as MuteService;
 import '../Utils/Id.dart';
 import '../Utils/Keys.dart';
 import '../Utils/Localizations.dart';
@@ -33,16 +32,6 @@ class SettingsPageView extends SettingsPageState {
                 style: TextStyle(
                   fontSize: 16.0,
                 ),
-              ),
-              CheckboxListTile(
-                value: muteDevice,
-                onChanged: (bool value) {
-                  setState(() {
-                    MuteService.init();
-                    muteDevice = value;
-                  });
-                },
-                title: Text(AppLocalizations.of(context).showShortCutDialog),
               ),
               // Show short cut dialog option
               CheckboxListTile(

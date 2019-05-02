@@ -5,13 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
+import '../UnitPlan/UnitPlanData.dart' as unitplan;
 import '../Utils/Keys.dart';
 import '../Utils/Localizations.dart';
-import '../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
 import '../Utils/Storage.dart';
 import '../Utils/Tags.dart';
-import '../Utils/MuteService.dart' as MuteService;
-import '../UnitPlan/UnitPlanData.dart' as unitplan;
 import 'HomeView.dart';
 import 'NewUnitplanDialog/NewUnitplanDialogModel.dart';
 
@@ -143,8 +142,6 @@ abstract class HomePageState extends State<HomePage> {
     loadData();
     HomePageState.updateWeek = _updateWeek;
     HomePageState.setShowWeek = _showWeek;
-
-    MuteService.init();
 
     if (selectedDrawerIndex <= 1) {
       setShowWeek(true);

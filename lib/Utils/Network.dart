@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 
@@ -31,14 +30,20 @@ Future<int> get checkOnline async {
 }
 
 String getUrl(String path, {bool auth = true}) {
-  String authString = auth ? '${Storage.getString(Keys.username) ?? ''}:${Storage.getString(Keys.password) ?? ''}@' : '';
+  String authString = auth
+      ? '${Storage.getString(Keys.username) ?? ''}:${Storage.getString(
+      Keys.password) ?? ''}@'
+      : '';
   if (path.contains('http')) return path.replaceFirst('://', '://$authString');
   if (!path.startsWith('/')) path = '/' + path;
   return '$apiUrl$path'.replaceFirst('://', '://$authString');
 }
 
 Future fetchDataAndSave(String url, String key, String defaultValue,
-    {Map<String, dynamic> body, Duration timeout, bool auth = true, Function(bool successfully) onFinished}) async {
+    {Map<String, dynamic> body,
+      Duration timeout,
+      bool auth = true,
+      Function(bool successfully) onFinished}) async {
   if (timeout == null) {
     timeout = maxTime;
   }

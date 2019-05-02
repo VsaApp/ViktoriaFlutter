@@ -6,6 +6,7 @@ import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
+
 import 'UnitPlanModel.dart';
 
 /// Downloads the unit plan
@@ -38,7 +39,8 @@ Future<List<UnitPlanDay>> download(String grade, bool temp,
     }
   }
   if (update) {
-    String defaultUnitplan = '{"participant": "5a", "date": "01.01.00", "data": []}';
+    String defaultUnitplan =
+        '{"participant": "5a", "date": "01.01.00", "data": []}';
     String oldUnitplan = Storage.getString(Keys.unitPlan(grade));
     await fetchDataAndSave(url, Keys.unitPlan(grade), defaultUnitplan,
         body: body, onFinished: (bool v) => successfully = v);
