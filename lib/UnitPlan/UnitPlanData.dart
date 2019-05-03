@@ -6,6 +6,7 @@ import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
+import 'package:viktoriaflutter/Utils/Tags.dart';
 
 import 'UnitPlanModel.dart';
 
@@ -45,7 +46,7 @@ Future<List<UnitPlanDay>> download(String grade, bool temp,
     await fetchDataAndSave(url, Keys.unitPlan(grade), defaultUnitplan,
         body: body, onFinished: (bool v) => successfully = v);
     String newUnitPlan = Storage.getString(Keys.unitPlan(grade));
-    if (oldUnitplan != null) checkUnitplanUpdated(oldUnitplan, newUnitPlan);
+    if (oldUnitplan != null) await checkUnitplanUpdated(oldUnitplan, newUnitPlan);
   }
 
   // Parse data...
@@ -106,7 +107,7 @@ String getFilteredString(String unitPlan) {
 }
 
 /// Resets the selected subjects when the unitplan changed
-void checkUnitplanUpdated(String version1, String version2) {
+Future checkUnitplanUpdated(String version1, String version2) async {
   try {
     if (getFilteredString(version1) != getFilteredString(version2)) {
       Storage.setBool(Keys.unitPlanIsNew, true);
@@ -121,6 +122,7 @@ void checkUnitplanUpdated(String version1, String version2) {
               .length > 2))))
           .toList();
       keysToReset.forEach((String key) => Storage.remove(key));
+      await syncTags();
     }
   } catch (_) {
     print('Failed to compare untiplan versions');

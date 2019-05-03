@@ -147,8 +147,7 @@ abstract class HomePageState extends State<HomePage> {
       setShowWeek(true);
     }
 
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => checkIfUnitplanUpdated(context));
+    WidgetsBinding.instance.addPostFrameCallback((_) => checkIfUnitplanUpdated(context));
 
     // Set the listener for android functions (Currently for incoming notifications and intents)...
     platform.setMethodCallHandler(_handleNotification);
