@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 
 import '../../Calendar/CalendarModel.dart';
@@ -31,13 +32,51 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
 
   @override
   void initState() {
-    setState(() {
-      grade = Storage.getString(Keys.grade);
-      showWorkGroups = Storage.get(Keys.showWorkGroupsInUnitPlan);
-      showCalendar = Storage.get(Keys.showCalendarInUnitPlan);
-      showCafetoria = Storage.get(Keys.showCafetoriaInUnitPlan);
+    WidgetsBinding.instance.addPostFrameCallback((a) {
+      int weekday = DateTime
+          .now()
+          .weekday - 1;
+      bool over = false;
+      if (weekday > 4) {
+        weekday = 0;
+        thisWeek = false;
+      } else if (UnitPlan.days[weekday].lessons.length > 0) {
+        if (DateTime.now().isAfter(DateTime(
+          DateTime
+              .now()
+              .year,
+          DateTime
+              .now()
+              .month,
+          DateTime
+              .now()
+              .day,
+          8,
+        ).add(Duration(
+            minutes: [60, 130, 210, 280, 360, 420, 480, 545][
+            UnitPlan.days[weekday].getUserLesseonsCount(
+                AppLocalizations
+                    .of(context)
+                    .freeLesson) -
+                1])))) {
+          over = true;
+        }
+      }
+      if (over) {
+        weekday++;
+      }
+      // If weekend select Monday
+      if (weekday > 4) {
+        weekday = 0;
+        thisWeek = false;
+      }
+      setState(() {
+        grade = Storage.getString(Keys.grade);
+        showWorkGroups = Storage.get(Keys.showWorkGroupsInUnitPlan);
+        showCalendar = Storage.get(Keys.showCalendarInUnitPlan);
+        showCafetoria = Storage.get(Keys.showCafetoriaInUnitPlan);
+      });
     });
-
     super.initState();
   }
 
