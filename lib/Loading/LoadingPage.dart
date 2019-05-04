@@ -10,7 +10,6 @@ import '../Cafetoria/CafetoriaData.dart' as Cafetoria;
 import '../Calendar/CalendarData.dart' as Calendar;
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import 'package:viktoriaflutter/Utils/Network.dart';
 import '../ReplacementPlan/ReplacementPlanData.dart' as ReplacementPlan;
 import '../Rooms/RoomsData.dart' as Rooms;
 import 'package:viktoriaflutter/Utils/Storage.dart';

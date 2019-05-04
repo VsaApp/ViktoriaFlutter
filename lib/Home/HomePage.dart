@@ -90,6 +90,7 @@ abstract class HomePageState extends State<HomePage> {
   Future handleReplacementplanNotification(Map msg) async {
     print("received replacementplan notification");
     String grade = Storage.getString(Keys.grade);
+    Storage.remove(Keys.historyDate('replacementplan'));
     await unitplan.download(grade, false);
     replacementplan.load(unitplan.getUnitPlan(), false);
     if (appScaffold != null) {
@@ -108,6 +109,7 @@ abstract class HomePageState extends State<HomePage> {
         ),
       ));
     }
+    checkIfUnitplanUpdated(context);
   }
 
   Future handleUnitplanNotification(Map msg) async {
