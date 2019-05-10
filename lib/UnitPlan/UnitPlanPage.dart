@@ -125,7 +125,7 @@ class UnitPlanView extends State<UnitPlanPage>
 
   @override
   void initState() {
-    listener = () => setState(() => null);
+    listener = () => setState(() => days = unitplan.getUnitPlan());
     HomePageState.replacementplanUpdatedListeners.add(listener);
     HomePageState.setWeekChangeable(true);
     WidgetsBinding.instance.addPostFrameCallback((a) {

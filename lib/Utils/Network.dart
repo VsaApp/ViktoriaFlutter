@@ -7,6 +7,7 @@ import 'package:viktoriaflutter/Utils/Storage.dart';
 
 Duration maxTime = Duration(seconds: 4);
 String apiUrl = 'https://api.vsa.2bad2c0.de';
+String lookupUrl = 'api.vsa.2bad2c0.de';
 String agbUrl = 'https://vsa.2bad2c0.de/agb.html';
 String historyUrl = 'https://history.api.vsa.2bad2c0.de';
 
@@ -14,7 +15,7 @@ String historyUrl = 'https://history.api.vsa.2bad2c0.de';
 Future<int> get checkOnline async {
   try {
     final result1 = await InternetAddress.lookup(
-        apiUrl.substring(apiUrl.indexOf('://') + 3))
+        lookupUrl)
         .timeout(maxTime);
     if (result1.isNotEmpty && result1[0].rawAddress.isNotEmpty) {
       return 1;

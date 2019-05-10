@@ -56,8 +56,6 @@ Future<List<UnitPlanDay>> download(String grade, bool temp,
     // Set default selections...
     UnitPlan.setAllSelections();
 
-    // Convert old selection format...
-    convertFromOldVerion();
   } else {
     if (onFinished != null) onFinished(successfully);
     return await fetchDays(grade);
@@ -122,7 +120,7 @@ Future checkUnitplanUpdated(String version1, String version2) async {
               .length > 2))))
           .toList();
       keysToReset.forEach((String key) => Storage.remove(key));
-      await syncTags();
+      await deleteTags(keysToReset);
     }
   } catch (_) {
     print('Failed to compare untiplan versions');

@@ -31,50 +31,6 @@ void logValues() {
   }
 }
 
-/// Converts all old format values to the new format...
-void convertFromOldVerion() {
-  String grade = Storage.getString(Keys.grade);
-  List<String> keys = Storage.getKeys()
-      .toList()
-      .where((String key) =>
-          key.startsWith('unitPlan') &&
-          key.split('-').length > 2 &&
-          key.split('-')[1] == grade)
-      .toList();
-  for (int i = 0; i < keys.length; i++) {
-    String key = keys[i];
-    List<String> fragments = key.split('-');
-    List<UnitPlanSubject> subjects;
-    int selected;
-    int day;
-    int unit;
-    try {
-      selected = Storage.getInt(key);
-    } catch (e) {
-      return;
-    }
-    if (fragments.length == 3) {
-      String block = fragments[2];
-      UnitPlan.days.forEach((UnitPlanDay day) {
-        day.lessons.forEach((lesson) {
-          if (lesson.subjects[0].block == block) {
-            subjects = lesson.subjects;
-          }
-        });
-      });
-    } else {
-      day = int.parse(fragments[2]);
-      unit = int.parse(fragments[3]);
-      subjects = UnitPlan.days[day].lessons[unit].subjects;
-    }
-
-    if (selected != null) {
-      UnitPlanSubject subject = subjects[selected];
-      setSelectedSubject(subject, day, unit);
-    }
-  }
-}
-
 int getSelectedIndex(List<UnitPlanSubject> subjects, int day, int unit,
     {String week = 'A'}) {
   // List element 0: week A  -- element 1: week B (Only one element: week AB)
