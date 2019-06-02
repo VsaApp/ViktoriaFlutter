@@ -92,7 +92,9 @@ Future initTags(id) async {
 
 Future sendTags(Map<String, dynamic> tags) async {
   String id = Id.id;
-  await post('/tags/$id/add', body: tags);
+  try {
+    await post('/tags/$id/add', body: tags);
+  } catch (_) {}
 }
 
 Future deleteTag(String key) async {
@@ -102,7 +104,9 @@ Future deleteTag(String key) async {
 Future deleteTags(List<String> tags) async {
   String id = Id.id;
   String url = '/tags/$id/remove';
-  post(url, body: tags);
+  try {
+    post(url, body: tags);
+  } catch (_) {}
 }
 
 void syncDaysLength() {

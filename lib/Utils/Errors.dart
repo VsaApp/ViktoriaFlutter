@@ -31,12 +31,16 @@ void reportError(error, stackTrace) async {
     catch (_) {
       version = '';
     }
-    post(url, body: {
-      "id": Id.id,
-      "title": error.toString(),
-      "error": stackTrace.toString(),
-      "version": version == '' ? null : version
-    });
+    try {
+      post(url, body: {
+        "id": Id.id,
+        "title": error.toString(),
+        "error": stackTrace.toString(),
+        "version": version == '' ? null : version
+      });
+    } catch (_) {
+      Storage.setStringList(Keys.bugs, Storage.getStringList(Keys.bugs)..add('$error:|:$stackTrace'));
+    }
   } else {
     Storage.setStringList(Keys.bugs, Storage.getStringList(Keys.bugs)..add('$error:|:$stackTrace'));
   }
