@@ -10,3 +10,6 @@
 -dontwarn android.support.v4.**
 -dontwarn com.google.android.gms.**
 -dontwarn com.google.firebase.**
+-dontwarn androidx.**
+-keep class androidx.** { *; }
+-keep interface androidx.** { *; }
