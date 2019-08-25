@@ -5,6 +5,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show MethodChannel, rootBundle;
 import 'package:viktoriaflutter/Utils/Network.dart';
+import 'package:viktoriaflutter/Utils/Id.dart';
+import 'package:viktoriaflutter/Utils/Errors.dart' as bugs;
 
 import '../Cafetoria/CafetoriaData.dart' as Cafetoria;
 import '../Calendar/CalendarData.dart' as Calendar;
@@ -40,63 +42,85 @@ abstract class LoadingPageState extends State<LoadingPage>
 
   @override
   void initState() {
-    checkOnline.then((online) async {
-      if (online == 1) {}
-    });
-    // Check if logged in
-    if (Storage.get(Keys.grade) == null ||
-        Storage.get(Keys.username) == null ||
-        Storage.get(Keys.password) == null) {
-      setState(() => loggedIn = false);
-      return;
-    }
+    () async {
+      await Storage.init();
+      await Id.init();
+      bugs.init();
 
-    WidgetsBinding.instance.addPostFrameCallback((a) {
-      if (Platform.isAndroid) {
-        MethodChannel('viktoriaflutter').invokeMethod('applyTheme', {
-          'color': Theme
-              .of(context)
-              .primaryColor
-              .value
-              .toRadixString(16)
-              .substring(2)
-              .toUpperCase(),
-        });
+      // Set default options
+      if (Storage.get(Keys.sortReplacementPlan) == null ||
+          Storage.get(Keys.showReplacementPlanInUnitPlan) == null ||
+          Storage.get(Keys.getReplacementPlanNotifications) == null ||
+          Storage.get(Keys.showWorkGroupsInUnitPlan) == null ||
+          Storage.get(Keys.showCalendarInUnitPlan) == null ||
+          Storage.get(Keys.showCafetoriaInUnitPlan) == null) {
+        Storage.setBool(Keys.sortReplacementPlan, true);
+        Storage.setBool(Keys.showReplacementPlanInUnitPlan, true);
+        Storage.setBool(Keys.getReplacementPlanNotifications, true);
+        Storage.setBool(Keys.showWorkGroupsInUnitPlan, false);
+        Storage.setBool(Keys.showCalendarInUnitPlan, true);
+        Storage.setBool(Keys.showCafetoriaInUnitPlan, false);
       }
-      texts.add(AppLocalizations
-          .of(context)
-          .updates);
-      texts.add(AppLocalizations.of(context).unitPlan);
-      texts.add(AppLocalizations.of(context).replacementPlan);
-      texts.add(AppLocalizations.of(context).workGroups);
-      texts.add(AppLocalizations.of(context).calendar);
-      texts.add(AppLocalizations.of(context).subjects);
-      texts.add(AppLocalizations.of(context).rooms);
-      texts.add(AppLocalizations.of(context).teachers);
-      texts.add(AppLocalizations.of(context).cafetoria);
-      texts.shuffle();
-      downloadAll();
-    });
-    textTimer = Timer(Duration(seconds: 3), () {
-      setState(() {
-        showTexts = true;
+
+      // Check if logged in
+      if (Storage.get(Keys.grade) == null ||
+          Storage.get(Keys.username) == null ||
+          Storage.get(Keys.password) == null) {
+          Navigator.of(context).pushReplacementNamed('/login');
+          return;
+      }
+
+      checkOnline.then((online) async {
+        if (online == 1) {}
       });
-    });
-    controller = AnimationController(
-      duration: Duration(milliseconds: 500),
-      vsync: this,
-    );
-    setState(() {
-      animation = Tween<double>(begin: -0.01, end: 0.01).animate(controller)
-        ..addStatusListener((status) {
-          if (status == AnimationStatus.completed) {
-            controller.reverse();
-          } else if (status == AnimationStatus.dismissed) {
-            controller.forward();
-          }
+
+      WidgetsBinding.instance.addPostFrameCallback((a) {
+        if (Platform.isAndroid) {
+          MethodChannel('viktoriaflutter').invokeMethod('applyTheme', {
+            'color': Theme
+                .of(context)
+                .primaryColor
+                .value
+                .toRadixString(16)
+                .substring(2)
+                .toUpperCase(),
+          });
+        }
+        texts.add(AppLocalizations
+            .of(context)
+            .updates);
+        texts.add(AppLocalizations.of(context).unitPlan);
+        texts.add(AppLocalizations.of(context).replacementPlan);
+        texts.add(AppLocalizations.of(context).workGroups);
+        texts.add(AppLocalizations.of(context).calendar);
+        texts.add(AppLocalizations.of(context).subjects);
+        texts.add(AppLocalizations.of(context).rooms);
+        texts.add(AppLocalizations.of(context).teachers);
+        texts.add(AppLocalizations.of(context).cafetoria);
+        texts.shuffle();
+        downloadAll();
+      });
+      textTimer = Timer(Duration(seconds: 3), () {
+        setState(() {
+          showTexts = true;
         });
-      controller.forward();
-    });
+      });
+      controller = AnimationController(
+        duration: Duration(milliseconds: 500),
+        vsync: this,
+      );
+      setState(() {
+        animation = Tween<double>(begin: -0.01, end: 0.01).animate(controller)
+          ..addStatusListener((status) {
+            if (status == AnimationStatus.completed) {
+              controller.reverse();
+            } else if (status == AnimationStatus.dismissed) {
+              controller.forward();
+            }
+          });
+        controller.forward();
+      });
+    }();
     super.initState();
   }
 

@@ -8,19 +8,19 @@ class Calendar {
 
 // Describes a calendar event...
 class CalendarEvent {
-  final String name;
-  final String info;
-  final DateTime start;
-  final DateTime end;
-  final bool free;
+  String name;
+  String info;
+  DateTime start;
+  DateTime end;
+  bool free;
 
-  CalendarEvent({
-    @required this.name,
-    @required this.info,
-    @required this.start,
-    @required this.end,
-    @required this.free
-  });
+  CalendarEvent({String name, String info, DateTime start, DateTime end, bool free}) {
+    this.name = name;
+    this.info = info;
+    this.start = start != null ? start : end;
+    this.end = end != null ? end : start;
+    this.free = free;
+  }
 
   factory CalendarEvent.fromJson(Map<String, dynamic> json) {
     DateFormat format = DateFormat('dd.MM.yyyy HH:mm');

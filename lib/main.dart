@@ -8,14 +8,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:viktoriaflutter/Utils/Errors.dart' as bugs;
 import 'Home/HomePage.dart';
-import 'package:viktoriaflutter/Utils/Id.dart';
+
 import 'Intro/IntroPage.dart';
-import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'Loading/LoadingPage.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'Login/LoginPage.dart';
 import 'Scan/ScanPage.dart';
-import 'package:viktoriaflutter/Utils/Storage.dart';
 
 // This is the first functions which is called in the app...
 void main() async {
@@ -54,34 +52,6 @@ Future launch() async {
     }
   };
   debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
-  await Storage.init();
-  await Id.init();
-  bugs.init();
-
-  // Default init is the loading screen...
-  String _initialRoute = '/';
-
-  // Set default options
-  if (Storage.get(Keys.sortReplacementPlan) == null ||
-      Storage.get(Keys.showReplacementPlanInUnitPlan) == null ||
-      Storage.get(Keys.getReplacementPlanNotifications) == null ||
-      Storage.get(Keys.showWorkGroupsInUnitPlan) == null ||
-      Storage.get(Keys.showCalendarInUnitPlan) == null ||
-      Storage.get(Keys.showCafetoriaInUnitPlan) == null) {
-    Storage.setBool(Keys.sortReplacementPlan, true);
-    Storage.setBool(Keys.showReplacementPlanInUnitPlan, true);
-    Storage.setBool(Keys.getReplacementPlanNotifications, true);
-    Storage.setBool(Keys.showWorkGroupsInUnitPlan, false);
-    Storage.setBool(Keys.showCalendarInUnitPlan, true);
-    Storage.setBool(Keys.showCafetoriaInUnitPlan, false);
-  }
-
-  // Check if logged in
-  if (Storage.get(Keys.grade) == null ||
-      Storage.get(Keys.username) == null ||
-      Storage.get(Keys.password) == null) {
-    _initialRoute = '/login';
-  }
 
   // Start the app...
   runApp(MaterialApp(
@@ -102,7 +72,7 @@ Future launch() async {
     supportedLocales: [
       Locale('de'),
     ],
-    initialRoute: _initialRoute,
+    initialRoute: '/',
     // Define three shortcuts for pages: loading, home and login...
     routes: <String, WidgetBuilder>{
       '/': (BuildContext context) => LoadingPage(),

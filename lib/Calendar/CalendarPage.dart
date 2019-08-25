@@ -29,11 +29,10 @@ class CalendarPageState extends State<CalendarPage>
 
   void setEvents() {
     List<CalendarEvent> events = getCalendar();
-    events = events
-        .where((event) =>
-    event.start.isAfter(DateTime.now()) ||
-        event.end.isAfter(DateTime.now()))
-        .toList();
+    events = events.where((event) {
+      return event.start.isAfter(DateTime.now()) || event.end.isAfter(DateTime.now());
+    }).toList();
+
     events.sort((a, b) => a.start.isAfter(b.start) ? 1 : -1);
     this.events = events;
   }

@@ -80,3 +80,4 @@ key.properties
 .data.json
 android/app/google-services.json
 android/key.properties
+ios/Flutter/flutter_export_environment.sh
