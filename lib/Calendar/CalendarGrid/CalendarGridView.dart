@@ -17,10 +17,12 @@ class CalendarGridView extends CalendarGridState {
           double width = constraints.maxWidth - otherPadding * 2 - 1;
 
           List<Widget> tabs = [];
-          for (int i = 0; i < lastEvent.month - firstEvent.month + 1; i++) {
-            int month = i + firstEvent.month - 1;
-            int days = daysInMonth(month, firstEvent.year);
-            DateTime firstDayInMonth = DateTime(firstEvent.year, month + 1, 1);
+          for (int i = 0; i < lastEvent.month - firstEvent.month + 1 + (lastEvent.year - firstEvent.year) * 12; i++) {
+            int month = (i + firstEvent.month - 1) % 12;
+            int year = firstEvent.year + ((i + firstEvent.month - 1) ~/ 12);
+            print(year.toString() + ' ' + month.toString());
+            int days = daysInMonth(month, year);
+            DateTime firstDayInMonth = DateTime(year, month + 1, 1);
             List<CalendarGridItem> items = [];
             for (int j = 0; j < firstDayInMonth.weekday - 1; j++) {
               DateTime date = firstDayInMonth
@@ -54,7 +56,7 @@ class CalendarGridView extends CalendarGridState {
                 Container(
                   width: constraints.maxWidth,
                   padding: EdgeInsets.all(10),
-                  child: Center(child: Text('${AppLocalizations.of(context).months[month]} ${firstEvent.year}',
+                  child: Center(child: Text('${AppLocalizations.of(context).months[month]} $year',
                     style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
                   )),
                 ),

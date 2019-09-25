@@ -40,7 +40,7 @@ abstract class CalendarGridState extends State<CalendarGrid>
             .compareTo(b.start.millisecondsSinceEpoch));
     firstEvent = widget.events[0].start;
     controller = TabController(
-      length: lastEvent.month - firstEvent.month + 1,
+      length: lastEvent.month - firstEvent.month + 1 + (lastEvent.year - firstEvent.year) * 12,
       vsync: this,
     );
     super.initState();
