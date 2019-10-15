@@ -101,50 +101,7 @@ class HomePageView extends HomePageState {
           }
         } else {
           String grade = Storage.getString(Keys.grade);
-          if ((grade == 'EF' || grade == 'Q1' || grade == 'Q2') &&
-              (Platform.isIOS || Platform.isAndroid)) {
-            showDialog(
-                context: context,
-                barrierDismissible: true,
-                builder: (BuildContext context1) {
-                  return AlertDialog(
-                    title: Text(AppLocalizations
-                        .of(context)
-                        .scanUnitPlan),
-                    content: Text(
-                        AppLocalizations
-                            .of(context)
-                            .scanUnitPlanExplanation),
-                    actions: <Widget>[
-                      FlatButton(
-                        color: Theme
-                            .of(context)
-                            .accentColor,
-                        child: Text(AppLocalizations
-                            .of(context)
-                            .cancel,
-                            style: TextStyle(color: Colors.black)),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      FlatButton(
-                        color: Theme
-                            .of(context)
-                            .accentColor,
-                        child: Text(AppLocalizations
-                            .of(context)
-                            .ok,
-                            style: TextStyle(color: Colors.black)),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          Navigator.of(context).pushNamed('/scan');
-                        },
-                      )
-                    ],
-                  );
-                });
-          }
+          // TODO: Add scan dialog
         }
       });
     }

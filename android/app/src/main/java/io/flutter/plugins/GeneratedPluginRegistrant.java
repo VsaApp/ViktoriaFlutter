@@ -6,7 +6,6 @@ import com.notrait.deviceid.DeviceIdPlugin;
 import io.flutter.plugins.deviceinfo.DeviceInfoPlugin;
 import io.flutter.plugins.firebase.core.FirebaseCorePlugin;
 import io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin;
-import io.github.edufolly.fluttermobilevision.FlutterMobileVisionPlugin;
 import io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin;
 import io.flutter.plugins.urllauncher.UrlLauncherPlugin;
 
@@ -23,7 +22,6 @@ public final class GeneratedPluginRegistrant {
     DeviceInfoPlugin.registerWith(registry.registrarFor("io.flutter.plugins.deviceinfo.DeviceInfoPlugin"));
     FirebaseCorePlugin.registerWith(registry.registrarFor("io.flutter.plugins.firebase.core.FirebaseCorePlugin"));
     FirebaseMessagingPlugin.registerWith(registry.registrarFor("io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin"));
-    FlutterMobileVisionPlugin.registerWith(registry.registrarFor("io.github.edufolly.fluttermobilevision.FlutterMobileVisionPlugin"));
     SharedPreferencesPlugin.registerWith(registry.registrarFor("io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin"));
     UrlLauncherPlugin.registerWith(registry.registrarFor("io.flutter.plugins.urllauncher.UrlLauncherPlugin"));
   }

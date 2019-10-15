@@ -79,7 +79,7 @@ Future launch() async {
       '/home': (BuildContext context) => HomePage(),
       '/login': (BuildContext context) => LoginPage(),
       '/intro': (BuildContext context) => IntroPage(),
-      '/scan': (BuildContext context) => ScanPage()
+      //'/scan': (BuildContext context) => ScanPage()
     },
   ));
 }
