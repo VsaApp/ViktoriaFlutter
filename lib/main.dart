@@ -13,7 +13,6 @@ import 'Intro/IntroPage.dart';
 import 'Loading/LoadingPage.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'Login/LoginPage.dart';
-import 'Scan/ScanPage.dart';
 
 // This is the first functions which is called in the app...
 void main() async {
