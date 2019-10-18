@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../../Calendar/CalendarModel.dart';
 import '../UnitPlanModel.dart';
@@ -29,9 +30,11 @@ abstract class UnitPlanDayListState extends State<UnitPlanDayList>
   bool showCalendar = false;
   bool showCafetoria = false;
   bool thisWeek = true;
+  PanelController panelController;
 
   @override
   void initState() {
+    panelController = PanelController();
     WidgetsBinding.instance.addPostFrameCallback((a) {
       int weekday = DateTime
           .now()

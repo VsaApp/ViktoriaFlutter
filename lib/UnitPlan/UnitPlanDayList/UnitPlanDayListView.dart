@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../../Cafetoria/CafetoriaModel.dart';
 import '../../Cafetoria/DayCard/DayCardWidget.dart';
@@ -208,9 +209,10 @@ class UnitPlanDayListView extends UnitPlanDayListState {
                       ))),
       );
     }).toList());
+    List<Widget> infoItems = [];
     if (showCalendar) {
       getEventsForWeekday(widget.dayIndex).forEach((event) {
-        items.add(Padding(
+        infoItems.add(Padding(
           padding: EdgeInsets.only(top: 10),
           child: EventCard(
             event: event,
@@ -219,7 +221,7 @@ class UnitPlanDayListView extends UnitPlanDayListState {
       });
     }
     if (showCafetoria) {
-      items.add(Padding(
+      infoItems.add(Padding(
         padding: EdgeInsets.only(top: 10),
         child: CafetoriaDayCard(
           day: Cafetoria.menues.days[widget.dayIndex],
@@ -228,7 +230,7 @@ class UnitPlanDayListView extends UnitPlanDayListState {
       ));
     }
     if (showWorkGroups) {
-      items.add(Padding(
+      infoItems.add(Padding(
         padding: EdgeInsets.only(top: 10),
         child: WorkGroupsDayCard(
           day: WorkGroups.days[widget.dayIndex],
@@ -236,9 +238,82 @@ class UnitPlanDayListView extends UnitPlanDayListState {
         ),
       ));
     }
-    return ListView(
-      shrinkWrap: true,
-      children: items,
-    );
+    if (infoItems.length > 0) {
+      return Stack(
+        children: [
+          ListView(
+            padding: EdgeInsets.only(bottom: 110),
+            shrinkWrap: true,
+            children: items,
+          ),
+          SlidingUpPanel(
+            controller: panelController,
+            minHeight: 100,
+            backdropEnabled: true,
+            panel: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                return Center(
+                  child: Column(
+                    children: <Widget>[
+                      GestureDetector(
+                        onTap: () {
+                          if (panelController.isPanelClosed()) {
+                            panelController.open();
+                          }
+                          else if (panelController.isPanelOpen()) {
+                            panelController.close();
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              stops: [0, 0.6, 1],
+                              colors: [
+                                Color.fromARGB(20, 100, 100, 100),
+                                Color.fromARGB(10, 100, 100, 100),
+                                Color.fromARGB(0, 100, 100, 100)
+                              ]
+                            ),
+                          ),
+                          child: Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 20, right: 20, top: 7, bottom: 10),
+                              child: SizedBox(
+                                height: 6,
+                                width: 70,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16.0),
+                                    color: Theme.of(context).accentColor,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ),
+                      SizedBox(
+                        height: constraints.maxHeight - 23,
+                        child: ListView(
+                          children: infoItems,
+                        )
+                      )
+                    ],
+                  )
+                );
+              },
+            )
+          )
+        ]
+      );
+    }
+    else {
+      return ListView(
+        shrinkWrap: true,
+        children: items,
+      );
+    }
   }
 }
