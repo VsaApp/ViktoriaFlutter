@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
-import '../UnitPlan/UnitPlanData.dart' as unitplan;
+import '../SubstitutionPlan/SubstitutionPlanData.dart' as substitutionPlan;
+import '../Timetable/TimetableData.dart' as timetable;
 import '../Utils/Keys.dart';
 import '../Utils/Localizations.dart';
 import '../Utils/Storage.dart';
 import '../Utils/Tags.dart';
 import 'HomeView.dart';
-import 'NewUnitplanDialog/NewUnitplanDialogModel.dart';
+import 'NewTimetableDialog/NewTimetableDialogModel.dart';
 
 // Define drawer item
 class DrawerItem {
@@ -47,8 +47,8 @@ abstract class HomePageState extends State<HomePage> {
   int selectedDrawerIndex = 0;
   static String grade = '';
   bool dialogShown = false;
-  bool unitplanChanged = false;
-  String currentUnitplanDate;
+  bool timetableChanged = false;
+  String currentTimetableDate;
   bool showDialog1 = true;
   int logoClickCount = 0;
   bool offlineShown = false;
@@ -58,7 +58,7 @@ abstract class HomePageState extends State<HomePage> {
   static Function(bool value) setShowWeek;
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  static List<Function()> replacementplanUpdatedListeners = [];
+  static List<Function()> substitutionPlanUpdatedListeners = [];
 
   void _showWeek(bool value) {
     if (mounted && value != showWeek) setState(() => showWeek = value);
@@ -87,19 +87,19 @@ abstract class HomePageState extends State<HomePage> {
     }
   }
 
-  Future handleReplacementplanNotification(Map msg) async {
-    print("received replacementplan notification");
+  Future handleSubstitutionPlanNotification(Map msg) async {
+    print("received substitution plan notification");
     String grade = Storage.getString(Keys.grade);
-    Storage.remove(Keys.historyDate('replacementplan'));
-    await unitplan.download(grade, false);
-    replacementplan.load(unitplan.getUnitPlan(), false);
+    Storage.remove(Keys.historyDate('substitutionPlan'));
+    await timetable.download(grade, false);
+    substitutionPlan.load(timetable.getTimetable(), false);
     if (appScaffold != null) {
-      replacementplanUpdatedListeners
-          .forEach((replacementplanUpdated) => replacementplanUpdated());
+      substitutionPlanUpdatedListeners
+          .forEach((substitutionPlanUpdated) => substitutionPlanUpdated());
       scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text(AppLocalizations
             .of(context)
-            .replacementPlanUpdated
+            .rsubstitutionPlanUpdated
             .replaceAll('%s', msg['weekday'])),
         action: SnackBarAction(
           label: AppLocalizations
@@ -109,33 +109,33 @@ abstract class HomePageState extends State<HomePage> {
         ),
       ));
     }
-    checkIfUnitplanUpdated(context);
+    checkIfTimetableUpdated(context);
   }
 
-  Future handleUnitplanNotification(Map msg) async {
-    print("received unitplan notification");
+  Future handleTimetableNotification(Map msg) async {
+    print("received timetable notification");
     String grade = Storage.getString(Keys.grade);
-    await unitplan.download(grade, false);
-    replacementplan.load(unitplan.getUnitPlan(), false);
+    await timetable.download(grade, false);
+    substitutionPlan.load(timetable.getTimetable(), false);
     if (appScaffold != null) {
-      replacementplanUpdatedListeners
-          .forEach((replacementplanUpdated) => replacementplanUpdated());
+      substitutionPlanUpdatedListeners
+          .forEach((substitutionPlanUpdated) => substitutionPlanUpdated());
     }
-    checkIfUnitplanUpdated(context);
+    checkIfTimetableUpdated(context);
   }
 
   Future notificationOpenedHandler(String msg) async {
     print("opened: $msg");
     platform.invokeMethod('clearNotifications');
-    if (msg == 'replacementplan_channel')
+    if (msg == 'substitutionPlan_channel')
       setState(() => selectedDrawerIndex = 1);
   }
 
   Future<dynamic> _handleNotification(MethodCall call) async {
-    if (call.method == 'replacementplan')
-      handleReplacementplanNotification(call.arguments);
-    else if (call.method == 'unitplan')
-      handleUnitplanNotification(call.arguments);
+    if (call.method == 'substitutionPlan')
+      handleSubstitutionPlanNotification(call.arguments);
+    else if (call.method == 'timetable')
+      handleTimetableNotification(call.arguments);
     else if (call.method == 'opened') notificationOpenedHandler(call.arguments);
   }
 
@@ -149,7 +149,7 @@ abstract class HomePageState extends State<HomePage> {
       setShowWeek(true);
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => checkIfUnitplanUpdated(context));
+    WidgetsBinding.instance.addPostFrameCallback((_) => checkIfTimetableUpdated(context));
 
     // Set the listener for android functions (Currently for incoming notifications and intents)...
     platform.setMethodCallHandler(_handleNotification);
@@ -167,8 +167,8 @@ abstract class HomePageState extends State<HomePage> {
         await initTags(token);
         await syncWithTags();
         await syncTags();
-        replacementplanUpdatedListeners
-            .forEach((replacementplanUpdated) => replacementplanUpdated());
+        substitutionPlanUpdatedListeners
+            .forEach((substitutionPlanUpdated) => substitutionPlanUpdated());
       });
     }
 
@@ -179,15 +179,15 @@ abstract class HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  static void checkIfUnitplanUpdated(BuildContext context) {
-    if (Storage.getBool(Keys.unitPlanIsNew) ?? false) {
+  static void checkIfTimetableUpdated(BuildContext context) {
+    if (Storage.getBool(Keys.timetableIsNew) ?? false) {
       showDialog<String>(
           context: context,
           barrierDismissible: true,
           builder: (BuildContext context1) {
-            return NewUnitplanDialog();
+            return NewTimetableDialog();
           });
-      Storage.setBool(Keys.unitPlanIsNew, false);
+      Storage.setBool(Keys.timetableIsNew, false);
       syncTags();
     }
   }

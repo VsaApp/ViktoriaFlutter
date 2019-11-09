@@ -9,10 +9,10 @@ import '../Calendar/CalendarPage.dart';
 import '../Courses/CoursesPage.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import '../ReplacementPlan/ReplacementPlanPage.dart';
+import '../SubstitutionPlan/SubstitutionPlanPage.dart';
 import '../Settings/SettingsPage.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import '../UnitPlan/UnitPlanPage.dart';
+import '../Timetable/TimetablePage.dart';
 import '../WorkGroups/WorkGroupsPage.dart';
 import 'HomePage.dart';
 import 'OfflineWidget.dart';
@@ -23,13 +23,13 @@ class HomePageView extends HomePageState {
   Widget build(BuildContext context) {
     // List of pages
     List<Page> pages = [
-      Page(AppLocalizations.of(context).unitPlan, Icons.event_note,
-          UnitPlanPage(),
+      Page(AppLocalizations.of(context).timetable, Icons.event_note,
+          TimetablePage(),
           url:
           'https://${Storage.getString(Keys.username)}:${Storage.getString(Keys
               .password)}@www.viktoriaschule-aachen.de/sundvplan/sps/index.html'),
-      Page(AppLocalizations.of(context).replacementPlan,
-          Icons.format_list_numbered, ReplacementPlanPage(),
+      Page(AppLocalizations.of(context).rsubstitutionPlan,
+          Icons.format_list_numbered, SubstitutionPlanPage(),
           url:
           'https://${Storage.getString(Keys.username)}:${Storage.getString(Keys
               .password)}@www.viktoriaschule-aachen.de/sundvplan/vps/index.html'),
@@ -73,7 +73,7 @@ class HomePageView extends HomePageState {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         bool selectedSubjects = Storage.getKeys().where((key) {
           if (key
-              .startsWith('unitPlan-${Storage.getString(Keys.grade)}-')) {
+              .startsWith('timetable-${Storage.getString(Keys.grade)}-')) {
             if ('-'
                 .allMatches(key)
                 .length == 3)
@@ -85,7 +85,7 @@ class HomePageView extends HomePageState {
           return false;
         }).length >
             0;
-        // Check if user selected anything in the unit plan (setup)
+        // Check if user selected anything in the timetable (setup)
         if (selectedSubjects) {
           // Check if short cut dialog enabled
           if (showDialog1) {

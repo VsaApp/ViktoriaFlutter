@@ -19,8 +19,8 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 
 public class MainActivity extends FlutterActivity {
     final static String[] channelsIds = new String[]{
-            "replacementplan_channel",
-            "unitplan_channel",
+            "substitutionPlan_channel",
+            "timetable_channel",
             "cafetoria_channel",
             "calendar_channel"
     };

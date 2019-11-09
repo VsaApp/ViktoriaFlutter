@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import '../../UnitPlan/UnitPlanData.dart' as Unitplan;
+import '../../Timetable/TimetableData.dart' as Timetable;
 import 'HistoryDialogData.dart';
 import 'HistoryDialogModel.dart';
 import 'HistoryDialogView.dart';
@@ -103,8 +103,8 @@ abstract class HistoryDialogState extends State<HistoryDialog> {
           currentDay = currentDate[2];
           currentTime = currentDate[3];
           loadNewestData = false;
-        } else if (widget.type == 'unitplan') {
-          Unitplan.fetchDate(Storage.getString(Keys.grade)).then((String date) {
+        } else if (widget.type == 'timetable') {
+          Timetable.fetchDate(Storage.getString(Keys.grade)).then((String date) {
             setState(() {
               currentYear = '20' + date.split('.')[2];
               currentMonth = date.split('.')[1];

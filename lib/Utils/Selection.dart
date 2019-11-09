@@ -1,8 +1,8 @@
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import '../UnitPlan/UnitPlanModel.dart';
+import '../Timetable/TimetableModel.dart';
 
-String getKey(UnitPlanSubject subject) {
+String getKey(TimetableSubject subject) {
   return '${subject.lesson}-${subject.teacher}';
 }
 
@@ -15,13 +15,13 @@ List<String> getValue(String key) {
   return data.cast<String>();
 }
 
-/// Logs all unitPlan keys and values... (Only for debugging)
+/// Logs all timetable keys and values... (Only for debugging)
 void logValues() {
   String grade = Storage.getString(Keys.grade);
   List<String> keys = Storage.getKeys()
       .toList()
       .where((String key) =>
-          key.startsWith('unitPlan') &&
+          key.startsWith('timetable') &&
           key.split('-').length > 2 &&
           key.split('-')[1] == grade)
       .toList();
@@ -31,11 +31,11 @@ void logValues() {
   }
 }
 
-int getSelectedIndex(List<UnitPlanSubject> subjects, int day, int unit,
+int getSelectedIndex(List<TimetableSubject> subjects, int day, int unit,
     {String week = 'A'}) {
   // List element 0: week A  -- element 1: week B (Only one element: week AB)
   if (unit == 5) return 0;
-  List<String> selected = getValue(Keys.unitPlan(Storage.getString(Keys.grade),
+  List<String> selected = getValue(Keys.timetable(Storage.getString(Keys.grade),
       block: subjects[0].block, day: day, unit: unit));
   if (selected == null) return null;
   week = week.toUpperCase();
@@ -48,8 +48,8 @@ int getSelectedIndex(List<UnitPlanSubject> subjects, int day, int unit,
       index = 1;
     else if (selected[1].endsWith('-')) index = 0;
   }
-  List<UnitPlanSubject> subject = subjects
-      .where((UnitPlanSubject subject) =>
+  List<TimetableSubject> subject = subjects
+      .where((TimetableSubject subject) =>
   subject.week.contains(week) && getKey(subject) == selected[index])
       .toList();
   if (subject.length == 0)
@@ -58,19 +58,19 @@ int getSelectedIndex(List<UnitPlanSubject> subjects, int day, int unit,
     return subjects.indexOf(subject[0]);
 }
 
-UnitPlanSubject getSelectedSubject(
-    List<UnitPlanSubject> subjects, int day, int unit,
+TimetableSubject getSelectedSubject(
+    List<TimetableSubject> subjects, int day, int unit,
     {String week = 'A'}) {
   int index = getSelectedIndex(subjects, day, unit, week: week);
   return index == null ? null : subjects[index];
 }
 
-void setSelectedSubject(UnitPlanSubject selected, int day, int unit,
-    {UnitPlanSubject selectedB}) {
+void setSelectedSubject(TimetableSubject selected, int day, int unit,
+    {TimetableSubject selectedB}) {
   List<String> weeks = selected.week == 'AB' || selectedB == null
       ? [getKey(selected)]
       : [getKey(selected), getKey(selectedB)];
-  String key = Keys.unitPlan(Storage.getString(Keys.grade),
+  String key = Keys.timetable(Storage.getString(Keys.grade),
       block: selected.block, day: day, unit: unit);
   Storage.setStringList(key, weeks);
 }

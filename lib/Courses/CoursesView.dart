@@ -6,28 +6,28 @@ import 'package:viktoriaflutter/Utils/SectionWidget.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import '../Subjects/SubjectsModel.dart';
-import '../UnitPlan/UnitPlanData.dart' as UnitPlan;
-import '../UnitPlan/UnitPlanModel.dart';
+import '../Timetable/TimetableData.dart' as Timetable;
+import '../Timetable/TimetableModel.dart';
 import 'CourseEdit/CourseEditWidget.dart';
 import 'CoursesPage.dart';
 
 class CoursesPageView extends CoursesPageState {
   @override
   Widget build(BuildContext context) {
-    List<UnitPlanSubject> selectedSubjects = [];
+    List<TimetableSubject> selectedSubjects = [];
 
     // Get all selected subjects...
-    UnitPlan.getUnitPlan().forEach((day) => day.lessons.forEach((lesson) {
+    Timetable.getTimetable().forEach((day) => day.lessons.forEach((lesson) {
           if (lesson.subjects.length > 0) {
             int selectedA = getSelectedIndex(
                     lesson.subjects,
-                    UnitPlan.getUnitPlan().indexOf(day),
+                    Timetable.getTimetable().indexOf(day),
                 day.lessons.indexOf(lesson),
                 week: 'A') ??
                 lesson.subjects.length;
             int selectedB = getSelectedIndex(
                 lesson.subjects,
-                UnitPlan.getUnitPlan().indexOf(day),
+                Timetable.getTimetable().indexOf(day),
                 day.lessons.indexOf(lesson),
                 week: 'B') ??
                 lesson.subjects.length;
@@ -38,7 +38,7 @@ class CoursesPageView extends CoursesPageState {
           }
         }));
 
-    Map<String, List<UnitPlanSubject>> courses = {};
+    Map<String, List<TimetableSubject>> courses = {};
 
     // Add to subjects to map
     selectedSubjects.forEach((subject) {
@@ -120,7 +120,7 @@ class CoursesPageView extends CoursesPageState {
       children: (courses.keys.toList().length > 0)
           ? sections
           :
-          // No subjects are selected in the unit plan
+          // No subjects are selected in the timetable
           <Widget>[
               Center(child: Text(AppLocalizations.of(context).noCourses))
             ],
@@ -129,7 +129,7 @@ class CoursesPageView extends CoursesPageState {
 }
 
 class CourseRow extends StatefulWidget {
-  final List<UnitPlanSubject> subjects;
+  final List<TimetableSubject> subjects;
 
   CourseRow({
     Key key,

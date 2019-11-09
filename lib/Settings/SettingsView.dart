@@ -101,37 +101,37 @@ class SettingsPageView extends SettingsPageState {
           ),
           Section(
             title: AppLocalizations.of(context)
-                .replacementPlanSettings
+                .rsubstitutionPlanSettings
                 .toUpperCase(),
             children: <Widget>[
-              // Sort replacement plan option
+              // Sort substitution plan option
               CheckboxListTile(
-                value: sortReplacementPlan,
+                value: sortSubstitutionPlan,
                 onChanged: (bool value) {
                   setState(() {
-                    Storage.setBool(Keys.sortReplacementPlan, value);
-                    sortReplacementPlan = value;
+                    Storage.setBool(Keys.sortSubstitutionPlan, value);
+                    sortSubstitutionPlan = value;
                   });
                 },
-                title: Text(AppLocalizations.of(context).sortReplacementPlan),
+                title: Text(AppLocalizations.of(context).sortSubstitutionPlan),
                 controlAffinity: ListTileControlAffinity.trailing,
               ),
-              // Get replacementplan notifications option
+              // Get substitutionPlan notifications option
               (Platform.isIOS || Platform.isAndroid)
                   ? CheckboxListTile(
-                value: getReplacementPlanNotifications,
+                value: getSubstitutionPlanNotifications,
                 onChanged: (bool value) {
                   setState(() {
                     Storage.setBool(
-                        Keys.getReplacementPlanNotifications, value);
-                    getReplacementPlanNotifications = value;
+                        Keys.getSubstitutionPlanNotifications, value);
+                    getSubstitutionPlanNotifications = value;
                     // Synchronise tags for notifications
                     syncTags();
                   });
                 },
                 title: Text(AppLocalizations
                     .of(context)
-                    .getReplacementPlanNotifications),
+                    .getSubstitutionPlanNotifications),
               )
                   : Container(),
             ],
@@ -140,72 +140,72 @@ class SettingsPageView extends SettingsPageState {
               title:
               AppLocalizations
                   .of(context)
-                  .unitPlanSettings
+                  .timetableSettings
                   .toUpperCase(),
               children: <Widget>[
-                // Show replacement plan in unit plan option
+                // Show substitution plan in timetable option
                 CheckboxListTile(
-                  value: showReplacementPlanInUnitPlan,
+                  value: showSubstitutionPlanInTimetable,
                   onChanged: (bool value) {
                     setState(() {
                       Storage.setBool(
-                          Keys.showReplacementPlanInUnitPlan, value);
-                      showReplacementPlanInUnitPlan = value;
+                          Keys.showSubstitutionPlanInTimetable, value);
+                      showSubstitutionPlanInTimetable = value;
                     });
                   },
                   title: Text(AppLocalizations.of(context)
-                      .showReplacementPlanInUnitPlan),
+                      .showSubstitutionPlanInTimetable),
                 ),
-                // Show work groups in unit plan option
+                // Show work groups in timetable option
                 CheckboxListTile(
-                  value: showWorkGroupsInUnitPlan,
+                  value: showWorkGroupsInTimetable,
                   onChanged: (bool value) {
                     setState(() {
-                      Storage.setBool(Keys.showWorkGroupsInUnitPlan, value);
-                      showWorkGroupsInUnitPlan = value;
+                      Storage.setBool(Keys.showWorkGroupsInTimetable, value);
+                      showWorkGroupsInTimetable = value;
                     });
                   },
                   title: Text(
-                      AppLocalizations.of(context).showWorkGroupsInUnitPlan),
+                      AppLocalizations.of(context).showWorkGroupsInTimetable),
                 ),
-                // Show calendar in unit plan option
+                // Show calendar in timetable option
                 CheckboxListTile(
-                  value: showCalendarInUnitPlan,
+                  value: showCalendarInTimetable,
                   onChanged: (bool value) {
                     setState(() {
-                      Storage.setBool(Keys.showCalendarInUnitPlan, value);
-                      showCalendarInUnitPlan = value;
+                      Storage.setBool(Keys.showCalendarInTimetable, value);
+                      showCalendarInTimetable = value;
                     });
                   },
                   title:
                   Text(AppLocalizations
                       .of(context)
-                      .showCalendarInUnitPlan),
+                      .showCalendarInTimetable),
                 ),
-                // Show cafetoria in unit plan option
+                // Show cafetoria in timetable option
                 CheckboxListTile(
-                  value: showCafetoriaInUnitPlan,
+                  value: showCafetoriaInTimetable,
                   onChanged: (bool value) {
                     setState(() {
-                      Storage.setBool(Keys.showCafetoriaInUnitPlan, value);
-                      showCafetoriaInUnitPlan = value;
+                      Storage.setBool(Keys.showCafetoriaInTimetable, value);
+                      showCafetoriaInTimetable = value;
                     });
                   },
                   title: Text(
-                      AppLocalizations.of(context).showCafetoriaInUnitPlan),
+                      AppLocalizations.of(context).showCafetoriaInTimetable),
                 ),
-                // Unit plan reset button
+                // Timetable reset button
                 Container(
                   margin: EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
                   child: SizedBox(
                     width: double.infinity,
                     child: FlatButton(
                       color: Theme.of(context).accentColor,
-                      child: Text(AppLocalizations.of(context).resetUnitPlan),
+                      child: Text(AppLocalizations.of(context).resetTimetable),
                       onPressed: () async {
                         Storage.getKeys()
                             .where((key) =>
-                        ((key.startsWith('unitPlan') ||
+                        ((key.startsWith('timetable') ||
                             key.startsWith('room')) &&
                             key
                                 .split('-')
@@ -304,13 +304,13 @@ class SettingsPageView extends SettingsPageState {
                         .accentColor,
                     child: Text(AppLocalizations
                         .of(context)
-                        .replacementplanVersion),
+                        .substitutionPlanVersion),
                     onPressed: () =>
                         showDialog<String>(
                             context: context,
                             barrierDismissible: true,
                             builder: (BuildContext context1) =>
-                                HistoryDialog(type: 'replacementplan')),
+                                HistoryDialog(type: 'substitutionPlan')),
                   ),
                 ),
               ),
@@ -326,13 +326,13 @@ class SettingsPageView extends SettingsPageState {
                       child: Text(
                           AppLocalizations
                               .of(context)
-                              .unitplanVersion),
+                              .timetableVersion),
                       onPressed: () =>
                           showDialog<String>(
                               context: context,
                               barrierDismissible: true,
                               builder: (BuildContext context1) =>
-                                  HistoryDialog(type: 'unitplan'))),
+                                  HistoryDialog(type: 'timetable'))),
                 ),
               ),
             ],

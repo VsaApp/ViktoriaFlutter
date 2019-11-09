@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import '../../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
+import '../../SubstitutionPlan/SubstitutionPlanData.dart' as substitutionPlan;
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import '../../UnitPlan/UnitPlanData.dart' as unitplan;
+import '../../Timetable/TimetableData.dart' as timetable;
 import 'HistoryDialogModel.dart';
 import 'HistoryDialogWidget.dart';
 
@@ -208,7 +208,7 @@ class HistoryDialogView extends HistoryDialogState {
                           Storage.remove(Keys.historyDate(widget.type));
                         } else if (!loadNewestData) {
                           String fileName;
-                          if (widget.type == 'unitplan') {
+                          if (widget.type == 'timetable') {
                             Day day = days.firstWhere(
                                 (Day day) => day.name == currentDay);
                             fileName = day.files[day.files.length - 1].name;
@@ -232,10 +232,10 @@ class HistoryDialogView extends HistoryDialogState {
                         }
                         Navigator.of(context).pop();
                         Function() update = () async {
-                          await unitplan.download(
+                          await timetable.download(
                               Storage.getString(Keys.grade), false);
-                          replacementplan.load(
-                              unitplan.getUnitPlan(), false);
+                          substitutionPlan.load(
+                              timetable.getTimetable(), false);
                         };
                         update();
                       },

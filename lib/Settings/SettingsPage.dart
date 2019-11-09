@@ -36,15 +36,15 @@ abstract class SettingsPageState extends State<SettingsPage> {
   String grade = grades[0];
   List<String> pages = [];
   String page = '';
-  List<String> replacementplanVerion;
-  List<String> unitplanVerion;
-  bool sortReplacementPlan = true;
-  bool showReplacementPlanInUnitPlan = true;
-  bool getReplacementPlanNotifications = true;
+  List<String> substitutionPlanVerion;
+  List<String> timetableVerion;
+  bool sortSubstitutionPlan = true;
+  bool showSubstitutionPlanInTimetable = true;
+  bool getSubstitutionPlanNotifications = true;
   bool showShortCutDialog = true;
-  bool showWorkGroupsInUnitPlan = true;
-  bool showCalendarInUnitPlan = true;
-  bool showCafetoriaInUnitPlan = true;
+  bool showWorkGroupsInTimetable = true;
+  bool showCalendarInTimetable = true;
+  bool showCafetoriaInTimetable = true;
   bool muteDevice = false;
   bool dev = false;
 
@@ -61,27 +61,27 @@ abstract class SettingsPageState extends State<SettingsPage> {
     setState(() {
       grade = Storage.get(Keys.grade) ?? '';
       dev = Storage.get(Keys.dev) ?? false;
-      sortReplacementPlan = Storage.getBool(Keys.sortReplacementPlan) ?? true;
-      showReplacementPlanInUnitPlan =
-          Storage.getBool(Keys.showReplacementPlanInUnitPlan) ?? true;
-      getReplacementPlanNotifications =
-          Storage.getBool(Keys.getReplacementPlanNotifications) ?? true;
+      sortSubstitutionPlan = Storage.getBool(Keys.sortSubstitutionPlan) ?? true;
+      showSubstitutionPlanInTimetable =
+          Storage.getBool(Keys.showSubstitutionPlanInTimetable) ?? true;
+      getSubstitutionPlanNotifications =
+          Storage.getBool(Keys.getSubstitutionPlanNotifications) ?? true;
       showShortCutDialog = Storage.getBool(Keys.showShortCutDialog) ?? true;
-      replacementplanVerion =
-          Storage.getStringList(Keys.historyDate('replacementplan'));
-      unitplanVerion = Storage.getStringList(Keys.historyDate('unitplan'));
-      showWorkGroupsInUnitPlan =
-          Storage.getBool(Keys.showWorkGroupsInUnitPlan) ?? true;
-      showCalendarInUnitPlan =
-          Storage.getBool(Keys.showCalendarInUnitPlan) ?? true;
-      showCafetoriaInUnitPlan =
-          Storage.getBool(Keys.showCafetoriaInUnitPlan) ?? true;
-      replacementplanVerion =
-          Storage.getStringList(Keys.historyDate('replacementplan'));
-      unitplanVerion = Storage.getStringList(Keys.historyDate('unitplan'));
+      substitutionPlanVerion =
+          Storage.getStringList(Keys.historyDate('substitutionPlan'));
+      timetableVerion = Storage.getStringList(Keys.historyDate('timetable'));
+      showWorkGroupsInTimetable =
+          Storage.getBool(Keys.showWorkGroupsInTimetable) ?? true;
+      showCalendarInTimetable =
+          Storage.getBool(Keys.showCalendarInTimetable) ?? true;
+      showCafetoriaInTimetable =
+          Storage.getBool(Keys.showCafetoriaInTimetable) ?? true;
+      substitutionPlanVerion =
+          Storage.getStringList(Keys.historyDate('substitutionPlan'));
+      timetableVerion = Storage.getStringList(Keys.historyDate('timetable'));
       pages = [
-        AppLocalizations.of(context).unitPlan,
-        AppLocalizations.of(context).replacementPlan,
+        AppLocalizations.of(context).timetable,
+        AppLocalizations.of(context).rsubstitutionPlan,
         AppLocalizations.of(context).calendar,
         AppLocalizations.of(context).cafetoria,
         AppLocalizations.of(context).workGroups,

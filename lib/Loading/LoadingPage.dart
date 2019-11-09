@@ -12,12 +12,12 @@ import '../Cafetoria/CafetoriaData.dart' as Cafetoria;
 import '../Calendar/CalendarData.dart' as Calendar;
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import '../ReplacementPlan/ReplacementPlanData.dart' as ReplacementPlan;
+import '../SubstitutionPlan/SubstitutionPlanData.dart' as SubstitutionPlan;
 import '../Rooms/RoomsData.dart' as Rooms;
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import '../Subjects/SubjectsData.dart' as Subjects;
 import '../Teachers/TeachersData.dart' as Teachers;
-import '../UnitPlan/UnitPlanData.dart' as UnitPlan;
+import '../Timetable/TimetableData.dart' as Timetable;
 import '../WorkGroups/WorkGroupsData.dart' as WorkGroups;
 import 'LoadingView.dart';
 
@@ -48,18 +48,18 @@ abstract class LoadingPageState extends State<LoadingPage>
       bugs.init();
 
       // Set default options
-      if (Storage.get(Keys.sortReplacementPlan) == null ||
-          Storage.get(Keys.showReplacementPlanInUnitPlan) == null ||
-          Storage.get(Keys.getReplacementPlanNotifications) == null ||
-          Storage.get(Keys.showWorkGroupsInUnitPlan) == null ||
-          Storage.get(Keys.showCalendarInUnitPlan) == null ||
-          Storage.get(Keys.showCafetoriaInUnitPlan) == null) {
-        Storage.setBool(Keys.sortReplacementPlan, true);
-        Storage.setBool(Keys.showReplacementPlanInUnitPlan, true);
-        Storage.setBool(Keys.getReplacementPlanNotifications, true);
-        Storage.setBool(Keys.showWorkGroupsInUnitPlan, false);
-        Storage.setBool(Keys.showCalendarInUnitPlan, true);
-        Storage.setBool(Keys.showCafetoriaInUnitPlan, false);
+      if (Storage.get(Keys.sortSubstitutionPlan) == null ||
+          Storage.get(Keys.showSubstitutionPlanInTimetable) == null ||
+          Storage.get(Keys.getSubstitutionPlanNotifications) == null ||
+          Storage.get(Keys.showWorkGroupsInTimetable) == null ||
+          Storage.get(Keys.showCalendarInTimetable) == null ||
+          Storage.get(Keys.showCafetoriaInTimetable) == null) {
+        Storage.setBool(Keys.sortSubstitutionPlan, true);
+        Storage.setBool(Keys.showSubstitutionPlanInTimetable, true);
+        Storage.setBool(Keys.getSubstitutionPlanNotifications, true);
+        Storage.setBool(Keys.showWorkGroupsInTimetable, false);
+        Storage.setBool(Keys.showCalendarInTimetable, true);
+        Storage.setBool(Keys.showCafetoriaInTimetable, false);
       }
 
       // Check if logged in
@@ -89,8 +89,8 @@ abstract class LoadingPageState extends State<LoadingPage>
         texts.add(AppLocalizations
             .of(context)
             .updates);
-        texts.add(AppLocalizations.of(context).unitPlan);
-        texts.add(AppLocalizations.of(context).replacementPlan);
+        texts.add(AppLocalizations.of(context).timetable);
+        texts.add(AppLocalizations.of(context).rsubstitutionPlan);
         texts.add(AppLocalizations.of(context).workGroups);
         texts.add(AppLocalizations.of(context).calendar);
         texts.add(AppLocalizations.of(context).subjects);
@@ -273,30 +273,30 @@ abstract class LoadingPageState extends State<LoadingPage>
         }, 1, AppLocalizations
             .of(context)
             .calendar);
-      } else if (key == 'unitplan') {
+      } else if (key == 'timetable') {
         download(() async {
-          await UnitPlan.download(
+          await Timetable.download(
             Storage.getString(Keys.grade),
             false,
             update: currentData[key] != newData[key] ||
-                currentData['replacementplantoday'] !=
-                    newData['replacementplantoday'] ||
-                currentData['replacementplantomorrow'] !=
-                    newData['replacementplantomorrow'] ||
+                currentData['substitutionPlantoday'] !=
+                    newData['substitutionPlantoday'] ||
+                currentData['substitutionPlantomorrow'] !=
+                    newData['substitutionPlantomorrow'] ||
                 oldGrade != newGrade,
             onFinished: (bool successfully) {
               if (successfully ?? true) {
                 currentData[key] = newData[key];
-                currentData['replacementplantoday'] = newData['replacementplantoday'];
-                currentData['replacementplantomorrow'] = newData['replacementplantomorrow'];
+                currentData['substitutionPlantoday'] = newData['substitutionPlantoday'];
+                currentData['substitutionPlantomorrow'] = newData['substitutionPlantomorrow'];
               }
             }
           );
-          texts.remove(AppLocalizations.of(context).unitPlan);
-          ReplacementPlan.load(UnitPlan.getUnitPlan(), false);
+          texts.remove(AppLocalizations.of(context).timetable);
+          SubstitutionPlan.load(Timetable.getTimetable(), false);
         }, 2, AppLocalizations
             .of(context)
-            .replacementPlan);
+            .rsubstitutionPlan);
       } else if (key == 'workgroups') {
         download(() async {
           await WorkGroups.download(
@@ -312,7 +312,7 @@ abstract class LoadingPageState extends State<LoadingPage>
             .of(context)
             .workGroups);
       }
-      else if (key != 'replacementplantoday' && key != 'replacementplantomorrow') currentData[key] = newData[key];
+      else if (key != 'substitutionPlantoday' && key != 'substitutionPlantomorrow') currentData[key] = newData[key];
       if (currentData[key] != newData[key] || oldGrade != newGrade) {
         print('Downloading ' + key);
       }

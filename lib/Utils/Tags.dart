@@ -10,7 +10,7 @@ import 'Keys.dart';
 import 'Network.dart';
 import 'Selection.dart';
 import 'Storage.dart';
-import '../UnitPlan/UnitPlanData.dart';
+import '../Timetable/TimetableData.dart';
 
 Future<Map<String, dynamic>> getTags({String idToLoad}) async {
   String id = idToLoad ?? Id.id;
@@ -37,7 +37,7 @@ Future syncWithTags() async {
   if (tags != null) {
     tags.forEach((key, value) {
       key = key.toString();
-      if (key.contains('unitPlan')) {
+      if (key.contains('timetable')) {
         Storage.setStringList(key, value == null ? null : value.cast<String>());
       } else if (key.contains('exam')) {
         Storage.setBool(
@@ -111,7 +111,7 @@ Future deleteTags(List<String> tags) async {
 
 void syncDaysLength() {
   String lengths = '';
-  getUnitPlan().forEach((day) {
+  getTimetable().forEach((day) {
     int count = day.getUserLesseonsCount('Freistunde');
     lengths += times[count].split(' - ')[1] + '|';
   });
@@ -124,20 +124,20 @@ Future syncTags() async {
   syncDaysLength();
   String grade = Storage.getString(Keys.grade);
 
-  // Get all unitplan and exams tags...
+  // Get all timetable and exams tags...
   Map<String, dynamic> allTags = await getTags();
   if (allTags == null) return;
   allTags.removeWhere((key, value) =>
-  !key.startsWith('unitPlan') &&
+  !key.startsWith('timetable') &&
       !key.startsWith('exams') &&
       !key.startsWith('room'));
 
   // Get all selected subjects...
   List<String> subjects = [];
-  getUnitPlan().forEach((day) {
+  getTimetable().forEach((day) {
     day.lessons.forEach((lesson) {
       int selected = getSelectedIndex(lesson.subjects,
-          getUnitPlan().indexOf(day), day.lessons.indexOf(lesson));
+          getTimetable().indexOf(day), day.lessons.indexOf(lesson));
       if (selected == null) {
         return;
       }
@@ -159,18 +159,18 @@ Future syncTags() async {
   newTags[Keys.exams(grade, subject)] =
       Storage.getBool(Keys.exams(grade, subject.toUpperCase())) ?? true);
 
-  newTags[Keys.getReplacementPlanNotifications] = Storage.getBool(Keys.getReplacementPlanNotifications) ?? true;
+  newTags[Keys.getSubstitutionPlanNotifications] = Storage.getBool(Keys.getSubstitutionPlanNotifications) ?? true;
 
-  // Set all new unitplan tags...
-  getUnitPlan().forEach((day) {
+  // Set all new timetable tags...
+  getTimetable().forEach((day) {
     day.lessons.forEach((lesson) {
-      newTags[Keys.unitPlan(grade,
+      newTags[Keys.timetable(grade,
           block: lesson.subjects[0].block,
-          day: getUnitPlan().indexOf(day),
+          day: getTimetable().indexOf(day),
           unit: day.lessons.indexOf(lesson))] =
-          Storage.getStringList(Keys.unitPlan(grade,
+          Storage.getStringList(Keys.timetable(grade,
               block: lesson.subjects[0].block,
-              day: getUnitPlan().indexOf(day),
+              day: getTimetable().indexOf(day),
               unit: day.lessons.indexOf(lesson)));
     });
   });

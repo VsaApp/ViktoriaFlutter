@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import '../../UnitPlan/UnitPlanData.dart' as UnitPlan;
-import '../../UnitPlan/UnitPlanModel.dart';
+import '../../Timetable/TimetableData.dart' as Timetable;
+import '../../Timetable/TimetableModel.dart';
 import 'CourseEditView.dart';
 
 class CourseEdit extends StatefulWidget {
-  final UnitPlanSubject subject;
+  final TimetableSubject subject;
   final List<String> blocks;
   final Function onExamChange;
 
@@ -34,10 +34,10 @@ abstract class CourseEditState extends State<CourseEdit> {
           widget.subject.lesson.toUpperCase())) ??
           true;
     });
-    List<UnitPlanDay> days = UnitPlan.getUnitPlan();
+    List<TimetableDay> days = Timetable.getTimetable();
     days.forEach((day) {
       day.lessons.forEach((lesson) {
-        UnitPlanSubject _selected = getSelectedSubject(
+        TimetableSubject _selected = getSelectedSubject(
             lesson.subjects, days.indexOf(day), day.lessons.indexOf(lesson));
         if (_selected == null) return;
         if (_selected.lesson == widget.subject.lesson) {

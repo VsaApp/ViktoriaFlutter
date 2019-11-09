@@ -14,8 +14,8 @@ class AppLocalizations {
     // List of all germans Strings...
     'de': {
       'title': 'Viktoria',
-      'unitPlan': 'Stundenplan',
-      'replacementPlan': 'Vertretungsplan',
+      'timetable': 'Stundenplan',
+      'rsubstitutionPlan': 'Vertretungsplan',
       'pupil': 'Schüler*In',
       'teacher': 'Lehrer*In',
       'pleaseSelect': 'Bitte auswählen',
@@ -36,9 +36,9 @@ class AppLocalizations {
       'appSettings': 'App',
       'logout': 'Abmelden',
       'freeLesson': 'Freistunde',
-      'sortReplacementPlan': 'Sortieren',
-      'showReplacementPlanInUnitPlan': 'Vertretungsplan anzeigen',
-      'getReplacementPlanNotifications': 'Benachrichtigungen für Änderungen',
+      'sortSubstitutionPlan': 'Sortieren',
+      'showSubstitutionPlanInTimetable': 'Vertretungsplan anzeigen',
+      'getSubstitutionPlanNotifications': 'Benachrichtigungen für Änderungen',
       'nUnit': '. Stunde',
       'myChanges': 'Meine Vertretungen',
       'undefChanges': 'Eventuell meine Vertretungen',
@@ -50,10 +50,10 @@ class AppLocalizations {
       'selectLesson': 'Stunde auswählen',
       'noCourses': 'Es wurden noch keine Kurse ausgewählt!',
       'whatDoFirst': 'Was möchtest du als erstes machen?',
-      'replacementplanFor': 'Vertretungsplan für ',
-      'replacementplanThe': ', den ',
-      'replacementplanLastUpdated': 'Zuletzt aktualisiert am ',
-      'replacementplanAt': ' um ',
+      'substitutionPlanFor': 'Vertretungsplan für ',
+      'substitutionPlanThe': ', den ',
+      'substitutionPlanLastUpdated': 'Zuletzt aktualisiert am ',
+      'substitutionPlanAt': ' um ',
       'edit': 'Bearbeiten',
       'goOnlineToLogin': 'Du musst online sein, um dich anzumelden',
       'retry': 'Erneut versuchen',
@@ -64,7 +64,7 @@ class AppLocalizations {
       'ok': 'OK',
       'showShortCutDialog': 'Schnellstartdialog anzeigen',
       'initialPage': 'Startseite',
-      'showReplacementPlanForBrotherSister':
+      'showSubstitutionPlanForBrotherSister':
           'Vertretungsplan für Geschwisterkind anzeigen',
       'noChanges': 'Keine Änderungen',
       'cafetoria': 'Cafetoria',
@@ -76,40 +76,40 @@ class AppLocalizations {
       'selectDate': 'Datum auswählen',
       'nowADeveloper': 'Du bist jetzt ein Entwickler!',
       'nowNoDeveloper': 'Du bist kein Entwickler mehr!',
-      'replacementPlanUpdated': 'Neuer Vertretungsplan für %s',
+      'rsubstitutionPlanUpdated': 'Neuer Vertretungsplan für %s',
       'goOnline': 'Du musst online sein beim ersten Mal laden!',
       'unparsed': 'Nicht erkannt',
       'yes': 'Ja',
       'no': 'Nein',
-      'introUnitPlanTitle': 'Stundenplan',
-      'newUnitplan': 'Neuer Stundenplan',
-      'newUnitplanInfo':
+      'introTimetableTitle': 'Stundenplan',
+      'newTimetable': 'Neuer Stundenplan',
+      'newTimetableInfo':
           'Deine Fachauswahl und deine Schriftlichkeiten wurden zurückgesetzt, da es einen neuen Stundenplan gibt!',
-      'introUnitPlanDescription':
+      'introTimetableDescription':
           'Ein Blick in den Stundenplan zeigt dir eine vollständige Übersicht über deinen Tag mit allen Änderungen',
-      'introReplacementPlanTitle': 'Vertretungsplan',
-      'introReplacementPlanDescription':
+      'introSubstitutionPlanTitle': 'Vertretungsplan',
+      'introSubstitutionPlanDescription':
           'Alle Vertretungen werden auf deine Stundenplan Auswahl angepasst und für dich gefiltert',
-      'scanUnitPlan': 'Stundenplan scannen',
-      'scanUnitPlanExplanation':
+      'scanTimetable': 'Stundenplan scannen',
+      'scanTimetableExplanation':
           'Du musst die Kamera deines Handys auf deinen Stundenplan halten und warten bis der Text erscheint. Wenn du meinst, dass alles erkannt wurde, dann kannst du einfach irgendwo auf den Bildschirm klicken. Danach musst du möglicherweise noch Fächer auswählen, wenn diese nicht erkannt werden konnten.',
-      'scanUnitPlanAllDetected': 'Alles erkannt',
+      'scanTimetableAllDetected': 'Alles erkannt',
       'onlyOnline': 'Du kannst dies nur online tun!',
-      'resetUnitPlan': 'Stundenplan zurücksetzen',
+      'resetTimetable': 'Stundenplan zurücksetzen',
       'scanDescription':
       'Hier siehst du eine Liste der Stunden die beim Fotografieren nicht erkannt werden konnten. Wähle für jede Stunde immer deinen Kurs aus!',
       'year': 'Jahr',
       'month': 'Monat',
       'day': 'Tag',
       'time': 'Zeit',
-      'replacementplanVersion': 'Vertretungsplan Version',
-      'unitplanVersion': 'Stundenplan Version',
-      'showWorkGroupsInUnitPlan': 'AGs anzeigen',
-      'showCalendarInUnitPlan': 'Termine anzeigen',
+      'substitutionPlanVersion': 'Vertretungsplan Version',
+      'timetableVersion': 'Stundenplan Version',
+      'showWorkGroupsInTimetable': 'AGs anzeigen',
+      'showCalendarInTimetable': 'Termine anzeigen',
       'event': 'Termin',
-      'showCafetoriaInUnitPlan': 'Cafetoriamenüs anzeigen',
-      'unitPlanSettings': 'Stundenplan',
-      'replacementPlanSettings': 'Vertretungsplan',
+      'showCafetoriaInTimetable': 'Cafetoriamenüs anzeigen',
+      'timetableSettings': 'Stundenplan',
+      'rsubstitutionPlanSettings': 'Vertretungsplan',
       'loadNewestData': 'Aktuellste Version',
       'coursesLanguagesArts': 'Sprachlich-literarisch-künstlerisch',
       'coursesSocialScienes': 'Gesellschaftswissenschaftlich',
@@ -132,8 +132,8 @@ class AppLocalizations {
       'introNotificationsTitle': 'Benachrichtigungen',
       'introNotificationsDescription':
           'Erhalte personalisierte Benachrichtigungen Vertretungs- und Stundenplanänderungen',
-      'introExtendedUnitplanTitle': 'Erweiterter Stundenplan',
-      'introExtendedUnitplanDescription':
+      'introExtendedTimetableTitle': 'Erweiterter Stundenplan',
+      'introExtendedTimetableDescription':
           'Zusätzlich zum Stundenplan kannst du dir auch alle AGs, alle Termine und alle Cafetoria Menüs für den jeweiligen Tag anzeigen lassen',
       'introCoursesTitle': 'Kurse',
       'introCoursesDescription':
@@ -186,7 +186,7 @@ class AppLocalizations {
       'notYetExistingOnServer': 'Noch nicht auf dem Schulserver vorhanden!',
       'updates': 'Aktualisierungen',
       'failedToCheckLogin': 'Fehler beim überprüfen der Logindaten! Versuche es später erneut.',
-      'unitAndReplacementplan': 'Stunden- und Vertretungsplan',
+      'unitAndSubstitutionPlan': 'Stunden- und Vertretungsplan',
       'updated': ' aktualisiert',
       'updatedFailed': ' aktualisieren fehlgeschlagen'
     },
@@ -197,8 +197,8 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]['updated'];
   }
 
-  String get unitAndReplacementplan {
-    return _localizedValues[locale.languageCode]['unitAndReplacementplan'];
+  String get unitAndSubstitutionPlan {
+    return _localizedValues[locale.languageCode]['unitAndSubstitutionPlan'];
   }
 
   String get updatedFailed {
@@ -265,12 +265,12 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]['loadNewestData'];
   }
 
-  String get replacementplanVersion {
-    return _localizedValues[locale.languageCode]['replacementplanVersion'];
+  String get substitutionPlanVersion {
+    return _localizedValues[locale.languageCode]['substitutionPlanVersion'];
   }
 
-  String get unitplanVersion {
-    return _localizedValues[locale.languageCode]['unitplanVersion'];
+  String get timetableVersion {
+    return _localizedValues[locale.languageCode]['timetableVersion'];
   }
 
   String get year {
@@ -289,8 +289,8 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]['time'];
   }
 
-  String get newUnitplan {
-    return _localizedValues[locale.languageCode]['newUnitplan'];
+  String get newTimetable {
+    return _localizedValues[locale.languageCode]['newTimetable'];
   }
 
   String get selectDate {
@@ -301,12 +301,12 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]['developerOptions'];
   }
 
-  String get newUnitplanInfo {
-    return _localizedValues[locale.languageCode]['newUnitplanInfo'];
+  String get newTimetableInfo {
+    return _localizedValues[locale.languageCode]['newTimetableInfo'];
   }
 
-  String get replacementPlanUpdated {
-    return _localizedValues[locale.languageCode]['replacementPlanUpdated'];
+  String get rsubstitutionPlanUpdated {
+    return _localizedValues[locale.languageCode]['rsubstitutionPlanUpdated'];
   }
 
   String get unparsed {
@@ -385,30 +385,30 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]['nUnit'];
   }
 
-  String get sortReplacementPlan {
-    return _localizedValues[locale.languageCode]['sortReplacementPlan'];
+  String get sortSubstitutionPlan {
+    return _localizedValues[locale.languageCode]['sortSubstitutionPlan'];
   }
 
-  String get showReplacementPlanInUnitPlan {
+  String get showSubstitutionPlanInTimetable {
     return _localizedValues[locale.languageCode]
-        ['showReplacementPlanInUnitPlan'];
+        ['showSubstitutionPlanInTimetable'];
   }
 
-  String get getReplacementPlanNotifications {
+  String get getSubstitutionPlanNotifications {
     return _localizedValues[locale.languageCode]
-        ['getReplacementPlanNotifications'];
+        ['getSubstitutionPlanNotifications'];
   }
 
   String get title {
     return _localizedValues[locale.languageCode]['title'];
   }
 
-  String get unitPlan {
-    return _localizedValues[locale.languageCode]['unitPlan'];
+  String get timetable {
+    return _localizedValues[locale.languageCode]['timetable'];
   }
 
-  String get replacementPlan {
-    return _localizedValues[locale.languageCode]['replacementPlan'];
+  String get rsubstitutionPlan {
+    return _localizedValues[locale.languageCode]['rsubstitutionPlan'];
   }
 
   String get pupil {
@@ -491,20 +491,20 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]['whatDoFirst'];
   }
 
-  String get replacementplanFor {
-    return _localizedValues[locale.languageCode]['replacementplanFor'];
+  String get substitutionPlanFor {
+    return _localizedValues[locale.languageCode]['substitutionPlanFor'];
   }
 
-  String get replacementplanThe {
-    return _localizedValues[locale.languageCode]['replacementplanThe'];
+  String get substitutionPlanThe {
+    return _localizedValues[locale.languageCode]['substitutionPlanThe'];
   }
 
-  String get replacementplanLastUpdated {
-    return _localizedValues[locale.languageCode]['replacementplanLastUpdated'];
+  String get substitutionPlanLastUpdated {
+    return _localizedValues[locale.languageCode]['substitutionPlanLastUpdated'];
   }
 
-  String get replacementplanAt {
-    return _localizedValues[locale.languageCode]['replacementplanAt'];
+  String get substitutionPlanAt {
+    return _localizedValues[locale.languageCode]['substitutionPlanAt'];
   }
 
   String get edit {
@@ -535,9 +535,9 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]['initialPage'];
   }
 
-  String get showReplacementPlanForBrotherSister {
+  String get showSubstitutionPlanForBrotherSister {
     return _localizedValues[locale.languageCode]
-        ['showReplacementPlanForBrotherSister'];
+        ['showSubstitutionPlanForBrotherSister'];
   }
 
   String get noChanges {
@@ -564,57 +564,57 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]['nowNoDeveloper'];
   }
 
-  String get introUnitPlanTitle {
-    return _localizedValues[locale.languageCode]['introUnitPlanTitle'];
+  String get introTimetableTitle {
+    return _localizedValues[locale.languageCode]['introTimetableTitle'];
   }
 
-  String get introUnitPlanDescription {
-    return _localizedValues[locale.languageCode]['introUnitPlanDescription'];
+  String get introTimetableDescription {
+    return _localizedValues[locale.languageCode]['introTimetableDescription'];
   }
 
-  String get introReplacementPlanTitle {
-    return _localizedValues[locale.languageCode]['introReplacementPlanTitle'];
+  String get introSubstitutionPlanTitle {
+    return _localizedValues[locale.languageCode]['introSubstitutionPlanTitle'];
   }
 
-  String get introReplacementPlanDescription {
+  String get introSubstitutionPlanDescription {
     return _localizedValues[locale.languageCode]
-        ['introReplacementPlanDescription'];
+        ['introSubstitutionPlanDescription'];
   }
 
-  String get scanUnitPlan {
-    return _localizedValues[locale.languageCode]['scanUnitPlan'];
+  String get scanTimetable {
+    return _localizedValues[locale.languageCode]['scanTimetable'];
   }
 
-  String get scanUnitPlanExplanation {
-    return _localizedValues[locale.languageCode]['scanUnitPlanExplanation'];
+  String get scanTimetableExplanation {
+    return _localizedValues[locale.languageCode]['scanTimetableExplanation'];
   }
 
-  String get scanUnitPlanAllDetected {
-    return _localizedValues[locale.languageCode]['scanUnitPlanAllDetected'];
+  String get scanTimetableAllDetected {
+    return _localizedValues[locale.languageCode]['scanTimetableAllDetected'];
   }
 
-  String get resetUnitPlan {
-    return _localizedValues[locale.languageCode]['resetUnitPlan'];
+  String get resetTimetable {
+    return _localizedValues[locale.languageCode]['resetTimetable'];
   }
 
-  String get showWorkGroupsInUnitPlan {
-    return _localizedValues[locale.languageCode]['showWorkGroupsInUnitPlan'];
+  String get showWorkGroupsInTimetable {
+    return _localizedValues[locale.languageCode]['showWorkGroupsInTimetable'];
   }
 
-  String get showCalendarInUnitPlan {
-    return _localizedValues[locale.languageCode]['showCalendarInUnitPlan'];
+  String get showCalendarInTimetable {
+    return _localizedValues[locale.languageCode]['showCalendarInTimetable'];
   }
 
-  String get showCafetoriaInUnitPlan {
-    return _localizedValues[locale.languageCode]['showCafetoriaInUnitPlan'];
+  String get showCafetoriaInTimetable {
+    return _localizedValues[locale.languageCode]['showCafetoriaInTimetable'];
   }
 
-  String get unitPlanSettings {
-    return _localizedValues[locale.languageCode]['unitPlanSettings'];
+  String get timetableSettings {
+    return _localizedValues[locale.languageCode]['timetableSettings'];
   }
 
-  String get replacementPlanSettings {
-    return _localizedValues[locale.languageCode]['replacementPlanSettings'];
+  String get rsubstitutionPlanSettings {
+    return _localizedValues[locale.languageCode]['rsubstitutionPlanSettings'];
   }
 
   String get coursesLanguagesArts {
@@ -678,13 +678,13 @@ class AppLocalizations {
         ['introNotificationsDescription'];
   }
 
-  String get introExtendedUnitplanTitle {
-    return _localizedValues[locale.languageCode]['introExtendedUnitplanTitle'];
+  String get introExtendedTimetableTitle {
+    return _localizedValues[locale.languageCode]['introExtendedTimetableTitle'];
   }
 
-  String get introExtendedUnitplanDescription {
+  String get introExtendedTimetableDescription {
     return _localizedValues[locale.languageCode]
-        ['introExtendedUnitplanDescription'];
+        ['introExtendedTimetableDescription'];
   }
 
   String get introCoursesTitle {

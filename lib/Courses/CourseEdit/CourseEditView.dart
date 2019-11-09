@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import '../../ReplacementPlan/ReplacementPlanData.dart' as replacementplan;
+import '../../SubstitutionPlan/SubstitutionPlanData.dart' as substitutionPlan;
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
-import '../../UnitPlan/UnitPlanData.dart' as unitplan;
+import '../../Timetable/TimetableData.dart' as timetable;
 import 'CourseEditWidget.dart';
 import 'RoomEdit/RoomEditView.dart';
 
@@ -30,7 +30,7 @@ class CourseEditView extends CourseEditState {
               if (widget.onExamChange != null) {
                 widget.onExamChange(exams);
               }
-              replacementplan.load(unitplan.getUnitPlan(), false);
+              substitutionPlan.load(timetable.getTimetable(), false);
             });
           },
           title: Text(AppLocalizations.of(context).writeExams),

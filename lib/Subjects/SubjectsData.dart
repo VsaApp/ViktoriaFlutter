@@ -6,7 +6,7 @@ import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'SubjectsModel.dart';
 
-// Download the unit plan...
+// Download the timetable...
 Future download({bool update = true, Function(bool successfully) onFinished}) async {
   bool successfully;
   if (update) {

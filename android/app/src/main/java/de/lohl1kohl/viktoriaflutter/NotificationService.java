@@ -32,13 +32,13 @@ public class NotificationService extends FirebaseMessagingService {
         System.out.println(remoteMessage.getData());
 
         if (remoteMessage.getNotification() == null && remoteMessage.getData().get("notificationTitle") != null) {
-            if (remoteMessage.getData().get("type").equals("replacementplan")) {
+            if (remoteMessage.getData().get("type").equals("substitution plan")) {
                 int changes = remoteMessage.getData().get("notificationBody").length() - remoteMessage.getData().get("notificationBody").replace("\n", "").length() + 1;
                 showNotification(
                         remoteMessage.getData().get("notificationTitle"),
                         changes > 1 ? String.valueOf(changes) + " Änderungen" : remoteMessage.getData().get("notificationBody"),
                         remoteMessage.getData().get("notificationBody"),
-                        "replacementplan_channel",
+                        "substitutionPlan_channel",
                         Arrays.asList(new String[]{"Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"}).indexOf(remoteMessage.getData().get("notificationTitle")),
                         remoteMessage.getData().get("notificationTitle") + " " + remoteMessage.getData().get("notificationBody"),
                         remoteMessage.getData()

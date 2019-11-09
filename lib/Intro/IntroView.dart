@@ -8,12 +8,12 @@ import '../Calendar/CalendarModel.dart';
 import '../Calendar/EventCard/EventCard.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import '../ReplacementPlan/ReplacementPlanModel.dart';
-import '../ReplacementPlan/ReplacementPlanRow/ReplacementPlanRowWidget.dart';
+import '../SubstitutionPlan/SubstitutionPlanModel.dart';
+import '../SubstitutionPlan/SubstitutionPlanRow/SubstitutionPlanRowWidget.dart';
 import 'package:viktoriaflutter/Utils/SectionWidget.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import '../UnitPlan/UnitPlanModel.dart';
-import '../UnitPlan/UnitPlanRow/UnitPlanRowWidget.dart';
+import '../Timetable/TimetableModel.dart';
+import '../Timetable/TimetableRow/TimetableRowWidget.dart';
 import '../WorkGroups/DayCard/DayCardWidget.dart';
 import '../WorkGroups/WorkGroupsModel.dart';
 import 'IntroPage.dart';
@@ -28,7 +28,7 @@ class IntroPageView extends IntroPageState {
   @override
   Widget build(BuildContext context) {
     slides.clear();
-    UnitPlanSubject subject = UnitPlanSubject(
+    TimetableSubject subject = TimetableSubject(
       teacher: 'STA',
       lesson: 'Erdkunde',
       room: '525',
@@ -55,21 +55,21 @@ class IntroPageView extends IntroPageState {
     );
     slides.add(
       Slide(
-        title: AppLocalizations.of(context).introUnitPlanTitle,
-        description: AppLocalizations.of(context).introUnitPlanDescription,
+        title: AppLocalizations.of(context).introTimetableTitle,
+        description: AppLocalizations.of(context).introTimetableDescription,
         centerWidget: Container(
           margin: EdgeInsets.all(10),
           child: Card(
             child: Padding(
               padding: EdgeInsets.only(bottom: 10),
               child: Column(children: [
-                UnitPlanRow(
+                TimetableRow(
                   weekday: 0,
                   subject: subject,
                   unit: 0,
                   isDialog: !(Platform.isIOS || Platform.isAndroid),
                 ),
-                ReplacementPlanRow(
+                SubstitutionPlanRow(
                   change: change,
                   changes: [change],
                   weekday: 0,
@@ -83,14 +83,14 @@ class IntroPageView extends IntroPageState {
     );
     slides.add(
       Slide(
-        title: AppLocalizations.of(context).introReplacementPlanTitle,
+        title: AppLocalizations.of(context).introSubstitutionPlanTitle,
         description:
-        AppLocalizations.of(context).introReplacementPlanDescription,
+        AppLocalizations.of(context).introSubstitutionPlanDescription,
         centerWidget: Section(
           isLast: false,
           title: AppLocalizations.of(context).myChanges,
           children: [
-            ReplacementPlanRow(
+            SubstitutionPlanRow(
               change: change,
               changes: [change],
               weekday: 0,
@@ -197,9 +197,9 @@ class IntroPageView extends IntroPageState {
       ),
     ));
     slides.add(Slide(
-      title: AppLocalizations.of(context).introExtendedUnitplanTitle,
+      title: AppLocalizations.of(context).introExtendedTimetableTitle,
       description:
-      AppLocalizations.of(context).introExtendedUnitplanDescription,
+      AppLocalizations.of(context).introExtendedTimetableDescription,
     ));
     slides.add(Slide(
       title: AppLocalizations.of(context).introCoursesTitle,

@@ -5,8 +5,8 @@ class Keys {
     return 'grade';
   }
 
-  static String get unitplanDate {
-    return 'unitplanDate';
+  static String get timetableDate {
+    return 'timetableDate';
   }
 
   static String get daysLengths {
@@ -60,37 +60,37 @@ class Keys {
     return 'password';
   }
 
-  // Saves if the replacementplan should be sorted...
-  static String get sortReplacementPlan {
-    return 'sortReplacementPlan';
+  // Saves if the substitution plan should be sorted...
+  static String get sortSubstitutionPlan {
+    return 'sortSubstitutionPlan';
   }
 
-  // Saves if the replacemetplan should shown in the unitplan...
-  static String get showReplacementPlanInUnitPlan {
-    return 'showReplacementPlanInUnitPlan';
+  // Saves if the replacemetplan should shown in the timetable...
+  static String get showSubstitutionPlanInTimetable {
+    return 'showSubstitutionPlanInTimetable';
   }
 
-  // Saves if the user get replacementplan notifications...
-  static String get getReplacementPlanNotifications {
-    return 'getReplacementPlanNotifications';
+  // Saves if the user get substitution plan notifications...
+  static String get getSubstitutionPlanNotifications {
+    return 'getSubstitutionPlanNotifications';
   }
 
-  // unitPlan-GRADE saves the untiplan json string...
-  // unitPLan-GRADE-BLOCK / uitplan-GRADE-DAY-UNIT saves the selected index...
-  static String unitPlan(String grade, {String block, int day, int unit}) {
+  // timetable-GRADE saves the untiplan json string...
+  // timetable-GRADE-BLOCK / uitplan-GRADE-DAY-UNIT saves the selected index...
+  static String timetable(String grade, {String block, int day, int unit}) {
     // If nothing is set, returns the key for saving the json string...
     if (block == null && day == null) {
-      return 'unitPlan-$grade';
+      return 'timetable-$grade';
     } else {
       return (block != '')
-          ? 'unitPlan-$grade-$block'
-          : 'unitPlan-$grade-$day-$unit';
+          ? 'timetable-$grade-$block'
+          : 'timetable-$grade-$day-$unit';
     }
   }
 
-  // replacementPlan-GRADE-DAY saves the replacement plan...
-  static String replacementPlan(String grade, String day) {
-    return 'replacementPlan-$grade-$day';
+  // rsubstitutionPlan-GRADE-DAY saves the substitution plan...
+  static String rsubstitutionPlan(String grade, String day) {
+    return 'rsubstitutionPlan-$grade-$day';
   }
 
   // exams-SUBJECTNAME saves if user writing exams in this course...
@@ -146,16 +146,16 @@ class Keys {
     return 'teachers';
   }
 
-  static String get showWorkGroupsInUnitPlan {
-    return 'showWorkGroupsInUnitPlan';
+  static String get showWorkGroupsInTimetable {
+    return 'showWorkGroupsInTimetable';
   }
 
-  static String get showCalendarInUnitPlan {
-    return 'showCalendarInUnitPlan';
+  static String get showCalendarInTimetable {
+    return 'showCalendarInTimetable';
   }
 
-  static String get showCafetoriaInUnitPlan {
-    return 'showCafetoriaInUnitPlan';
+  static String get showCafetoriaInTimetable {
+    return 'showCafetoriaInTimetable';
   }
 
   static String get id {
@@ -170,8 +170,8 @@ class Keys {
     return 'oldGrade';
   }
 
-  static String get unitPlanIsNew {
-    return 'unitPlanIsNew';
+  static String get timetableIsNew {
+    return 'timetableIsNew';
   }
 
   static String get muteService {
