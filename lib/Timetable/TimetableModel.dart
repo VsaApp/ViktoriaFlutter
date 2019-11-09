@@ -19,21 +19,21 @@ class Timetable {
 class TimetableDay {
   final String name;
   final List<dynamic> lessons;
-  final String rsubstitutionPlanForDate;
-  final String rsubstitutionPlanForWeekday;
-  final String rsubstitutionPlanForWeektype;
-  final String rsubstitutionPlanUpdatedDate;
-  final String rsubstitutionPlanUpdatedTime;
+  final String substitutionPlanForDate;
+  final String substitutionPlanForWeekday;
+  final String substitutionPlanForWeektype;
+  final String substitutionPlanUpdatedDate;
+  final String substitutionPlanUpdatedTime;
   String showWeek = 'A';
 
   TimetableDay({
     @required this.name,
     @required this.lessons,
-    @required this.rsubstitutionPlanForDate,
-    @required this.rsubstitutionPlanForWeekday,
-    @required this.rsubstitutionPlanForWeektype,
-    @required this.rsubstitutionPlanUpdatedDate,
-    @required this.rsubstitutionPlanUpdatedTime,
+    @required this.substitutionPlanForDate,
+    @required this.substitutionPlanForWeekday,
+    @required this.substitutionPlanForWeektype,
+    @required this.substitutionPlanUpdatedDate,
+    @required this.substitutionPlanUpdatedTime,
   });
 
   factory TimetableDay.fromJson(Map<String, dynamic> json) {
@@ -44,14 +44,14 @@ class TimetableDay {
           .toList()
           .map((i) => TimetableLesson.fromJson(i))
           .toList(),
-      rsubstitutionPlanForDate: json['substitutionPlan']['for']['date'] as String,
-      rsubstitutionPlanForWeekday:
+      substitutionPlanForDate: json['substitutionPlan']['for']['date'] as String,
+      substitutionPlanForWeekday:
       json['substitutionPlan']['for']['weekday'] as String,
-      rsubstitutionPlanForWeektype:
+      substitutionPlanForWeektype:
       json['substitutionPlan']['for']['weektype'] as String,
-      rsubstitutionPlanUpdatedDate:
+      substitutionPlanUpdatedDate:
           json['substitutionPlan']['updated']['date'] as String,
-      rsubstitutionPlanUpdatedTime:
+      substitutionPlanUpdatedTime:
           json['substitutionPlan']['updated']['time'] as String,
     );
   }
@@ -61,7 +61,7 @@ class TimetableDay {
       TimetableLesson lesson = lessons[i];
       TimetableSubject selected = getSelectedSubject(
           lesson.subjects, Timetable.days.indexOf(this), lessons.indexOf(lesson),
-          week: rsubstitutionPlanForWeektype);
+          week: substitutionPlanForWeektype);
 
       // If nothing  or a subject (not lunchtime and free lesson) selected return the index...
       if ((selected == null || selected.lesson != freeLesson) && i != 5) {
@@ -93,7 +93,7 @@ class TimetableDay {
     lessons.forEach((lesson) {
       int unit = lessons.indexOf(lesson);
       int s = getSelectedIndex(lesson.subjects, weekday, unit,
-          week: rsubstitutionPlanForWeektype);
+          week: substitutionPlanForWeektype);
       lesson.subjects.forEach((subject) {
         int i = lesson.subjects.indexOf(subject);
         subject.changes.forEach((change) {
@@ -102,7 +102,7 @@ class TimetableDay {
           } else {
             if (i == s) {
               if (change.isExam) {
-                int isMy = change.isMyExam(rsubstitutionPlanForWeektype);
+                int isMy = change.isMyExam(substitutionPlanForWeektype);
                 (isMy == 1 && s != null
                         ? myChanges
                         : (isMy == -1 ? undefinedChanges : otherChanges))
@@ -156,11 +156,11 @@ class TimetableDay {
     }
 
     return SubstitutionPlanDay(
-      date: rsubstitutionPlanForDate,
-      time: rsubstitutionPlanUpdatedTime,
-      weekday: rsubstitutionPlanForWeekday,
-      weektype: rsubstitutionPlanForWeektype,
-      update: rsubstitutionPlanUpdatedDate,
+      date: substitutionPlanForDate,
+      time: substitutionPlanUpdatedTime,
+      weekday: substitutionPlanForWeekday,
+      weektype: substitutionPlanForWeektype,
+      update: substitutionPlanUpdatedDate,
       unparsed: unparsedChanges,
       myChanges: myChanges,
       undefinedChanges: undefinedChanges,

@@ -101,7 +101,7 @@ class SettingsPageView extends SettingsPageState {
           ),
           Section(
             title: AppLocalizations.of(context)
-                .rsubstitutionPlanSettings
+                .substitutionPlanSettings
                 .toUpperCase(),
             children: <Widget>[
               // Sort substitution plan option

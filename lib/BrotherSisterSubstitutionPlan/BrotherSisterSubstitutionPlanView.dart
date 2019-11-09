@@ -42,7 +42,7 @@ class BrotherSisterSubstitutionPlanPageView
               final days1 = await timetable.download(
                 widget.grade ?? Storage.getString(Keys.grade), 
                 true, 
-                onFinished: (successfully) => dataUpdated(context, successfully, AppLocalizations.of(context).rsubstitutionPlan)
+                onFinished: (successfully) => dataUpdated(context, successfully, AppLocalizations.of(context).substitutionPlan)
               );
               setState(() {
                 days = substitutionPlan.load(days1, true);

@@ -28,7 +28,7 @@ class HomePageView extends HomePageState {
           url:
           'https://${Storage.getString(Keys.username)}:${Storage.getString(Keys
               .password)}@www.viktoriaschule-aachen.de/sundvplan/sps/index.html'),
-      Page(AppLocalizations.of(context).rsubstitutionPlan,
+      Page(AppLocalizations.of(context).substitutionPlan,
           Icons.format_list_numbered, SubstitutionPlanPage(),
           url:
           'https://${Storage.getString(Keys.username)}:${Storage.getString(Keys

@@ -63,8 +63,7 @@ abstract class LoadingPageState extends State<LoadingPage>
       }
 
       // Check if logged in
-      if (Storage.get(Keys.grade) == null ||
-          Storage.get(Keys.username) == null ||
+      if (Storage.get(Keys.username) == null ||
           Storage.get(Keys.password) == null) {
           Navigator.of(context).pushReplacementNamed('/login');
           return;
@@ -90,7 +89,7 @@ abstract class LoadingPageState extends State<LoadingPage>
             .of(context)
             .updates);
         texts.add(AppLocalizations.of(context).timetable);
-        texts.add(AppLocalizations.of(context).rsubstitutionPlan);
+        texts.add(AppLocalizations.of(context).substitutionPlan);
         texts.add(AppLocalizations.of(context).workGroups);
         texts.add(AppLocalizations.of(context).calendar);
         texts.add(AppLocalizations.of(context).subjects);
@@ -296,7 +295,7 @@ abstract class LoadingPageState extends State<LoadingPage>
           SubstitutionPlan.load(Timetable.getTimetable(), false);
         }, 2, AppLocalizations
             .of(context)
-            .rsubstitutionPlan);
+            .substitutionPlan);
       } else if (key == 'workgroups') {
         download(() async {
           await WorkGroups.download(

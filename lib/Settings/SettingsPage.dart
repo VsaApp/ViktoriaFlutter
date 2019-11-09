@@ -81,7 +81,7 @@ abstract class SettingsPageState extends State<SettingsPage> {
       timetableVerion = Storage.getStringList(Keys.historyDate('timetable'));
       pages = [
         AppLocalizations.of(context).timetable,
-        AppLocalizations.of(context).rsubstitutionPlan,
+        AppLocalizations.of(context).substitutionPlan,
         AppLocalizations.of(context).calendar,
         AppLocalizations.of(context).cafetoria,
         AppLocalizations.of(context).workGroups,

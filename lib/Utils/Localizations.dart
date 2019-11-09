@@ -15,7 +15,7 @@ class AppLocalizations {
     'de': {
       'title': 'Viktoria',
       'timetable': 'Stundenplan',
-      'rsubstitutionPlan': 'Vertretungsplan',
+      'substitutionPlan': 'Vertretungsplan',
       'pupil': 'Schüler*In',
       'teacher': 'Lehrer*In',
       'pleaseSelect': 'Bitte auswählen',
@@ -23,8 +23,8 @@ class AppLocalizations {
       'checkLogin': 'Anmeldedaten überprüfen',
       'developerOptions': 'Entwickler',
       'fieldCantBeEmpty': 'Das Feld darf nicht leer sein',
-      'pupilUsername': 'Nutzername der Homepage',
-      'pupilPassword': 'Passwort der Homepage',
+      'pupilUsername': 'Nutzername der Schul-PCs',
+      'pupilPassword': 'Passwort der Schule-PCs',
       'teacherUsername': 'Kürzel',
       'teacherPassword': 'Passwort',
       'cafetoriaId': 'ID',
@@ -76,7 +76,7 @@ class AppLocalizations {
       'selectDate': 'Datum auswählen',
       'nowADeveloper': 'Du bist jetzt ein Entwickler!',
       'nowNoDeveloper': 'Du bist kein Entwickler mehr!',
-      'rsubstitutionPlanUpdated': 'Neuer Vertretungsplan für %s',
+      'substitutionPlanUpdated': 'Neuer Vertretungsplan für %s',
       'goOnline': 'Du musst online sein beim ersten Mal laden!',
       'unparsed': 'Nicht erkannt',
       'yes': 'Ja',
@@ -109,7 +109,7 @@ class AppLocalizations {
       'event': 'Termin',
       'showCafetoriaInTimetable': 'Cafetoriamenüs anzeigen',
       'timetableSettings': 'Stundenplan',
-      'rsubstitutionPlanSettings': 'Vertretungsplan',
+      'substitutionPlanSettings': 'Vertretungsplan',
       'loadNewestData': 'Aktuellste Version',
       'coursesLanguagesArts': 'Sprachlich-literarisch-künstlerisch',
       'coursesSocialScienes': 'Gesellschaftswissenschaftlich',
@@ -305,8 +305,8 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]['newTimetableInfo'];
   }
 
-  String get rsubstitutionPlanUpdated {
-    return _localizedValues[locale.languageCode]['rsubstitutionPlanUpdated'];
+  String get substitutionPlanUpdated {
+    return _localizedValues[locale.languageCode]['substitutionPlanUpdated'];
   }
 
   String get unparsed {
@@ -407,8 +407,8 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]['timetable'];
   }
 
-  String get rsubstitutionPlan {
-    return _localizedValues[locale.languageCode]['rsubstitutionPlan'];
+  String get substitutionPlan {
+    return _localizedValues[locale.languageCode]['substitutionPlan'];
   }
 
   String get pupil {
@@ -613,8 +613,8 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]['timetableSettings'];
   }
 
-  String get rsubstitutionPlanSettings {
-    return _localizedValues[locale.languageCode]['rsubstitutionPlanSettings'];
+  String get substitutionPlanSettings {
+    return _localizedValues[locale.languageCode]['substitutionPlanSettings'];
   }
 
   String get coursesLanguagesArts {

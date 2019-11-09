@@ -3,7 +3,7 @@ import 'SubstitutionPlanModel.dart';
 
 List<SubstitutionPlanDay> load(List<TimetableDay> _days, bool temp) {
   List<SubstitutionPlanDay> days = _days
-      .where((day) => day.rsubstitutionPlanForWeekday != '')
+      .where((day) => day.substitutionPlanForWeekday != '')
       .map((day) => day.getSubstitutionPlanDay())
       .toList();
 

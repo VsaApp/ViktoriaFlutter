@@ -35,7 +35,7 @@ class SubstitutionPlanPageView extends SubstitutionPlanPageState {
           controller: controller,
           onUpdate: () async {
             await timetable.download(Storage.getString(Keys.grade), false, onFinished: (successfully) {
-              dataUpdated(context, successfully, AppLocalizations.of(context).rsubstitutionPlan);
+              dataUpdated(context, successfully, AppLocalizations.of(context).substitutionPlan);
             });
             substitutionPlan.load(timetable.getTimetable(), false);
             setState(() =>

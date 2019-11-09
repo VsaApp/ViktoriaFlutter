@@ -81,27 +81,6 @@ class LoginPageView extends LoginPageState {
                     key: pupilFormKey,
                     child: Column(
                       children: <Widget>[
-                        // Grade selector
-                        SizedBox(
-                          width: double.infinity,
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              isDense: true,
-                              items: LoginPageState.grades.map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                              value: grade,
-                              onChanged: (grade) {
-                                setState(() {
-                                  this.grade = grade;
-                                });
-                              },
-                            ),
-                          ),
-                        ),
                         // Username input
                         TextFormField(
                           controller: usernameController,

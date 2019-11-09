@@ -125,7 +125,7 @@ class TimetableDayListView extends TimetableDayListState {
             :
                 // Show list of changes
                 lesson.subjects[_selected]
-                    .getChanges(widget.day.rsubstitutionPlanForWeektype)
+                    .getChanges(widget.day.substitutionPlanForWeektype)
                             .length >
                         0
                     ? Padding(
@@ -143,13 +143,13 @@ class TimetableDayListView extends TimetableDayListState {
                                 (lesson.subjects[_selected].unsures > 0 ||
                                     (lesson.subjects[_selected]
                                         .getChanges(widget.day
-                                        .rsubstitutionPlanForWeektype)
+                                        .substitutionPlanForWeektype)
                                         .map((change) => change.isExam)
                                         .toList()
                                         .contains(true) &&
                                         lesson.subjects[_selected]
                                             .getChanges(widget.day
-                                            .rsubstitutionPlanForWeektype)
+                                            .substitutionPlanForWeektype)
                                             .where((change) =>
                                         !change.isExam)
                                             .toList()
@@ -165,7 +165,7 @@ class TimetableDayListView extends TimetableDayListState {
                               ]
                                 ..addAll(lesson.subjects[_selected]
                                     .getChanges(
-                                    widget.day.rsubstitutionPlanForWeektype)
+                                    widget.day.substitutionPlanForWeektype)
                                   .map((change) {
                                     return Padding(
                                       padding: EdgeInsets.only(
@@ -176,14 +176,14 @@ class TimetableDayListView extends TimetableDayListState {
                                             0 ||
                                             (lesson.subjects[_selected]
                                                 .getChanges(widget.day
-                                                .rsubstitutionPlanForWeektype)
+                                                .substitutionPlanForWeektype)
                                                 .map((change) =>
                                             change.isExam)
                                                 .toList()
                                                 .contains(true) &&
                                                 lesson.subjects[_selected]
                                                     .getChanges(widget.day
-                                                    .rsubstitutionPlanForWeektype)
+                                                    .substitutionPlanForWeektype)
                                                     .where((change) =>
                                                 !change.isExam)
                                                     .toList()
@@ -192,7 +192,7 @@ class TimetableDayListView extends TimetableDayListState {
                                         change: change,
                                         changes: lesson.subjects[_selected]
                                             .getChanges(widget.day
-                                            .rsubstitutionPlanForWeektype),
+                                            .substitutionPlanForWeektype),
                                         weekday: widget.dayIndex,
                                       ),
                                     );

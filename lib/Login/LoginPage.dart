@@ -4,6 +4,7 @@ import 'dart:io' show Platform;
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:viktoriaflutter/Utils/Id.dart';
@@ -25,27 +26,6 @@ abstract class LoginPageState extends State<LoginPage> {
   int online;
   bool pupilCredentialsCorrect = true;
   bool teacherCredentialsCorrect = true;
-  static List<String> grades = [
-    '5a',
-    '5b',
-    '5c',
-    '6a',
-    '6b',
-    '6c',
-    '7a',
-    '7b',
-    '7c',
-    '8a',
-    '8b',
-    '8c',
-    '9a',
-    '9b',
-    '9c',
-    'EF',
-    'Q1',
-    'Q2'
-  ];
-  String grade = grades[0];
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   final idController = TextEditingController();
@@ -56,8 +36,7 @@ abstract class LoginPageState extends State<LoginPage> {
     if (Platform.isAndroid) {
       WidgetsBinding.instance.addPostFrameCallback((a) {
         MethodChannel('viktoriaflutter').invokeMethod('applyTheme', {
-          'color': Theme
-              .of(context)
+          'color': Theme.of(context)
               .primaryColor
               .value
               .toRadixString(16)
@@ -72,15 +51,12 @@ abstract class LoginPageState extends State<LoginPage> {
   // Check if credentials entered are correct
   void checkForm() async {
     setState(() => isCheckingForm = true);
-    String _username =
-        sha256.convert(utf8.encode(usernameController.text)).toString();
-    String _password =
-        sha256.convert(utf8.encode(passwordController.text)).toString();
-    String response =
-    await fetchData('/login/$_username/$_password/', auth: false);
+    Response response = await fetch(
+        '$apiUrl/login/'.replaceFirst('://', '://${usernameController.text}:${passwordController.text}@'),
+        auth: true);
 
     try {
-      pupilCredentialsCorrect = json.decode(response)['status'];
+      pupilCredentialsCorrect = response.statusCode == 200;
     } catch (e) {
       online = -1;
       Scaffold.of(context).showSnackBar(
@@ -102,7 +78,6 @@ abstract class LoginPageState extends State<LoginPage> {
       askAgbDse(() async {
         Storage.setString(Keys.username, usernameController.text);
         Storage.setString(Keys.password, passwordController.text);
-        Storage.setString(Keys.grade, grade);
 
         Map<String, dynamic> alreadyInitialized = await isInitialized();
         if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
@@ -134,18 +109,12 @@ abstract class LoginPageState extends State<LoginPage> {
         barrierDismissible: false,
         builder: (BuildContext context1) {
           return SimpleDialog(
-              title: Text(AppLocalizations
-                  .of(context)
-                  .agbDse,
-                  style: TextStyle(color: Theme
-                      .of(context)
-                      .accentColor)),
+              title: Text(AppLocalizations.of(context).agbDse,
+                  style: TextStyle(color: Theme.of(context).accentColor)),
               children: <Widget>[
                 Padding(
                     padding: EdgeInsets.only(left: 20, right: 20),
-                    child: Text(AppLocalizations
-                        .of(context)
-                        .accecptDseAndAgb)),
+                    child: Text(AppLocalizations.of(context).accecptDseAndAgb)),
                 Padding(
                     padding: EdgeInsets.only(right: 20),
                     child: Column(
@@ -154,13 +123,9 @@ abstract class LoginPageState extends State<LoginPage> {
                           FlatButton(
                             padding: EdgeInsets.all(0),
                             child: Text(
-                              AppLocalizations
-                                  .of(context)
-                                  .readAgbDse,
+                              AppLocalizations.of(context).readAgbDse,
                               style: TextStyle(
-                                  color: Theme
-                                      .of(context)
-                                      .accentColor),
+                                  color: Theme.of(context).accentColor),
                               textAlign: TextAlign.end,
                             ),
                             onPressed: () => launchURL(agbUrl),
@@ -171,27 +136,19 @@ abstract class LoginPageState extends State<LoginPage> {
                                 FlatButton(
                                   padding: EdgeInsets.all(0),
                                   child: Text(
-                                      AppLocalizations
-                                          .of(context)
-                                          .reject,
+                                      AppLocalizations.of(context).reject,
                                       style: TextStyle(
-                                          color: Theme
-                                              .of(context)
-                                              .accentColor),
+                                          color: Theme.of(context).accentColor),
                                       textAlign: TextAlign.end),
                                   onPressed: () => Navigator.pop(context),
                                 ),
                                 FlatButton(
                                     padding: EdgeInsets.all(0),
                                     child: Text(
-                                        AppLocalizations
-                                            .of(context)
-                                            .accept,
+                                        AppLocalizations.of(context).accept,
                                         style: TextStyle(
                                             color:
-                                            Theme
-                                                .of(context)
-                                                .accentColor),
+                                                Theme.of(context).accentColor),
                                         textAlign: TextAlign.end),
                                     onPressed: () {
                                       Navigator.pop(context);
@@ -208,32 +165,24 @@ abstract class LoginPageState extends State<LoginPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text(AppLocalizations
-                .of(context)
-                .syncPhone),
+            title: Text(AppLocalizations.of(context).syncPhone),
             content: Column(
               children: <Widget>[
-                Text(AppLocalizations
-                    .of(context)
-                    .syncPhoneDescription),
+                Text(AppLocalizations.of(context).syncPhoneDescription),
                 TextFormField(
                   controller: idController,
                   validator: (value) {
                     if (value.isEmpty) {
-                      return AppLocalizations
-                          .of(context)
-                          .fieldCantBeEmpty;
+                      return AppLocalizations.of(context).fieldCantBeEmpty;
                     }
                   },
                   decoration: InputDecoration(
-                      hintText: AppLocalizations
-                          .of(context)
-                          .syncPhoneId),
+                      hintText: AppLocalizations.of(context).syncPhoneId),
                   onFieldSubmitted: (value) async {
                     Id.overrideId(value);
                     print(value);
                     Map<String, dynamic> alreadyInitialized =
-                    await isInitialized();
+                        await isInitialized();
                     if (alreadyInitialized != null) {
                       askOldDataLoading();
                     } else {
@@ -246,18 +195,14 @@ abstract class LoginPageState extends State<LoginPage> {
             ),
             actions: <Widget>[
               FlatButton(
-                child: Text(AppLocalizations
-                    .of(context)
-                    .skip),
+                child: Text(AppLocalizations.of(context).skip),
                 onPressed: () {
                   Navigator.of(context).pop();
                   Navigator.pushReplacementNamed(context, '/');
                 },
               ),
               FlatButton(
-                child: Text(AppLocalizations
-                    .of(context)
-                    .ok),
+                child: Text(AppLocalizations.of(context).ok),
                 onPressed: () async {
                   Id.overrideId(idController.text);
                   await syncWithTags();
@@ -275,26 +220,18 @@ abstract class LoginPageState extends State<LoginPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text(AppLocalizations
-                .of(context)
-                .loadOldData),
-            content: Text(AppLocalizations
-                .of(context)
-                .loadOldDataDescription),
+            title: Text(AppLocalizations.of(context).loadOldData),
+            content: Text(AppLocalizations.of(context).loadOldDataDescription),
             actions: <Widget>[
               FlatButton(
-                child: Text(AppLocalizations
-                    .of(context)
-                    .no),
+                child: Text(AppLocalizations.of(context).no),
                 onPressed: () {
                   Navigator.of(context).pop();
                   Navigator.pushReplacementNamed(context, '/');
                 },
               ),
               FlatButton(
-                child: Text(AppLocalizations
-                    .of(context)
-                    .yes),
+                child: Text(AppLocalizations.of(context).yes),
                 onPressed: () async {
                   await syncWithTags();
                   Navigator.of(context).pop();

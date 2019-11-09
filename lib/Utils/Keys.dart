@@ -88,9 +88,9 @@ class Keys {
     }
   }
 
-  // rsubstitutionPlan-GRADE-DAY saves the substitution plan...
-  static String rsubstitutionPlan(String grade, String day) {
-    return 'rsubstitutionPlan-$grade-$day';
+  // substitutionPlan-GRADE-DAY saves the substitution plan...
+  static String substitutionPlan(String grade, String day) {
+    return 'substitutionPlan-$grade-$day';
   }
 
   // exams-SUBJECTNAME saves if user writing exams in this course...
