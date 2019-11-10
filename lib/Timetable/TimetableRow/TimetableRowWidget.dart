@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Rooms.dart';
 import 'package:viktoriaflutter/Utils/Times.dart';
-import '../TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
 
 class TimetableRow extends StatelessWidget {
   final TimetableSubject subject;

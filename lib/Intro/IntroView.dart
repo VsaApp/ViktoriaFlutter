@@ -2,20 +2,22 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 
-import '../Cafetoria/CafetoriaModel.dart';
-import '../Cafetoria/DayCard/DayCardWidget.dart';
-import '../Calendar/CalendarModel.dart';
-import '../Calendar/EventCard/EventCard.dart';
+import 'package:viktoriaflutter/Utils/Models/WorkGroupsModel.dart';
+import 'package:viktoriaflutter/Utils/Models/CafetoriaModel.dart';
+import 'package:viktoriaflutter/Utils/Models/SubstitutionPlanModel.dart';
+import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models/CalendarModel.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import '../SubstitutionPlan/SubstitutionPlanModel.dart';
-import '../SubstitutionPlan/SubstitutionPlanRow/SubstitutionPlanRowWidget.dart';
 import 'package:viktoriaflutter/Utils/SectionWidget.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import '../Timetable/TimetableModel.dart';
-import '../Timetable/TimetableRow/TimetableRowWidget.dart';
-import '../WorkGroups/DayCard/DayCardWidget.dart';
-import '../WorkGroups/WorkGroupsModel.dart';
+
+import 'package:viktoriaflutter/Cafetoria/DayCard/DayCardWidget.dart';
+import 'package:viktoriaflutter/Calendar/EventCard/EventCard.dart';
+import 'package:viktoriaflutter/SubstitutionPlan/SubstitutionPlanRow/SubstitutionPlanRowWidget.dart';
+import 'package:viktoriaflutter/Timetable/TimetableRow/TimetableRowWidget.dart';
+import 'package:viktoriaflutter/WorkGroups/DayCard/DayCardWidget.dart';
+
 import 'IntroPage.dart';
 import 'IntroSlider/IntroSliderWidget.dart';
 import 'Slide/SlideWidget.dart';
@@ -126,7 +128,7 @@ class IntroPageView extends IntroPageState {
     CafetoriaDay cafetoriaDay = CafetoriaDay(
       weekday: 'Montag',
       date: '11.3.2019',
-      menues: [
+      menus: [
         CafetoriaMenu(
           name: 'Fleischbällchen mit Reis',
           time: '',

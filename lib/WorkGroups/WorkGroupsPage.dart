@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:viktoriaflutter/Utils/Update.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'WorkGroupsData.dart';
-import 'WorkGroupsModel.dart';
+import 'package:viktoriaflutter/Utils/Models/WorkGroupsModel.dart';
 import 'WorkGroupsView.dart';
 
 class WorkGroupsPage extends StatefulWidget {

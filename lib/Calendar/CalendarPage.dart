@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'CalendarData.dart';
 import 'CalendarGrid/CalendarGridWidget.dart';
-import 'CalendarModel.dart';
+import 'package:viktoriaflutter/Utils/Models/CalendarModel.dart';
 import 'EventCard/EventCard.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Update.dart';

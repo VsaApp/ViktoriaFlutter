@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../SubstitutionPlan/SubstitutionPlanData.dart' as SubstitutionPlan;
 import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
-import '../TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
 import 'TimetableSelectDialogView.dart';
 
 class TimetableSelectDialog extends StatefulWidget {
@@ -59,7 +59,7 @@ abstract class TimetableSelectDialogState extends State<TimetableSelectDialog>
         .toList();
   }
 
-  TimetableSubject isOnlyRoomDiffrent(TimetableSubject subject) {
+  TimetableSubject isOnlyRoomDifferent(TimetableSubject subject) {
     if (subject.teacher == '') return null;
     List<TimetableSubject> possibleSubject = (subject.week == 'A'
         ? getBSubjects()
@@ -95,14 +95,14 @@ abstract class TimetableSelectDialogState extends State<TimetableSelectDialog>
             Timetable.days.indexOf(day), day.lessons.indexOf(lesson),
             selectedB: (subject.week == 'A' ? getBSubjects()[0] : subject));
       }
-      // When there is the same lesson and only the room is diffrent...
-      else if (isOnlyRoomDiffrent(subject) != null) {
+      // When there is the same lesson and only the room is Different...
+      else if (isOnlyRoomDifferent(subject) != null) {
         setSelectedSubject(
-            (subject.week == 'A' ? subject : isOnlyRoomDiffrent(subject)),
+            (subject.week == 'A' ? subject : isOnlyRoomDifferent(subject)),
             Timetable.days.indexOf(day),
             day.lessons.indexOf(lesson),
             selectedB:
-            (subject.week == 'A' ? isOnlyRoomDiffrent(subject) : subject));
+            (subject.week == 'A' ? isOnlyRoomDifferent(subject) : subject));
       } else {
         lastSelected = subject;
         return;
@@ -112,7 +112,7 @@ abstract class TimetableSelectDialogState extends State<TimetableSelectDialog>
     if (widget.enableWrapper) Navigator.pop(context);
     widget.onSelected();
 
-    // Synchronise tags for notifications
+    // Synchronize tags for notifications
     syncTags();
     SubstitutionPlan.load(Timetable.days, false);
   }

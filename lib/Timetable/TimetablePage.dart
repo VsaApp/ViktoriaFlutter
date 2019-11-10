@@ -4,14 +4,14 @@ import '../Home/HomePage.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import '../SubstitutionPlan/SubstitutionPlanData.dart' as substitutionPlan;
-import '../SubstitutionPlan/SubstitutionPlanModel.dart';
+import 'package:viktoriaflutter/Utils/Models/SubstitutionPlanModel.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/TabProxy.dart';
 import 'package:viktoriaflutter/Utils/Update.dart';
 import 'TimetableData.dart' as timetable;
 import 'TimetableDayList/TimetableDayListWidget.dart';
-import 'TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
 
 class TimetablePage extends StatefulWidget {
   @override
@@ -103,7 +103,7 @@ class TimetableView extends State<TimetablePage>
         8,
       ).add(Duration(
           minutes: [60, 130, 210, 280, 360, 420, 480, 545][days[weekday]
-              .getUserLesseonsCount(
+              .getUserLessonsCount(
               AppLocalizations
                   .of(context)
                   .freeLesson) -

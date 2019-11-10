@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import '../Timetable/TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
 
 // Describes the substitution plan
 class SubstitutionPlan {
@@ -37,7 +37,7 @@ class SubstitutionPlanDay {
   });
 }
 
-// Desrcibes a change which could not be parsed...
+// Describes a change which could not be parsed...
 class UnparsedChange {
   final int unit;
   final List<dynamic> original;

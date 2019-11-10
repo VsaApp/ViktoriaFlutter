@@ -5,9 +5,9 @@ import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/SectionWidget.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import '../Subjects/SubjectsModel.dart';
+import 'package:viktoriaflutter/Utils/Models/SubjectsModel.dart';
 import '../Timetable/TimetableData.dart' as Timetable;
-import '../Timetable/TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
 import 'CourseEdit/CourseEditWidget.dart';
 import 'CoursesPage.dart';
 
@@ -103,11 +103,11 @@ class CoursesPageView extends CoursesPageState {
       children: section0Items,
     ));
     sections.add(Section(
-      title: AppLocalizations.of(context).coursesSocialScienes,
+      title: AppLocalizations.of(context).coursesSocialSciences,
       children: section1Items,
     ));
     sections.add(Section(
-      title: AppLocalizations.of(context).coursesNatureScienes,
+      title: AppLocalizations.of(context).coursesNatureSciences,
       children: section2Items,
     ));
     sections.add(Section(

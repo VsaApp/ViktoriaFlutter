@@ -163,7 +163,7 @@ abstract class HomePageState extends State<HomePage> {
       _firebaseMessaging.getToken().then((String token) async {
         assert(token != null);
 
-        // Synchronise tags for notifications
+        // Synchronize tags for notifications
         await initTags(token);
         await syncWithTags();
         await syncTags();

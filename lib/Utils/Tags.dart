@@ -5,7 +5,6 @@ import 'package:device_info/device_info.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 import 'Times.dart';
-import 'Id.dart';
 import 'Keys.dart';
 import 'Network.dart';
 import 'Selection.dart';
@@ -112,7 +111,7 @@ Future deleteTags(List<String> tags) async {
 void syncDaysLength() {
   String lengths = '';
   getTimetable().forEach((day) {
-    int count = day.getUserLesseonsCount('Freistunde');
+    int count = day.getUserLessonsCount('Freistunde');
     lengths += times[count].split(' - ')[1] + '|';
   });
   Storage.setString(Keys.daysLengths, lengths);

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../CalendarModel.dart';
+import 'package:viktoriaflutter/Utils/Models/CalendarModel.dart';
 import 'CalendarGridView.dart';
 import 'CalendarGridEvent/CalendarGridEventWidget.dart';
 

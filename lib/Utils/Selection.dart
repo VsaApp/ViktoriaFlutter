@@ -1,6 +1,6 @@
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import '../Timetable/TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
 
 String getKey(TimetableSubject subject) {
   return '${subject.lesson}-${subject.teacher}';

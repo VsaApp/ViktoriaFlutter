@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-import '../../Cafetoria/CafetoriaModel.dart';
+import 'package:viktoriaflutter/Utils/Models/CafetoriaModel.dart';
 import '../../Cafetoria/DayCard/DayCardWidget.dart';
 import '../../Calendar/EventCard/EventCard.dart';
 import '../../Courses/CourseEdit/CourseEditWidget.dart';
@@ -11,8 +11,8 @@ import '../../SubstitutionPlan/SubstitutionPlanRow/SubstitutionPlanRowWidget.dar
 import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import '../../WorkGroups/DayCard/DayCardWidget.dart';
-import '../../WorkGroups/WorkGroupsModel.dart';
-import '../TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models/WorkGroupsModel.dart';
+import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
 import '../TimetableRow/TimetableRowWidget.dart';
 import '../TimetableSelectDialog/TimetableSelectDialogWidget.dart';
 import 'TimetableDayListWidget.dart';
@@ -224,7 +224,7 @@ class TimetableDayListView extends TimetableDayListState {
       infoItems.add(Padding(
         padding: EdgeInsets.only(top: 10),
         child: CafetoriaDayCard(
-          day: Cafetoria.menues.days[widget.dayIndex],
+          day: Cafetoria.menus.days[widget.dayIndex],
           showWeekday: false,
         ),
       ));

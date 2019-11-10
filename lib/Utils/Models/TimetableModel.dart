@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../SubstitutionPlan/SubstitutionPlanModel.dart';
+import 'package:viktoriaflutter/Utils/Models/SubstitutionPlanModel.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
 
 // Describes the whole timetable...
@@ -56,7 +56,7 @@ class TimetableDay {
     );
   }
 
-  int getUserLesseonsCount(String freeLesson) {
+  int getUserLessonsCount(String freeLesson) {
     for (int i = lessons.length - 1; i >= 0; i--) {
       TimetableLesson lesson = lessons[i];
       TimetableSubject selected = getSelectedSubject(
@@ -131,7 +131,7 @@ class TimetableDay {
           continue;
         }
       }
-      // Delete all double chanes in the other lists...
+      // Delete all double changes in the other lists...
       for (int j = 0; j < listToEdit.length; j++) {
         Change change = listToEdit[j];
         // If change is in myChanges, delete in other lists...

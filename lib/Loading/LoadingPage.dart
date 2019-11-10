@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show MethodChannel, rootBundle;
 import 'package:viktoriaflutter/Utils/Network.dart';
-import 'package:viktoriaflutter/Utils/Id.dart';
 import 'package:viktoriaflutter/Utils/Errors.dart' as bugs;
 
 import '../Cafetoria/CafetoriaData.dart' as Cafetoria;
@@ -44,7 +43,6 @@ abstract class LoadingPageState extends State<LoadingPage>
   void initState() {
     () async {
       await Storage.init();
-      await Id.init();
       bugs.init();
 
       // Set default options
@@ -156,23 +154,26 @@ abstract class LoadingPageState extends State<LoadingPage>
   Future downloadAll() async {
     stopwatch = Stopwatch()
       ..start();
-    String oldGrade = Storage.getString(Keys.oldGrade) ?? '--';
-    String newGrade = Storage.getString(Keys.grade);
-    Storage.setString(Keys.oldGrade, newGrade);
+
     Map<String, String> currentData = json
         .decode(Storage.getString(Keys.updates) ?? '{}')
         .cast<String, String>();
     Map<String, String> newData = {};
     try {
-      String raw = await fetchData('/updates');
-      if (raw.contains('401 Authorization Required')) {
+      final raw = await fetch('/updates');
+      if (raw == null) throw 'Updates response is undefined';
+      if (raw.statusCode == 401) {
         Navigator.of(context).pushReplacementNamed('/login');
         return;
       }
-      newData = json.decode(raw).cast<String, String>();
+      newData = json.decode(raw.body).cast<String, String>();
     } catch (e) {
       newData = currentData;
     }
+    String oldGrade = Storage.getString(Keys.grade) ?? '--';
+    String newGrade = newData['grade'];
+    Storage.setString(Keys.oldGrade, newGrade);
+    
     setState(() {
       countCurrentDownloads--;
       texts.remove(AppLocalizations
@@ -186,7 +187,7 @@ abstract class LoadingPageState extends State<LoadingPage>
         .toList()[0]
         .split(':')[1]
         .trim();
-    if (int.parse(newData['app']) > int.parse(appVersion.split('+')[1])) {
+    if (int.parse(newData['minAppLevel']) > int.parse(appVersion.split('+')[1])) {
       showOldAppDialog(appVersion);
       return;
     }

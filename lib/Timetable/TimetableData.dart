@@ -4,17 +4,16 @@ import 'dart:math';
 
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
-import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
 
-import 'TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
 
 /// Downloads the timetable
 ///
 /// Grade defines for which grade the timetable should be download.
 /// If temp is true, the downloaded timetable will be returned and not set in the static class (Default temp is false).
-/// If update is true, the untiplan will be downloaded from the server and if not it only would be loaded from the storage.
+/// If update is true, the timetable will be downloaded from the server and if not it only would be loaded from the storage.
 Future<List<TimetableDay>> download(String grade, bool temp,
     {bool update = true, Function(bool successfully) onFinished}) async {
   // Check if a date is selected...
@@ -123,6 +122,6 @@ Future checkTimetableUpdated(String version1, String version2) async {
       await deleteTags(keysToReset);
     }
   } catch (_) {
-    print('Failed to compare untiplan versions');
+    print('Failed to compare timetable versions');
   }
 }

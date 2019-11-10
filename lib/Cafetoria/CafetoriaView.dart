@@ -4,7 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'ActionFAB/ActionFABWidget.dart';
 import 'CafetoriaData.dart';
-import 'CafetoriaModel.dart';
+import 'package:viktoriaflutter/Utils/Models/CafetoriaModel.dart';
 import 'CafetoriaPage.dart';
 import 'DayCard/DayCardWidget.dart';
 import 'LoginDialog/LoginDialogWidget.dart';
@@ -23,7 +23,7 @@ class CafetoriaPageView extends CafetoriaPageState {
             child: ListView(
               padding: EdgeInsets.only(bottom: 70, left: 10, right: 10, top: 10),
               shrinkWrap: true,
-              children: Cafetoria.menues.days
+              children: Cafetoria.menus.days
                   .map((day) => CafetoriaDayCard(
                         day: day,
                         showWeekday: true,
@@ -48,7 +48,7 @@ class CafetoriaPageView extends CafetoriaPageState {
                           LoginDialog(onFinished: () {
                             download().then((a) {
                               setState(() {
-                                saldo = Cafetoria.menues.saldo;
+                                saldo = Cafetoria.menus.saldo;
                               });
                             });
                           })

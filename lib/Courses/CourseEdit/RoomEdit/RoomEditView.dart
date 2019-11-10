@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Rooms.dart';
-import '../../../Rooms/RoomsModel.dart';
+import 'package:viktoriaflutter/Utils/Models/RoomsModel.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
 
 class RoomEdit extends StatefulWidget {

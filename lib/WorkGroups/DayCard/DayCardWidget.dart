@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-import '../WorkGroupsModel.dart';
+import 'package:viktoriaflutter/Utils/Models/WorkGroupsModel.dart';
 
 class WorkGroupsDayCard extends StatelessWidget {
   const WorkGroupsDayCard({

@@ -4,8 +4,8 @@ import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-import '../../Calendar/CalendarModel.dart';
-import '../TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models/CalendarModel.dart';
+import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
 import 'TimetableDayListView.dart';
 
 class TimetableDayList extends StatefulWidget {
@@ -57,7 +57,7 @@ abstract class TimetableDayListState extends State<TimetableDayList>
           8,
         ).add(Duration(
             minutes: [60, 130, 210, 280, 360, 420, 480, 545][
-            Timetable.days[weekday].getUserLesseonsCount(
+            Timetable.days[weekday].getUserLessonsCount(
                 AppLocalizations
                     .of(context)
                     .freeLesson) -

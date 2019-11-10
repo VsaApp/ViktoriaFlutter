@@ -4,7 +4,7 @@ import '../Home/HomePage.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import '../Timetable/TimetableData.dart' as timetable;
 import 'SubstitutionPlanData.dart' as substitutionPlan;
-import 'SubstitutionPlanModel.dart';
+import 'package:viktoriaflutter/Utils/Models/SubstitutionPlanModel.dart';
 import 'SubstitutionPlanView.dart';
 
 class SubstitutionPlanPage extends StatefulWidget {
@@ -74,7 +74,7 @@ abstract class SubstitutionPlanPageState extends State<SubstitutionPlanPage>
                 .add(Duration(
                 minutes: [60, 130, 210, 280, 360, 420, 480, 545][timetable
                     .getTimetable()[weekday]
-                    .getUserLesseonsCount(
+                    .getUserLessonsCount(
                     AppLocalizations
                         .of(context)
                         .freeLesson) -

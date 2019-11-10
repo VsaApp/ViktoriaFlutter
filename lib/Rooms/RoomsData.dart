@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import 'RoomsModel.dart';
+import 'package:viktoriaflutter/Utils/Models/RoomsModel.dart';
 
 // Download the timetable...
 Future download({bool update = true, Function(bool successfully) onFinished}) async {

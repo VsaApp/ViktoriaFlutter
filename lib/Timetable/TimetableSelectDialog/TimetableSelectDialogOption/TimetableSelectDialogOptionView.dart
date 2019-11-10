@@ -4,7 +4,7 @@ import '../../../Courses/CourseEdit/CourseEditWidget.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import '../../TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
 import '../../TimetableRow/TimetableRowWidget.dart';
 import 'TimetableSelectDialogOptionWidget.dart';
 

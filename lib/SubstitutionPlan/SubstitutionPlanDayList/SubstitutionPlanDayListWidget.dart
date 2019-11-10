@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../SubstitutionPlanModel.dart';
+import 'package:viktoriaflutter/Utils/Models/SubstitutionPlanModel.dart';
 import 'SubstitutionPlanDayListView.dart';
 
 class SubstitutionPlanDayList extends StatefulWidget {

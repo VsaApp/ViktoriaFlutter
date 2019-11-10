@@ -1,7 +1,7 @@
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:flutter/material.dart';
 
-import '../CalendarModel.dart';
+import 'package:viktoriaflutter/Utils/Models/CalendarModel.dart';
 
 class EventCard extends StatelessWidget {
   EventCard({@required this.event}) : super();

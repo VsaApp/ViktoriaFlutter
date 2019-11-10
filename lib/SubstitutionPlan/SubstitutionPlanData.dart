@@ -1,5 +1,5 @@
-import '../Timetable/TimetableModel.dart';
-import 'SubstitutionPlanModel.dart';
+import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models/SubstitutionPlanModel.dart';
 
 List<SubstitutionPlanDay> load(List<TimetableDay> _days, bool temp) {
   List<SubstitutionPlanDay> days = _days

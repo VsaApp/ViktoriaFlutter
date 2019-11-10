@@ -5,7 +5,7 @@ import 'dart:math';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import 'WorkGroupsModel.dart';
+import 'package:viktoriaflutter/Utils/Models/WorkGroupsModel.dart';
 
 // Download work groups data...
 Future download({bool update = true, Function(bool successfully) onFinished}) async {

@@ -68,8 +68,8 @@ class AppLocalizations {
           'Vertretungsplan für Geschwisterkind anzeigen',
       'noChanges': 'Keine Änderungen',
       'cafetoria': 'Cafetoria',
-      'cafetoriaNoMenues': 'Keine Menüs vorhanden',
-      'cafetoriaLogin': 'Keyfobdaten eingeben',
+      'cafetoriaNoMenus': 'Keine Menüs vorhanden',
+      'cafetoriaLogin': 'Keyfob-Daten eingeben',
       'workGroups': 'AGs',
       'calendar': 'Kalender',
       'dates': 'Termine',
@@ -112,8 +112,8 @@ class AppLocalizations {
       'substitutionPlanSettings': 'Vertretungsplan',
       'loadNewestData': 'Aktuellste Version',
       'coursesLanguagesArts': 'Sprachlich-literarisch-künstlerisch',
-      'coursesSocialScienes': 'Gesellschaftswissenschaftlich',
-      'coursesNatureScienes': 'Mathematisch-naturwissenschaftlich-technisch',
+      'coursesSocialSciences': 'Gesellschaftswissenschaftlich',
+      'coursesNatureSciences': 'Mathematisch-naturwissenschaftlich-technisch',
       'coursesOthers': 'Sonstige',
       'subjects': 'Fächer',
       'rooms': 'Räume',
@@ -147,8 +147,8 @@ class AppLocalizations {
       'cancel': 'Abbrechen',
       'introScannerTitle': 'Scanner',
       'oldApp':
-      'Die aktuell installierte App Version (VERSION) ist zu alt und wird nicht mehr unterstützt.\n\nBitte sorge dafür, dass du die aktuelle App erhälst! Einfach im Store die aktuelle \'VsaApp\' installieren.',
-      'accecptDseAndAgb':
+      'Die aktuell installierte App Version (VERSION) ist zu alt und wird nicht mehr unterstützt.\n\nBitte sorge dafür, dass du die aktuelle App erhältst! Einfach im Store die aktuelle \'VsaApp\' installieren.',
+      'acceptDseAndAgb':
       'Mit der Nutzung unserer App akzeptierst du unsere AGB und unsere Datenschutzerklärung.',
       'accept': 'Akzeptieren',
       'reject': 'Ablehnen',
@@ -221,8 +221,8 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]['accept'];
   }
 
-  String get accecptDseAndAgb {
-    return _localizedValues[locale.languageCode]['accecptDseAndAgb'];
+  String get acceptDseAndAgb {
+    return _localizedValues[locale.languageCode]['acceptDseAndAgb'];
   }
 
   String get reject {
@@ -341,8 +341,8 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]['onlyOnline'];
   }
 
-  String get cafetoriaNoMenues {
-    return _localizedValues[locale.languageCode]['cafetoriaNoMenues'];
+  String get cafetoriaNoMenus {
+    return _localizedValues[locale.languageCode]['cafetoriaNoMenus'];
   }
 
   String get noCourses {
@@ -621,12 +621,12 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]['coursesLanguagesArts'];
   }
 
-  String get coursesSocialScienes {
-    return _localizedValues[locale.languageCode]['coursesSocialScienes'];
+  String get coursesSocialSciences {
+    return _localizedValues[locale.languageCode]['coursesSocialSciences'];
   }
 
-  String get coursesNatureScienes {
-    return _localizedValues[locale.languageCode]['coursesNatureScienes'];
+  String get coursesNatureSciences {
+    return _localizedValues[locale.languageCode]['coursesNatureSciences'];
   }
 
   String get coursesOthers {

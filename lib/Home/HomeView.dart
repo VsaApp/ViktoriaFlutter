@@ -1,5 +1,3 @@
-import 'dart:io' show Platform;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -100,7 +98,7 @@ class HomePageView extends HomePageState {
                 });
           }
         } else {
-          String grade = Storage.getString(Keys.grade);
+          // String grade = Storage.getString(Keys.grade);
           // TODO: Add scan dialog
         }
       });

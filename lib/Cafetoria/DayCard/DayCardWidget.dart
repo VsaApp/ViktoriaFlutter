@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import '../CafetoriaModel.dart';
+import 'package:viktoriaflutter/Utils/Models/CafetoriaModel.dart';
 
 class CafetoriaDayCard extends StatelessWidget {
   const CafetoriaDayCard({
@@ -16,7 +16,7 @@ class CafetoriaDayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> menues = day.menues
+    List<Widget> menus = day.menus
         .map((menu) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -30,16 +30,16 @@ class CafetoriaDayCard extends StatelessWidget {
                   ),
                 ),
                 menu.time != '' ? Text(menu.time) : Container(),
-                day.menues.indexOf(menu) != day.menues.length - 1
+                day.menus.indexOf(menu) != day.menus.length - 1
                     ? Text('')
                     : Container(),
               ],
             ))
         .toList();
-    if (menues.length == 0) {
-      menues = [
+    if (menus.length == 0) {
+      menus = [
         Text(
-          AppLocalizations.of(context).cafetoriaNoMenues,
+          AppLocalizations.of(context).cafetoriaNoMenus,
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -66,7 +66,7 @@ class CafetoriaDayCard extends StatelessWidget {
                     : null,
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: menues,
+                  children: menus,
                 ),
                 onTap: () => launch('https://www.opc-asp.de/vs-aachen/'),
               ),

@@ -4,7 +4,7 @@ import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import '../../Timetable/TimetableData.dart' as Timetable;
-import '../../Timetable/TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
 import 'CourseEditView.dart';
 
 class CourseEdit extends StatefulWidget {

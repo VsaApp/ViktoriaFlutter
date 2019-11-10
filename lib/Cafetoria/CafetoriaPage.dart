@@ -5,7 +5,7 @@ import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/Update.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'CafetoriaData.dart';
-import 'CafetoriaModel.dart';
+import 'package:viktoriaflutter/Utils/Models/CafetoriaModel.dart';
 import 'CafetoriaView.dart';
 
 class CafetoriaPage extends StatefulWidget {
@@ -14,7 +14,7 @@ class CafetoriaPage extends StatefulWidget {
 }
 
 abstract class CafetoriaPageState extends State<CafetoriaPage> {
-  double saldo = Cafetoria.menues.saldo;
+  double saldo = Cafetoria.menus.saldo;
   bool loading = true;
 
   Future reload() async {
@@ -25,7 +25,7 @@ abstract class CafetoriaPageState extends State<CafetoriaPage> {
       dataUpdated(context, successfully, AppLocalizations.of(context).cafetoria);
     }).then((a) {
       setState(() {
-        saldo = Cafetoria.menues.saldo;
+        saldo = Cafetoria.menus.saldo;
         loading = false;
       });
     });
@@ -42,7 +42,7 @@ abstract class CafetoriaPageState extends State<CafetoriaPage> {
     } else {
       download().then((a) {
         setState(() {
-          saldo = Cafetoria.menues.saldo;
+          saldo = Cafetoria.menus.saldo;
           loading = false;
         });
       });

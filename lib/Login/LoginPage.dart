@@ -1,13 +1,10 @@
-import 'dart:convert';
 import 'dart:io' show Platform;
 
-import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:viktoriaflutter/Utils/Id.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
@@ -114,7 +111,7 @@ abstract class LoginPageState extends State<LoginPage> {
               children: <Widget>[
                 Padding(
                     padding: EdgeInsets.only(left: 20, right: 20),
-                    child: Text(AppLocalizations.of(context).accecptDseAndAgb)),
+                    child: Text(AppLocalizations.of(context).acceptDseAndAgb)),
                 Padding(
                     padding: EdgeInsets.only(right: 20),
                     child: Column(
@@ -175,6 +172,7 @@ abstract class LoginPageState extends State<LoginPage> {
                     if (value.isEmpty) {
                       return AppLocalizations.of(context).fieldCantBeEmpty;
                     }
+                    return null;
                   },
                   decoration: InputDecoration(
                       hintText: AppLocalizations.of(context).syncPhoneId),

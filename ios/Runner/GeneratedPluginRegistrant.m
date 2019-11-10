@@ -10,12 +10,6 @@
 @import add_2_calendar;
 #endif
 
-#if __has_include(<device_id/DeviceIdPlugin.h>)
-#import <device_id/DeviceIdPlugin.h>
-#else
-@import device_id;
-#endif
-
 #if __has_include(<device_info/DeviceInfoPlugin.h>)
 #import <device_info/DeviceInfoPlugin.h>
 #else
@@ -50,7 +44,6 @@
 
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
   [Add2CalendarPlugin registerWithRegistrar:[registry registrarForPlugin:@"Add2CalendarPlugin"]];
-  [DeviceIdPlugin registerWithRegistrar:[registry registrarForPlugin:@"DeviceIdPlugin"]];
   [FLTDeviceInfoPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTDeviceInfoPlugin"]];
   [FLTFirebaseCorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCorePlugin"]];
   [FLTFirebaseMessagingPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseMessagingPlugin"]];

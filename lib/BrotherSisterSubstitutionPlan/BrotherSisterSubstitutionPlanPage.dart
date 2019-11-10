@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../SubstitutionPlan/SubstitutionPlanData.dart' as substitutionPlan;
-import '../SubstitutionPlan/SubstitutionPlanModel.dart';
+import 'package:viktoriaflutter/Utils/Models/SubstitutionPlanModel.dart';
 import '../Timetable/TimetableData.dart' as timetable;
 import 'BrotherSisterSubstitutionPlanView.dart';
 

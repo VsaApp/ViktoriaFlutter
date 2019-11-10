@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import 'CafetoriaModel.dart';
+import 'package:viktoriaflutter/Utils/Models/CafetoriaModel.dart';
 
 // Download cafetoria data from the api...
 Future download({String id, String password, bool update = true, Function(bool successfully) onFinished}) async {
@@ -20,7 +20,7 @@ Future download({String id, String password, bool update = true, Function(bool s
     await fetchDataAndSave(url, Keys.cafetoria, '{}', onFinished: (bool v) => successfully = v);
   }
 
-  Cafetoria.menues = await fetchDays();
+  Cafetoria.menus = await fetchDays();
   if (onFinished != null) onFinished(successfully);
 }
 
@@ -39,12 +39,12 @@ Future<bool> checkLogin({String id, String password}) async {
 }
 
 // Load the preferences data...
-Future<CafetoriaMenues> fetchDays() async {
+Future<CafetoriaMenus> fetchDays() async {
   return parseDays(Storage.getString(Keys.cafetoria));
 }
 
 // Parse the json string to the model structure...
-CafetoriaMenues parseDays(String responseBody) {
+CafetoriaMenus parseDays(String responseBody) {
   final parsed = json.decode(responseBody);
-  return CafetoriaMenues.fromJson(parsed);
+  return CafetoriaMenus.fromJson(parsed);
 }

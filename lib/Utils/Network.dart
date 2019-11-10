@@ -6,12 +6,12 @@ import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 
 Duration maxTime = Duration(seconds: 4);
-String apiUrl = 'https://api.vsa.2bad2c0.de';
-String lookupUrl = 'api.vsa.2bad2c0.de';
+String apiUrl = 'https://vsa.fingeg.de';
+String lookupUrl = 'vsa.fingeg.de';
 String agbUrl = 'https://vsa.2bad2c0.de/agb.html';
-String historyUrl = 'https://history.api.vsa.2bad2c0.de';
+String historyUrl = 'https://vsa.fingeg.de/history';
 
-/// Returns 1 if the api is online, 0 if google.com is online and -1 if everthing is offline
+/// Returns 1 if the api is online, 0 if google.com is online and -1 if everything is offline
 Future<int> get checkOnline async {
   try {
     final result1 = await InternetAddress.lookup(
@@ -35,6 +35,7 @@ String getUrl(String path, {bool auth = true}) {
       ? '${Storage.getString(Keys.username) ?? ''}:${Storage.getString(
       Keys.password) ?? ''}@'
       : '';
+  if (path.contains('@')) authString = '';
   if (path.contains('http')) return path.replaceFirst('://', '://$authString');
   if (!path.startsWith('/')) path = '/' + path;
   return '$apiUrl$path'.replaceFirst('://', '://$authString');
@@ -70,7 +71,7 @@ Future fetchDataAndSave(String url, String key, String defaultValue,
   }
 }
 
-Future<String> fetchData(String url,
+Future<http.Response> fetch(String url,
     {Duration timeout, bool auth = true}) async {
   if (timeout == null) {
     timeout = maxTime;
@@ -78,11 +79,20 @@ Future<String> fetchData(String url,
   url = getUrl(url, auth: auth);
   try {
     final response = await http.Client().get(url).timeout(timeout);
-    return response.body;
+    return response;
   } catch (e) {
     print("Error during fetching ($url): " + e.toString());
-    return "";
+    return null;
   }
+}
+
+Future<String> fetchData(String url,
+    {Duration timeout, bool auth = true}) async {
+  http.Response response = await fetch(url, timeout: timeout, auth: auth);
+  if (response == null) {
+    return '';
+  }
+  return response.body;
 }
 
 Future<String> post(String url, {dynamic body, bool auth = true}) async {

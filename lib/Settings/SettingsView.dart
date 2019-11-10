@@ -2,7 +2,6 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 
-import '../Utils/Id.dart';
 import '../Utils/Keys.dart';
 import '../Utils/Localizations.dart';
 import '../Utils/Network.dart';
@@ -125,7 +124,7 @@ class SettingsPageView extends SettingsPageState {
                     Storage.setBool(
                         Keys.getSubstitutionPlanNotifications, value);
                     getSubstitutionPlanNotifications = value;
-                    // Synchronise tags for notifications
+                    // Synchronize tags for notifications
                     syncTags();
                   });
                 },

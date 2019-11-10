@@ -1,5 +1,4 @@
 // Describes a list of calendar events...
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class Calendar {

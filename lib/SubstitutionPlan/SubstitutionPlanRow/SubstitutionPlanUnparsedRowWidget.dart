@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../SubstitutionPlanModel.dart';
+import 'package:viktoriaflutter/Utils/Models/SubstitutionPlanModel.dart';
 
 class SubstitutionPlanUnparsedRow extends StatelessWidget {
   const SubstitutionPlanUnparsedRow({Key key, this.change, this.changes})

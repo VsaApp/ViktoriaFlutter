@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'DayCard/DayCardWidget.dart';
-import 'WorkGroupsModel.dart';
+import 'package:viktoriaflutter/Utils/Models/WorkGroupsModel.dart';
 import 'WorkGroupsPage.dart';
 
 class WorkGroupsPageView extends WorkGroupsPageState {

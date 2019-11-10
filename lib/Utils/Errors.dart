@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart' show rootBundle;
 
-import 'package:viktoriaflutter/Utils/Id.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';

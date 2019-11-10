@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
 import 'TimetableSelectDialogOptionView.dart';
 
 class TimetableSelectDialogOption extends StatefulWidget {
