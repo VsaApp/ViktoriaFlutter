@@ -1,27 +1,54 @@
-import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
-import 'package:viktoriaflutter/Utils/Models/SubstitutionPlanModel.dart';
+import 'dart:async';
+import 'dart:convert';
 
-List<SubstitutionPlanDay> load(List<TimetableDay> _days, bool temp) {
-  List<SubstitutionPlanDay> days = _days
-      .where((day) => day.substitutionPlanForWeekday != '')
-      .map((day) => day.getSubstitutionPlanDay())
-      .toList();
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Network.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 
-  // Return or set the data in a static object...
-  if (!(temp ?? false)) {
-    days.sort((a, b) =>
-        DateTime(int.parse(a.date.split('.')[2]),
-            int.parse(a.date.split('.')[1]), int.parse(a.date.split('.')[0]))
-            .compareTo(DateTime(int.parse(b.date.split('.')[2]),
-            int.parse(b.date.split('.')[1]), int.parse(b.date.split('.')[0]))));
-    SubstitutionPlan.days = days;
-    return null;
-  } else {
-    return days;
+/// Downloads the substitution plan
+///
+/// If temp is true, the downloaded timetable will be returned and not set in the static class (Default temp is false).
+///
+/// If update is true, the timetable will be downloaded from the server and if not it only would be loaded from the storage.
+Future<SubstitutionPlan> download(
+    {bool update = true, Function(bool successfully) onFinished}) async {
+  bool successfully;
+
+  if (update) {
+    // Default timetable (Only for download errors)
+    String defaultSubstitutionPlan = json.encode([]);
+    await fetchDataAndSave(
+      Urls.substitutionPlan,
+      Keys.substitutionPlan,
+      defaultSubstitutionPlan,
+      onFinished: (int v) => successfully = v == 200,
+    );
   }
+
+  // Parse data...
+  Data.substitutionPlan = fetchSubstitutionPlan();
+
+  if (onFinished != null) onFinished(successfully);
+  return null;
 }
 
 // Returns the static substitution plan...
 List<SubstitutionPlanDay> getSubstitutionPlan() {
-  return SubstitutionPlan.days;
+  return Data.substitutionPlan.days;
+}
+
+/// Get timetable from preferences...
+SubstitutionPlan fetchSubstitutionPlan() {
+  return parseSubstitutionPlan(Storage.getString(Keys.substitutionPlan));
+}
+
+/// Returns parsed timetable...
+SubstitutionPlan parseSubstitutionPlan(String responseBody) {
+  final parsed = json.decode(responseBody);
+  return SubstitutionPlan(
+    days: parsed
+        .map<SubstitutionPlanDay>((day) => SubstitutionPlanDay.fromJson(day))
+        .toList(),
+  );
 }

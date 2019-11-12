@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -18,6 +17,7 @@ import '../Subjects/SubjectsData.dart' as Subjects;
 import '../Teachers/TeachersData.dart' as Teachers;
 import '../Timetable/TimetableData.dart' as Timetable;
 import '../WorkGroups/WorkGroupsData.dart' as WorkGroups;
+import '../Updates/UpdatesData.dart' as Updates;
 import 'LoadingView.dart';
 
 class LoadingPage extends StatefulWidget {
@@ -63,8 +63,8 @@ abstract class LoadingPageState extends State<LoadingPage>
       // Check if logged in
       if (Storage.get(Keys.username) == null ||
           Storage.get(Keys.password) == null) {
-          Navigator.of(context).pushReplacementNamed('/login');
-          return;
+        Navigator.of(context).pushReplacementNamed('/login');
+        return;
       }
 
       checkOnline.then((online) async {
@@ -74,8 +74,7 @@ abstract class LoadingPageState extends State<LoadingPage>
       WidgetsBinding.instance.addPostFrameCallback((a) {
         if (Platform.isAndroid) {
           MethodChannel('viktoriaflutter').invokeMethod('applyTheme', {
-            'color': Theme
-                .of(context)
+            'color': Theme.of(context)
                 .primaryColor
                 .value
                 .toRadixString(16)
@@ -83,9 +82,7 @@ abstract class LoadingPageState extends State<LoadingPage>
                 .toUpperCase(),
           });
         }
-        texts.add(AppLocalizations
-            .of(context)
-            .updates);
+        texts.add(AppLocalizations.of(context).updates);
         texts.add(AppLocalizations.of(context).timetable);
         texts.add(AppLocalizations.of(context).substitutionPlan);
         texts.add(AppLocalizations.of(context).workGroups);
@@ -107,7 +104,7 @@ abstract class LoadingPageState extends State<LoadingPage>
         vsync: this,
       );
       setState(() {
-        animation = Tween<double>(begin: -0.01, end: 0.01).animate(controller)
+        animation = Tween<double>(begin: -0.0, end: 0.01).animate(controller)
           ..addStatusListener((status) {
             if (status == AnimationStatus.completed) {
               controller.reverse();
@@ -134,17 +131,12 @@ abstract class LoadingPageState extends State<LoadingPage>
         barrierDismissible: false,
         builder: (BuildContext context1) {
           return SimpleDialog(
-              title: Text(AppLocalizations
-                  .of(context)
-                  .appTooOld,
-                  style: TextStyle(color: Theme
-                      .of(context)
-                      .accentColor)),
+              title: Text(AppLocalizations.of(context).appTooOld,
+                  style: TextStyle(color: Theme.of(context).accentColor)),
               children: <Widget>[
                 Padding(
                     padding: EdgeInsets.only(left: 20, right: 20),
-                    child: Text(AppLocalizations
-                        .of(context)
+                    child: Text(AppLocalizations.of(context)
                         .oldApp
                         .replaceAll('VERSION', version)))
               ]);
@@ -152,184 +144,165 @@ abstract class LoadingPageState extends State<LoadingPage>
   }
 
   Future downloadAll() async {
-    stopwatch = Stopwatch()
-      ..start();
+    stopwatch = Stopwatch()..start();
 
-    Map<String, String> currentData = json
-        .decode(Storage.getString(Keys.updates) ?? '{}')
-        .cast<String, String>();
-    Map<String, String> newData = {};
-    try {
-      final raw = await fetch('/updates');
-      if (raw == null) throw 'Updates response is undefined';
-      if (raw.statusCode == 401) {
-        Navigator.of(context).pushReplacementNamed('/login');
-        return;
-      }
-      newData = json.decode(raw.body).cast<String, String>();
-    } catch (e) {
-      newData = currentData;
+    // Get current versions of local data
+    final currentData = Updates.getUpdates(loaded: false);
+
+    // Get the versions of server data
+    final completer = Completer<int>();
+    final newData = await Updates.download(onFinished: completer.complete);
+    if (await completer.future == 401) {
+      Navigator.of(context).pushReplacementNamed('/login');
+      return;
     }
+
     String oldGrade = Storage.getString(Keys.grade) ?? '--';
-    String newGrade = newData['grade'];
-    Storage.setString(Keys.oldGrade, newGrade);
-    
+    String newGrade = newData.grade;
+    bool gradeChanged = newGrade != oldGrade;
+    Storage.setString(Keys.grade, newGrade);
+
+    // Download updates finished
     setState(() {
       countCurrentDownloads--;
-      texts.remove(AppLocalizations
-          .of(context)
-          .updates);
+      texts.remove(AppLocalizations.of(context).updates);
     });
 
+    // Get the current app version to check the min app level
     String appVersion = (await rootBundle.loadString('pubspec.yaml'))
         .split('\n')
         .where((line) => line.startsWith('version'))
         .toList()[0]
         .split(':')[1]
         .trim();
-    if (int.parse(newData['minAppLevel']) > int.parse(appVersion.split('+')[1])) {
+    if (newData.minAppLevel > int.parse(appVersion.split('+')[1])) {
       showOldAppDialog(appVersion);
       return;
     }
 
+    // Print all data to download
+    Map<String, dynamic> newDataMap = newData.toMap();
+    Map<String, dynamic> currentDataMap = currentData.toMap();
     print('Downloading ' +
-        (newData.keys
-            .map((key) =>
-        newData[key] != currentData[key] || oldGrade != newGrade)
-            .where((a) => a)
-            .length)
+        (newDataMap.keys
+                .map((key) =>
+                    newDataMap[key] != currentDataMap[key] || gradeChanged)
+                .where((a) => a)
+                .length)
             .toString() +
         ' new files');
-    newData.keys.forEach((key) {
-      if (key == 'subjectsDef') {
-        download(() async {
-          await Subjects.download(
-            update: currentData[key] != newData[key] || oldGrade != newGrade,
+
+    // Download subjects, rooms, teachers, timetable and substitution plan in the correct order
+    () async {
+      // Update subjects
+      await download(() async {
+        await Subjects.download(
+            update:
+                updated(newData.subjects, currentData.subjects) || gradeChanged,
             onFinished: (bool successfully) {
               if (successfully ?? true) {
-                currentData[key] = newData[key];
-                Storage.setString(Keys.updates, json.encode(currentData));
+                currentData.subjects = newData.subjects;
               }
-            }
-          );
-        }, 1, AppLocalizations
-            .of(context)
-            .subjects);
-      } else if (key == 'roomsDef') {
-        download(() async {
-          await Rooms.download(
-            update: currentData[key] != newData[key] || oldGrade != newGrade,
+            });
+      }, AppLocalizations.of(context).subjects);
+
+      // Update rooms
+      await download(() async {
+        await Rooms.download(
+            update: updated(newData.rooms, currentData.rooms) || gradeChanged,
             onFinished: (bool successfully) {
               if (successfully ?? true) {
-                currentData[key] = newData[key];
-                Storage.setString(Keys.updates, json.encode(currentData));
+                currentData.rooms = newData.rooms;
               }
-            }
-          );
-        }, 1, AppLocalizations
-            .of(context)
-            .rooms);
-      } else if (key == 'teachersDef') {
-        download(() async {
-          await Teachers.download(
-            update: currentData[key] != newData[key] || oldGrade != newGrade,
+            });
+      }, AppLocalizations.of(context).rooms);
+
+      // Update teachers
+      await download(() async {
+        await Teachers.download(
+            update:
+                updated(newData.teachers, currentData.teachers) || gradeChanged,
             onFinished: (bool successfully) {
               if (successfully ?? true) {
-                currentData[key] = newData[key];
-                Storage.setString(Keys.updates, json.encode(currentData));
+                currentData.teachers = newData.teachers;
               }
-            }
-          );
-        }, 1, AppLocalizations
-            .of(context)
-            .teachers);
-      } else if (key == 'cafetoria') {
-        download(() async {
-          await Cafetoria.download(
-            id: 'null',
-            password: 'null',
-            update: currentData[key] != newData[key] || oldGrade != newGrade,
+            });
+      }, AppLocalizations.of(context).teachers);
+
+      // Update timetable
+      await download(() async {
+        await Timetable.download(false,
+            update: updated(newData.timetable, currentData.timetable) ||
+                gradeChanged, onFinished: (bool successfully) {
+          if (successfully ?? true) {
+            currentData.timetable = newData.timetable;
+          }
+        });
+      }, AppLocalizations.of(context).timetable);
+
+      // Update substitution plan
+      await download(() async {
+        await SubstitutionPlan.download(
+            update: updated(
+                    newData.substitutionPlan, currentData.substitutionPlan) ||
+                gradeChanged,
             onFinished: (bool successfully) {
               if (successfully ?? true) {
-                currentData[key] = newData[key];
-                Storage.setString(Keys.updates, json.encode(currentData));
+                currentData.substitutionPlan = newData.substitutionPlan;
               }
+            });
+      }, AppLocalizations.of(context).substitutionPlan);
+    }();
+
+    // Update cafetoria
+    download(() async {
+      await Cafetoria.download(
+          update:
+              updated(newData.cafetoria, currentData.cafetoria) || gradeChanged,
+          onFinished: (bool successfully) {
+            if (successfully ?? true) {
+              currentData.cafetoria = newData.cafetoria;
             }
-          );
-        }, 1, AppLocalizations
-            .of(context)
-            .cafetoria);
-      } else if (key == 'calendar') {
-        download(() async {
-          await Calendar.download(
-            update: currentData[key] != newData[key] || oldGrade != newGrade,
-            onFinished: (bool successfully) {
-              if (successfully ?? true) {
-                currentData[key] = newData[key];
-                Storage.setString(Keys.updates, json.encode(currentData));
-              }
+          });
+    }, AppLocalizations.of(context).cafetoria);
+
+    // Update calendar
+    download(() async {
+      await Calendar.download(
+          update:
+              updated(newData.calendar, currentData.calendar) || gradeChanged,
+          onFinished: (bool successfully) {
+            if (successfully ?? true) {
+              currentData.calendar = newData.calendar;
             }
-          );
-        }, 1, AppLocalizations
-            .of(context)
-            .calendar);
-      } else if (key == 'timetable') {
-        download(() async {
-          await Timetable.download(
-            Storage.getString(Keys.grade),
-            false,
-            update: currentData[key] != newData[key] ||
-                currentData['substitutionPlantoday'] !=
-                    newData['substitutionPlantoday'] ||
-                currentData['substitutionPlantomorrow'] !=
-                    newData['substitutionPlantomorrow'] ||
-                oldGrade != newGrade,
-            onFinished: (bool successfully) {
-              if (successfully ?? true) {
-                currentData[key] = newData[key];
-                currentData['substitutionPlantoday'] = newData['substitutionPlantoday'];
-                currentData['substitutionPlantomorrow'] = newData['substitutionPlantomorrow'];
-              }
+          });
+    }, AppLocalizations.of(context).calendar);
+
+    // Update workgroups
+    download(() async {
+      await WorkGroups.download(
+          update: updated(newData.workgroups, currentData.workgroups) ||
+              gradeChanged,
+          onFinished: (bool successfully) {
+            if (successfully ?? true) {
+              currentData.workgroups = newData.workgroups;
             }
-          );
-          texts.remove(AppLocalizations.of(context).timetable);
-          SubstitutionPlan.load(Timetable.getTimetable(), false);
-        }, 2, AppLocalizations
-            .of(context)
-            .substitutionPlan);
-      } else if (key == 'workgroups') {
-        download(() async {
-          await WorkGroups.download(
-            update: currentData[key] != newData[key] || oldGrade != newGrade,
-            onFinished: (bool successfully) {
-              if (successfully ?? true) {
-                currentData[key] = newData[key];
-                Storage.setString(Keys.updates, json.encode(currentData));
-              }
-            }
-          );
-        }, 1, AppLocalizations
-            .of(context)
-            .workGroups);
-      }
-      else if (key != 'substitutionPlantoday' && key != 'substitutionPlantomorrow') currentData[key] = newData[key];
-      if (currentData[key] != newData[key] || oldGrade != newGrade) {
-        print('Downloading ' + key);
-      }
-    });
+          });
+    }, AppLocalizations.of(context).workGroups);
   }
 
-  Future download(Function() process, int count, String text) async {
+  bool updated(DateTime oldValue, DateTime newValue) =>
+      !oldValue.isAtSameMomentAs(newValue);
+
+  Future download(Function() process, String text) async {
     await process();
-    for (int i = 0; i < count; i++) {
-      countCurrentDownloads--;
-    }
-    setState(() {
-      texts.remove(text);
-    });
+    countCurrentDownloads--;
+    setState(() => texts.remove(text));
+
     if (countCurrentDownloads == 0) {
       stopwatch.stop();
       print(stopwatch.elapsedMilliseconds);
+      Updates.saveUpdates();
       // After download show app
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         int storedVersion = Storage.getInt(Keys.slidesVersion) ?? 0;

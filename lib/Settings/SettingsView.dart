@@ -23,15 +23,6 @@ class SettingsPageView extends SettingsPageState {
           Section(
             title: AppLocalizations.of(context).appSettings.toUpperCase(),
             children: <Widget>[
-              Text(
-                AppLocalizations
-                    .of(context)
-                    .syncPhoneId + ': ' + Id.id,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 16.0,
-                ),
-              ),
               // Show short cut dialog option
               CheckboxListTile(
                 value: showShortCutDialog,
@@ -118,29 +109,25 @@ class SettingsPageView extends SettingsPageState {
               // Get substitutionPlan notifications option
               (Platform.isIOS || Platform.isAndroid)
                   ? CheckboxListTile(
-                value: getSubstitutionPlanNotifications,
-                onChanged: (bool value) {
-                  setState(() {
-                    Storage.setBool(
-                        Keys.getSubstitutionPlanNotifications, value);
-                    getSubstitutionPlanNotifications = value;
-                    // Synchronize tags for notifications
-                    syncTags();
-                  });
-                },
-                title: Text(AppLocalizations
-                    .of(context)
-                    .getSubstitutionPlanNotifications),
-              )
+                      value: getSubstitutionPlanNotifications,
+                      onChanged: (bool value) {
+                        setState(() {
+                          Storage.setBool(
+                              Keys.getSubstitutionPlanNotifications, value);
+                          getSubstitutionPlanNotifications = value;
+                          // Synchronize tags for notifications
+                          syncTags();
+                        });
+                      },
+                      title: Text(AppLocalizations.of(context)
+                          .getSubstitutionPlanNotifications),
+                    )
                   : Container(),
             ],
           ),
           Section(
               title:
-              AppLocalizations
-                  .of(context)
-                  .timetableSettings
-                  .toUpperCase(),
+                  AppLocalizations.of(context).timetableSettings.toUpperCase(),
               children: <Widget>[
                 // Show substitution plan in timetable option
                 CheckboxListTile(
@@ -176,10 +163,8 @@ class SettingsPageView extends SettingsPageState {
                       showCalendarInTimetable = value;
                     });
                   },
-                  title:
-                  Text(AppLocalizations
-                      .of(context)
-                      .showCalendarInTimetable),
+                  title: Text(
+                      AppLocalizations.of(context).showCalendarInTimetable),
                 ),
                 // Show cafetoria in timetable option
                 CheckboxListTile(
@@ -204,13 +189,11 @@ class SettingsPageView extends SettingsPageState {
                       onPressed: () async {
                         Storage.getKeys()
                             .where((key) =>
-                        ((key.startsWith('timetable') ||
-                            key.startsWith('room')) &&
-                            key
-                                .split('-')
-                                .length >= 3 &&
-                            !key.endsWith('-5')) ||
-                            key.startsWith('exams'))
+                                ((key.startsWith('timetable') ||
+                                        key.startsWith('room')) &&
+                                    key.split('-').length >= 3 &&
+                                    !key.endsWith('-5')) ||
+                                key.startsWith('exams'))
                             .forEach((key) {
                           Storage.remove(key);
                         });
@@ -223,47 +206,6 @@ class SettingsPageView extends SettingsPageState {
           Section(
             title: AppLocalizations.of(context).personalData.toUpperCase(),
             children: <Widget>[
-              // Grade selector
-              Padding(
-                padding: EdgeInsets.only(left: 15.0, right: 22.5),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      isDense: true,
-                      items: SettingsPageState.grades.map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      value: grade,
-                      onChanged: (grade) async {
-                        if (await checkOnline == 1) {
-                          setState(() {
-                            Storage.setString(Keys.grade, grade);
-                            // Reload app
-                            Navigator.of(context).pushReplacementNamed('/');
-                          });
-                        } else {
-                          Scaffold.of(context).showSnackBar(
-                            SnackBar(
-                              content:
-                              Text(AppLocalizations
-                                  .of(context)
-                                  .onlyOnline),
-                              action: SnackBarAction(
-                                label: AppLocalizations.of(context).ok,
-                                onPressed: () {},
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ),
               // Logout button
               Container(
                 margin: EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
@@ -285,58 +227,6 @@ class SettingsPageView extends SettingsPageState {
               ),
             ],
           ),
-          dev
-              ? Section(
-            title: AppLocalizations
-                .of(context)
-                .developerOptions
-                .toUpperCase(),
-            children: <Widget>[
-              Container(
-                margin:
-                EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: FlatButton(
-                    color: Theme
-                        .of(context)
-                        .accentColor,
-                    child: Text(AppLocalizations
-                        .of(context)
-                        .substitutionPlanVersion),
-                    onPressed: () =>
-                        showDialog<String>(
-                            context: context,
-                            barrierDismissible: true,
-                            builder: (BuildContext context1) =>
-                                HistoryDialog(type: 'substitutionPlan')),
-                  ),
-                ),
-              ),
-              Container(
-                margin:
-                EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: FlatButton(
-                      color: Theme
-                          .of(context)
-                          .accentColor,
-                      child: Text(
-                          AppLocalizations
-                              .of(context)
-                              .timetableVersion),
-                      onPressed: () =>
-                          showDialog<String>(
-                              context: context,
-                              barrierDismissible: true,
-                              builder: (BuildContext context1) =>
-                                  HistoryDialog(type: 'timetable'))),
-                ),
-              ),
-            ],
-          )
-              : Container()
         ],
       ),
     );

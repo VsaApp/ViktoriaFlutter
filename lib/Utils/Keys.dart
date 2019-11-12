@@ -5,6 +5,10 @@ class Keys {
     return 'grade';
   }
 
+  static String get group {
+    return 'group';
+  }
+
   static String get timetableDate {
     return 'timetableDate';
   }
@@ -76,26 +80,23 @@ class Keys {
   }
 
   // timetable-GRADE saves the timetable json string...
-  // timetable-GRADE-BLOCK / uitplan-GRADE-DAY-UNIT saves the selected index...
-  static String timetable(String grade, {String block, int day, int unit}) {
-    // If nothing is set, returns the key for saving the json string...
-    if (block == null && day == null) {
-      return 'timetable-$grade';
-    } else {
-      return (block != '')
-          ? 'timetable-$grade-$block'
-          : 'timetable-$grade-$day-$unit';
-    }
+  static String timetable(String grade) {
+    return 'timetable-$grade';
   }
 
-  // substitutionPlan-GRADE-DAY saves the substitution plan...
-  static String substitutionPlan(String grade, String day) {
-    return 'substitutionPlan-$grade-$day';
+  // selection-courseID saves the selected course
+  static String selection(String courseID) {
+    return 'selection-$courseID';
   }
 
-  // exams-SUBJECTNAME saves if user writing exams in this course...
-  static String exams(String grade, String subject) {
-    return 'exams-$grade-$subject';
+  // substitutionPlan saves the substitution plan...
+  static String get substitutionPlan {
+    return 'substitutionPlan';
+  }
+
+  // exams-courseID saves if user writing exams in this course...
+  static String exams(String courseID) {
+    return 'exams-$courseID';
   }
 
   // Saves if the shortcut dialog should be shown...
@@ -176,5 +177,9 @@ class Keys {
 
   static String get muteService {
     return 'muteService';
+  }
+
+  static String get lastModified {
+    return 'lastModified';
   }
 }

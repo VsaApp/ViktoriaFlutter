@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
 
-import 'package:viktoriaflutter/Utils/Models/WorkGroupsModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 
 class WorkGroupsDayCard extends StatelessWidget {
   const WorkGroupsDayCard({
@@ -55,7 +56,7 @@ class WorkGroupsDayCard extends StatelessWidget {
                 title: showWeekday
                     ? Padding(
                         padding: EdgeInsets.only(bottom: 5),
-                        child: Text(day.weekday),
+                        child: Text(AppLocalizations.of(context).weekdays[day.weekday]),
                       )
                     : null,
                 subtitle: Column(

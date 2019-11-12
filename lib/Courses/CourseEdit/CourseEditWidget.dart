@@ -4,7 +4,7 @@ import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import '../../Timetable/TimetableData.dart' as Timetable;
-import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 import 'CourseEditView.dart';
 
 class CourseEdit extends StatefulWidget {
@@ -30,20 +30,17 @@ abstract class CourseEditState extends State<CourseEdit> {
   @override
   void initState() {
     setState(() {
-      exams = Storage.getBool(Keys.exams(Storage.getString(Keys.grade),
-          widget.subject.lesson.toUpperCase())) ??
-          true;
+      exams = Storage.getBool(Keys.exams(widget.subject.courseID)) ?? true;
     });
     List<TimetableDay> days = Timetable.getTimetable();
     days.forEach((day) {
-      day.lessons.forEach((lesson) {
-        TimetableSubject _selected = getSelectedSubject(
-            lesson.subjects, days.indexOf(day), day.lessons.indexOf(lesson));
+      day.units.forEach((unit) {
+        TimetableSubject _selected = getSelectedSubject(unit.subjects);
         if (_selected == null) return;
-        if (_selected.lesson == widget.subject.lesson) {
+        if (_selected.subjectID == widget.subject.subjectID) {
           subjects1.add({
             'weekday': days.indexOf(day),
-            'unit': day.lessons.indexOf(lesson),
+            'unit': day.units.indexOf(unit),
             'subject': _selected
           });
         }

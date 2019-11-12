@@ -1,36 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
 
 import 'package:viktoriaflutter/Utils/Rooms.dart';
-import 'package:viktoriaflutter/Utils/Models/SubstitutionPlanModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 
 class SubstitutionPlanRow extends StatelessWidget {
   const SubstitutionPlanRow({
     Key key,
-    @required this.change,
+    @required this.substitution,
     @required this.changes,
     @required this.weekday,
     this.isDialog = false,
     this.showUnit = true,
   }) : super(key: key);
 
-  final Change change;
+  final Substitution substitution;
   final List<dynamic> changes;
   final int weekday;
   final bool isDialog;
   final bool showUnit;
 
+  String getSubstitutionDescription(BuildContext context, int type) {
+    switch (type) {
+      case 0:
+        return '';
+      case 1:
+        return AppLocalizations.of(context).freeLesson;
+      case 2:
+        return AppLocalizations.of(context).exam;
+      default:
+        return '';
+    }
+  }
+
+  String getInfoText(BuildContext context, Substitution substitution) {
+    String info = '';
+    String description = getSubstitutionDescription(context, substitution.type);
+    if (description.isNotEmpty) {
+      info += description;
+    } else if (substitution.changed.subjectID.isNotEmpty) {
+      info += Data.subjects[substitution.changed.subjectID
+                                  .toUpperCase()] ??
+                              substitution.changed.subjectID;
+    }
+    if (substitution.info.isNotEmpty) {
+      if (info.isNotEmpty) {
+        info += ': ';
+      }
+      info += substitution.info;
+    }
+    return info;
+  }
+
   @override
   Widget build(BuildContext context) {
     bool show = showUnit;
-    if (changes.indexOf(change) != 0 &&
-        changes[changes.indexOf(change) - 1].unit == change.unit) {
+    if (changes.indexOf(substitution) != 0 &&
+        changes[changes.indexOf(substitution) - 1].unit == substitution.unit) {
       show = false;
     }
 
     return Container(
       padding: EdgeInsets.only(
         // Add padding if unit not shown
-        top: show ? (changes.indexOf(change) == 0 ? 10 : 20) : 5,
+        top: show ? (changes.indexOf(substitution) == 0 ? 10 : 20) : 5,
         right: 5,
       ),
       child: Row(
@@ -39,7 +72,7 @@ class SubstitutionPlanRow extends StatelessWidget {
             flex: 7,
             child: Center(
               child: Text(
-                (show) ? '${change.unit + 1}' : '',
+                (show) ? '${substitution.unit + 1}' : '',
                 style: TextStyle(
                   color: Colors.black54,
                 ),
@@ -49,21 +82,19 @@ class SubstitutionPlanRow extends StatelessWidget {
           Expanded(
             flex: 1,
             child: Container(
-              height: !change.isRewriteExam ? 42 : 24,
+              height: 42,
               alignment: Alignment.centerRight,
               decoration: BoxDecoration(
                 border: Border(
                   left: BorderSide(
                       width: 2,
-                      color: (change.color == null)
+                      color: (substitution.color == null)
                           ?
-                      // Default color
-                      Theme
-                          .of(context)
-                          .primaryColor
+                          // Default color
+                          Theme.of(context).primaryColor
                           :
-                      // Changed color
-                      change.color),
+                          // Changed color
+                          substitution.color),
                 ),
               ),
             ),
@@ -74,19 +105,18 @@ class SubstitutionPlanRow extends StatelessWidget {
               padding: EdgeInsets.only(top: 5, bottom: 5, left: 5),
               child: Column(
                 children: <Widget>[
-                  !change.isRewriteExam ?
                   Row(
                     children: <Widget>[
                       Expanded(
                         flex: 60,
                         child: Text(
-                          change.lesson,
+                          Data.subjects[substitution.original.subjectID
+                                  .toUpperCase()] ??
+                              substitution.original.subjectID,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 15.0,
-                            color: Theme
-                                .of(context)
-                                .primaryColor,
+                            color: Theme.of(context).primaryColor,
                           ),
                         ),
                       ),
@@ -95,45 +125,32 @@ class SubstitutionPlanRow extends StatelessWidget {
                         child: Text(
                           getRoom(
                             weekday,
-                            change.unit,
-                            change.lesson,
-                            change.room,
+                            substitution.unit,
+                            substitution.original.subjectID,
+                            substitution.original.roomID,
                           ),
                           style: TextStyle(
-                            color: Theme
-                                .of(context)
-                                .primaryColor,
+                            color: Theme.of(context).primaryColor,
                           ),
                         ),
                       ),
                       Expanded(
                         flex: 20,
                         child: Text(
-                          change.teacher,
+                          substitution.original.teacherID.toUpperCase(),
                           style: TextStyle(
-                            color: Theme
-                                .of(context)
-                                .primaryColor,
+                            color: Theme.of(context).primaryColor,
                           ),
                         ),
                       ),
                     ],
-                  ) : Container(),
+                  ),
                   Row(
                     children: <Widget>[
                       Expanded(
                         flex: 60,
                         child: Text(
-                          (change.changed.subject != ''
-                              ? change.changed.subject
-                              : '') +
-                              (change.changed.info != '' &&
-                                  change.changed.subject != ''
-                                  ? ': '
-                                  : '') +
-                              (change.changed.info != ''
-                                  ? change.changed.info
-                                  : ''),
+                          getInfoText(context, substitution),
                           style: TextStyle(
                             color: Colors.black54,
                           ),
@@ -142,9 +159,10 @@ class SubstitutionPlanRow extends StatelessWidget {
                       Expanded(
                         flex: 20,
                         child: Text(
-                          change.changed.room == change.room
+                          substitution.changed.roomID ==
+                                  substitution.original.roomID
                               ? ''
-                              : change.changed.room,
+                              : substitution.changed.roomID,
                           style: TextStyle(
                             color: Colors.black54,
                           ),
@@ -153,10 +171,11 @@ class SubstitutionPlanRow extends StatelessWidget {
                       Expanded(
                         flex: 20,
                         child: Text(
-                          change.teacher == change.changed.teacher &&
-                              change.changed.info != 'Klausur'
+                          substitution.original.teacherID ==
+                                      substitution.changed.teacherID &&
+                                  !substitution.isExam
                               ? ''
-                              : change.changed.teacher,
+                              : substitution.changed.teacherID.toUpperCase(),
                           style: TextStyle(
                             color: Colors.black54,
                           ),

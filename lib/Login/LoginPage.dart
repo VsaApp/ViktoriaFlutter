@@ -2,7 +2,6 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:viktoriaflutter/Utils/Keys.dart';
@@ -48,7 +47,7 @@ abstract class LoginPageState extends State<LoginPage> {
   // Check if credentials entered are correct
   void checkForm() async {
     setState(() => isCheckingForm = true);
-    Response response = await fetch(
+    final response = await fetch(
         '$apiUrl/login/'.replaceFirst('://', '://${usernameController.text}:${passwordController.text}@'),
         auth: true);
 
@@ -177,7 +176,6 @@ abstract class LoginPageState extends State<LoginPage> {
                   decoration: InputDecoration(
                       hintText: AppLocalizations.of(context).syncPhoneId),
                   onFieldSubmitted: (value) async {
-                    Id.overrideId(value);
                     print(value);
                     Map<String, dynamic> alreadyInitialized =
                         await isInitialized();
@@ -202,7 +200,6 @@ abstract class LoginPageState extends State<LoginPage> {
               FlatButton(
                 child: Text(AppLocalizations.of(context).ok),
                 onPressed: () async {
-                  Id.overrideId(idController.text);
                   await syncWithTags();
                   Navigator.of(context).pop();
                   Navigator.pushReplacementNamed(context, '/');

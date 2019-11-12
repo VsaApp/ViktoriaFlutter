@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../SubstitutionPlan/SubstitutionPlanData.dart' as substitutionPlan;
-import 'package:viktoriaflutter/Utils/Models/SubstitutionPlanModel.dart';
-import '../Timetable/TimetableData.dart' as timetable;
+import 'package:viktoriaflutter/Utils/Models.dart';
 import 'BrotherSisterSubstitutionPlanView.dart';
 
 class BrotherSisterSubstitutionPlanPage extends StatefulWidget {
@@ -24,12 +22,8 @@ abstract class BrotherSisterSubstitutionPlanPageState
 
   @override
   void initState() {
-    timetable.download(widget.grade, true).then((days1) {
-      setState(() {
-        days = substitutionPlan.load(days1, true);
-        controller = TabController(vsync: this, length: days.length);
-      });
-    });
+    days = Data.substitutionPlan.days;
+    controller = TabController(vsync: this, length: days.length);
     super.initState();
   }
 }

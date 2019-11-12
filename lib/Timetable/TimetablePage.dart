@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:viktoriaflutter/Utils/Week.dart';
 
 import '../Home/HomePage.dart';
-import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import '../SubstitutionPlan/SubstitutionPlanData.dart' as substitutionPlan;
-import 'package:viktoriaflutter/Utils/Models/SubstitutionPlanModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
-import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/TabProxy.dart';
 import 'package:viktoriaflutter/Utils/Update.dart';
 import 'TimetableData.dart' as timetable;
 import 'TimetableDayList/TimetableDayListWidget.dart';
-import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
 
 class TimetablePage extends StatefulWidget {
   @override
@@ -24,89 +21,65 @@ class TimetableView extends State<TimetablePage>
   bool thisWeek = true;
   List<TimetableDay> days;
   TabController controller;
-  String originalWeek;
+  int originalWeek;
   List<String> weekdays;
 
   void setWeeks() {
     // Get the week number of the shown week...
     DateTime today = DateTime(
-        DateTime
-            .now()
-            .year, DateTime
-        .now()
-        .month, DateTime
-        .now()
-        .day + 1);
-    DateTime startOfYear = DateTime(today.year, 1, 1, 0, 0);
-    int firstMonday = startOfYear.weekday;
-    int daysInFirstWeek = 8 - firstMonday;
-    Duration diff = today.difference(startOfYear);
-    int weeks = ((diff.inDays - daysInFirstWeek) / 7).ceil();
-    if (daysInFirstWeek > 3) weeks++;
+        DateTime.now().year, DateTime.now().month, DateTime.now().day + 1);
+    int weeks = Date.now().getWeekOfYear();
     if (!thisWeek) weeks++;
-    String currentWeek = weeks % 2 == 0 ? 'A' : 'B';
+    int currentWeek = weeks % 2;
 
     // Set all days to this week...
-    Timetable.days.forEach((TimetableDay day) => day.showWeek = currentWeek);
+    Data.timetable.days.forEach((TimetableDay day) => day.showWeek = weeks % 2);
 
     // If there are changes for other weeks, set that days to this week...
     DateTime dateOfMonday = today.add(Duration(
         days: thisWeek ? -today.weekday : DateTime.sunday + 1 - today.weekday));
-    for (int i = 0; i < SubstitutionPlan.days.length; i++) {
-      SubstitutionPlanDay day = SubstitutionPlan.days[i];
-      if (day.weektype != currentWeek) {
-        DateTime date = DateTime(
-            int.parse(day.date.split('.')[2]),
-            int.parse(day.date.split('.')[1]),
-            int.parse(day.date.split('.')[0]));
-        for (int j = 0; j < Timetable.days.length; j++) {
+    for (int i = 0; i < Data.substitutionPlan.days.length; i++) {
+      SubstitutionPlanDay day = Data.substitutionPlan.days[i];
+      if (day.week != currentWeek) {
+        DateTime date = day.date;
+        for (int j = 0; j < Data.timetable.days.length; j++) {
           DateTime dateOfDay = dateOfMonday.add(Duration(days: j));
           if (date.isAfter(today) && dateOfDay.weekday <= date.weekday)
-            Timetable.days[j - 1 > 0 ? j - 1 : 0].showWeek = day.weektype;
+            Data.timetable.days[j - 1 > 0 ? j - 1 : 0].showWeek = day.week;
           else if (date.isBefore(today) && dateOfDay.weekday >= date.weekday)
-            Timetable.days[j].showWeek = day.weektype;
+            Data.timetable.days[j].showWeek = day.week;
         }
       }
     }
   }
 
   int getFirstPageToSelect() {
-    for (int i = 0; i < Timetable.days.length; i++) {
-      TimetableDay day = Timetable.days[i];
-      for (int j = 0; j < day.lessons.length; j++) {
-        TimetableLesson lesson = day.lessons[j];
-        if (getSelectedIndex(lesson.subjects, i, j) == null) return i;
+    for (int i = 0; i < Data.timetable.days.length; i++) {
+      TimetableDay day = Data.timetable.days[i];
+      for (int j = 0; j < day.units.length; j++) {
+        TimetableUnit unit = day.units[j];
+        if (getSelectedIndex(unit.subjects) == null) return i;
       }
     }
     return -1;
   }
 
   int getCurrentWeekday() {
-    int weekday = DateTime
-        .now()
-        .weekday - 1;
+    int weekday = DateTime.now().weekday - 1;
     bool over = false;
     if (weekday > 4) {
       weekday = 0;
       thisWeek = false;
-    } else if (days[weekday].lessons.length > 0) {
+    } else if (days[weekday].units.length > 0) {
       if (DateTime.now().isAfter(DateTime(
-        DateTime
-            .now()
-            .year,
-        DateTime
-            .now()
-            .month,
-        DateTime
-            .now()
-            .day,
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
         8,
       ).add(Duration(
           minutes: [60, 130, 210, 280, 360, 420, 480, 545][days[weekday]
-              .getUserLessonsCount(
-              AppLocalizations
-                  .of(context)
-                  .freeLesson) -
+                  .getUserLessonsCount(
+                      AppLocalizations.of(context).freeLesson) -
               1])))) {
         over = true;
       }
@@ -130,8 +103,7 @@ class TimetableView extends State<TimetablePage>
     HomePageState.setWeekChangeable(true);
     WidgetsBinding.instance.addPostFrameCallback((a) {
       setState(() {
-        weekdays = AppLocalizations
-            .of(context)
+        weekdays = AppLocalizations.of(context)
             .weekdays
             .map((day) => day.substring(0, 2).toUpperCase())
             .toList();
@@ -145,21 +117,22 @@ class TimetableView extends State<TimetablePage>
       controller.animateTo(firstPage);
       setWeeks();
 
-      HomePageState.updateWeek(Timetable.days[firstPage].showWeek);
+      HomePageState.updateWeek(Data.timetable.days[firstPage].showWeek);
       controller.addListener(() {
         if (originalWeek != null) {
-          Timetable.days[controller.previousIndex].showWeek = originalWeek;
+          Data.timetable.days[controller.previousIndex].showWeek = originalWeek;
           originalWeek = null;
         }
-        HomePageState.updateWeek(Timetable.days[controller.index].showWeek);
+        HomePageState.updateWeek(
+            Data.timetable.days[controller.index].showWeek);
       });
 
       // Add week listener...
-      HomePageState.weekChanged = (String week) {
+      HomePageState.weekChanged = (int week) {
         if (originalWeek == null)
-          originalWeek = Timetable.days[controller.index].showWeek;
+          originalWeek = Data.timetable.days[controller.index].showWeek;
         if (mounted)
-          setState(() => Timetable.days[controller.index].showWeek = week);
+          setState(() => Data.timetable.days[controller.index].showWeek = week);
       };
     });
     setState(() => days = timetable.getTimetable());
@@ -180,23 +153,20 @@ class TimetableView extends State<TimetablePage>
     return TabProxy(
         weekdays: weekdays,
         tabs: days
-            .map((day) =>
-            TimetableDayList(
-              day: day,
-              dayIndex: days.indexOf(day),
-            ))
+            .map((day) => TimetableDayList(
+                  day: day,
+                  dayIndex: days.indexOf(day),
+                ))
             .toList(),
         controller: controller,
         onUpdate: () async {
-          await timetable.download(Storage.getString(Keys.grade), false,
-              onFinished: (successfully) {
-                dataUpdated(context, successfully,
-                    AppLocalizations
-                        .of(context)
-                        .unitAndSubstitutionPlan);
-                HomePageState.checkIfTimetableUpdated(context);
+          await timetable.download(false, onFinished: (successfully) {
+            dataUpdated(context, successfully,
+                AppLocalizations.of(context).unitAndSubstitutionPlan);
+            HomePageState.checkIfTimetableUpdated(context);
           });
-          substitutionPlan.load(timetable.getTimetable(), false);
+          Data.substitutionPlan.insert();
+          Data.substitutionPlan.updateFilter();
           setWeeks();
           setState(() => days = timetable.getTimetable());
         });

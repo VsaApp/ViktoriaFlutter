@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'CalendarData.dart';
 import 'CalendarGrid/CalendarGridWidget.dart';
-import 'package:viktoriaflutter/Utils/Models/CalendarModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 import 'EventCard/EventCard.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Update.dart';
@@ -28,9 +28,10 @@ class CalendarPageState extends State<CalendarPage>
   }
 
   void setEvents() {
-    List<CalendarEvent> events = getCalendar();
+    List<CalendarEvent> events = getCalendarEvents();
     events = events.where((event) {
-      return event.start.isAfter(DateTime.now()) || event.end.isAfter(DateTime.now());
+      return event.start.isAfter(DateTime.now()) ||
+          event.end.isAfter(DateTime.now());
     }).toList();
 
     events.sort((a, b) => a.start.isAfter(b.start) ? 1 : -1);
@@ -50,15 +51,11 @@ class CalendarPageState extends State<CalendarPage>
     return DefaultTabController(
       length: types.length,
       child: Scaffold(
-        backgroundColor: Theme
-            .of(context)
-            .primaryColor,
+        backgroundColor: Theme.of(context).primaryColor,
         // Tab bar views
         appBar: TabBar(
           controller: tabController,
-          indicatorColor: Theme
-              .of(context)
-              .accentColor,
+          indicatorColor: Theme.of(context).accentColor,
           indicatorWeight: 2.5,
           tabs: types.map((type) {
             return Container(
@@ -71,7 +68,7 @@ class CalendarPageState extends State<CalendarPage>
           controller: tabController,
           children: types.map((type) {
             GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
-            GlobalKey<RefreshIndicatorState>();
+                GlobalKey<RefreshIndicatorState>();
             return Container(
               width: double.infinity,
               height: double.infinity,
@@ -81,12 +78,12 @@ class CalendarPageState extends State<CalendarPage>
                 key: refreshIndicatorKey,
                 child: type == types[0]
                     ? ListView(
-                  padding: EdgeInsets.all(10),
-                  shrinkWrap: true,
-                  children: events
-                      .map((event) => EventCard(event: event))
-                      .toList(),
-                )
+                        padding: EdgeInsets.all(10),
+                        shrinkWrap: true,
+                        children: events
+                            .map((event) => EventCard(event: event))
+                            .toList(),
+                      )
                     : CalendarGrid(events: events),
               ),
             );

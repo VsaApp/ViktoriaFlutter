@@ -1,6 +1,3 @@
-class Teachers {
-  static List<Teacher> teachers;
-}
 
 class Teacher {
   final String shortName;
@@ -10,7 +7,7 @@ class Teacher {
   factory Teacher.fromJson(Map<String, dynamic> json) {
     return Teacher(
       shortName: json['shortName'] as String,
-      subjects: json['subjects'].cast<String>() as List<String>,
+      subjects: [],
     );
   }
 }

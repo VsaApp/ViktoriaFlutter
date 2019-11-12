@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import 'package:viktoriaflutter/Utils/Models/CafetoriaModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 
 class CafetoriaDayCard extends StatelessWidget {
   const CafetoriaDayCard({
@@ -61,7 +61,7 @@ class CafetoriaDayCard extends StatelessWidget {
                 title: showWeekday
                     ? Padding(
                         padding: EdgeInsets.only(bottom: 5),
-                        child: Text(day.weekday),
+                        child: Text(AppLocalizations.of(context).weekdays[day.day]),
                       )
                     : null,
                 subtitle: Column(

@@ -19,7 +19,12 @@ void main() async {
   // Report all dart errors...
   try {
     runZoned<Future<void>>(launch, onError: (error, stackTrace) {
-      if (!isInDebugMode) bugs.reportError(error, stackTrace);
+      if (!isInDebugMode)
+        bugs.reportError(error, stackTrace);
+      else {
+        print(error);
+        print(stackTrace);
+      }
     });
   } catch (e) {
     print("Error: $e");

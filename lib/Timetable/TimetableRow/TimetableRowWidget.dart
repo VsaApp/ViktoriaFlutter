@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Rooms.dart';
 import 'package:viktoriaflutter/Utils/Times.dart';
-import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 
 class TimetableRow extends StatelessWidget {
   final TimetableSubject subject;
@@ -55,7 +55,7 @@ class TimetableRow extends StatelessWidget {
                             ?
                         // Normal name
                         Text(
-                          subject.lesson,
+                          subject.subjectID,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 15.0,
@@ -68,7 +68,7 @@ class TimetableRow extends StatelessWidget {
                         // Lunch break
                         Center(
                           child: Text(
-                            subject.lesson,
+                            subject.subjectID,
                             style: TextStyle(
                               fontSize: 15.0,
                             ),
@@ -78,7 +78,7 @@ class TimetableRow extends StatelessWidget {
                       Expanded(
                         flex: 20,
                         child: Text(
-                          subject.teacher,
+                          subject.teacherID,
                           style: TextStyle(
                             color: Colors.black54,
                           ),
@@ -100,7 +100,7 @@ class TimetableRow extends StatelessWidget {
                       Expanded(
                         flex: 20,
                         child: Text(
-                          getRoom(weekday, unit, subject.lesson, subject.room),
+                          getRoom(weekday, unit, subject.subjectID, subject.roomID),
                           style: TextStyle(
                             color: Colors.black54,
                           ),

@@ -2,11 +2,7 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 
-import 'package:viktoriaflutter/Utils/Models/WorkGroupsModel.dart';
-import 'package:viktoriaflutter/Utils/Models/CafetoriaModel.dart';
-import 'package:viktoriaflutter/Utils/Models/SubstitutionPlanModel.dart';
-import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
-import 'package:viktoriaflutter/Utils/Models/CalendarModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/SectionWidget.dart';
@@ -31,29 +27,32 @@ class IntroPageView extends IntroPageState {
   Widget build(BuildContext context) {
     slides.clear();
     TimetableSubject subject = TimetableSubject(
-      teacher: 'STA',
-      lesson: 'Erdkunde',
-      room: '525',
+      unit: 2,
+      teacherID: 'STA',
+      subjectID: 'Erdkunde',
+      roomID: '525',
+      id: '',
+      courseID: '',
+      week: 2,
       block: '',
-      course: '',
-      changes: [],
-      unsures: 0,
-      week: 'AB',
+      day: 1
     );
-    Change change = Change(
+    Substitution change = Substitution(
       unit: 1,
-      lesson: 'Deutsch',
-      room: '516',
-      course: '',
-      teacher: 'KLU',
-      changed: Changed(
-          info: AppLocalizations
-              .of(context)
-              .freeLesson,
-          subject: 'Deutsch',
-          teacher: '',
-          room: ''),
-      sure: true,
+      id: null,
+      courseID: null,
+      info: '',
+      type: 1,
+      original: SubstitutionDetails(
+        roomID: '233',
+        teacherID: 'HIM',
+        subjectID: 'Englisch'
+      ),
+      changed: SubstitutionDetails(
+          subjectID: 'Deutsch',
+          teacherID: '',
+          roomID: ''
+      ),
     );
     slides.add(
       Slide(
@@ -72,7 +71,7 @@ class IntroPageView extends IntroPageState {
                   isDialog: !(Platform.isIOS || Platform.isAndroid),
                 ),
                 SubstitutionPlanRow(
-                  change: change,
+                  substitution: change,
                   changes: [change],
                   weekday: 0,
                   isDialog: !(Platform.isIOS || Platform.isAndroid),
@@ -93,7 +92,7 @@ class IntroPageView extends IntroPageState {
           title: AppLocalizations.of(context).myChanges,
           children: [
             SubstitutionPlanRow(
-              change: change,
+              substitution: change,
               changes: [change],
               weekday: 0,
             ),
@@ -126,7 +125,7 @@ class IntroPageView extends IntroPageState {
       ),
     ));
     CafetoriaDay cafetoriaDay = CafetoriaDay(
-      weekday: 'Montag',
+      day: 0,
       date: '11.3.2019',
       menus: [
         CafetoriaMenu(
@@ -159,7 +158,7 @@ class IntroPageView extends IntroPageState {
     ));
 
     WorkGroupsDay workGroupsDay = WorkGroupsDay(
-      weekday: 'Montag',
+      weekday: 0,
       data: [
         WorkGroup(
           name: 'Fußball',

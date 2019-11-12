@@ -1,76 +1,63 @@
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 
-String getKey(TimetableSubject subject) {
-  return '${subject.lesson}-${subject.teacher}';
-}
+/// Returns the selected index for the given week
+int getSelectedIndex(List<TimetableSubject> subjects, {int week = 0}) {
+  // If it is the lunch break, it is always the first
+  if (subjects.length > 0 && subjects[0].unit == 5) return 0;
 
-/// Returns the value for key and reset when the value is still in the old format...
-List<String> getValue(String key) {
-  var data = Storage.getStringList(key);
-  if (data == null) {
-    return null;
-  }
-  return data.cast<String>();
-}
-
-/// Logs all timetable keys and values... (Only for debugging)
-void logValues() {
-  String grade = Storage.getString(Keys.grade);
-  List<String> keys = Storage.getKeys()
-      .toList()
-      .where((String key) =>
-          key.startsWith('timetable') &&
-          key.split('-').length > 2 &&
-          key.split('-')[1] == grade)
+  // Get all selected courses
+  List<String> courseIDs = Storage.getKeys()
+      .where((key) => key.startsWith(Keys.selection('')))
       .toList();
-  for (int i = 0; i < keys.length; i++) {
-    String key = keys[i];
-    print('$key: ${Storage.get(key)}');
-  }
-}
 
-int getSelectedIndex(List<TimetableSubject> subjects, int day, int unit,
-    {String week = 'A'}) {
-  // List element 0: week A  -- element 1: week B (Only one element: week AB)
-  if (unit == 5) return 0;
-  List<String> selected = getValue(Keys.timetable(Storage.getString(Keys.grade),
-      block: subjects[0].block, day: day, unit: unit));
-  if (selected == null) return null;
-  week = week.toUpperCase();
-  int index = selected.length == 1 ? 0 : week == 'A' ? 0 : 1;
-  if (selected.length > 1 &&
-      subjects
-          .where((s) => s.week != 'AB')
-          .length == 0) {
-    if (selected[0].endsWith('-'))
-      index = 1;
-    else if (selected[1].endsWith('-')) index = 0;
-  }
-  List<TimetableSubject> subject = subjects
-      .where((TimetableSubject subject) =>
-  subject.week.contains(week) && getKey(subject) == selected[index])
+  // Get all subjects for the correct week and with a selected course
+  List<TimetableSubject> selectedForWeek = subjects
+      .where((s) =>
+          (s.week == 2 || week == s.week) && courseIDs.contains(s.courseID))
       .toList();
-  if (subject.length == 0)
-    return null;
-  else
-    return subjects.indexOf(subject[0]);
+  return selectedForWeek.length > 0
+      ? subjects.indexOf(selectedForWeek.single)
+      : null;
 }
 
-TimetableSubject getSelectedSubject(
-    List<TimetableSubject> subjects, int day, int unit,
-    {String week = 'A'}) {
-  int index = getSelectedIndex(subjects, day, unit, week: week);
+TimetableSubject getSelectedSubject(List<TimetableSubject> subjects,
+    {int week = 0}) {
+  int index = getSelectedIndex(subjects, week: week);
   return index == null ? null : subjects[index];
 }
 
-void setSelectedSubject(TimetableSubject selected, int day, int unit,
+void setSelectedSubject(TimetableSubject selected,
     {TimetableSubject selectedB}) {
-  List<String> weeks = selected.week == 'AB' || selectedB == null
-      ? [getKey(selected)]
-      : [getKey(selected), getKey(selectedB)];
-  String key = Keys.timetable(Storage.getString(Keys.grade),
-      block: selected.block, day: day, unit: unit);
-  Storage.setStringList(key, weeks);
+  // Get all selected courses
+  List<String> courseIDs = Storage.getKeys()
+      .where((key) => key.startsWith(Keys.selection('')))
+      .toList();
+
+  // If the weeks are not 1 and 0 or 0 and 1 (sum = 1), only set the first subject
+  if (selectedB != null && selected.week + selectedB.week != 1) {
+    selectedB = null;
+  }
+
+  // Get all units with the selected course
+  Data.timetable.getAllSubjectsWithCourseID(selected.courseID).forEach((unit) {
+    // Remove every unit that has the same week and is also selected
+    unit.subjects.forEach((s) {
+      // Check for week 0 (B)
+      bool isSameWeek = s.week == selected.week || selected.week == 2;
+      if (isSameWeek && courseIDs.contains(s.courseID)) {
+        Storage.remove(s.courseID);
+        courseIDs.remove(s.courseID);
+      }
+      // Check for week 1 (A), if there is any
+      if (selectedB != null) {
+        isSameWeek = s.week == selectedB.week || selectedB.week == 2;
+        if (isSameWeek && courseIDs.contains(s.courseID)) {
+          Storage.remove(s.courseID);
+          courseIDs.remove(s.courseID);
+        }
+      }
+    });
+  });
 }

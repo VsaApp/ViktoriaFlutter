@@ -97,7 +97,7 @@ class AppLocalizations {
       'onlyOnline': 'Du kannst dies nur online tun!',
       'resetTimetable': 'Stundenplan zurücksetzen',
       'scanDescription':
-      'Hier siehst du eine Liste der Stunden die beim Fotografieren nicht erkannt werden konnten. Wähle für jede Stunde immer deinen Kurs aus!',
+          'Hier siehst du eine Liste der Stunden die beim Fotografieren nicht erkannt werden konnten. Wähle für jede Stunde immer deinen Kurs aus!',
       'year': 'Jahr',
       'month': 'Monat',
       'day': 'Tag',
@@ -143,20 +143,20 @@ class AppLocalizations {
       'viewIntro': 'Einführung nochmal anschauen',
       'loadOldData': 'Alte Daten laden?',
       'loadOldDataDescription':
-      'Es werden die ausgewählten Stunden und die Schriftlichkeiten vom letzten Mal übernommen.',
+          'Es werden die ausgewählten Stunden und die Schriftlichkeiten vom letzten Mal übernommen.',
       'cancel': 'Abbrechen',
       'introScannerTitle': 'Scanner',
       'oldApp':
-      'Die aktuell installierte App Version (VERSION) ist zu alt und wird nicht mehr unterstützt.\n\nBitte sorge dafür, dass du die aktuelle App erhältst! Einfach im Store die aktuelle \'VsaApp\' installieren.',
+          'Die aktuell installierte App Version (VERSION) ist zu alt und wird nicht mehr unterstützt.\n\nBitte sorge dafür, dass du die aktuelle App erhältst! Einfach im Store die aktuelle \'VsaApp\' installieren.',
       'acceptDseAndAgb':
-      'Mit der Nutzung unserer App akzeptierst du unsere AGB und unsere Datenschutzerklärung.',
+          'Mit der Nutzung unserer App akzeptierst du unsere AGB und unsere Datenschutzerklärung.',
       'accept': 'Akzeptieren',
       'reject': 'Ablehnen',
       'readAgbDse': 'AGB/DSE Lesen',
       'agbDse': 'AGB/DSE',
       'appTooOld': 'App zu alt!',
       'introScannerDescription':
-      'Damit du nicht deinen ganzen Stundenplan von Hand eingeben musst, kannst du ihn auch einfach mit deinem Handy einscannen',
+          'Damit du nicht deinen ganzen Stundenplan von Hand eingeben musst, kannst du ihn auch einfach mit deinem Handy einscannen',
       'months': [
         'Januar',
         'Februar',
@@ -174,7 +174,7 @@ class AppLocalizations {
       'syncPhoneId': 'Synchronisierungs-ID',
       'syncPhone': 'Mit Handy synchronisieren',
       'syncPhoneDescription':
-      'Wenn du auf deinem Handy und in dieser Anwendung immer dieselben Sachen sehen möchtest, dann musst die Synchronisierungs-ID aus deine Einstellungen deiner App nehmen und hier eingeben:',
+          'Wenn du auf deinem Handy und in dieser Anwendung immer dieselben Sachen sehen möchtest, dann musst die Synchronisierungs-ID aus deine Einstellungen deiner App nehmen und hier eingeben:',
       'skip': 'Überspringen',
       'weekdays': [
         'Montag',
@@ -185,16 +185,26 @@ class AppLocalizations {
       ],
       'notYetExistingOnServer': 'Noch nicht auf dem Schulserver vorhanden!',
       'updates': 'Aktualisierungen',
-      'failedToCheckLogin': 'Fehler beim überprüfen der Logindaten! Versuche es später erneut.',
+      'failedToCheckLogin':
+          'Fehler beim überprüfen der Logindaten! Versuche es später erneut.',
       'unitAndSubstitutionPlan': 'Stunden- und Vertretungsplan',
       'updated': ' aktualisiert',
-      'updatedFailed': ' aktualisieren fehlgeschlagen'
+      'updatedFailed': ' aktualisieren fehlgeschlagen',
+      'exam': 'Klausur'
     },
   };
+
+  String gradeName(String grade) {
+    return !['ef', 'q1', 'q1'].contains(grade) ? grade : grade.toUpperCase();
+  }
 
 // All getter defined...
   String get updated {
     return _localizedValues[locale.languageCode]['updated'];
+  }
+
+  String get exam {
+    return _localizedValues[locale.languageCode]['exam'];
   }
 
   String get unitAndSubstitutionPlan {

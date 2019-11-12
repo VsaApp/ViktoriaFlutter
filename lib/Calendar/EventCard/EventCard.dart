@@ -1,7 +1,7 @@
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:flutter/material.dart';
 
-import 'package:viktoriaflutter/Utils/Models/CalendarModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 
 class EventCard extends StatelessWidget {
   EventCard({@required this.event}) : super();
@@ -11,44 +11,36 @@ class EventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     String startDate = event.start != null
         ? event.start.day.toString() +
-        '.' +
-        event.start.month.toString() +
-        '.' +
-        event.start.year.toString()
+            '.' +
+            event.start.month.toString() +
+            '.' +
+            event.start.year.toString()
         : '';
     String startTime = event.start != null
-        ? (event.start.hour
-        .toString()
-        .length == 1 ? '0' : '') +
-        event.start.hour.toString() +
-        ':' +
-        (event.start.minute
-            .toString()
-            .length == 1 ? '0' : '') +
-        event.start.minute.toString()
+        ? (event.start.hour.toString().length == 1 ? '0' : '') +
+            event.start.hour.toString() +
+            ':' +
+            (event.start.minute.toString().length == 1 ? '0' : '') +
+            event.start.minute.toString()
         : '';
-    if (startTime == '00:00') {
+    if (startTime == '23:00') {
       startTime = '';
     }
     String endDate = event.end != null
         ? event.end.day.toString() +
-        '.' +
-        event.end.month.toString() +
-        '.' +
-        event.end.year.toString()
+            '.' +
+            event.end.month.toString() +
+            '.' +
+            event.end.year.toString()
         : '';
     String endTime = event.end != null
-        ? (event.end.hour
-        .toString()
-        .length == 1 ? '0' : '') +
-        event.end.hour.toString() +
-        ':' +
-        (event.end.hour
-            .toString()
-            .length == 1 ? '0' : '') +
-        event.end.minute.toString()
+        ? (event.end.hour.toString().length == 1 ? '0' : '') +
+            event.end.hour.toString() +
+            ':' +
+            (event.end.minute.toString().length == 1 ? '0' : '') +
+            event.end.minute.toString()
         : '';
-    if (endTime == '23:59') {
+    if (endTime == '23:00') {
       endTime = '';
     }
     return Padding(
@@ -77,14 +69,14 @@ class EventCard extends StatelessWidget {
                       Container(
                         margin: EdgeInsets.only(bottom: 10),
                         child:
-                        event.info != '' ? Text(event.info) : Container(),
+                            event.info != '' ? Text(event.info) : Container(),
                       ),
                       Text(startDate +
                           (startTime != '' ? ' (' + startTime + ' Uhr)' : '')),
                       startDate + startTime != endDate + endTime
                           ? Text('bis ' +
-                          endDate +
-                          (endTime != '' ? ' (' + endTime + ' Uhr)' : ''))
+                              (endDate != startDate ? endDate : '') +
+                              (endTime != '' ? (endDate == startDate ? '' : ' (') + endTime + (endDate == startDate ? ' Uhr' : ' Uhr)') : ''))
                           : Container()
                     ],
                   ),

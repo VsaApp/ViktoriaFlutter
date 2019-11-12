@@ -1,214 +1,203 @@
 import 'package:flutter/material.dart';
 
-import 'package:viktoriaflutter/Utils/Keys.dart';
-import 'package:viktoriaflutter/Utils/Selection.dart';
-import 'package:viktoriaflutter/Utils/Storage.dart';
-import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 
 // Describes the substitution plan
 class SubstitutionPlan {
-  static List<SubstitutionPlanDay> days;
+  final List<SubstitutionPlanDay> days;
+
+  void updateFilter() {
+    days.forEach((day) => day.filterSubstitutions());
+  }
+
+  void insert() {
+    days.forEach((day) => day.insertInTimetable());
+  }
+
+  SubstitutionPlan({@required this.days});
 }
 
 // Describes a day of the substitution plan...
 class SubstitutionPlanDay {
-  final String date;
-  final String time;
-  final String update;
-  final String weekday;
-  final String weektype;
-  final List<Change> myChanges;
-  final List<Change> undefinedChanges;
-  final List<Change> otherChanges;
-  final List<Change> unparsed;
-  final isEmpty;
+  final DateTime date;
+  final DateTime updated;
+  final int week;
+  final Map<String, List<String>> unparsed;
+  final Map<String, List<Substitution>> data;
+  final bool isEmpty;
+  List<Substitution> myChanges;
+  List<Substitution> undefinedChanges;
+  List<Substitution> otherChanges;
+  List<String> myUnparsed;
+  String filteredGrade;
 
-  SubstitutionPlanDay({
-    @required this.date,
-    @required this.weekday,
-    @required this.weektype,
-    this.time,
-    this.update,
-    this.myChanges,
-    this.undefinedChanges,
-    this.otherChanges,
-    this.unparsed,
-    this.isEmpty = false,
-  });
-}
-
-// Describes a change which could not be parsed...
-class UnparsedChange {
-  final int unit;
-  final List<dynamic> original;
-  final List<dynamic> change;
-
-  UnparsedChange({
-    @required this.unit,
-    @required this.original,
-    @required this.change,
-  });
-
-  factory UnparsedChange.fromJson(Map<String, dynamic> json) {
-    return UnparsedChange(
-        unit: int.parse(json['unit'] as String) - 1,
-        original: json['original'].map((line) => line.toString()).toList(),
-        change: json['change'].map((line) => line.toString()).toList());
-  }
-}
-
-// Describes a change of a substitution plan day...
-class Change {
-  final int unit;
-  final String lesson;
-  final String course;
-  String room;
-  String teacher;
-  final Changed changed;
-  bool sure;
-  List<dynamic> original;
-  List<dynamic> change;
-
-  Color get color {
-    if (changed.info.toLowerCase().contains('klausur'))
-      return Colors.red;
-    else if (changed.info.toLowerCase().contains('freistunde'))
-      return null;
-    else
-      return Colors.orange;
+  SubstitutionPlanDay(
+      {@required this.date,
+      @required this.updated,
+      @required this.data,
+      @required this.week,
+      @required this.unparsed,
+      @required this.isEmpty}) {
+    insertInTimetable();
+    filterSubstitutions();
+    filterUnparsed();
   }
 
-  bool get isExam {
-    return changed.info.toLowerCase().contains('klausur');
-  }
+  void insertInTimetable() {
+    List<TimetableSubject> subjects =
+        Data.timetable.getAllSubjects(reset: true);
+    List<String> subjectsIds = subjects.map((s) => s.id).toList();
+    List<String> subjectsCourseIDs = subjects.map((s) => s.courseID).toList();
 
-  bool get isRewriteExam {
-    return isExam && changed.info.toLowerCase().contains('nachschreiber');
-  }
-
-  int isMyExam(String week) {
-    if (isRewriteExam) return -1;
-    String grade = Storage.getString(Keys.grade) ?? '';
-    if (!(Storage.getBool(Keys.exams(grade, lesson.toUpperCase())) ?? true))
-      return 0;
-
-    Map<String, List<int>> courseCount = {};
-    int selected = 0;
-    bool containsLK = false;
-    int count = 0;
-
-    for (int i = 0; i < Timetable.days.length; i++) {
-      TimetableDay day = Timetable.days[i];
-      for (int j = 0; j < day.lessons.length; j++) {
-        TimetableLesson lesson = day.lessons[j];
-        int _selected = getSelectedIndex(lesson.subjects,
-            Timetable.days.indexOf(day), day.lessons.indexOf(lesson),
-            week: week);
-        for (int k = 0; k < lesson.subjects.length; k++) {
-          TimetableSubject subject = lesson.subjects[k];
-          if ((subject.lesson == this.lesson &&
-                  subject.course == this.course) ||
-              (subject.course.length == 0 &&
-                  subject.lesson == this.lesson &&
-                  subject.teacher == this.teacher)) {
-            containsLK = containsLK ||
-                subject.course.toLowerCase().contains('lk') ||
-                course.toLowerCase().contains('lk');
-            count++;
-            if (!courseCount.keys.contains(subject.course))
-              courseCount[subject.course] = [0, 1];
-            else
-              courseCount[subject.course][1]++;
-            if (lesson.subjects.indexOf(subject) == _selected) {
-              selected++;
-              courseCount[subject.course][0]++;
-            }
-          }
+    filteredGrade = Data.timetable.grade;
+    data[filteredGrade].forEach((substitution) {
+      if (substitution.id != null && subjectsIds.contains(substitution.id)) {
+        subjects[subjectsIds.indexOf(substitution.id)]
+            .substitutions
+            .add(substitution);
+      } else if (substitution.courseID != null &&
+          subjectsCourseIDs.contains(substitution.courseID)) {
+        List<TimetableSubject> _subjects =
+            subjects.where((s) => s.courseID == substitution.courseID).toList();
+        try {
+          _subjects
+              .where((s) =>
+                  s.day == date.weekday - 1 && s.unit == substitution.unit)
+              .single
+              .substitutions
+              .add(substitution);
+        } on StateError catch (_) {
+          Data.timetable.days[date.weekday - 1].units[substitution.unit]
+              .substitutions
+              .add(substitution);
         }
       }
-    }
+    });
+  }
 
-    if (selected == 0) return 0;
-    if (selected >= count - 1) return 1;
-    for (int i = 0; i < courseCount.keys.length; i++) {
-      String key = courseCount.keys.toList()[i];
-      if (key == course) {
-        if (courseCount[key][0] > 0) return 1;
+  void filterUnparsed() {
+    myUnparsed = [];
+    filteredGrade = Data.timetable.grade;
+    myUnparsed.addAll(unparsed[filteredGrade]);
+    myUnparsed.addAll(unparsed['other']);
+  }
+
+  void filterSubstitutions() {
+    myChanges = [];
+    otherChanges = [];
+    undefinedChanges = [];
+
+    List<TimetableSubject> selectedSubjects =
+        Data.timetable.getAllSelectedSubjects();
+    List<String> selectedIds = selectedSubjects.map((s) => s.id).toList();
+    List<String> selectedCourseIds =
+        selectedSubjects.map((s) => s.courseID).toList();
+
+    filteredGrade = Data.timetable.grade;
+    data[filteredGrade].forEach((substitution) {
+      if (substitution.id == null && substitution.courseID == null) {
+        undefinedChanges.add(substitution);
+      } else if ((substitution.id != null &&
+              selectedIds.contains(substitution.id)) ||
+          (substitution.courseID != null &&
+              selectedCourseIds.contains(substitution.courseID))) {
+        myChanges.add(substitution);
+      } else {
+        otherChanges.add(substitution);
       }
-    }
-    if (courseCount.keys.contains('')) {
-      if (courseCount[''][0] >= courseCount[''][1] - 1) return 1;
-      if (courseCount[''][1] > 3) return -1;
-      if (courseCount[''][0] >= 1) return 1;
-      return 0;
-    } else
-      return 0;
+    });
   }
 
-  bool equals(Change c) {
+  factory SubstitutionPlanDay.fromJson(Map<String, dynamic> json) {
+    return SubstitutionPlanDay(
+        date: DateTime.parse(json['date'] as String),
+        updated: DateTime.parse(json['updated'] as String),
+        unparsed: json['unparsed'].map<String, List<String>>(
+            (String key, value) =>
+                MapEntry<String, List<String>>(key, value.cast<String>())),
+        data: json['data'].map<String, List<Substitution>>(
+            (String key, value) => MapEntry<String, List<Substitution>>(
+                key,
+                value
+                    .map<Substitution>((json) => Substitution.fromJson(json))
+                    .toList())),
+        week: json['week'] as int,
+        isEmpty: false);
+  }
+}
+
+// Describes a substitution of a substitution plan day...
+class Substitution {
+  /// starts with 0; 6. unit is the lunch break
+  final int unit;
+
+  /// 0 => substitution; 1 => free lesson; 2 => exam
+  final int type;
+  final String info;
+  final String id;
+  final String courseID;
+  final SubstitutionDetails original;
+  final SubstitutionDetails changed;
+
+  Color get color => type == 0 ? Colors.orange : type == 1 ? null : Colors.red;
+
+  bool get isExam => type == 2;
+
+  bool get sure => id != null;
+
+  bool equals(Substitution c) {
     return unit == c.unit &&
-        lesson == c.lesson &&
-        course == c.course &&
-        room == c.room &&
-        teacher == c.teacher &&
-        changed.equals(c.changed);
+        type == c.type &&
+        courseID == c.courseID &&
+        info == c.info &&
+        id == c.id;
   }
 
-  Change({@required this.unit,
-    @required this.lesson,
-    @required this.course,
-    @required this.room,
-    @required this.teacher,
-    @required this.changed,
-    @required this.sure,
-    this.original,
-    this.change});
+  Substitution(
+      {@required this.unit,
+      @required this.type,
+      @required this.info,
+      @required this.id,
+      @required this.courseID,
+      @required this.original,
+      @required this.changed});
 
-  factory Change.fromJson(Map<String, dynamic> json) {
-    return Change(
+  factory Substitution.fromJson(Map<String, dynamic> json) {
+    return Substitution(
       unit: json['unit'] as int,
-      lesson: json['subject'] as String,
-      course: json['course'] as String,
-      room: json['room'] as String,
-      teacher: json['participant'] as String,
-      changed: Changed.fromJson(json['change']),
-      sure: json['sure'] as bool,
-      original: !json.keys.contains('participant')
-          ? json['unparsedOriginal'].map((line) => line.toString()).toList()
-          : null,
-      change: !json.keys.contains('participant')
-          ? json['unparsedChange'].map((line) => line.toString()).toList()
-          : null,
+      type: json['type'] as int,
+      info: json['info'] as String,
+      id: json['id'] as String,
+      courseID: json['courseID'] as String,
+      original: SubstitutionDetails.fromJson(json['original']),
+      changed: SubstitutionDetails.fromJson(json['changed']),
     );
   }
 }
 
-// Describes a changed of a substitution plan change...
-class Changed {
-  final String info;
-  final String teacher;
-  final String room;
-  final String subject;
+// Describes details of a substitution...
+class SubstitutionDetails {
+  final String teacherID;
+  final String roomID;
+  final String subjectID;
 
-  bool equals(Changed c) {
-    return info == c.info &&
-        teacher == c.teacher &&
-        room == c.room &&
-        subject == c.subject;
+  bool equals(SubstitutionDetails c) {
+    return teacherID == c.teacherID &&
+        roomID == c.roomID &&
+        subjectID == c.subjectID;
   }
 
-  Changed({
-    @required this.info,
-    @required this.teacher,
-    @required this.room,
-    @required this.subject,
+  SubstitutionDetails({
+    @required this.teacherID,
+    @required this.roomID,
+    @required this.subjectID,
   });
 
-  factory Changed.fromJson(Map<String, dynamic> json) {
-    return Changed(
-        info: json['info'] as String,
-        teacher: json['teacher'] as String,
-        room: json['room'] as String,
-        subject: json['subject'] as String);
+  factory SubstitutionDetails.fromJson(Map<String, dynamic> json) {
+    return SubstitutionDetails(
+      teacherID: json['teacherID'] as String,
+      roomID: json['roomID'] as String,
+      subjectID: json['subjectID'] as String,
+    );
   }
 }

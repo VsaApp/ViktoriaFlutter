@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'DayCard/DayCardWidget.dart';
-import 'package:viktoriaflutter/Utils/Models/WorkGroupsModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 import 'WorkGroupsPage.dart';
 
 class WorkGroupsPageView extends WorkGroupsPageState {
@@ -16,7 +16,7 @@ class WorkGroupsPageView extends WorkGroupsPageState {
       child: ListView(
         padding: EdgeInsets.all(10),
         shrinkWrap: true,
-        children: WorkGroups.days
+        children: Data.workGroups.days
             .map((day) => WorkGroupsDayCard(
                   day: day,
                   showWeekday: true,

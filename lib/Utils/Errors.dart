@@ -17,7 +17,6 @@ void init() async {
 void reportError(error, stackTrace) async {
   print("Report new bug ($error)");
   if ((await checkOnline) == 1) {
-    String url = '/bugs/report';
     String version;
     try {
       version = (await rootBundle.loadString('pubspec.yaml'))
@@ -31,8 +30,8 @@ void reportError(error, stackTrace) async {
       version = '';
     }
     try {
-      post(url, body: {
-        "id": Id.id,
+      httpPost(Urls.bugReport, body: {
+        "username": Storage.getString(Keys.username),
         "title": error.toString(),
         "error": stackTrace.toString(),
         "version": version == '' ? null : version

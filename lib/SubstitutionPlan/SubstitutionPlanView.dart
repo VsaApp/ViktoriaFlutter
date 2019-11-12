@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../BrotherSisterSubstitutionPlan/BrotherSisterSubstitutionPlanPage.dart';
-import 'package:viktoriaflutter/Utils/Update.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/TabProxy.dart';
-import '../Timetable/TimetableData.dart' as timetable;
 import 'GradeFAB/GradeFABWidget.dart';
 import 'SubstitutionPlanData.dart' as substitutionPlan;
 import 'SubstitutionPlanDayList/SubstitutionPlanDayListWidget.dart';
@@ -34,10 +32,7 @@ class SubstitutionPlanPageView extends SubstitutionPlanPageState {
               .toList(),
           controller: controller,
           onUpdate: () async {
-            await timetable.download(Storage.getString(Keys.grade), false, onFinished: (successfully) {
-              dataUpdated(context, successfully, AppLocalizations.of(context).substitutionPlan);
-            });
-            substitutionPlan.load(timetable.getTimetable(), false);
+            await substitutionPlan.download();
             setState(() =>
             days = generateDays(substitutionPlan.getSubstitutionPlan()));
           },

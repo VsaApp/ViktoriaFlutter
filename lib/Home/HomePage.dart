@@ -40,7 +40,7 @@ class HomePage extends StatefulWidget {
 
 abstract class HomePageState extends State<HomePage> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-  String currentWeek = 'A';
+  int currentWeek = 0;
   bool showWeek = false;
   static bool weekChangeable = true;
   Scaffold appScaffold;
@@ -50,11 +50,10 @@ abstract class HomePageState extends State<HomePage> {
   bool timetableChanged = false;
   String currentTimetableDate;
   bool showDialog1 = true;
-  int logoClickCount = 0;
   bool offlineShown = false;
   static const platform = const MethodChannel('viktoriaflutter');
-  static Function(String week) weekChanged;
-  static Function(String week) updateWeek;
+  static Function(int week) weekChanged;
+  static Function(int week) updateWeek;
   static Function(bool value) setShowWeek;
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -68,13 +67,13 @@ abstract class HomePageState extends State<HomePage> {
     HomePageState.weekChangeable = value;
   }
 
-  void _updateWeek(String week) {
+  void _updateWeek(int week) {
     if (mounted && week != currentWeek) setState(() => currentWeek = week);
   }
 
   void weekPressed() {
     if (!weekChangeable) return;
-    setState(() => currentWeek = currentWeek == 'B' ? 'A' : 'B');
+    setState(() => currentWeek = currentWeek == 1 ? 0 : 1);
     if (weekChanged != null) weekChanged(currentWeek);
   }
 
@@ -89,22 +88,17 @@ abstract class HomePageState extends State<HomePage> {
 
   Future handleSubstitutionPlanNotification(Map msg) async {
     print("received substitution plan notification");
-    String grade = Storage.getString(Keys.grade);
     Storage.remove(Keys.historyDate('substitutionPlan'));
-    await timetable.download(grade, false);
-    substitutionPlan.load(timetable.getTimetable(), false);
+    await substitutionPlan.download();
     if (appScaffold != null) {
       substitutionPlanUpdatedListeners
           .forEach((substitutionPlanUpdated) => substitutionPlanUpdated());
       scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text(AppLocalizations
-            .of(context)
+        content: Text(AppLocalizations.of(context)
             .substitutionPlanUpdated
             .replaceAll('%s', msg['weekday'])),
         action: SnackBarAction(
-          label: AppLocalizations
-              .of(context)
-              .ok,
+          label: AppLocalizations.of(context).ok,
           onPressed: () {},
         ),
       ));
@@ -114,9 +108,9 @@ abstract class HomePageState extends State<HomePage> {
 
   Future handleTimetableNotification(Map msg) async {
     print("received timetable notification");
-    String grade = Storage.getString(Keys.grade);
-    await timetable.download(grade, false);
-    substitutionPlan.load(timetable.getTimetable(), false);
+    await syncWithTags();
+    await timetable.download(false);
+    await substitutionPlan.download();
     if (appScaffold != null) {
       substitutionPlanUpdatedListeners
           .forEach((substitutionPlanUpdated) => substitutionPlanUpdated());
@@ -149,7 +143,8 @@ abstract class HomePageState extends State<HomePage> {
       setShowWeek(true);
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => checkIfTimetableUpdated(context));
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => checkIfTimetableUpdated(context));
 
     // Set the listener for android functions (Currently for incoming notifications and intents)...
     platform.setMethodCallHandler(_handleNotification);
@@ -164,7 +159,7 @@ abstract class HomePageState extends State<HomePage> {
         assert(token != null);
 
         // Synchronize tags for notifications
-        await initTags(token);
+        await initTags(context, token);
         await syncWithTags();
         await syncTags();
         substitutionPlanUpdatedListeners
@@ -192,7 +187,7 @@ abstract class HomePageState extends State<HomePage> {
     }
   }
 
-// Load saved data
+  // Load saved data
   void loadData() async {
     setState(() {
       grade = Storage.get(Keys.grade) ?? '';
@@ -201,32 +196,7 @@ abstract class HomePageState extends State<HomePage> {
     });
   }
 
-  void logoClick() {
-    logoClickCount++;
-    if (logoClickCount >= 7) {
-      scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text((Storage.getBool(Keys.dev) ?? false)
-            ? AppLocalizations
-            .of(context)
-            .nowNoDeveloper
-            : AppLocalizations
-            .of(context)
-            .nowADeveloper),
-        action: SnackBarAction(
-          label: AppLocalizations
-              .of(context)
-              .ok,
-          onPressed: () {},
-        ),
-      ));
-
-      logoClickCount = 0;
-      Storage.setBool(Keys.dev, !(Storage.getBool(Keys.dev) ?? false));
-      sendTag(Keys.dev, Storage.getBool(Keys.dev));
-    }
-  }
-
-// Return the widget of the page
+  // Return the widget of the page
   getDrawerItemWidget(int pos, List<Page> pages) {
     if (pos < pages.length)
       return pages[pos].page;
@@ -234,7 +204,7 @@ abstract class HomePageState extends State<HomePage> {
       return Text('Error');
   }
 
-// Change page
+  // Change page
   onSelectItem(int index) {
     if (index > 1)
       setShowWeek(false);

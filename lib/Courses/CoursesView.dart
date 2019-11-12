@@ -5,9 +5,8 @@ import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/SectionWidget.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import 'package:viktoriaflutter/Utils/Models/SubjectsModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 import '../Timetable/TimetableData.dart' as Timetable;
-import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
 import 'CourseEdit/CourseEditWidget.dart';
 import 'CoursesPage.dart';
 
@@ -17,24 +16,16 @@ class CoursesPageView extends CoursesPageState {
     List<TimetableSubject> selectedSubjects = [];
 
     // Get all selected subjects...
-    Timetable.getTimetable().forEach((day) => day.lessons.forEach((lesson) {
-          if (lesson.subjects.length > 0) {
-            int selectedA = getSelectedIndex(
-                    lesson.subjects,
-                    Timetable.getTimetable().indexOf(day),
-                day.lessons.indexOf(lesson),
-                week: 'A') ??
-                lesson.subjects.length;
-            int selectedB = getSelectedIndex(
-                lesson.subjects,
-                Timetable.getTimetable().indexOf(day),
-                day.lessons.indexOf(lesson),
-                week: 'B') ??
-                lesson.subjects.length;
-            if (selectedA < lesson.subjects.length)
-              selectedSubjects.add(lesson.subjects[selectedA]);
-            if (selectedB != selectedA && selectedB < lesson.subjects.length)
-              selectedSubjects.add(lesson.subjects[selectedB]);
+    Timetable.getTimetable().forEach((day) => day.units.forEach((unit) {
+          if (unit.subjects.length > 0) {
+            int selectedA = getSelectedIndex(unit.subjects, week: 0) ??
+                unit.subjects.length;
+            int selectedB = getSelectedIndex(unit.subjects, week: 1) ??
+                unit.subjects.length;
+            if (selectedA < unit.subjects.length)
+              selectedSubjects.add(unit.subjects[selectedA]);
+            if (selectedB != selectedA && selectedB < unit.subjects.length)
+              selectedSubjects.add(unit.subjects[selectedB]);
           }
         }));
 
@@ -42,9 +33,9 @@ class CoursesPageView extends CoursesPageState {
 
     // Add to subjects to map
     selectedSubjects.forEach((subject) {
-      if (subject.lesson != AppLocalizations.of(context).lunchBreak &&
-          subject.lesson != AppLocalizations.of(context).freeLesson) {
-        String key = subject.lesson + subject.teacher;
+      if (subject.subjectID != AppLocalizations.of(context).lunchBreak &&
+          subject.subjectID != AppLocalizations.of(context).freeLesson) {
+        String key = subject.subjectID + subject.teacherID;
         if (courses.containsKey(key)) {
           courses[key].add(subject);
         } else
@@ -59,36 +50,36 @@ class CoursesPageView extends CoursesPageState {
     List<Widget> section3Items = [];
 
     courses.keys.toList().forEach((key) {
-      String lesson = courses[key][0].lesson;
-      if (lesson == Subjects.subjects['D'] ||
-          lesson == Subjects.subjects['E'] ||
-          lesson == Subjects.subjects['F'] ||
-          lesson == Subjects.subjects['L'] ||
-          lesson == Subjects.subjects['S'] ||
-          lesson == Subjects.subjects['KU'] ||
-          lesson == Subjects.subjects['MU'] ||
-          lesson == Subjects.subjects['MC'] ||
-          lesson == Subjects.subjects['UC'] ||
-          lesson == Subjects.subjects['SG']) {
+      String lesson = courses[key][0].subjectID;
+      if (lesson == Data.subjects['D'] ||
+          lesson == Data.subjects['E'] ||
+          lesson == Data.subjects['F'] ||
+          lesson == Data.subjects['L'] ||
+          lesson == Data.subjects['S'] ||
+          lesson == Data.subjects['KU'] ||
+          lesson == Data.subjects['MU'] ||
+          lesson == Data.subjects['MC'] ||
+          lesson == Data.subjects['UC'] ||
+          lesson == Data.subjects['SG']) {
         section0Items.add(CourseRow(
           subjects: courses[key].toList(),
         ));
-      } else if (lesson == Subjects.subjects['EK'] ||
-          lesson == Subjects.subjects['GE'] ||
-          lesson == Subjects.subjects['PL'] ||
-          lesson == Subjects.subjects['SW'] ||
-          lesson == Subjects.subjects['DP'] ||
-          lesson == Subjects.subjects['PK']) {
+      } else if (lesson == Data.subjects['EK'] ||
+          lesson == Data.subjects['GE'] ||
+          lesson == Data.subjects['PL'] ||
+          lesson == Data.subjects['SW'] ||
+          lesson == Data.subjects['DP'] ||
+          lesson == Data.subjects['PK']) {
         section1Items.add(CourseRow(
           subjects: courses[key].toList(),
         ));
-      } else if (lesson == Subjects.subjects['BI'] ||
-          lesson == Subjects.subjects['CH'] ||
-          lesson == Subjects.subjects['NW'] ||
-          lesson == Subjects.subjects['IF'] ||
-          lesson == Subjects.subjects['MI'] ||
-          lesson == Subjects.subjects['M'] ||
-          lesson == Subjects.subjects['PH']) {
+      } else if (lesson == Data.subjects['BI'] ||
+          lesson == Data.subjects['CH'] ||
+          lesson == Data.subjects['NW'] ||
+          lesson == Data.subjects['IF'] ||
+          lesson == Data.subjects['MI'] ||
+          lesson == Data.subjects['M'] ||
+          lesson == Data.subjects['PH']) {
         section2Items.add(CourseRow(
           subjects: courses[key].toList(),
         ));
@@ -121,9 +112,7 @@ class CoursesPageView extends CoursesPageState {
           ? sections
           :
           // No subjects are selected in the timetable
-          <Widget>[
-              Center(child: Text(AppLocalizations.of(context).noCourses))
-            ],
+          <Widget>[Center(child: Text(AppLocalizations.of(context).noCourses))],
     );
   }
 }
@@ -149,18 +138,16 @@ class CourseRowView extends State<CourseRow> {
 
   @override
   void initState() {
-    name = widget.subjects[0].lesson;
-    teacher = widget.subjects[0].teacher;
+    name = widget.subjects[0].subjectID;
+    teacher = widget.subjects[0].teacherID;
     course = '';
     blocks = [];
-    _exams = Storage.getBool(Keys.exams(Storage.getString(Keys.grade),
-            widget.subjects[0].lesson.toUpperCase())) ??
-        true;
+    _exams = Storage.getBool(Keys.exams(widget.subjects[0].courseID)) ?? true;
 
     // Create list of blocks
     widget.subjects.forEach((subject) {
-      if (course.length == 0) course = subject.course;
-      if (!blocks.contains(subject.block)) blocks.add(subject.block);
+      if (course.length == 0) course = subject.courseID;
+      if (!blocks.contains(subject.courseID)) blocks.add(subject.courseID);
     });
 
     if (course.length == 0) course = '-';
@@ -245,14 +232,14 @@ class CourseRowView extends State<CourseRow> {
                                   barrierDismissible: true,
                                   builder: (BuildContext context1) =>
                                       CourseEdit(
-                                        subject: widget.subjects[0],
-                                        blocks: blocks,
-                                        onExamChange: (exams) {
-                                          setState(() {
-                                            _exams = exams;
-                                          });
-                                        },
-                                      ),
+                                    subject: widget.subjects[0],
+                                    blocks: blocks,
+                                    onExamChange: (exams) {
+                                      setState(() {
+                                        _exams = exams;
+                                      });
+                                    },
+                                  ),
                                 );
                               }),
                         ),

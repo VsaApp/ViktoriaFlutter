@@ -1,40 +1,38 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import 'package:viktoriaflutter/Utils/Models/CalendarModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 
 // Download calendar data...
-Future download({bool update = true, Function(bool successfully) onFinished}) async {
+Future download(
+    {bool update = true, Function(bool successfully) onFinished}) async {
   bool successfully;
   if (update) {
-    String url = '/calendar/calendar.json?v=' +
-        Random().nextInt(99999999).toString();
-    await fetchDataAndSave(url, Keys.calendar, '{}', onFinished: (v) => successfully = v);
+    String url = Urls.calendar;
+    await fetchDataAndSave(url, Keys.calendar, '{}',
+        onFinished: (v) => successfully = v == 200);
   }
 
   // Parse loaded data...
-  Calendar.events = await fetchEvents();
+  Data.calendar = fetchCalendar();
   if (onFinished != null) onFinished(successfully);
 }
 
 // Returns the static calendar data...
-List<CalendarEvent> getCalendar() {
-  return Calendar.events;
+List<CalendarEvent> getCalendarEvents() {
+  return Data.calendar.events;
 }
 
 // Load calendar from preferences...
-Future<List<CalendarEvent>> fetchEvents() async {
+Calendar fetchCalendar() {
   return parseEvents(Storage.getString(Keys.calendar));
 }
 
 // Returns parse calendar events...
-List<CalendarEvent> parseEvents(String responseBody) {
+Calendar parseEvents(String responseBody) {
   final parsed = json.decode(responseBody);
-  return parsed['data']
-      .map<CalendarEvent>((json) => CalendarEvent.fromJson(json))
-      .toList();
+  return Calendar.fromJson(parsed);
 }

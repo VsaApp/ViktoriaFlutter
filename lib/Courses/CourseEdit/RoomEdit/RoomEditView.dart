@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Rooms.dart';
-import 'package:viktoriaflutter/Utils/Models/RoomsModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
 
 class RoomEdit extends StatefulWidget {
@@ -26,8 +26,8 @@ class RoomEditView extends State<RoomEdit> {
       room = getRoom(
         widget.subject['weekday'],
         widget.subject['unit'],
-        widget.subject['subject'].lesson,
-        widget.subject['subject'].room,
+        widget.subject['subject'].unit,
+        widget.subject['subject'].roomID,
       );
     });
   }
@@ -50,14 +50,14 @@ class RoomEditView extends State<RoomEdit> {
               ' ' +
               (widget.subject['unit'] + 1).toString() +
               '. Stunde (Normal: ' +
-              widget.subject['subject'].room +
+              widget.subject['subject'].roomID +
               '):'),
           SizedBox(
             width: double.infinity,
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 isDense: true,
-                items: Rooms.rooms.values.toSet().toList().map((String value) {
+                items: Data.rooms.values.toSet().toList().map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -70,7 +70,7 @@ class RoomEditView extends State<RoomEdit> {
                     setRoom(
                       widget.subject['weekday'],
                       widget.subject['unit'],
-                      widget.subject['subject'].lesson,
+                      widget.subject['subject'].unit,
                       value,
                     );
                     syncTags();

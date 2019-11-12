@@ -24,13 +24,11 @@ class HomePageView extends HomePageState {
       Page(AppLocalizations.of(context).timetable, Icons.event_note,
           TimetablePage(),
           url:
-          'https://${Storage.getString(Keys.username)}:${Storage.getString(Keys
-              .password)}@www.viktoriaschule-aachen.de/sundvplan/sps/index.html'),
+              'https://www.viktoriaschule-aachen.de/sundvplan/sps/index.html'),
       Page(AppLocalizations.of(context).substitutionPlan,
           Icons.format_list_numbered, SubstitutionPlanPage(),
           url:
-          'https://${Storage.getString(Keys.username)}:${Storage.getString(Keys
-              .password)}@www.viktoriaschule-aachen.de/sundvplan/vps/index.html'),
+              'https://www.viktoriaschule-aachen.de/sundvplan/vps/index.html'),
       Page(AppLocalizations.of(context).calendar, Icons.calendar_today,
           CalendarPage()),
       Page(AppLocalizations.of(context).cafetoria, Icons.fastfood,
@@ -70,18 +68,14 @@ class HomePageView extends HomePageState {
 
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         bool selectedSubjects = Storage.getKeys().where((key) {
-          if (key
-              .startsWith('timetable-${Storage.getString(Keys.grade)}-')) {
-            if ('-'
-                .allMatches(key)
-                .length == 3)
-              return key.split('-')[key
-                  .split('-')
-                  .length - 1] != '5';
-            return true;
-          }
-          return false;
-        }).length >
+              if (key
+                  .startsWith('timetable-${Storage.getString(Keys.grade)}-')) {
+                if ('-'.allMatches(key).length == 3)
+                  return key.split('-')[key.split('-').length - 1] != '5';
+                return true;
+              }
+              return false;
+            }).length >
             0;
         // Check if user selected anything in the timetable (setup)
         if (selectedSubjects) {
@@ -118,26 +112,26 @@ class HomePageView extends HomePageState {
         actions: <Widget>[
           showWeek
               ? Container(
-            margin: EdgeInsets.all(10),
-            child: OutlineButton(
-                borderSide: BorderSide(
-                  color: Colors.white,
-                  width: 1.0,
-                ),
-                color: Colors.white,
-                highlightedBorderColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                child: Text(
-                  currentWeek,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
-                ),
-                onPressed: weekPressed),
-          )
+                  margin: EdgeInsets.all(10),
+                  child: OutlineButton(
+                      borderSide: BorderSide(
+                        color: Colors.white,
+                        width: 1.0,
+                      ),
+                      color: Colors.white,
+                      highlightedBorderColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      child: Text(
+                        currentWeek == 0 ? 'A' : 'B',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                      ),
+                      onPressed: weekPressed),
+                )
               : Container()
         ],
       ),
@@ -149,18 +143,15 @@ class HomePageView extends HomePageState {
               child: Column(
                 children: <Widget>[
                   // Logo
-                  GestureDetector(
-                    onTap: logoClick,
-                    child: Container(
-                      height: 100.0,
-                      child: SvgPicture.asset(
-                        'assets/images/logo_white.svg',
-                      ),
+                  Container(
+                    height: 100.0,
+                    child: SvgPicture.asset(
+                      'assets/images/logo_white.svg',
                     ),
                   ),
                   // Grade
                   Text(
-                    HomePageState.grade,
+                    AppLocalizations.of(context).gradeName(HomePageState.grade),
                     style: TextStyle(
                       fontSize: 20,
                       color: Colors.white,

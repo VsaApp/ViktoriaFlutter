@@ -1,8 +1,18 @@
 // Describes a list of calendar events...
-import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
 
 class Calendar {
-  static List<CalendarEvent> events;
+  final List<int> years;
+  final List<CalendarEvent> events;
+
+  Calendar({@required this.years, @required this.events});
+
+  factory Calendar.fromJson(Map<String, dynamic> json) {
+    return Calendar(
+      years: json['years'].cast<int>().toList(),
+      events: json['data'].map((json) => CalendarEvent.fromJson(json)).cast<CalendarEvent>().toList()
+    );
+  }
 }
 
 // Describes a calendar event...
@@ -11,32 +21,21 @@ class CalendarEvent {
   String info;
   DateTime start;
   DateTime end;
-  bool free;
 
-  CalendarEvent({String name, String info, DateTime start, DateTime end, bool free}) {
+  CalendarEvent(
+      {String name, String info, DateTime start, DateTime end, bool free}) {
     this.name = name;
     this.info = info;
     this.start = start != null ? start : end;
     this.end = end != null ? end : start;
-    this.free = free;
   }
 
   factory CalendarEvent.fromJson(Map<String, dynamic> json) {
-    DateFormat format = DateFormat('dd.MM.yyyy HH:mm');
     return CalendarEvent(
       name: json['name'] as String,
       info: json['info'] as String,
-      start: json['start']['date'] != null && json['start']['date'] != ''
-          ? format.parse(json['start']['date'] +
-          ' ' +
-          (json['start']['time'] != '' ? json['start']['time'] : '00:00'))
-          : null,
-      end: json['end']['date'] != null && json['end']['date'] != ''
-          ? format.parse(json['end']['date'] +
-          ' ' +
-          (json['end']['time'] != '' ? json['end']['time'] : '23:59'))
-          : null,
-      free: json['free'] as bool
+      start: json['start'] != null ? DateTime.parse(json['start']) : null,
+      end: json['end'] != null ? DateTime.parse(json['end']) : null,
     );
   }
 }

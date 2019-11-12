@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io' show File, Platform;
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
 
 // ignore: avoid_classes_with_only_static_members
 class Storage {
@@ -31,6 +32,8 @@ class Storage {
   }
 
   static void setStringList(String key, List<String> value) {
+    if (key.startsWith(Keys.selection('')))
+      setString(Keys.lastModified, DateTime.now().toIso8601String());
     if (_isDesktop) {
       data[key] = value;
     } else {
@@ -41,6 +44,8 @@ class Storage {
 
   // ignore: avoid_positional_boolean_parameters
   static void setBool(String key, bool value) {
+    if (key.startsWith(Keys.exams('')))
+      setString(Keys.lastModified, DateTime.now().toIso8601String());
     if (_isDesktop) {
       data[key] = value;
     } else {

@@ -4,7 +4,7 @@ import '../../../Courses/CourseEdit/CourseEditWidget.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 import '../../TimetableRow/TimetableRowWidget.dart';
 import 'TimetableSelectDialogOptionWidget.dart';
 
@@ -18,14 +18,12 @@ class TimetableSelectDialogOptionView extends TimetableSelectDialogOptionState {
             .where((key) =>
         key ==
             Keys.exams(
-                Storage.getString(Keys.grade),
-                lesson.subjects[lesson.subjects.indexOf(subject)].lesson
-                    .toUpperCase()))
+                unit.subjects[unit.subjects.indexOf(subject)].courseID))
             .length >
             0);
         if (!_selected &&
-            lesson.subjects[lesson.subjects.indexOf(subject)].block != null &&
-            lesson.subjects[lesson.subjects.indexOf(subject)].lesson !=
+            unit.subjects[unit.subjects.indexOf(subject)].block != null &&
+            unit.subjects[unit.subjects.indexOf(subject)].subjectID !=
                 AppLocalizations
                     .of(context)
                     .freeLesson) {
@@ -35,9 +33,9 @@ class TimetableSelectDialogOptionView extends TimetableSelectDialogOptionState {
             barrierDismissible: true,
             builder: (BuildContext context2) {
               return CourseEdit(
-                subject: lesson.subjects[lesson.subjects.indexOf(subject)],
+                subject: unit.subjects[unit.subjects.indexOf(subject)],
                 blocks: [
-                  lesson.subjects[lesson.subjects.indexOf(subject)].block
+                  unit.subjects[unit.subjects.indexOf(subject)].block
                 ],
                 onExamChange: (_) {
                   if (mounted)
@@ -51,9 +49,9 @@ class TimetableSelectDialogOptionView extends TimetableSelectDialogOptionState {
         }
       },
       child: TimetableRow(
-        weekday: Timetable.days.indexOf(day),
+        weekday: Data.timetable.days.indexOf(day),
         subject: subject,
-        unit: day.lessons.indexOf(lesson),
+        unit: day.units.indexOf(unit),
         showUnit: false,
         isDialog: true,
       ),

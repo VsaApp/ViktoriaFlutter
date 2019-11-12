@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:viktoriaflutter/Utils/Models/SubstitutionPlanModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 import 'SubstitutionPlanDayListView.dart';
 
 class SubstitutionPlanDayList extends StatefulWidget {
@@ -46,13 +46,13 @@ abstract class SubstitutionPlanDayListState extends State<SubstitutionPlanDayLis
     'Q2'
   ];
 
-  List<Change> getUnsortedList(SubstitutionPlanDay day) {
-    List<Change> changes = [
+  List<Substitution> getUnsortedList(SubstitutionPlanDay day) {
+    List<Substitution> changes = [
       day.myChanges,
       day.undefinedChanges,
       day.otherChanges
     ].expand((x) => x).toList();
-    changes.sort((Change c1, Change c2) => c1.unit.compareTo(c2.unit));
+    changes.sort((Substitution c1, Substitution c2) => c1.unit.compareTo(c2.unit));
     return changes;
   }
 }

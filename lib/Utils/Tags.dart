@@ -2,20 +2,20 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:device_info/device_info.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:viktoriaflutter/Utils/Localizations.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 
 import 'Times.dart';
 import 'Keys.dart';
 import 'Network.dart';
-import 'Selection.dart';
 import 'Storage.dart';
 import '../Timetable/TimetableData.dart';
 
-Future<Map<String, dynamic>> getTags({String idToLoad}) async {
-  String id = idToLoad ?? Id.id;
-  String url = '/tags/$id';
+Future<Map<String, dynamic>> getTags() async {
   try {
-    return json.decode(await fetchData(url));
+    return json.decode(await fetchData(Urls.tags));
   } on Exception catch (_) {
     return null;
   }
@@ -26,32 +26,53 @@ Future sendTag(String key, dynamic value) async {
 }
 
 Future<Map<String, dynamic>> isInitialized() async {
-  Map<String, dynamic> deviceId = await getTags(idToLoad: Id.id);
-  if (deviceId.keys.length > 0) return deviceId;
+  Map<String, dynamic> tags = await getTags();
+  if (tags.keys.length > 0) return tags;
   return null;
 }
 
-Future syncWithTags() async {
-  Map<String, dynamic> tags = await getTags();
+Future syncWithTags({Map<String, dynamic> tags}) async {
+  if (tags == null) tags = await getTags();
   if (tags != null) {
-    tags.forEach((key, value) {
-      key = key.toString();
-      if (key.contains('timetable')) {
-        Storage.setStringList(key, value == null ? null : value.cast<String>());
-      } else if (key.contains('exam')) {
-        Storage.setBool(
-            Keys.exams(key.split('-')[1], key.split('-')[2].toUpperCase()),
-            value);
-      } else if (key == 'dev') {
-        Storage.setBool(key, value);
-      } else if (key.contains('room')) {
-        Storage.setString(key, value);
+    // Check if the server hast newer data than the local data
+    String _lastModified = Storage.getString(Keys.lastModified);
+    String _timestamp = tags['timestamp'];
+    bool serverIsNewer = true;
+    if (_lastModified != null && _timestamp != null) {
+      DateTime lastModified = DateTime.parse(_lastModified);
+      DateTime timestamp = DateTime.parse(_timestamp);
+      serverIsNewer = timestamp.isAfter(lastModified);
+    } else if (_timestamp == null) {
+      serverIsNewer = false;
+    }
+
+    // If the server has newer data, sync phone
+    if (serverIsNewer) {
+      if (tags['selected'] != null) {
+        // Reset local selections
+        Storage.getKeys()
+            .where((key) => key.startsWith(Keys.selection('')))
+            .forEach((key) => Storage.remove(key));
+        // Set new selections
+        tags['selected'].forEach((key) {
+          Storage.setBool(Keys.selection(key['courseID'] as String), true);
+        });
       }
-    });
+      if (tags['exams'] != null) {
+        // Reset local exam settings
+        Storage.getKeys()
+            .where((key) => key.startsWith(Keys.exams('')))
+            .forEach((key) => Storage.remove(key));
+        // Set new exam settings
+        tags['exams'].forEach((key) {
+          Storage.setBool(Keys.exams(key['courseID'] as String), true);
+        });
+      }
+    }
   }
 }
 
-Future initTags(id) async {
+Future initTags(BuildContext context, String id) async {
   if ((await checkOnline) == -1) return;
   String appVersion = (await rootBundle.loadString('pubspec.yaml'))
       .split('\n')
@@ -71,40 +92,37 @@ Future initTags(id) async {
     os = 'iOS ' + iosInfo.systemVersion;
     deviceName = iosInfo.utsname.machine;
   }
+  String language = AppLocalizations.of(context).locale.languageCode;
   Map<String, dynamic> send = {
-    Keys.grade: Storage.getString(Keys.grade),
-    Keys.dev: Storage.getBool(Keys.dev) ?? false,
-    'firebaseId': id,
-    'lastSession': DateTime.now().toIso8601String(),
+    'device': {
+      'firebaseId': id,
+      'language': language,
+      'notifications':
+          Storage.getBool(Keys.getSubstitutionPlanNotifications) ?? true
+    },
   };
   if (appVersion != '') {
-    send['appVersion'] = appVersion;
+    send['device']['appVersion'] = appVersion;
   }
   if (deviceName != '') {
-    send['deviceName'] = deviceName;
+    send['device']['name'] = deviceName;
   }
   if (os != '') {
-    send['os'] = os;
+    send['device']['os'] = os;
   }
-  sendTags(send);
+  await sendTags(send);
 }
 
 Future sendTags(Map<String, dynamic> tags) async {
-  String id = Id.id;
   try {
-    await post('/tags/$id/add', body: tags);
+    await httpPost(Urls.tags, body: tags);
   } catch (_) {}
 }
 
-Future deleteTag(String key) async {
-  deleteTags([key]);
-}
-
-Future deleteTags(List<String> tags) async {
-  String id = Id.id;
-  String url = '/tags/$id/remove';
+Future deleteTags(Map<String, dynamic> tags) async {
+  String url = Urls.tags;
   try {
-    post(url, body: tags);
+    httpDelete(url, body: tags);
   } catch (_) {}
 }
 
@@ -121,80 +139,60 @@ void syncDaysLength() {
 Future syncTags() async {
   if ((await checkOnline) == -1) return;
   syncDaysLength();
-  String grade = Storage.getString(Keys.grade);
 
   // Get all timetable and exams tags...
   Map<String, dynamic> allTags = await getTags();
   if (allTags == null) return;
-  allTags.removeWhere((key, value) =>
-  !key.startsWith('timetable') &&
-      !key.startsWith('exams') &&
-      !key.startsWith('room'));
+
+  if (Storage.getString(Keys.lastModified) == null) {
+    await syncTags();
+  }
+  else if (DateTime.parse(allTags['timestamp'])
+      .isAfter(DateTime.parse(Storage.getString(Keys.lastModified)))) {
+    await syncWithTags(tags: allTags);
+    return;
+  }
+
+  // Set the user group (1 (pupil); 2 (teacher); 4 (developer); 8 (other))
+  Storage.setInt(Keys.group, allTags['group'] as int);
 
   // Get all selected subjects...
-  List<String> subjects = [];
-  getTimetable().forEach((day) {
-    day.lessons.forEach((lesson) {
-      int selected = getSelectedIndex(lesson.subjects,
-          getTimetable().indexOf(day), day.lessons.indexOf(lesson));
-      if (selected == null) {
-        return;
-      }
-      subjects.add(lesson.subjects[selected].lesson);
-    });
-  });
+  List<TimetableSubject> subjects = Data.timetable
+      .getAllSelectedSubjects()
+      .where((TimetableSubject subject) {
+        return subject.subjectID != 'Mittagspause' &&
+            subject.subjectID != 'Freistunde';
+      })
+      .toSet()
+      .toList();
 
-  // Remove all lunch times...
-  subjects = subjects.where((subject) {
-    return subject != 'Mittagspause' && subject != 'Freistunde';
-  }).toList();
+  List<String> exams = subjects
+      .where((TimetableSubject subject) =>
+          Storage.getBool(Keys.exams(subject.courseID)) ?? true)
+      .map((TimetableSubject subject) => subject.courseID)
+      .toList();
 
-  // Remove double subjects...
-  subjects = subjects.toSet().toList();
+  List<String> selected =
+      subjects.map((TimetableSubject subject) => subject.courseID).toList();
 
-  // Get all new exams tags...
-  Map<String, dynamic> newTags = {};
-  subjects.forEach((subject) =>
-  newTags[Keys.exams(grade, subject)] =
-      Storage.getBool(Keys.exams(grade, subject.toUpperCase())) ?? true);
-
-  newTags[Keys.getSubstitutionPlanNotifications] = Storage.getBool(Keys.getSubstitutionPlanNotifications) ?? true;
-
-  // Set all new timetable tags...
-  getTimetable().forEach((day) {
-    day.lessons.forEach((lesson) {
-      newTags[Keys.timetable(grade,
-          block: lesson.subjects[0].block,
-          day: getTimetable().indexOf(day),
-          unit: day.lessons.indexOf(lesson))] =
-          Storage.getStringList(Keys.timetable(grade,
-              block: lesson.subjects[0].block,
-              day: getTimetable().indexOf(day),
-              unit: day.lessons.indexOf(lesson)));
-    });
-  });
-
-  Storage.getKeys().where((key) => key.startsWith('room-')).forEach((key) {
-    newTags[key] = Storage.getString(key);
-  });
+  bool notifications =
+      Storage.getBool(Keys.getSubstitutionPlanNotifications) ?? true;
 
   // Compare new and old tags...
-  Map<String, dynamic> tagsToUpdate = {};
-  Map<String, dynamic> tagsToRemove = {};
-
-  // Get all removed and changed tags...
-  allTags.forEach((key, value) {
-    if (!newTags.containsKey(key) && key != 'firebaseId')
-      tagsToRemove[key] = value;
-    else if (value.toString() != newTags[key].toString()) {
-      tagsToUpdate[key] = newTags[key];
-    }
-  });
-  // Get all new tags...
-  newTags.keys
-      .where((key) => !allTags.containsKey(key))
-      .forEach((key) => tagsToUpdate[key] = newTags[key]);
-
-  if (tagsToRemove.length > 0) await deleteTags(tagsToRemove.keys.toList());
-  if (tagsToUpdate.length > 0) await sendTags(tagsToUpdate);
+  Map<String, dynamic> tagsToUpdate = {
+    if (allTags['device']['notifications'] != notifications)
+      'device': {
+        'notifications': notifications,
+      },
+    'exams': exams.where((tag) => !allTags['exams'].contains(tag)),
+    'selected': selected.where((tag) => !allTags['selected'].contains(tag)),
+  };
+  Map<String, dynamic> tagsToRemove = {
+    'selected': allTags['selected'].where((tag) => !selected.contains(tag)),
+    'exams': allTags['exams'].where((tag) => !exams.contains(tag)),
+  };
+  if (tagsToRemove['selected'].length > 0 || tagsToRemove['exams'].length > 0)
+    await deleteTags(tagsToRemove);
+  if (tagsToUpdate['selected'].length > 0 || tagsToUpdate['exams'].length > 0)
+    await sendTags(tagsToUpdate);
 }

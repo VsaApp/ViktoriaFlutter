@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 
-import '../../SubstitutionPlan/SubstitutionPlanData.dart' as SubstitutionPlan;
 import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
-import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 import 'TimetableSelectDialogView.dart';
 
 class TimetableSelectDialog extends StatefulWidget {
   final TimetableDay day;
-  final TimetableLesson lesson;
+  final TimetableUnit unit;
   final Function() onSelected;
   final bool enableWrapper;
 
   TimetableSelectDialog({
     Key key,
     @required this.day,
-    @required this.lesson,
+    @required this.unit,
     @required this.onSelected,
     this.enableWrapper = true,
   }) : super(key: key);
@@ -33,76 +32,76 @@ abstract class TimetableSelectDialogState extends State<TimetableSelectDialog>
   bool hideASubjects = false;
 
   TimetableDay day;
-  TimetableLesson lesson;
+  TimetableUnit unit;
 
   List<TimetableSubject> getABSubjects() {
     return hideABSubjects
         ? []
-        : lesson.subjects
-        .where((TimetableSubject subject) => subject.week == 'AB')
-        .toList();
+        : unit.subjects
+            .where((TimetableSubject subject) => subject.week == 2)
+            .toList();
   }
 
   List<TimetableSubject> getBSubjects() {
     return hideBSubjects
         ? []
-        : lesson.subjects
-        .where((TimetableSubject subject) => subject.week == 'B')
-        .toList();
+        : unit.subjects
+            .where((TimetableSubject subject) => subject.week == 1)
+            .toList();
   }
 
   List<TimetableSubject> getASubjects() {
     return hideASubjects
         ? []
-        : lesson.subjects
-        .where((TimetableSubject subject) => subject.week == 'A')
-        .toList();
+        : unit.subjects
+            .where((TimetableSubject subject) => subject.week == 0)
+            .toList();
   }
 
   TimetableSubject isOnlyRoomDifferent(TimetableSubject subject) {
-    if (subject.teacher == '') return null;
-    List<TimetableSubject> possibleSubject = (subject.week == 'A'
-        ? getBSubjects()
-        : getASubjects())
-        .where(
-            (s) => s.lesson == subject.lesson && s.teacher == subject.teacher)
-        .toList();
+    if (subject.teacherID == '') return null;
+    List<TimetableSubject> possibleSubject =
+        (subject.week == 0 ? getBSubjects() : getASubjects())
+            .where((s) =>
+                s.subjectID == subject.subjectID &&
+                s.teacherID == subject.teacherID)
+            .toList();
     if (possibleSubject.length == 1) return possibleSubject[0];
     return null;
   }
 
   void optionSelected(TimetableSubject subject) {
-    if (subject.week == 'AB') {
-      setSelectedSubject(
-          subject, Timetable.days.indexOf(day), day.lessons.indexOf(lesson));
+    if (subject.week == 2) {
+      setSelectedSubject(subject);
     } else {
       // Hide some sections of the list...
       setState(() => hideABSubjects = true);
-      if (subject.week == 'B')
+      if (subject.week == 1)
         setState(() => hideBSubjects = true);
       else
         setState(() => hideASubjects = true);
 
       if (lastSelected != null) {
-        setSelectedSubject((subject.week == 'A' ? subject : lastSelected),
-            Timetable.days.indexOf(day), day.lessons.indexOf(lesson),
-            selectedB: (subject.week == 'A' ? lastSelected : subject));
+        setSelectedSubject(
+          (subject.week == 0 ? subject : lastSelected),
+          selectedB: (subject.week == 0 ? lastSelected : subject),
+        );
       }
       // When only one other option is possible...
-      else if ((subject.week == 'A' ? getBSubjects() : getASubjects()).length ==
+      else if ((subject.week == 0 ? getBSubjects() : getASubjects()).length ==
           1) {
-        setSelectedSubject((subject.week == 'A' ? subject : getASubjects()[0]),
-            Timetable.days.indexOf(day), day.lessons.indexOf(lesson),
-            selectedB: (subject.week == 'A' ? getBSubjects()[0] : subject));
+        setSelectedSubject(
+          (subject.week == 0 ? subject : getASubjects()[0]),
+          selectedB: (subject.week == 0 ? getBSubjects()[0] : subject),
+        );
       }
       // When there is the same lesson and only the room is Different...
       else if (isOnlyRoomDifferent(subject) != null) {
         setSelectedSubject(
-            (subject.week == 'A' ? subject : isOnlyRoomDifferent(subject)),
-            Timetable.days.indexOf(day),
-            day.lessons.indexOf(lesson),
-            selectedB:
-            (subject.week == 'A' ? isOnlyRoomDifferent(subject) : subject));
+          (subject.week == 0 ? subject : isOnlyRoomDifferent(subject)),
+          selectedB:
+              (subject.week == 0 ? isOnlyRoomDifferent(subject) : subject),
+        );
       } else {
         lastSelected = subject;
         return;
@@ -114,13 +113,13 @@ abstract class TimetableSelectDialogState extends State<TimetableSelectDialog>
 
     // Synchronize tags for notifications
     syncTags();
-    SubstitutionPlan.load(Timetable.days, false);
+    Data.substitutionPlan.updateFilter();
   }
 
   @override
   void initState() {
     day = widget.day;
-    lesson = widget.lesson;
+    unit = widget.unit;
 
     super.initState();
   }

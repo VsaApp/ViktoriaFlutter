@@ -4,8 +4,7 @@ import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-import 'package:viktoriaflutter/Utils/Models/CalendarModel.dart';
-import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 import 'TimetableDayListView.dart';
 
 class TimetableDayList extends StatefulWidget {
@@ -43,7 +42,7 @@ abstract class TimetableDayListState extends State<TimetableDayList>
       if (weekday > 4) {
         weekday = 0;
         thisWeek = false;
-      } else if (Timetable.days[weekday].lessons.length > 0) {
+      } else if (Data.timetable.days[weekday].units.length > 0) {
         if (DateTime.now().isAfter(DateTime(
           DateTime
               .now()
@@ -57,7 +56,7 @@ abstract class TimetableDayListState extends State<TimetableDayList>
           8,
         ).add(Duration(
             minutes: [60, 130, 210, 280, 360, 420, 480, 545][
-            Timetable.days[weekday].getUserLessonsCount(
+            Data.timetable.days[weekday].getUserLessonsCount(
                 AppLocalizations
                     .of(context)
                     .freeLesson) -
@@ -96,7 +95,7 @@ abstract class TimetableDayListState extends State<TimetableDayList>
     DateTime targetDay = today
         .subtract(Duration(days: today.weekday))
         .add(Duration(days: weekday + (!thisWeek ? 7 : 0) + 1));
-    return Calendar.events.where((event) {
+    return Data.calendar.events.where((event) {
       try {
         return (event.start.isBefore(targetDay) || event.start == targetDay) &&
           (event.end.isAfter(targetDay) || event.end == targetDay);

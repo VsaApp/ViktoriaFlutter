@@ -14,7 +14,7 @@ class TimetableSelectDialogView extends TimetableSelectDialogState {
           getABSubjects().map((subject) =>
               TimetableSelectDialogOption(
                   day: day,
-                  lesson: lesson,
+                  unit: unit,
                   subject: subject,
                   onSelected: optionSelected)),
           [
@@ -29,7 +29,7 @@ class TimetableSelectDialogView extends TimetableSelectDialogState {
                   .map((subject) =>
                   TimetableSelectDialogOption(
                       day: day,
-                      lesson: lesson,
+                      unit: unit,
                       subject: subject,
                       onSelected: optionSelected))
                   .cast<Widget>()
@@ -50,7 +50,7 @@ class TimetableSelectDialogView extends TimetableSelectDialogState {
                   .map((subject) =>
                   TimetableSelectDialogOption(
                       day: day,
-                      lesson: lesson,
+                      unit: unit,
                       subject: subject,
                       onSelected: optionSelected))
                   .cast<Widget>()
@@ -66,7 +66,7 @@ class TimetableSelectDialogView extends TimetableSelectDialogState {
     );
     if (widget.enableWrapper) {
       return SimpleDialog(
-        title: Text((day.lessons.indexOf(lesson) + 1).toString() +
+        title: Text((day.units.indexOf(unit) + 1).toString() +
             AppLocalizations
                 .of(context)
                 .nUnit),

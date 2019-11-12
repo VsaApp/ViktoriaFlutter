@@ -4,33 +4,31 @@ import 'dart:convert';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import 'package:viktoriaflutter/Utils/Models/RoomsModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 
 // Download the timetable...
 Future download({bool update = true, Function(bool successfully) onFinished}) async {
   bool successfully;
   if (update) {
-    String url = '/rooms';
-    await fetchDataAndSave(url, Keys.rooms, '{}', onFinished: (bool v) => successfully = v);
+    await fetchDataAndSave(Urls.rooms, Keys.rooms, '{}', onFinished: (int v) => successfully = v == 200);
   }
 
   // Parse data...
-  Rooms.rooms = await fetchRooms();
+  Data.rooms = fetchRooms();
   if (onFinished != null) onFinished(successfully);
 }
 
 // Returns the static rooms...
 Map<String, String> getRooms() {
-  return Rooms.rooms;
+  return Data.rooms;
 }
 
 // Get rooms from preferences...
-Future<Map<String, String>> fetchRooms() async {
+Map<String, String> fetchRooms() {
   return parseRooms(Storage.getString(Keys.rooms));
 }
 
 // Returns parsed rooms...
 Map<String, String> parseRooms(String responseBody) {
-  final parsed = json.decode(responseBody).cast<String, String>();
-  return parsed;
+  return json.decode(responseBody).cast<String, String>();
 }

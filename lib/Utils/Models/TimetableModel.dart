@@ -1,238 +1,203 @@
 import 'package:flutter/material.dart';
 
-import 'package:viktoriaflutter/Utils/Models/SubstitutionPlanModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
+import 'package:viktoriaflutter/Utils/Week.dart';
 
-// Describes the whole timetable...
+/// Describes the whole timetable...
 class Timetable {
-  static List<TimetableDay> days;
+  List<TimetableDay> days;
+  DateTime date;
+  String grade;
 
-  // Set all default selections...
-  static void setAllSelections() {
+  Timetable({@required this.days, @required this.date, @required this.grade});
+
+  /// Set all default selections...
+  void setAllSelections() {
     for (int i = 0; i < days.length; i++) {
       days[i].setSelections(days.indexOf(days[i]));
     }
   }
+
+  factory Timetable.fromJSON(Map<String, dynamic> json) {
+    return Timetable(
+      grade: json['grade'] as String,
+      date: DateTime.parse(json['date'] as String),
+      days: json['data']['days']
+          .map((json) => TimetableDay.fromJson(json))
+          .cast<TimetableDay>()
+          .toList(),
+    );
+  }
+
+  List<TimetableSubject> getAllSubjects({bool reset = false}) {
+    return days
+        .map((d) => d.units.map((u) {
+              if (reset) {
+                u.substitutions = [];
+                u.subjects.forEach((s) => s.substitutions = []);
+              }
+              return u.subjects;
+            }).toList())
+        .toList()
+        .reduce((i1, i2) => i1..addAll(i2))
+        .reduce((i1, i2) => i1..addAll(i2));
+  }
+
+  List<TimetableSubject> getAllSelectedSubjects() {
+    return days
+        .map((TimetableDay day) {
+          return day.units.map((TimetableUnit unit) {
+            return unit.getSelected();
+          }).toList();
+        })
+        .toList()
+        .reduce((List<TimetableSubject> i1, List<TimetableSubject> i2) =>
+            i1..addAll(i2))
+            .where((subject) => subject != null && subject.unit != 5).toList();
+  }
+
+  List<TimetableUnit> getAllSubjectsWithCourseID(String courseID) {
+    return days
+        .map((TimetableDay day) => day.units
+            .where((TimetableUnit unit) => unit.subjects
+                .map((subject) => subject.courseID)
+                .contains(courseID))
+            .toList())
+        .toList()
+        .reduce((i1, i2) => i1..addAll(i2));
+  }
 }
 
-// Describes a day of the timetable...
+/// Describes a day of the timetable...
 class TimetableDay {
-  final String name;
-  final List<dynamic> lessons;
-  final String substitutionPlanForDate;
-  final String substitutionPlanForWeekday;
-  final String substitutionPlanForWeektype;
-  final String substitutionPlanUpdatedDate;
-  final String substitutionPlanUpdatedTime;
-  String showWeek = 'A';
+  final int day;
+  final List<TimetableUnit> units;
+  int showWeek;
 
-  TimetableDay({
-    @required this.name,
-    @required this.lessons,
-    @required this.substitutionPlanForDate,
-    @required this.substitutionPlanForWeekday,
-    @required this.substitutionPlanForWeektype,
-    @required this.substitutionPlanUpdatedDate,
-    @required this.substitutionPlanUpdatedTime,
-  });
+  TimetableDay({@required this.day, @required this.units}) {
+    int week = Date.now().getWeekOfYear();
+    if (DateTime.now().day > 5) week++;
+    showWeek = week % 2;
+  }
 
   factory TimetableDay.fromJson(Map<String, dynamic> json) {
     return TimetableDay(
-      name: json['weekday'] as String,
-      lessons: json['lessons']
-          .values
-          .toList()
-          .map((i) => TimetableLesson.fromJson(i))
+      day: json['day'] as int,
+      units: json['units']
+          .map((i) => TimetableUnit.fromJson(i, json['day'] as int))
+          .cast<TimetableUnit>()
           .toList(),
-      substitutionPlanForDate: json['substitutionPlan']['for']['date'] as String,
-      substitutionPlanForWeekday:
-      json['substitutionPlan']['for']['weekday'] as String,
-      substitutionPlanForWeektype:
-      json['substitutionPlan']['for']['weektype'] as String,
-      substitutionPlanUpdatedDate:
-          json['substitutionPlan']['updated']['date'] as String,
-      substitutionPlanUpdatedTime:
-          json['substitutionPlan']['updated']['time'] as String,
     );
   }
 
   int getUserLessonsCount(String freeLesson) {
-    for (int i = lessons.length - 1; i >= 0; i--) {
-      TimetableLesson lesson = lessons[i];
+    for (int i = units.length - 1; i >= 0; i--) {
+      TimetableUnit unit = units[i];
       TimetableSubject selected = getSelectedSubject(
-          lesson.subjects, Timetable.days.indexOf(this), lessons.indexOf(lesson),
-          week: substitutionPlanForWeektype);
+        unit.subjects,
+        week: showWeek,
+      );
 
       // If nothing  or a subject (not lunchtime and free lesson) selected return the index...
-      if ((selected == null || selected.lesson != freeLesson) && i != 5) {
+      if ((selected == null || selected.subjectID != freeLesson) && i != 5) {
         return i + 1;
       }
     }
     return 0;
   }
 
-  // Set the default selections...
+  /// Set the default selections...
   Future setSelections(int day) async {
-    for (int i = 0; i < lessons.length; i++) {
-      await lessons[i].setSelection(day, i);
+    for (int i = 0; i < units.length; i++) {
+      units[i].setSelection(day, i);
     }
   }
 
-  List<Change> getEqualChanges(List<Change> changes, Change change) {
-    changes = changes.where((Change c) => c != change).toList();
-    return changes.where((Change c) => change.equals(c)).toList();
-  }
-
-  SubstitutionPlanDay getSubstitutionPlanDay() {
-    List<Change> unparsedChanges = [];
-    List<Change> myChanges = [];
-    List<Change> undefinedChanges = [];
-    List<Change> otherChanges = [];
-    int weekday = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag']
-        .indexOf(name);
-    lessons.forEach((lesson) {
-      int unit = lessons.indexOf(lesson);
-      int s = getSelectedIndex(lesson.subjects, weekday, unit,
-          week: substitutionPlanForWeektype);
-      lesson.subjects.forEach((subject) {
-        int i = lesson.subjects.indexOf(subject);
-        subject.changes.forEach((change) {
-          if (change.original != null) {
-            unparsedChanges.add(change);
-          } else {
-            if (i == s) {
-              if (change.isExam) {
-                int isMy = change.isMyExam(substitutionPlanForWeektype);
-                (isMy == 1 && s != null
-                        ? myChanges
-                        : (isMy == -1 ? undefinedChanges : otherChanges))
-                    .add(change);
-              } else {
-                (change.sure ? myChanges : undefinedChanges).add(change);
-              }
-            } else {
-              otherChanges.add(change);
-            }
-          }
-        });
-      });
-    });
-
-    for (int i = 0; i < 3; i++) {
-      List<Change> listToEdit =
-          i == 0 ? myChanges : i == 1 ? undefinedChanges : otherChanges;
-      // Delete all double changes in the same list...
-      for (int j = 0; j < listToEdit.length; j++) {
-        Change change = listToEdit[j];
-        List<Change> equalChanges = getEqualChanges(listToEdit, change);
-        if (equalChanges.length > 0) {
-          listToEdit.removeWhere((Change c) => equalChanges.contains(c));
-          j = 0;
-          continue;
-        }
-      }
-      // Delete all double changes in the other lists...
-      for (int j = 0; j < listToEdit.length; j++) {
-        Change change = listToEdit[j];
-        // If change is in myChanges, delete in other lists...
-        if (i == 0) {
-          List<Change> equalChanges = getEqualChanges(otherChanges, change);
-          otherChanges.removeWhere((Change c) => equalChanges.contains(c));
-          equalChanges = getEqualChanges(undefinedChanges, change);
-          undefinedChanges.removeWhere((Change c) => equalChanges.contains(c));
-        }
-        // If change is in undefinedChanges, delete in otherChanges...
-        else if (i == 1) {
-          List<Change> equalChanges = getEqualChanges(otherChanges, change);
-          otherChanges.removeWhere((Change c) => equalChanges.contains(c));
-        }
-      }
-      if (i == 0)
-        myChanges = listToEdit;
-      else if (i == 1)
-        undefinedChanges = listToEdit;
-      else
-        otherChanges = listToEdit;
-    }
-
-    return SubstitutionPlanDay(
-      date: substitutionPlanForDate,
-      time: substitutionPlanUpdatedTime,
-      weekday: substitutionPlanForWeekday,
-      weektype: substitutionPlanForWeektype,
-      update: substitutionPlanUpdatedDate,
-      unparsed: unparsedChanges,
-      myChanges: myChanges,
-      undefinedChanges: undefinedChanges,
-      otherChanges: otherChanges,
-    );
+  /// Returns all equals changes
+  List<Substitution> getEqualChanges(
+      List<Substitution> changes, Substitution change) {
+    changes = changes.where((Substitution c) => c != change).toList();
+    return changes.where((Substitution c) => change.equals(c)).toList();
   }
 }
 
 // Describes a Lesson of a timetable day...
-class TimetableLesson {
+class TimetableUnit {
+  final int unit;
   final List<TimetableSubject> subjects;
+  final int day;
+  List<Substitution> substitutions = [];
 
-  TimetableLesson({
+  TimetableUnit({
+    @required this.unit,
     @required this.subjects,
+    @required this.day,
   });
 
-  factory TimetableLesson.fromJson(List<dynamic> json) {
-    return TimetableLesson(
-      subjects: json.map((i) => TimetableSubject.fromJson(i)).toList(),
-    );
+  factory TimetableUnit.fromJson(Map<String, dynamic> json, int day) {
+    return TimetableUnit(
+        unit: json['unit'] as int,
+        subjects: json['subjects']
+            .map((i) => TimetableSubject.fromJson(i, day))
+            .cast<TimetableSubject>()
+            .toList(),
+        day: day);
   }
 
   // Set the default selection...
-  Future setSelection(int day, int unit) async {
+  void setSelection(int day, int unit) {
     if (subjects.length == 1) {
-      setSelectedSubject(subjects[0], day, unit);
+      setSelectedSubject(subjects[0]);
     }
+  }
+
+  TimetableSubject getSelected() {
+    return getSelectedSubject(subjects);
   }
 }
 
-// Describes a subject of a timetable lesson...
+// Describes a subject of a timetable unit...
 class TimetableSubject {
-  final String teacher;
-  final String lesson;
-  final String room;
+  final int unit;
+  final String id;
+  final String subjectID;
+  final String teacherID;
+  final String roomID;
+  final String courseID;
+  final int week;
   final String block;
-  final String course;
-  final String week;
-  final List<Change> changes;
-  final int unsures;
+  final int day;
+  List<Substitution> substitutions = [];
 
   TimetableSubject({
-    @required this.teacher,
-    @required this.lesson,
-    @required this.room,
-    @required this.block,
-    @required this.course,
+    @required this.unit,
+    @required this.id,
+    @required this.teacherID,
+    @required this.subjectID,
+    @required this.roomID,
+    @required this.courseID,
     @required this.week,
-    @required this.changes,
-    @required this.unsures,
+    @required this.block,
+    @required this.day,
   });
 
-  List<Change> getChanges(String week) {
-    List<Change> changes =
-        this.changes.where((Change change) => !change.isExam).toList();
-    List<Change> exams =
-        this.changes.where((Change change) => change.isExam).toList();
-    return changes
-      ..addAll(exams.where((Change exam) => exam.isMyExam(week) != 0).toList());
+  /// Returns all changes with this subject id
+  List<Substitution> getSubstitutions() {
+    return (substitutions ?? [])
+      ..addAll(Data.timetable.days[day].units[unit].substitutions ?? []);
   }
 
-  factory TimetableSubject.fromJson(Map<String, dynamic> json) {
-    List<Change> changes =
-        json['changes'].map((i) => Change.fromJson(i)).toList().cast<Change>();
+  factory TimetableSubject.fromJson(Map<String, dynamic> json, int day) {
     return TimetableSubject(
-        teacher: json['participant'] as String,
-        lesson: json['subject'] as String,
-        room: json['room'] as String,
+        unit: json['unit'] as int,
+        id: json['id'] as String,
+        teacherID: json['teacherID'] as String,
+        subjectID: json['subjectID'] as String,
+        roomID: json['roomID'] as String,
+        courseID: json['courseID'] as String,
+        week: json['week'] as int,
         block: json['block'] as String,
-        course: json['course'] as String,
-        week: json['week'] as String,
-        changes: changes,
-        unsures: changes.where((change) => !change.sure).length);
+        day: day);
   }
 }

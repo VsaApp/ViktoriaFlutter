@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import '../../SubstitutionPlan/SubstitutionPlanData.dart' as substitutionPlan;
+import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
-import '../../Timetable/TimetableData.dart' as timetable;
 import 'CourseEditWidget.dart';
 import 'RoomEdit/RoomEditView.dart';
 
@@ -13,7 +12,7 @@ class CourseEditView extends CourseEditState {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: Text(widget.subject.lesson + ' ' + widget.subject.teacher),
+      title: Text(widget.subject.subjectID + ' ' + widget.subject.teacherID),
       children: <Widget>[
         // Writing option
         CheckboxListTile(
@@ -21,16 +20,13 @@ class CourseEditView extends CourseEditState {
           onChanged: (bool value) {
             setState(() {
               // Save change
-              Storage.setBool(
-                  Keys.exams(Storage.getString(Keys.grade),
-                      widget.subject.lesson.toUpperCase()),
-                  value);
+              Storage.setBool(Keys.exams(widget.subject.courseID), value);
               syncTags();
               exams = value;
               if (widget.onExamChange != null) {
                 widget.onExamChange(exams);
               }
-              substitutionPlan.load(timetable.getTimetable(), false);
+              Data.substitutionPlan.updateFilter();
             });
           },
           title: Text(AppLocalizations.of(context).writeExams),
@@ -54,8 +50,7 @@ class CourseEditView extends CourseEditState {
               color: Theme.of(context).accentColor,
               onPressed: () {
                 Storage.setBool(
-                    Keys.exams(Storage.getString(Keys.grade),
-                        widget.subject.lesson.toUpperCase()),
+                    Keys.exams(widget.subject.courseID),
                     exams);
                 syncTags();
                 if (widget.onExamChange != null) {

@@ -17,7 +17,7 @@ class HistoryDialogView extends HistoryDialogState {
         data == null ||
                 currentYear == null ||
                 currentMonth == null ||
-            currentDay == null
+                currentDay == null
             ?
             // Show loader
             Center(
@@ -109,9 +109,9 @@ class HistoryDialogView extends HistoryDialogState {
                                 items: months
                                     .map(
                                       (Month month) => DropdownMenuItem(
-                                            value: month.name,
-                                            child: Text(month.name),
-                                          ),
+                                        value: month.name,
+                                        child: Text(month.name),
+                                      ),
                                     )
                                     .toList(),
                               ),
@@ -147,9 +147,9 @@ class HistoryDialogView extends HistoryDialogState {
                                 items: days
                                     .map(
                                       (Day day) => DropdownMenuItem(
-                                            value: day.name,
-                                            child: Text(day.name),
-                                          ),
+                                        value: day.name,
+                                        child: Text(day.name),
+                                      ),
                                     )
                                     .toList(),
                               ),
@@ -232,10 +232,8 @@ class HistoryDialogView extends HistoryDialogState {
                         }
                         Navigator.of(context).pop();
                         Function() update = () async {
-                          await timetable.download(
-                              Storage.getString(Keys.grade), false);
-                          substitutionPlan.load(
-                              timetable.getTimetable(), false);
+                          await timetable.download(false);
+                          await substitutionPlan.download();
                         };
                         update();
                       },

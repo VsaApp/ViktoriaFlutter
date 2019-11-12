@@ -1,39 +1,37 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import 'package:viktoriaflutter/Utils/Models/WorkGroupsModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 
-// Download work groups data...
+/// Download work groups data...
 Future download({bool update = true, Function(bool successfully) onFinished}) async {
   bool successfully;
   if (update) {
-    String url = '/workgroups/workgroups.json?v=' + Random().nextInt(99999999).toString();
-    await fetchDataAndSave(url, Keys.workGroups, '[]', onFinished: (v) => successfully = v);
+    await fetchDataAndSave(Urls.workgroups, Keys.workGroups, '[]', onFinished: (v) => successfully = v == 200);
   }
 
   // Parse loaded data...
-  WorkGroups.days = await fetchGroups();
+  Data.workGroups = fetchGroups();
   if (onFinished != null) onFinished(successfully);
 }
 
-// Returns the static work groups data...
+/// Returns the static work groups data...
 List<WorkGroupsDay> getWorkGroups() {
-  return WorkGroups.days;
+  return Data.workGroups.days;
 }
 
-// Load work groups from preferences...
-Future<List<WorkGroupsDay>> fetchGroups() async {
+/// Load work groups from preferences...
+WorkGroups fetchGroups() {
   return parseGroups(Storage.getString(Keys.workGroups));
 }
 
-// Returns parse work groups days...
-List<WorkGroupsDay> parseGroups(String responseBody) {
+/// Returns parse work groups days...
+WorkGroups parseGroups(String responseBody) {
   final parsed = json.decode(responseBody);
-  return parsed
+  return WorkGroups(days: parsed
       .map<WorkGroupsDay>((json) => WorkGroupsDay.fromJson(json))
-      .toList();
+      .toList());
 }

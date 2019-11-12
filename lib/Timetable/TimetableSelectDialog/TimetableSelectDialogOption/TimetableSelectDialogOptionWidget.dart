@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
-import 'package:viktoriaflutter/Utils/Models/TimetableModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 import 'TimetableSelectDialogOptionView.dart';
 
 class TimetableSelectDialogOption extends StatefulWidget {
   TimetableDay day;
-  TimetableLesson lesson;
+  TimetableUnit unit;
   TimetableSubject subject;
   final Function(TimetableSubject subject) onSelected;
 
   TimetableSelectDialogOption({
     Key key,
     this.day,
-    this.lesson,
+    this.unit,
     this.subject,
     this.onSelected,
   }) : super(key: key);
@@ -26,13 +26,13 @@ abstract class TimetableSelectDialogOptionState
     extends State<TimetableSelectDialogOption>
     with SingleTickerProviderStateMixin {
   TimetableDay day;
-  TimetableLesson lesson;
+  TimetableUnit unit;
   TimetableSubject subject;
 
   @override
   void initState() {
     day = widget.day;
-    lesson = widget.lesson;
+    unit = widget.unit;
     subject = widget.subject;
 
     super.initState();
