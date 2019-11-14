@@ -75,11 +75,15 @@ class SubstitutionPlanDay {
     });
   }
 
-  void filterUnparsed() {
+  List<String> filterUnparsed({String grade}) {
     myUnparsed = [];
-    filteredGrade = Data.timetable.grade;
-    myUnparsed.addAll(unparsed[filteredGrade]);
-    myUnparsed.addAll(unparsed['other']);
+    if (grade == null) {
+      filteredGrade = Data.timetable.grade;
+      myUnparsed.addAll(unparsed[filteredGrade]);
+      myUnparsed.addAll(unparsed['other']);
+      return null;
+    }
+    return []..addAll(unparsed[grade]..addAll(unparsed['other']));
   }
 
   void filterSubstitutions() {

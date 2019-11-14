@@ -11,9 +11,6 @@ class BrotherSisterSubstitutionPlanPageView
     extends BrotherSisterSubstitutionPlanPageState {
   @override
   Widget build(BuildContext context) {
-    if (days == null) {
-      return Container();
-    }
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.grade),

@@ -25,7 +25,6 @@ class TabProxyState extends State<TabProxy> {
 
   @override
   void dispose() {
-    widget.controller.dispose();
     super.dispose();
   }
 

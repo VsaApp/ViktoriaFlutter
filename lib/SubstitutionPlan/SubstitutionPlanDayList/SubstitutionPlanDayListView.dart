@@ -91,7 +91,7 @@ class SubstitutionPlanDayListView extends SubstitutionPlanDayListState {
             ),
           ),
         ]
-          ..add(widget.day.myUnparsed.length > 0
+          ..add(widget.day.filterUnparsed(grade: widget.grade.toLowerCase()).length > 0
               ? Section(
                   title: AppLocalizations.of(context).unparsed,
                   // Show unparsed changes...
