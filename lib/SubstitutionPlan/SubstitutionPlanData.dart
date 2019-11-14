@@ -8,9 +8,7 @@ import 'package:viktoriaflutter/Utils/Models.dart';
 
 /// Downloads the substitution plan
 ///
-/// If temp is true, the downloaded timetable will be returned and not set in the static class (Default temp is false).
-///
-/// If update is true, the timetable will be downloaded from the server and if not it only would be loaded from the storage.
+/// If update is true, the substitution plan will be downloaded from the server and if not it would only be loaded from the storage.
 Future<SubstitutionPlan> download(
     {bool update = true, Function(bool successfully) onFinished}) async {
   bool successfully;
@@ -22,7 +20,7 @@ Future<SubstitutionPlan> download(
       Urls.substitutionPlan,
       Keys.substitutionPlan,
       defaultSubstitutionPlan,
-      onFinished: (int v) => successfully = v == 200,
+      onFinished: (int v) => successfully = v == StatusCodes.success,
     );
   }
 

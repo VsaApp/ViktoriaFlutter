@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/SectionWidget.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
-import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 import '../Timetable/TimetableData.dart' as Timetable;
 import 'CourseEdit/CourseEditWidget.dart';
@@ -50,7 +48,8 @@ class CoursesPageView extends CoursesPageState {
     List<Widget> section3Items = [];
 
     courses.keys.toList().forEach((key) {
-      String lesson = courses[key][0].subjectID;
+      String lesson =
+          Data.subjects[courses[key][0].subjectID] ?? courses[key][0];
       if (lesson == Data.subjects['D'] ||
           lesson == Data.subjects['E'] ||
           lesson == Data.subjects['F'] ||
@@ -138,15 +137,16 @@ class CourseRowView extends State<CourseRow> {
 
   @override
   void initState() {
-    name = widget.subjects[0].subjectID;
+    name = Data.subjects[widget.subjects[0].subjectID] ??
+        widget.subjects[0].subjectID;
     teacher = widget.subjects[0].teacherID;
     course = '';
     blocks = [];
-    _exams = Storage.getBool(Keys.exams(widget.subjects[0].courseID)) ?? true;
+    _exams = widget.subjects[0].writeExams;
 
     // Create list of blocks
     widget.subjects.forEach((subject) {
-      if (course.length == 0) course = subject.courseID;
+      if (course.length == 0) course = subject.courseID.split('-')[1];
       if (!blocks.contains(subject.courseID)) blocks.add(subject.courseID);
     });
 

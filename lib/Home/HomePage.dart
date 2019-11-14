@@ -1,6 +1,5 @@
 import 'dart:io' show Platform;
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -11,6 +10,7 @@ import '../Utils/Keys.dart';
 import '../Utils/Localizations.dart';
 import '../Utils/Storage.dart';
 import '../Utils/Tags.dart';
+import '../Utils/Models.dart' as Models;
 import 'HomeView.dart';
 import 'NewTimetableDialog/NewTimetableDialogModel.dart';
 
@@ -39,7 +39,6 @@ class HomePage extends StatefulWidget {
 }
 
 abstract class HomePageState extends State<HomePage> {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   int currentWeek = 0;
   bool showWeek = false;
   static bool weekChangeable = true;
@@ -63,20 +62,24 @@ abstract class HomePageState extends State<HomePage> {
     if (mounted && value != showWeek) setState(() => showWeek = value);
   }
 
+  /// Activates od Deactivates the week toggle button
   static setWeekChangeable(bool value) {
     HomePageState.weekChangeable = value;
   }
 
+  /// Updates the week of the week button
   void _updateWeek(int week) {
     if (mounted && week != currentWeek) setState(() => currentWeek = week);
   }
 
+  /// Calls the listener and updates wee
   void weekPressed() {
     if (!weekChangeable) return;
     setState(() => currentWeek = currentWeek == 1 ? 0 : 1);
     if (weekChanged != null) weekChanged(currentWeek);
   }
 
+  /// Launches an url in browser
   launchURL(String url) async {
     if (url == null) return;
     if (await canLaunch(url)) {
@@ -86,9 +89,10 @@ abstract class HomePageState extends State<HomePage> {
     }
   }
 
+  /// Handles an incoming substitution plan notification
+  // TODO: Check if msg['weekday'] still is the same
   Future handleSubstitutionPlanNotification(Map msg) async {
     print("received substitution plan notification");
-    Storage.remove(Keys.historyDate('substitutionPlan'));
     await substitutionPlan.download();
     if (appScaffold != null) {
       substitutionPlanUpdatedListeners
@@ -103,14 +107,15 @@ abstract class HomePageState extends State<HomePage> {
         ),
       ));
     }
-    checkIfTimetableUpdated(context);
   }
 
+  /// Handles incoming timetable notifications
   Future handleTimetableNotification(Map msg) async {
     print("received timetable notification");
     await syncWithTags();
     await timetable.download(false);
-    await substitutionPlan.download();
+    Models.Data.substitutionPlan.insert();
+    Models.Data.substitutionPlan.updateFilter();
     if (appScaffold != null) {
       substitutionPlanUpdatedListeners
           .forEach((substitutionPlanUpdated) => substitutionPlanUpdated());
@@ -118,13 +123,17 @@ abstract class HomePageState extends State<HomePage> {
     checkIfTimetableUpdated(context);
   }
 
+  /// Handles incoming notifications opened signals
   Future notificationOpenedHandler(String msg) async {
     print("opened: $msg");
+    // Delete all notifications
     platform.invokeMethod('clearNotifications');
+    // Switch to substitution plan page
     if (msg == 'substitutionPlan_channel')
       setState(() => selectedDrawerIndex = 1);
   }
 
+  /// Handles events from the platform code (currently only android)
   Future<dynamic> _handleNotification(MethodCall call) async {
     if (call.method == 'substitutionPlan')
       handleSubstitutionPlanNotification(call.arguments);
@@ -135,10 +144,16 @@ abstract class HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    loadData();
+    // Load data
+    grade = Storage.get(Keys.grade) ?? '';
+    showDialog1 = Storage.getBool(Keys.showShortCutDialog) ?? false;
+    selectedDrawerIndex = Storage.getInt(Keys.initialPage) ?? 0;
+
+    // Set listeners
     HomePageState.updateWeek = _updateWeek;
     HomePageState.setShowWeek = _showWeek;
 
+    // Show the current week only for timetable and substitution plan
     if (selectedDrawerIndex <= 1) {
       setShowWeek(true);
     }
@@ -148,28 +163,13 @@ abstract class HomePageState extends State<HomePage> {
 
     // Set the listener for android functions (Currently for incoming notifications and intents)...
     platform.setMethodCallHandler(_handleNotification);
-    if (Platform.isIOS || Platform.isAndroid) {
-      _firebaseMessaging.requestNotificationPermissions(
-          const IosNotificationSettings(sound: true, badge: true, alert: true));
-      _firebaseMessaging.onIosSettingsRegistered
-          .listen((IosNotificationSettings settings) {
-        print("Settings registered: $settings");
-      });
-      _firebaseMessaging.getToken().then((String token) async {
-        assert(token != null);
-
-        // Synchronize tags for notifications
-        await initTags(context, token);
-        await syncWithTags();
-        await syncTags();
-        substitutionPlanUpdatedListeners
-            .forEach((substitutionPlanUpdated) => substitutionPlanUpdated());
-      });
-    }
 
     if (Platform.isAndroid) {
       platform.invokeMethod('channelRegistered');
     }
+
+    substitutionPlanUpdatedListeners
+        .forEach((substitutionPlanUpdated) => substitutionPlanUpdated());
 
     super.initState();
   }
@@ -183,17 +183,7 @@ abstract class HomePageState extends State<HomePage> {
             return NewTimetableDialog();
           });
       Storage.setBool(Keys.timetableIsNew, false);
-      syncTags();
     }
-  }
-
-  // Load saved data
-  void loadData() async {
-    setState(() {
-      grade = Storage.get(Keys.grade) ?? '';
-      showDialog1 = Storage.getBool(Keys.showShortCutDialog) ?? true;
-      selectedDrawerIndex = Storage.getInt(Keys.initialPage) ?? 0;
-    });
   }
 
   // Return the widget of the page

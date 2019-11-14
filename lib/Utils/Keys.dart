@@ -123,14 +123,6 @@ class Keys {
     return 'room-' + weekday.toString() + '-' + unit.toString() + '-' + subject;
   }
 
-  static String historyDate(String type) {
-    return 'historyDate-$type';
-  }
-
-  static String history(String type) {
-    return 'history-$type';
-  }
-
   static String get slidesVersion {
     return 'slidesVersion';
   }

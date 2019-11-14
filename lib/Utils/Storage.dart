@@ -32,8 +32,6 @@ class Storage {
   }
 
   static void setStringList(String key, List<String> value) {
-    if (key.startsWith(Keys.selection('')))
-      setString(Keys.lastModified, DateTime.now().toIso8601String());
     if (_isDesktop) {
       data[key] = value;
     } else {
@@ -44,7 +42,7 @@ class Storage {
 
   // ignore: avoid_positional_boolean_parameters
   static void setBool(String key, bool value) {
-    if (key.startsWith(Keys.exams('')))
+    if (key.startsWith(Keys.selection('')) || key.startsWith(Keys.exams('')))
       setString(Keys.lastModified, DateTime.now().toIso8601String());
     if (_isDesktop) {
       data[key] = value;
@@ -105,6 +103,9 @@ class Storage {
   }
 
   static void remove(String key) {
+    if (key.startsWith(Keys.selection('')) || key.startsWith(Keys.exams(''))) {
+      setString(Keys.lastModified, DateTime.now().toIso8601String());
+    }
     if (_isDesktop) {
       data.remove(key);
     } else {
@@ -113,11 +114,11 @@ class Storage {
     _save();
   }
 
-  static Set<String> getKeys() {
+  static List<String> getKeys() {
     if (_isDesktop) {
-      return data.keys.toSet();
+      return data.keys.toSet().toList();
     } else {
-      return _sharedPreferences.getKeys();
+      return _sharedPreferences.getKeys().toList();
     }
   }
 

@@ -36,8 +36,6 @@ abstract class SettingsPageState extends State<SettingsPage> {
   String grade = grades[0];
   List<String> pages = [];
   String page = '';
-  List<String> substitutionPlanVersion;
-  List<String> timetableVersion;
   bool sortSubstitutionPlan = true;
   bool showSubstitutionPlanInTimetable = true;
   bool getSubstitutionPlanNotifications = true;
@@ -66,19 +64,13 @@ abstract class SettingsPageState extends State<SettingsPage> {
           Storage.getBool(Keys.showSubstitutionPlanInTimetable) ?? true;
       getSubstitutionPlanNotifications =
           Storage.getBool(Keys.getSubstitutionPlanNotifications) ?? true;
-      showShortCutDialog = Storage.getBool(Keys.showShortCutDialog) ?? true;
-      substitutionPlanVersion =
-          Storage.getStringList(Keys.historyDate('substitutionPlan'));
-      timetableVersion = Storage.getStringList(Keys.historyDate('timetable'));
+      showShortCutDialog = Storage.getBool(Keys.showShortCutDialog) ?? false;
       showWorkGroupsInTimetable =
           Storage.getBool(Keys.showWorkGroupsInTimetable) ?? true;
       showCalendarInTimetable =
           Storage.getBool(Keys.showCalendarInTimetable) ?? true;
       showCafetoriaInTimetable =
           Storage.getBool(Keys.showCafetoriaInTimetable) ?? true;
-      substitutionPlanVersion =
-          Storage.getStringList(Keys.historyDate('substitutionPlan'));
-      timetableVersion = Storage.getStringList(Keys.historyDate('timetable'));
       pages = [
         AppLocalizations.of(context).timetable,
         AppLocalizations.of(context).substitutionPlan,

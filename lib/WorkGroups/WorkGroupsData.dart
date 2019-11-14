@@ -7,10 +7,16 @@ import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 
 /// Download work groups data...
-Future download({bool update = true, Function(bool successfully) onFinished}) async {
+Future download(
+    {bool update = true, Function(bool successfully) onFinished}) async {
   bool successfully;
   if (update) {
-    await fetchDataAndSave(Urls.workgroups, Keys.workGroups, '[]', onFinished: (v) => successfully = v == 200);
+    await fetchDataAndSave(
+      Urls.workgroups,
+      Keys.workGroups,
+      '[]',
+      onFinished: (v) => successfully = v == StatusCodes.success,
+    );
   }
 
   // Parse loaded data...
@@ -31,7 +37,8 @@ WorkGroups fetchGroups() {
 /// Returns parse work groups days...
 WorkGroups parseGroups(String responseBody) {
   final parsed = json.decode(responseBody);
-  return WorkGroups(days: parsed
-      .map<WorkGroupsDay>((json) => WorkGroupsDay.fromJson(json))
-      .toList());
+  return WorkGroups(
+      days: parsed
+          .map<WorkGroupsDay>((json) => WorkGroupsDay.fromJson(json))
+          .toList());
 }

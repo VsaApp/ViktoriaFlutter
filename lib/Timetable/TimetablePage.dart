@@ -24,6 +24,7 @@ class TimetableView extends State<TimetablePage>
   int originalWeek;
   List<String> weekdays;
 
+  /// Sets the week for each day
   void setWeeks() {
     // Get the week number of the shown week...
     DateTime today = DateTime(
@@ -53,6 +54,7 @@ class TimetableView extends State<TimetablePage>
     }
   }
 
+  /// There is a day with a lesson that still is not selected, go to this day
   int getFirstPageToSelect() {
     for (int i = 0; i < Data.timetable.days.length; i++) {
       TimetableDay day = Data.timetable.days[i];
@@ -64,6 +66,7 @@ class TimetableView extends State<TimetablePage>
     return -1;
   }
 
+  /// Returns the index of the current school day
   int getCurrentWeekday() {
     int weekday = DateTime.now().weekday - 1;
     bool over = false;

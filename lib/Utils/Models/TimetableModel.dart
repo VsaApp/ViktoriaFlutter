@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/Week.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
 
 /// Describes the whole timetable...
 class Timetable {
@@ -40,8 +42,8 @@ class Timetable {
               return u.subjects;
             }).toList())
         .toList()
-        .reduce((i1, i2) => i1..addAll(i2))
-        .reduce((i1, i2) => i1..addAll(i2));
+        .reduce((i1, i2) => List.from(i1)..addAll(i2))
+        .reduce((i1, i2) => List.from(i1)..addAll(i2));
   }
 
   List<TimetableSubject> getAllSelectedSubjects() {
@@ -53,8 +55,9 @@ class Timetable {
         })
         .toList()
         .reduce((List<TimetableSubject> i1, List<TimetableSubject> i2) =>
-            i1..addAll(i2))
-            .where((subject) => subject != null && subject.unit != 5).toList();
+            List.from(i1)..addAll(i2))
+        .where((subject) => subject != null && subject.unit != 5)
+        .toList();
   }
 
   List<TimetableUnit> getAllSubjectsWithCourseID(String courseID) {
@@ -65,7 +68,7 @@ class Timetable {
                 .contains(courseID))
             .toList())
         .toList()
-        .reduce((i1, i2) => i1..addAll(i2));
+        .reduce((i1, i2) => List.from(i1)..addAll(i2));
   }
 }
 
@@ -187,6 +190,11 @@ class TimetableSubject {
     return (substitutions ?? [])
       ..addAll(Data.timetable.days[day].units[unit].substitutions ?? []);
   }
+
+  /// Define exams settings
+  bool get examIsSet => Storage.getBool(Keys.exams(courseID)) != null;
+  bool get writeExams => Storage.getBool(Keys.exams(courseID)) ?? true;
+  set writeExams(bool write) => Storage.setBool(Keys.exams(courseID), write);
 
   factory TimetableSubject.fromJson(Map<String, dynamic> json, int day) {
     return TimetableSubject(

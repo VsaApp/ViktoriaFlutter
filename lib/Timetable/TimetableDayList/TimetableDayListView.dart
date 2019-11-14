@@ -27,6 +27,7 @@ class TimetableDayListView extends TimetableDayListState {
       );
       bool nothingSelected = _selected == null;
       if (nothingSelected) _selected = 0;
+      TimetableSubject selected = unit.subjects[_selected];
       return GestureDetector(
         onTap: () {
           if (unit.subjects.length > 1) {
@@ -44,17 +45,14 @@ class TimetableDayListView extends TimetableDayListState {
           }
         },
         onLongPress: () {
-          if (unit.subjects[_selected].block != null &&
-              unit.subjects[_selected].subjectID !=
+          if (selected.block != null &&
+              selected.subjectID !=
                   AppLocalizations.of(context).freeLesson &&
-              unit.subjects[_selected].subjectID !=
+              selected.subjectID !=
                   AppLocalizations.of(context).lunchBreak &&
               !nothingSelected) {
-            if (Storage.getBool(
-                    Keys.exams(unit.subjects[_selected].courseID)) ==
-                null) {
-              Storage.setBool(
-                  Keys.exams(unit.subjects[_selected].courseID), true);
+            if (!selected.examIsSet) {
+              selected.writeExams = true;
             }
             // Show writing option dialog
             showDialog<String>(
@@ -62,8 +60,8 @@ class TimetableDayListView extends TimetableDayListState {
               barrierDismissible: true,
               builder: (BuildContext context1) {
                 return CourseEdit(
-                  subject: unit.subjects[_selected],
-                  blocks: [unit.subjects[_selected].block],
+                  subject: selected,
+                  blocks: [selected.block],
                   onExamChange: (_) {
                     setState(() {
                       Data.timetable.setAllSelections();
@@ -102,7 +100,7 @@ class TimetableDayListView extends TimetableDayListState {
                             unit: widget.day.units.indexOf(unit),
                           ),
                         ]))))
-            : (unit.subjects[_selected].substitutions.length == 0 ||
+            : (selected.substitutions.length == 0 ||
                     !Storage.getBool(Keys.showSubstitutionPlanInTimetable)
                 ?
                 // Show normal subject
@@ -110,13 +108,13 @@ class TimetableDayListView extends TimetableDayListState {
                     padding: EdgeInsets.only(left: 2.5, right: 2.5),
                     child: TimetableRow(
                       weekday: widget.dayIndex,
-                      subject: unit.subjects[_selected],
+                      subject: selected,
                       unit: widget.day.units.indexOf(unit),
                     ),
                   )
                 :
                 // Show list of changes
-                unit.subjects[_selected].getSubstitutions().length > 0
+                selected.getSubstitutions().length > 0
                     ? Padding(
                         padding: EdgeInsets.only(
                             left: 0,
@@ -126,19 +124,19 @@ class TimetableDayListView extends TimetableDayListState {
                           child: Padding(
                             padding: EdgeInsets.only(bottom: 10),
                             child: Column(
-                              children: unit.subjects[_selected]
+                              children: selected
                                   .getSubstitutions()
                                   .map((change) {
                                     return Padding(
                                       padding: EdgeInsets.only(
                                           left: 2.5, right: 2.5),
                                       child: SubstitutionPlanRow(
-                                        showUnit: (unit.subjects[_selected]
+                                        showUnit: (selected
                                                 .getSubstitutions()
                                                 .map((change) => change.isExam)
                                                 .toList()
                                                 .contains(true) &&
-                                            unit.subjects[_selected]
+                                            selected
                                                     .getSubstitutions()
                                                     .where((change) =>
                                                         !change.isExam)
@@ -146,7 +144,7 @@ class TimetableDayListView extends TimetableDayListState {
                                                     .length ==
                                                 0),
                                         substitution: change,
-                                        changes: unit.subjects[_selected]
+                                        changes: selected
                                             .getSubstitutions(),
                                         weekday: widget.dayIndex,
                                       ),
@@ -159,7 +157,7 @@ class TimetableDayListView extends TimetableDayListState {
                         ))
                     : TimetableRow(
                         weekday: widget.dayIndex,
-                        subject: unit.subjects[_selected],
+                        subject: selected,
                         unit: widget.day.units.indexOf(unit),
                       ))),
       );

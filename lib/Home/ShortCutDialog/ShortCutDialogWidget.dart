@@ -22,7 +22,7 @@ abstract class ShortCutDialogState extends State<ShortCutDialog> {
   @override
   void initState() {
     setState(() {
-      showDialog1 = Storage.getBool(Keys.showShortCutDialog) ?? true;
+      showDialog1 = Storage.getBool(Keys.showShortCutDialog) ?? false;
     });
     super.initState();
   }

@@ -47,12 +47,13 @@ abstract class LoginPageState extends State<LoginPage> {
   // Check if credentials entered are correct
   void checkForm() async {
     setState(() => isCheckingForm = true);
-    final response = await fetch(
-        '$apiUrl/login/'.replaceFirst('://', '://${usernameController.text}:${passwordController.text}@'),
+    Response response = await fetch(
+        '$apiUrl/login/'.replaceFirst(
+            '://', '://${usernameController.text}:${passwordController.text}@'),
         auth: true);
 
     try {
-      pupilCredentialsCorrect = response.statusCode == 200;
+      pupilCredentialsCorrect = response.statusCode == StatusCodes.success;
     } catch (e) {
       online = -1;
       Scaffold.of(context).showSnackBar(
@@ -75,14 +76,8 @@ abstract class LoginPageState extends State<LoginPage> {
         Storage.setString(Keys.username, usernameController.text);
         Storage.setString(Keys.password, passwordController.text);
 
-        Map<String, dynamic> alreadyInitialized = await isInitialized();
-        if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-          askSync();
-        } else if (alreadyInitialized != null) {
-          askOldDataLoading();
-        } else {
-          Navigator.pushReplacementNamed(context, '/');
-        }
+        await syncWithTags();
+        Navigator.pushReplacementNamed(context, '/');
       });
     } else {
       passwordController.clear();
@@ -153,88 +148,6 @@ abstract class LoginPageState extends State<LoginPage> {
                               ])
                         ]))
               ]);
-        });
-  }
-
-  void askSync() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(AppLocalizations.of(context).syncPhone),
-            content: Column(
-              children: <Widget>[
-                Text(AppLocalizations.of(context).syncPhoneDescription),
-                TextFormField(
-                  controller: idController,
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return AppLocalizations.of(context).fieldCantBeEmpty;
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context).syncPhoneId),
-                  onFieldSubmitted: (value) async {
-                    print(value);
-                    Map<String, dynamic> alreadyInitialized =
-                        await isInitialized();
-                    if (alreadyInitialized != null) {
-                      askOldDataLoading();
-                    } else {
-                      Navigator.pushReplacementNamed(context, '/');
-                    }
-                  },
-                  obscureText: false,
-                ),
-              ],
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text(AppLocalizations.of(context).skip),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.pushReplacementNamed(context, '/');
-                },
-              ),
-              FlatButton(
-                child: Text(AppLocalizations.of(context).ok),
-                onPressed: () async {
-                  await syncWithTags();
-                  Navigator.of(context).pop();
-                  Navigator.pushReplacementNamed(context, '/');
-                },
-              ),
-            ],
-          );
-        });
-  }
-
-  void askOldDataLoading() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(AppLocalizations.of(context).loadOldData),
-            content: Text(AppLocalizations.of(context).loadOldDataDescription),
-            actions: <Widget>[
-              FlatButton(
-                child: Text(AppLocalizations.of(context).no),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.pushReplacementNamed(context, '/');
-                },
-              ),
-              FlatButton(
-                child: Text(AppLocalizations.of(context).yes),
-                onPressed: () async {
-                  await syncWithTags();
-                  Navigator.of(context).pop();
-                  Navigator.pushReplacementNamed(context, '/');
-                },
-              ),
-            ],
-          );
         });
   }
 }

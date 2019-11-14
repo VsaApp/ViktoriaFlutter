@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:device_info/device_info.dart';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:viktoriaflutter/Utils/Localizations.dart';
@@ -13,67 +15,76 @@ import 'Network.dart';
 import 'Storage.dart';
 import '../Timetable/TimetableData.dart';
 
-Future<Map<String, dynamic>> getTags() async {
+Future<Tags> getTags() async {
   try {
-    return json.decode(await fetchData(Urls.tags));
+    Response response = await fetch(Urls.tags);
+    assert(response.statusCode == StatusCodes.success);
+    Tags tags = Tags.fromJson(json.decode(response.body));
+    Data.tags = tags;
+    return tags;
   } on Exception catch (_) {
     return null;
   }
 }
 
-Future sendTag(String key, dynamic value) async {
-  sendTags({key: value});
+Future<bool> isInitialized() async {
+  Tags tags = await getTags();
+  return tags.isInitialized;
 }
 
-Future<Map<String, dynamic>> isInitialized() async {
-  Map<String, dynamic> tags = await getTags();
-  if (tags.keys.length > 0) return tags;
-  return null;
-}
-
-Future syncWithTags({Map<String, dynamic> tags}) async {
+Future<bool> syncWithTags({Tags tags}) async {
   if (tags == null) tags = await getTags();
   if (tags != null) {
+    // Sync grade
+    Storage.setString(Keys.grade, tags.grade);
+
     // Check if the server hast newer data than the local data
     String _lastModified = Storage.getString(Keys.lastModified);
-    String _timestamp = tags['timestamp'];
     bool serverIsNewer = true;
-    if (_lastModified != null && _timestamp != null) {
-      DateTime lastModified = DateTime.parse(_lastModified);
-      DateTime timestamp = DateTime.parse(_timestamp);
-      serverIsNewer = timestamp.isAfter(lastModified);
-    } else if (_timestamp == null) {
+
+    // If the server do not has any data of this user, do not sync
+    if (!tags.isInitialized) {
       serverIsNewer = false;
+    }
+    // If there are already local changes compare the newer version
+    else if (_lastModified != null) {
+      DateTime lastModified = DateTime.parse(_lastModified);
+      serverIsNewer = tags.timestamp.isAfter(lastModified);
     }
 
     // If the server has newer data, sync phone
     if (serverIsNewer) {
-      if (tags['selected'] != null) {
-        // Reset local selections
-        Storage.getKeys()
-            .where((key) => key.startsWith(Keys.selection('')))
-            .forEach((key) => Storage.remove(key));
-        // Set new selections
-        tags['selected'].forEach((key) {
-          Storage.setBool(Keys.selection(key['courseID'] as String), true);
-        });
-      }
-      if (tags['exams'] != null) {
-        // Reset local exam settings
-        Storage.getKeys()
-            .where((key) => key.startsWith(Keys.exams('')))
-            .forEach((key) => Storage.remove(key));
-        // Set new exam settings
-        tags['exams'].forEach((key) {
-          Storage.setBool(Keys.exams(key['courseID'] as String), true);
-        });
-      }
+      print('Sync device with server');
+
+      // Reset local selections
+      Storage.getKeys()
+          .where((key) => key.startsWith(Keys.selection('')))
+          .forEach((key) => Storage.remove(key));
+      // Set all courses to non writing
+      Storage.getKeys()
+          .where((key) => key.startsWith(Keys.exams('')))
+          .forEach((key) => Storage.setBool(key, false));
+
+      // Set new selections
+      tags.selected.forEach((course) {
+        Storage.setBool(Keys.selection(course), true);
+      });
+
+      // Set new exam settings
+      tags.exams.forEach((course) {
+        Storage.setBool(Keys.exams(course), true);
+      });
+
+      Storage.setString(Keys.lastModified, tags.timestamp.toIso8601String());
     }
+    return serverIsNewer;
   }
+  return false;
 }
 
-Future initTags(BuildContext context, String id) async {
+Future initTags(BuildContext context) async {
   if ((await checkOnline) == -1) return;
+  String id = await FirebaseMessaging().getToken();
   String appVersion = (await rootBundle.loadString('pubspec.yaml'))
       .split('\n')
       .where((line) => line.startsWith('version'))
@@ -93,24 +104,18 @@ Future initTags(BuildContext context, String id) async {
     deviceName = iosInfo.utsname.machine;
   }
   String language = AppLocalizations.of(context).locale.languageCode;
-  Map<String, dynamic> send = {
-    'device': {
-      'firebaseId': id,
-      'language': language,
-      'notifications':
-          Storage.getBool(Keys.getSubstitutionPlanNotifications) ?? true
-    },
-  };
-  if (appVersion != '') {
-    send['device']['appVersion'] = appVersion;
-  }
-  if (deviceName != '') {
-    send['device']['name'] = deviceName;
-  }
-  if (os != '') {
-    send['device']['os'] = os;
-  }
-  await sendTags(send);
+  Device device = Device(
+      language: language,
+      firebaseId: id,
+      notifications:
+          Storage.getBool(Keys.getSubstitutionPlanNotifications) ?? true,
+      appVersion: appVersion.isEmpty ? null : appVersion,
+      name: deviceName.isEmpty ? null : deviceName,
+      os: os.isEmpty ? null : os);
+  await sendTags({
+    'device': device.toMap(),
+    'timestamp': DateTime.now().toIso8601String()
+  });
 }
 
 Future sendTags(Map<String, dynamic> tags) async {
@@ -122,7 +127,7 @@ Future sendTags(Map<String, dynamic> tags) async {
 Future deleteTags(Map<String, dynamic> tags) async {
   String url = Urls.tags;
   try {
-    httpDelete(url, body: tags);
+    await httpDelete(url, body: tags);
   } catch (_) {}
 }
 
@@ -136,63 +141,71 @@ void syncDaysLength() {
 }
 
 // Sync the tags...
-Future syncTags() async {
-  if ((await checkOnline) == -1) return;
-  syncDaysLength();
+Future syncTags({bool syncExams = true, bool syncSelections = true}) async {
+  if ((await checkOnline) != 1) return;
 
-  // Get all timetable and exams tags...
-  Map<String, dynamic> allTags = await getTags();
+  // Get all server tags...
+  Tags allTags = await getTags();
   if (allTags == null) return;
 
-  if (Storage.getString(Keys.lastModified) == null) {
-    await syncTags();
-  }
-  else if (DateTime.parse(allTags['timestamp'])
-      .isAfter(DateTime.parse(Storage.getString(Keys.lastModified)))) {
-    await syncWithTags(tags: allTags);
-    return;
-  }
+  bool synced = await syncWithTags(tags: allTags);
+  if (synced) return;
 
   // Set the user group (1 (pupil); 2 (teacher); 4 (developer); 8 (other))
-  Storage.setInt(Keys.group, allTags['group'] as int);
-
-  // Get all selected subjects...
-  List<TimetableSubject> subjects = Data.timetable
-      .getAllSelectedSubjects()
-      .where((TimetableSubject subject) {
-        return subject.subjectID != 'Mittagspause' &&
-            subject.subjectID != 'Freistunde';
-      })
-      .toSet()
-      .toList();
-
-  List<String> exams = subjects
-      .where((TimetableSubject subject) =>
-          Storage.getBool(Keys.exams(subject.courseID)) ?? true)
-      .map((TimetableSubject subject) => subject.courseID)
-      .toList();
-
-  List<String> selected =
-      subjects.map((TimetableSubject subject) => subject.courseID).toList();
-
-  bool notifications =
-      Storage.getBool(Keys.getSubstitutionPlanNotifications) ?? true;
+  Storage.setInt(Keys.group, allTags.group);
 
   // Compare new and old tags...
-  Map<String, dynamic> tagsToUpdate = {
-    if (allTags['device']['notifications'] != notifications)
-      'device': {
-        'notifications': notifications,
-      },
-    'exams': exams.where((tag) => !allTags['exams'].contains(tag)),
-    'selected': selected.where((tag) => !allTags['selected'].contains(tag)),
-  };
+  String lastModified = Storage.getString(Keys.lastModified);
   Map<String, dynamic> tagsToRemove = {
-    'selected': allTags['selected'].where((tag) => !selected.contains(tag)),
-    'exams': allTags['exams'].where((tag) => !exams.contains(tag)),
+    'timestamp': lastModified,
   };
-  if (tagsToRemove['selected'].length > 0 || tagsToRemove['exams'].length > 0)
+  Map<String, dynamic> tagsToUpdate = {
+    'timestamp': lastModified,
+  };
+
+  if (syncExams || syncSelections) {
+    // Get all selected subjects
+    List<TimetableSubject> subjects = Data.timetable
+        .getAllSelectedSubjects()
+        .where((TimetableSubject subject) {
+          return subject.subjectID != 'Mittagspause' &&
+              subject.subjectID != 'Freistunde';
+        })
+        .toSet()
+        .toList();
+
+    // Sync all selected exams
+    List<String> exams = subjects
+        .where((TimetableSubject subject) => subject.writeExams)
+        .map((TimetableSubject subject) => subject.courseID)
+        .toSet()
+        .toList();
+
+    tagsToUpdate['exams'] =
+        exams.where((tag) => !allTags.exams.contains(tag)).toList();
+    tagsToRemove['exams'] =
+        allTags.exams.where((tag) => !exams.contains(tag)).toList();
+
+    // Sync all selected subjects
+    syncDaysLength();
+    List<String> selected =
+        subjects.map((TimetableSubject subject) => subject.courseID).toList();
+
+    tagsToUpdate['selected'] =
+        selected.where((tag) => !allTags.selected.contains(tag)).toList();
+    tagsToRemove['selected'] =
+        allTags.selected.where((tag) => !selected.contains(tag)).toList();
+  }
+
+  if ((tagsToRemove['selected'] != null &&
+          tagsToRemove['selected'].length > 0) ||
+      (tagsToRemove['exams'] != null && tagsToRemove['exams'].length > 0)) {
     await deleteTags(tagsToRemove);
-  if (tagsToUpdate['selected'].length > 0 || tagsToUpdate['exams'].length > 0)
+  }
+  if ((tagsToUpdate['selected'] != null &&
+          tagsToUpdate['selected'].length > 0) ||
+      (tagsToUpdate['exams'] != null && tagsToUpdate['exams'].length > 0) ||
+      tagsToUpdate['device'] != null) {
     await sendTags(tagsToUpdate);
+  }
 }

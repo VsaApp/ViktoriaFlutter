@@ -15,8 +15,14 @@ int getSelectedIndex(List<TimetableSubject> subjects, {int week = 0}) {
   // Get all subjects for the correct week and with a selected course
   List<TimetableSubject> selectedForWeek = subjects
       .where((s) =>
-          (s.week == 2 || week == s.week) && courseIDs.contains(s.courseID))
+          (s.week == 2 || week == s.week) &&
+          courseIDs.contains(Keys.selection(s.courseID)))
       .toList();
+  // If there are too much selected (only possible with a bug), reset the selections to this unit
+  if (selectedForWeek.length > 1) {
+    selectedForWeek.forEach((s) => Storage.remove(Keys.selection(s.courseID)));
+    return null;
+  }
   return selectedForWeek.length > 0
       ? subjects.indexOf(selectedForWeek.single)
       : null;
@@ -46,18 +52,23 @@ void setSelectedSubject(TimetableSubject selected,
     unit.subjects.forEach((s) {
       // Check for week 0 (B)
       bool isSameWeek = s.week == selected.week || selected.week == 2;
-      if (isSameWeek && courseIDs.contains(s.courseID)) {
-        Storage.remove(s.courseID);
-        courseIDs.remove(s.courseID);
+      if (isSameWeek && courseIDs.contains(Keys.selection(s.courseID))) {
+        Storage.remove(Keys.selection(s.courseID));
+        courseIDs.remove(Keys.selection(s.courseID));
       }
       // Check for week 1 (A), if there is any
       if (selectedB != null) {
         isSameWeek = s.week == selectedB.week || selectedB.week == 2;
-        if (isSameWeek && courseIDs.contains(s.courseID)) {
-          Storage.remove(s.courseID);
-          courseIDs.remove(s.courseID);
+        if (isSameWeek && courseIDs.contains(Keys.selection(s.courseID))) {
+          Storage.remove(Keys.selection(s.courseID));
+          courseIDs.remove(Keys.selection(s.courseID));
         }
       }
     });
   });
+
+  Storage.setBool(Keys.selection(selected.courseID), true);
+  if (selectedB != null) {
+    Storage.setBool(Keys.selection(selected.courseID), true);
+  }
 }

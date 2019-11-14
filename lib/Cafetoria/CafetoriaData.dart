@@ -30,8 +30,12 @@ Future download(
       "error": null,
       "days": [],
     });
-    await fetchDataAndSave(url, Keys.cafetoria, defaultJson,
-        onFinished: (int status) => successfully = status == 200);
+    await fetchDataAndSave(
+      url,
+      Keys.cafetoria,
+      defaultJson,
+      onFinished: (int status) => successfully = status == StatusCodes.success,
+    );
   }
 
   Data.cafetoria = await fetchCafetoria();
@@ -42,7 +46,10 @@ Future download(
 Future<bool> checkLogin({String id, String password}) async {
   try {
     String url = Urls.cafetoriaLogin(id, password);
-    return json.decode(await fetchData(url))['error'] == null;
+    Response response = await fetch(url);
+    if (response.statusCode != StatusCodes.success)
+      throw 'Failed to check login';
+    return json.decode(response.body)['error'] == null;
   } catch (e) {
     return false;
   }

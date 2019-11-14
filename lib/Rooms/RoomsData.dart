@@ -7,10 +7,16 @@ import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 
 // Download the timetable...
-Future download({bool update = true, Function(bool successfully) onFinished}) async {
+Future download(
+    {bool update = true, Function(bool successfully) onFinished}) async {
   bool successfully;
   if (update) {
-    await fetchDataAndSave(Urls.rooms, Keys.rooms, '{}', onFinished: (int v) => successfully = v == 200);
+    await fetchDataAndSave(
+      Urls.rooms,
+      Keys.rooms,
+      '{}',
+      onFinished: (int status) => successfully = status == StatusCodes.success,
+    );
   }
 
   // Parse data...

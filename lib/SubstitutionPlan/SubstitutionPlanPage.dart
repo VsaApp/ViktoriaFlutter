@@ -51,58 +51,46 @@ abstract class SubstitutionPlanPageState extends State<SubstitutionPlanPage>
 
   void initDays() {
     WidgetsBinding.instance.addPostFrameCallback((a) {
-        setState(() {
-          days = generateDays(substitutionPlan.getSubstitutionPlan());
-          weekdays = days.map((day) => AppLocalizations.of(context).weekdays[day.date.weekday - 1]).toList();
-          controller = TabController(vsync: this, length: days.length);
-        });
-        int day = 0;
-        bool over = false;
-        int weekday = DateTime
-            .now()
-            .weekday - 1;
-        if (weekday <= 4) {
-          if (timetable.getTimetable()[weekday].units.length > 0) {
-            if (DateTime.now().isAfter(DateTime(DateTime
-                .now()
-                .year,
-                DateTime
-                    .now()
-                    .month, DateTime
-                    .now()
-                    .day, 8)
-                .add(Duration(
-                minutes: [60, 130, 210, 280, 360, 420, 480, 545][timetable
-                    .getTimetable()[weekday]
-                    .getUserLessonsCount(
-                    AppLocalizations
-                        .of(context)
-                        .freeLesson) -
-                    1])))) {
-              over = true;
-            }
+      setState(() {
+        days = generateDays(substitutionPlan.getSubstitutionPlan());
+        weekdays = days
+            .map((day) =>
+                AppLocalizations.of(context).weekdays[day.date.weekday - 1])
+            .toList();
+        controller = TabController(vsync: this, length: days.length);
+      });
+      int day = 0;
+      bool over = false;
+      int weekday = DateTime.now().weekday - 1;
+      if (weekday <= 4) {
+        if (timetable.getTimetable()[weekday].units.length > 0) {
+          if (DateTime.now().isAfter(DateTime(DateTime.now().year,
+                  DateTime.now().month, DateTime.now().day, 8)
+              .add(Duration(
+                  minutes: [60, 130, 210, 280, 360, 420, 480, 545][timetable
+                          .getTimetable()[weekday]
+                          .getUserLessonsCount(
+                              AppLocalizations.of(context).freeLesson) -
+                      1])))) {
+            over = true;
           }
         }
+      }
 
-        // If the first day is passed, select the next day...
-        if (DateTime(
-          DateTime
-              .now()
-              .year,
-          DateTime
-              .now()
-              .month,
-          DateTime
-              .now()
-              .day,
-        ).add(Duration(days: (over) ? 1 : 0)).isAfter(days[0].date)) day = 1;
-        controller.animateTo(day);
-        HomePageState.updateWeek(days[controller.index].week);
-        controller.addListener(
-                () => HomePageState.updateWeek(days[controller.index].week));
-      });
-    }
+      // If the first day is passed, select the next day...
+      if (DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+      ).add(Duration(days: (over) ? 1 : 0)).isAfter(days[0].date)) day = 1;
+      controller.animateTo(day);
+      HomePageState.updateWeek(days[controller.index].week);
+      controller.addListener(
+          () => HomePageState.updateWeek(days[controller.index].week));
+    });
+  }
 
+  /// Adds a empty day if there is only one
   List<SubstitutionPlanDay> generateDays(List<SubstitutionPlanDay> days) {
     if (days.length == 1) {
       DateTime day = days[0].date;

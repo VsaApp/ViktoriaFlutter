@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
-import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
 import 'CourseEditWidget.dart';
-import 'RoomEdit/RoomEditView.dart';
 
 class CourseEditView extends CourseEditState {
   @override
@@ -20,8 +17,8 @@ class CourseEditView extends CourseEditState {
           onChanged: (bool value) {
             setState(() {
               // Save change
-              Storage.setBool(Keys.exams(widget.subject.courseID), value);
-              syncTags();
+              widget.subject.writeExams = value;
+              syncTags(syncSelections: false);
               exams = value;
               if (widget.onExamChange != null) {
                 widget.onExamChange(exams);
@@ -30,14 +27,6 @@ class CourseEditView extends CourseEditState {
             });
           },
           title: Text(AppLocalizations.of(context).writeExams),
-        ),
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.only(top: 10, left: 15, right: 15, bottom: 10),
-          child: Column(
-            children:
-                subjects1.map((subject) => RoomEdit(subject: subject)).toList(),
-          ),
         ),
         Container(
           margin: EdgeInsets.only(
@@ -49,10 +38,8 @@ class CourseEditView extends CourseEditState {
             child: RaisedButton(
               color: Theme.of(context).accentColor,
               onPressed: () {
-                Storage.setBool(
-                    Keys.exams(widget.subject.courseID),
-                    exams);
-                syncTags();
+                widget.subject.writeExams = exams;
+                syncTags(syncSelections: false);
                 if (widget.onExamChange != null) {
                   widget.onExamChange(exams);
                 }

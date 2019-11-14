@@ -8,10 +8,21 @@ import 'package:viktoriaflutter/Utils/Models.dart';
 
 // Download the timetable...
 Future<Updates> download(
-    {bool update = true, Function(int successfully) onFinished}) async {
+    {bool update = true, Function(int statusCode) onFinished}) async {
+  if (!update) {
+    if (onFinished != null) onFinished(StatusCodes.success);
+    Data.updates = fetchUpdates();
+    return Data.updates;
+  }
+
   // Get response
   final response = await fetch(Urls.updates);
   int statusCode = response.statusCode;
+
+  if (statusCode != StatusCodes.success) {
+    if (onFinished != null) onFinished(statusCode);
+    return null;
+  }
 
   // Parse data...
   Data.updates = parseUpdates(response.body);

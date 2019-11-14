@@ -4,11 +4,9 @@ import 'package:flutter/material.dart';
 
 import '../Utils/Keys.dart';
 import '../Utils/Localizations.dart';
-import '../Utils/Network.dart';
 import '../Utils/SectionWidget.dart';
 import '../Utils/Storage.dart';
 import '../Utils/Tags.dart';
-import 'HistoryDialog/HistoryDialogWidget.dart';
 import 'SettingsPage.dart';
 
 class SettingsPageView extends SettingsPageState {
@@ -116,7 +114,7 @@ class SettingsPageView extends SettingsPageState {
                               Keys.getSubstitutionPlanNotifications, value);
                           getSubstitutionPlanNotifications = value;
                           // Synchronize tags for notifications
-                          syncTags();
+                          initTags(context);
                         });
                       },
                       title: Text(AppLocalizations.of(context)
@@ -189,11 +187,8 @@ class SettingsPageView extends SettingsPageState {
                       onPressed: () async {
                         Storage.getKeys()
                             .where((key) =>
-                                ((key.startsWith('timetable') ||
-                                        key.startsWith('room')) &&
-                                    key.split('-').length >= 3 &&
-                                    !key.endsWith('-5')) ||
-                                key.startsWith('exams'))
+                                key.startsWith(Keys.selection('')) ||
+                                key.startsWith(Keys.exams('')))
                             .forEach((key) {
                           Storage.remove(key);
                         });

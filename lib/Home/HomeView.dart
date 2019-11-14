@@ -5,16 +5,13 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import '../Cafetoria/CafetoriaPage.dart';
 import '../Calendar/CalendarPage.dart';
 import '../Courses/CoursesPage.dart';
-import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import '../SubstitutionPlan/SubstitutionPlanPage.dart';
 import '../Settings/SettingsPage.dart';
-import 'package:viktoriaflutter/Utils/Storage.dart';
 import '../Timetable/TimetablePage.dart';
 import '../WorkGroups/WorkGroupsPage.dart';
 import 'HomePage.dart';
 import 'OfflineWidget.dart';
-import 'ShortCutDialog/ShortCutDialogWidget.dart';
 
 class HomePageView extends HomePageState {
   @override
@@ -62,41 +59,8 @@ class HomePageView extends HomePageState {
         onTap: () => onSelectItem(i),
       ));
     }
-    // Only show the dialog only at the opening
-    if (!dialogShown) {
-      dialogShown = true;
 
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        bool selectedSubjects = Storage.getKeys().where((key) {
-              if (key
-                  .startsWith('timetable-${Storage.getString(Keys.grade)}-')) {
-                if ('-'.allMatches(key).length == 3)
-                  return key.split('-')[key.split('-').length - 1] != '5';
-                return true;
-              }
-              return false;
-            }).length >
-            0;
-        // Check if user selected anything in the timetable (setup)
-        if (selectedSubjects) {
-          // Check if short cut dialog enabled
-          if (showDialog1) {
-            showDialog<String>(
-                context: context,
-                barrierDismissible: true,
-                builder: (BuildContext context1) {
-                  return ShortCutDialog(
-                    items: drawerItems,
-                    selectItem: onSelectItem,
-                  );
-                });
-          }
-        } else {
-          // String grade = Storage.getString(Keys.grade);
-          // TODO: Add scan dialog
-        }
-      });
-    }
+    // TODO: Show scan dialog
 
     appScaffold = Scaffold(
       key: scaffoldKey,

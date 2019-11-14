@@ -45,45 +45,31 @@ class SubstitutionPlanPageView extends SubstitutionPlanPageState {
               child: GradeFab(
                 onSelectPressed: (Function(String grade) selected) async {
                   // Select a grade to show the substitution plan of
-                  int online = await checkOnline;
-                  if (online != 1) {
-                    Scaffold.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(online == -1
-                            ? AppLocalizations.of(context).onlyOnline
-                            : AppLocalizations.of(context).serverIsOffline),
-                        action: SnackBarAction(
-                          label: AppLocalizations.of(context).ok,
-                          onPressed: () {},
-                        ),
-                      ),
+                  showDialog<String>(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (BuildContext context1) {
+                        return SimpleDialog(
+                          title:
+                              Text(AppLocalizations.of(context).pleaseSelect),
+                          children:
+                              SubstitutionPlanPageState.grades.map((_grade) {
+                            return SimpleDialogOption(
+                              onPressed: () {
+                                print(_grade);
+                                selected(_grade);
+                                Navigator.of(context).pop();
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        BrotherSisterSubstitutionPlanPage(
+                                            grade: _grade)));
+                              },
+                              child: Text(_grade),
+                            );
+                          }).toList(),
+                        );
+                      }
                     );
-                  } else {
-                    showDialog<String>(
-                        context: context,
-                        barrierDismissible: true,
-                        builder: (BuildContext context1) {
-                          return SimpleDialog(
-                            title:
-                                Text(AppLocalizations.of(context).pleaseSelect),
-                            children:
-                                SubstitutionPlanPageState.grades.map((_grade) {
-                              return SimpleDialogOption(
-                                onPressed: () {
-                                  print(_grade);
-                                  selected(_grade);
-                                  Navigator.of(context).pop();
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          BrotherSisterSubstitutionPlanPage(
-                                              grade: _grade)));
-                                },
-                                child: Text(_grade),
-                              );
-                            }).toList(),
-                          );
-                        });
-                  }
                 },
                 onSelected: (String grade) async {
                   int online = await checkOnline;

@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show MethodChannel, rootBundle;
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Errors.dart' as bugs;
+import 'package:viktoriaflutter/Utils/Tags.dart';
 
 import '../Cafetoria/CafetoriaData.dart' as Cafetoria;
 import '../Calendar/CalendarData.dart' as Calendar;
@@ -27,6 +29,7 @@ class LoadingPage extends StatefulWidget {
 
 abstract class LoadingPageState extends State<LoadingPage>
     with TickerProviderStateMixin {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   int allDownloadsCount = 9;
   int countCurrentDownloads = 9;
   double centerWidgetDimensions = 150;
@@ -67,11 +70,8 @@ abstract class LoadingPageState extends State<LoadingPage>
         return;
       }
 
-      checkOnline.then((online) async {
-        if (online == 1) {}
-      });
-
-      WidgetsBinding.instance.addPostFrameCallback((a) {
+      WidgetsBinding.instance.addPostFrameCallback((a) async {
+        // Apply the android app theme
         if (Platform.isAndroid) {
           MethodChannel('viktoriaflutter').invokeMethod('applyTheme', {
             'color': Theme.of(context)
@@ -82,6 +82,8 @@ abstract class LoadingPageState extends State<LoadingPage>
                 .toUpperCase(),
           });
         }
+
+        // Add all download texts
         texts.add(AppLocalizations.of(context).updates);
         texts.add(AppLocalizations.of(context).timetable);
         texts.add(AppLocalizations.of(context).substitutionPlan);
@@ -94,15 +96,21 @@ abstract class LoadingPageState extends State<LoadingPage>
         texts.shuffle();
         downloadAll();
       });
+
+      // Show download texts only after 3 seconds
       textTimer = Timer(Duration(seconds: 3), () {
         setState(() {
           showTexts = true;
         });
       });
+
+      // Start animation controller (For the loading app icon)
       controller = AnimationController(
         duration: Duration(milliseconds: 500),
         vsync: this,
       );
+
+      // Animate from one site to the other and so on
       setState(() {
         animation = Tween<double>(begin: -0.0, end: 0.01).animate(controller)
           ..addStatusListener((status) {
@@ -143,6 +151,23 @@ abstract class LoadingPageState extends State<LoadingPage>
         });
   }
 
+  Future initFirebase() async {
+    if (Platform.isIOS || Platform.isAndroid) {
+      _firebaseMessaging.requestNotificationPermissions(
+          const IosNotificationSettings(sound: true, badge: true, alert: true));
+      _firebaseMessaging.onIosSettingsRegistered
+          .listen((IosNotificationSettings settings) {
+        print("Settings registered: $settings");
+      });
+      String token = await _firebaseMessaging.getToken();
+      assert(token != null);
+
+      // Synchronize tags for notifications
+      await initTags(context);
+      await syncTags();
+    }
+  }
+
   Future downloadAll() async {
     stopwatch = Stopwatch()..start();
 
@@ -151,12 +176,20 @@ abstract class LoadingPageState extends State<LoadingPage>
 
     // Get the versions of server data
     final completer = Completer<int>();
-    final newData = await Updates.download(onFinished: completer.complete);
-    if (await completer.future == 401) {
+    var newData = await Updates.download(onFinished: completer.complete);
+    final status = await completer.future;
+    if (status == StatusCodes.unauthorized) {
       Navigator.of(context).pushReplacementNamed('/login');
       return;
     }
+    if (status == StatusCodes.failed ||
+        status == StatusCodes.offline ||
+        newData == null) {
+      print('Offline');
+      newData = await Updates.download(update: false);
+    }
 
+    // Compares the old and new grade
     String oldGrade = Storage.getString(Keys.grade) ?? '--';
     String newGrade = newData.grade;
     bool gradeChanged = newGrade != oldGrade;
@@ -175,12 +208,14 @@ abstract class LoadingPageState extends State<LoadingPage>
         .toList()[0]
         .split(':')[1]
         .trim();
+
+    // If the app is too old, show non dismissible dialog
     if (newData.minAppLevel > int.parse(appVersion.split('+')[1])) {
       showOldAppDialog(appVersion);
       return;
     }
 
-    // Print all data to download
+    // Print data count to download
     Map<String, dynamic> newDataMap = newData.toMap();
     Map<String, dynamic> currentDataMap = currentData.toMap();
     print('Downloading ' +
@@ -190,15 +225,14 @@ abstract class LoadingPageState extends State<LoadingPage>
                 .where((a) => a)
                 .length)
             .toString() +
-        ' new files');
+        '/$allDownloadsCount files');
 
     // Download subjects, rooms, teachers, timetable and substitution plan in the correct order
     () async {
       // Update subjects
       await download(() async {
         await Subjects.download(
-            update:
-                updated(newData.subjects, currentData.subjects) || gradeChanged,
+            update: updated(newData.subjects, currentData.subjects),
             onFinished: (bool successfully) {
               if (successfully ?? true) {
                 currentData.subjects = newData.subjects;
@@ -209,7 +243,7 @@ abstract class LoadingPageState extends State<LoadingPage>
       // Update rooms
       await download(() async {
         await Rooms.download(
-            update: updated(newData.rooms, currentData.rooms) || gradeChanged,
+            update: updated(newData.rooms, currentData.rooms),
             onFinished: (bool successfully) {
               if (successfully ?? true) {
                 currentData.rooms = newData.rooms;
@@ -220,8 +254,7 @@ abstract class LoadingPageState extends State<LoadingPage>
       // Update teachers
       await download(() async {
         await Teachers.download(
-            update:
-                updated(newData.teachers, currentData.teachers) || gradeChanged,
+            update: updated(newData.teachers, currentData.teachers),
             onFinished: (bool successfully) {
               if (successfully ?? true) {
                 currentData.teachers = newData.teachers;
@@ -243,9 +276,8 @@ abstract class LoadingPageState extends State<LoadingPage>
       // Update substitution plan
       await download(() async {
         await SubstitutionPlan.download(
-            update: updated(
-                    newData.substitutionPlan, currentData.substitutionPlan) ||
-                gradeChanged,
+            update:
+                updated(newData.substitutionPlan, currentData.substitutionPlan),
             onFinished: (bool successfully) {
               if (successfully ?? true) {
                 currentData.substitutionPlan = newData.substitutionPlan;
@@ -294,23 +326,27 @@ abstract class LoadingPageState extends State<LoadingPage>
   bool updated(DateTime oldValue, DateTime newValue) =>
       !oldValue.isAtSameMomentAs(newValue);
 
-  Future download(Function() process, String text) async {
+  Future<void> download(Future<void> Function() process, String text) async {
     await process();
     countCurrentDownloads--;
     setState(() => texts.remove(text));
 
-    if (countCurrentDownloads == 0) {
+    if (countCurrentDownloads <= 0) {
       stopwatch.stop();
       print(stopwatch.elapsedMilliseconds);
       Updates.saveUpdates();
+      await initFirebase();
+      print('everything loaded');
       // After download show app
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         int storedVersion = Storage.getInt(Keys.slidesVersion) ?? 0;
         int currentVersion = 3;
         if (currentVersion != storedVersion) {
           Storage.setInt(Keys.slidesVersion, currentVersion);
+          print('open intro');
           Navigator.of(context).pushReplacementNamed('/intro');
         } else {
+          print('open home');
           Navigator.of(context).pushReplacementNamed('/home');
         }
       });

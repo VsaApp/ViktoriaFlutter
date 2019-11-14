@@ -5,6 +5,7 @@ export 'Models/SubstitutionPlanModel.dart';
 export 'Models/TeachersModel.dart';
 export 'Models/WorkGroupsModel.dart';
 export 'Models/UpdatesModel.dart';
+export 'Models/TagsModel.dart';
 import 'Models/TimetableModel.dart';
 import 'Models/CafetoriaModel.dart';
 import 'Models/CalendarModel.dart';
@@ -12,6 +13,7 @@ import 'Models/SubstitutionPlanModel.dart';
 import 'Models/TeachersModel.dart';
 import 'Models/WorkGroupsModel.dart';
 import 'Models/UpdatesModel.dart';
+import 'Models/TagsModel.dart';
 
 class Data {
   static Timetable timetable;
@@ -23,4 +25,5 @@ class Data {
   static WorkGroups workGroups;
   static Map<String, String> subjects;
   static Updates updates;
+  static Tags tags;
 }

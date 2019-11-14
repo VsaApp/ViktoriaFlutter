@@ -21,16 +21,16 @@ Future<Timetable> download(bool temp,
   if (update) {
     // Default timetable (Only for download errors)
     String defaultTimetable = json.encode({
-      "grade": grade,
-      "date": DateTime.now().toIso8601String(),
-      "data": {"grade": grade, "days": []}
+      'grade': grade,
+      'date': DateTime.now().toIso8601String(),
+      'data': {'grade': grade, 'days': []}
     });
     String oldTimetable = Storage.getString(Keys.timetable(grade));
     await fetchDataAndSave(
       Urls.timetable,
       Keys.timetable(grade),
       defaultTimetable,
-      onFinished: (int v) => successfully = v == 200,
+      onFinished: (int v) => successfully = v == StatusCodes.success,
     );
     String newTimetable = Storage.getString(Keys.timetable(grade));
     if (oldTimetable != null) {
@@ -52,7 +52,7 @@ Future<Timetable> download(bool temp,
   return null;
 }
 
-// Returns the static timetable...
+/// Returns the static timetable...
 List<TimetableDay> getTimetable() {
   return Data.timetable.days;
 }
@@ -68,38 +68,20 @@ Timetable parseTimetable(String responseBody) {
   return Timetable.fromJSON(parsed);
 }
 
-/// Returns the timetable without any substitution plan data
-String getFilteredString(String timetable) {
-  final parsed = json.decode(timetable).cast<String, dynamic>()['data'];
-  parsed.forEach((day) {
-    day['substitutionPlan'] = null;
-    day['lessons'].keys.toList().forEach((lesson) {
-      day['lessons'][lesson].forEach((subject) {
-        subject['course'] = null;
-        subject['changes'] = null;
-      });
-    });
-  });
-  return json.encode(parsed);
-}
-
 /// Resets the selected subjects when the timetable changed
 Future checkTimetableUpdated(String version1, String version2) async {
-  try {
-    if (getFilteredString(version1) != getFilteredString(version2)) {
-      Storage.setBool(Keys.timetableIsNew, true);
-      print('There is a new timetable, reset old data');
-      List<String> keys = Storage.getKeys().toList();
-      List<String> keysToReset = keys
-          .where((String key) => key.startsWith(Keys.selection('')) || key.startsWith(Keys.exams('')))
-          .toList();
-      keysToReset.forEach((String key) => Storage.remove(key));
-      await deleteTags({
-        'selected': keys.where((String key) => key.startsWith(Keys.selection(''))).toList(),
-        'exams': keys.where((String key) => key.startsWith(Keys.exams(''))).toList()
-      });
-    }
-  } catch (_) {
-    print('Failed to compare timetable versions');
+  if (version1 != version2) {
+    Storage.setBool(Keys.timetableIsNew, true);
+    print('There is a new timetable, reset old data');
+    List<String> keys = Storage.getKeys();
+    List<String> keysToReset = keys
+        .where((String key) => key.startsWith(Keys.selection('')) || key.startsWith(Keys.exams('')))
+        .toList();
+    keysToReset.forEach((String key) => Storage.remove(key));
+    await deleteTags({
+      'timestamp': Storage.getString(Keys.lastModified),
+      'selected': keys.where((String key) => key.startsWith(Keys.selection(''))).toList(),
+      'exams': keys.where((String key) => key.startsWith(Keys.exams(''))).toList()
+    });
   }
 }

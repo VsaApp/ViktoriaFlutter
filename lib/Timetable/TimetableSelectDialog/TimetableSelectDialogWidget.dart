@@ -112,7 +112,7 @@ abstract class TimetableSelectDialogState extends State<TimetableSelectDialog>
     widget.onSelected();
 
     // Synchronize tags for notifications
-    syncTags();
+    syncTags(syncExams: false);
     Data.substitutionPlan.updateFilter();
   }
 

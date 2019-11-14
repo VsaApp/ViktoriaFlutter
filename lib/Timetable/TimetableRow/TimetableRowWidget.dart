@@ -55,7 +55,7 @@ class TimetableRow extends StatelessWidget {
                             ?
                         // Normal name
                         Text(
-                          subject.subjectID,
+                          Data.subjects[subject.subjectID] ?? subject.subjectID,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 15.0,
