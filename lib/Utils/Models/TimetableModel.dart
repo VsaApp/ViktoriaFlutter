@@ -24,7 +24,7 @@ class Timetable {
   factory Timetable.fromJSON(Map<String, dynamic> json) {
     return Timetable(
       grade: json['grade'] as String,
-      date: DateTime.parse(json['date'] as String),
+      date: DateTime.parse(json['date'] as String).toLocal(),
       days: json['data']['days']
           .map((json) => TimetableDay.fromJson(json))
           .cast<TimetableDay>()

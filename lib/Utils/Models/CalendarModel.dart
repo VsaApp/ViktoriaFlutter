@@ -9,9 +9,11 @@ class Calendar {
 
   factory Calendar.fromJson(Map<String, dynamic> json) {
     return Calendar(
-      years: json['years'].cast<int>().toList(),
-      events: json['data'].map((json) => CalendarEvent.fromJson(json)).cast<CalendarEvent>().toList()
-    );
+        years: json['years'].cast<int>().toList(),
+        events: json['data']
+            .map((json) => CalendarEvent.fromJson(json))
+            .cast<CalendarEvent>()
+            .toList());
   }
 }
 
@@ -34,8 +36,8 @@ class CalendarEvent {
     return CalendarEvent(
       name: json['name'] as String,
       info: json['info'] as String,
-      start: json['start'] != null ? DateTime.parse(json['start']) : null,
-      end: json['end'] != null ? DateTime.parse(json['end']) : null,
+      start: json['start'] != null ? DateTime.parse(json['start']).toLocal() : null,
+      end: json['end'] != null ? DateTime.parse(json['end']).toLocal() : null,
     );
   }
 }

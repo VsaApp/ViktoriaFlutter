@@ -23,9 +23,6 @@ class EventCard extends StatelessWidget {
             (event.start.minute.toString().length == 1 ? '0' : '') +
             event.start.minute.toString()
         : '';
-    if (startTime == '23:00') {
-      startTime = '';
-    }
     String endDate = event.end != null
         ? event.end.day.toString() +
             '.' +
@@ -40,9 +37,21 @@ class EventCard extends StatelessWidget {
             (event.end.minute.toString().length == 1 ? '0' : '') +
             event.end.minute.toString()
         : '';
-    if (endTime == '23:00') {
-      endTime = '';
+    String line1 = startDate;
+    String line2 = 'bis $endDate';
+    if (startDate != endDate) {
+      line1 += startTime != '00:00' ? ' ($startTime Uhr)' : '';
+      line2 += endTime != '00:00' ? ' ($endTime Uhr)' : '';
+    } else {
+      if (startTime != endTime) {
+        line2 = '$startTime - $endTime Uhr';
+      } else if (startTime != '00:00') {
+        line2 = '$startTime Uhr';
+      } else {
+        line2 = '';
+      }
     }
+
     return Padding(
       padding: EdgeInsets.only(bottom: 5),
       child: Card(
@@ -71,13 +80,8 @@ class EventCard extends StatelessWidget {
                         child:
                             event.info != '' ? Text(event.info) : Container(),
                       ),
-                      Text(startDate +
-                          (startTime != '' ? ' (' + startTime + ' Uhr)' : '')),
-                      startDate + startTime != endDate + endTime
-                          ? Text('bis ' +
-                              (endDate != startDate ? endDate : '') +
-                              (endTime != '' ? (endDate == startDate ? '' : ' (') + endTime + (endDate == startDate ? ' Uhr' : ' Uhr)') : ''))
-                          : Container()
+                      Text(line1),
+                      if (line2.isNotEmpty) Text(line2)
                     ],
                   ),
                 ),

@@ -110,8 +110,8 @@ class SubstitutionPlanDay {
 
   factory SubstitutionPlanDay.fromJson(Map<String, dynamic> json) {
     return SubstitutionPlanDay(
-        date: DateTime.parse(json['date'] as String),
-        updated: DateTime.parse(json['updated'] as String),
+        date: DateTime.parse(json['date'] as String).toLocal(),
+        updated: DateTime.parse(json['updated'] as String).toLocal(),
         unparsed: json['unparsed'].map<String, List<String>>(
             (String key, value) =>
                 MapEntry<String, List<String>>(key, value.cast<String>())),

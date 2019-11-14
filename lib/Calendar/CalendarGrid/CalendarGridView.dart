@@ -20,7 +20,6 @@ class CalendarGridView extends CalendarGridState {
           for (int i = 0; i < lastEvent.month - firstEvent.month + 1 + (lastEvent.year - firstEvent.year) * 12; i++) {
             int month = (i + firstEvent.month - 1) % 12;
             int year = firstEvent.year + ((i + firstEvent.month - 1) ~/ 12);
-            print(year.toString() + ' ' + month.toString());
             int days = daysInMonth(month, year);
             DateTime firstDayInMonth = DateTime(year, month + 1, 1);
             List<CalendarGridItem> items = [];
