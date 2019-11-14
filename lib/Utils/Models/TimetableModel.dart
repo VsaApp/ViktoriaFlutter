@@ -151,7 +151,7 @@ class TimetableUnit {
   // Set the default selection...
   void setSelection(int day, int unit) {
     if (subjects.length == 1) {
-      setSelectedSubject(subjects[0]);
+      setSelectedSubject(subjects[0], defaultSelection: true);
     }
   }
 

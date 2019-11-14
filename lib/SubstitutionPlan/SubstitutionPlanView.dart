@@ -6,6 +6,7 @@ import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/TabProxy.dart';
+import 'package:viktoriaflutter/Utils/Tags.dart';
 import 'GradeFAB/GradeFABWidget.dart';
 import 'SubstitutionPlanData.dart' as substitutionPlan;
 import 'SubstitutionPlanDayList/SubstitutionPlanDayListWidget.dart';
@@ -22,19 +23,19 @@ class SubstitutionPlanPageView extends SubstitutionPlanPageState {
         TabProxy(
           weekdays: weekdays,
           tabs: days
-              .map((day) =>
-              SubstitutionPlanDayList(
-                day: day,
-                dayIndex: days.indexOf(day),
-                grade: Storage.getString(Keys.grade),
-                sort: Storage.getBool(Keys.sortSubstitutionPlan),
-              ))
+              .map((day) => SubstitutionPlanDayList(
+                    day: day,
+                    dayIndex: days.indexOf(day),
+                    grade: Storage.getString(Keys.grade),
+                    sort: Storage.getBool(Keys.sortSubstitutionPlan),
+                  ))
               .toList(),
           controller: controller,
           onUpdate: () async {
+            await syncWithTags();
             await substitutionPlan.download();
             setState(() =>
-            days = generateDays(substitutionPlan.getSubstitutionPlan()));
+                days = generateDays(substitutionPlan.getSubstitutionPlan()));
           },
         ),
         // FAB
@@ -68,8 +69,7 @@ class SubstitutionPlanPageView extends SubstitutionPlanPageState {
                             );
                           }).toList(),
                         );
-                      }
-                    );
+                      });
                 },
                 onSelected: (String grade) async {
                   int online = await checkOnline;

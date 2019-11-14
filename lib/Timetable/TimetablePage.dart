@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:viktoriaflutter/Utils/Tags.dart';
 import 'package:viktoriaflutter/Utils/Week.dart';
 
 import '../Home/HomePage.dart';
@@ -168,6 +169,7 @@ class TimetableView extends State<TimetablePage>
                 AppLocalizations.of(context).unitAndSubstitutionPlan);
             HomePageState.checkIfTimetableUpdated(context);
           });
+          await syncWithTags();
           Data.substitutionPlan.insert();
           Data.substitutionPlan.updateFilter();
           setWeeks();

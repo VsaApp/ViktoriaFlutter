@@ -41,8 +41,8 @@ class Storage {
   }
 
   // ignore: avoid_positional_boolean_parameters
-  static void setBool(String key, bool value) {
-    if (key.startsWith(Keys.selection('')) || key.startsWith(Keys.exams('')))
+  static void setBool(String key, bool value, {bool autoSet = false}) {
+    if (!autoSet && (key.startsWith(Keys.selection('')) || key.startsWith(Keys.exams(''))))
       setString(Keys.lastModified, DateTime.now().toIso8601String());
     if (_isDesktop) {
       data[key] = value;
@@ -102,8 +102,8 @@ class Storage {
     }
   }
 
-  static void remove(String key) {
-    if (key.startsWith(Keys.selection('')) || key.startsWith(Keys.exams(''))) {
+  static void remove(String key, {bool autoSet = false}) {
+    if (!autoSet && (key.startsWith(Keys.selection('')) || key.startsWith(Keys.exams('')))) {
       setString(Keys.lastModified, DateTime.now().toIso8601String());
     }
     if (_isDesktop) {

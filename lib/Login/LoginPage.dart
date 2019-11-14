@@ -76,7 +76,6 @@ abstract class LoginPageState extends State<LoginPage> {
         Storage.setString(Keys.username, usernameController.text);
         Storage.setString(Keys.password, passwordController.text);
 
-        await syncWithTags();
         Navigator.pushReplacementNamed(context, '/');
       });
     } else {

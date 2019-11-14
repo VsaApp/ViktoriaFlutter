@@ -35,7 +35,7 @@ TimetableSubject getSelectedSubject(List<TimetableSubject> subjects,
 }
 
 void setSelectedSubject(TimetableSubject selected,
-    {TimetableSubject selectedB}) {
+    {TimetableSubject selectedB, bool defaultSelection = false}) {
   // Get all selected courses
   List<String> courseIDs = Storage.getKeys()
       .where((key) => key.startsWith(Keys.selection('')))
@@ -53,22 +53,22 @@ void setSelectedSubject(TimetableSubject selected,
       // Check for week 0 (B)
       bool isSameWeek = s.week == selected.week || selected.week == 2;
       if (isSameWeek && courseIDs.contains(Keys.selection(s.courseID))) {
-        Storage.remove(Keys.selection(s.courseID));
+        Storage.remove(Keys.selection(s.courseID), autoSet: defaultSelection);
         courseIDs.remove(Keys.selection(s.courseID));
       }
       // Check for week 1 (A), if there is any
       if (selectedB != null) {
         isSameWeek = s.week == selectedB.week || selectedB.week == 2;
         if (isSameWeek && courseIDs.contains(Keys.selection(s.courseID))) {
-          Storage.remove(Keys.selection(s.courseID));
+          Storage.remove(Keys.selection(s.courseID), autoSet: defaultSelection);
           courseIDs.remove(Keys.selection(s.courseID));
         }
       }
     });
   });
 
-  Storage.setBool(Keys.selection(selected.courseID), true);
+  Storage.setBool(Keys.selection(selected.courseID), true, autoSet: defaultSelection);
   if (selectedB != null) {
-    Storage.setBool(Keys.selection(selected.courseID), true);
+    Storage.setBool(Keys.selection(selected.courseID), true, autoSet: defaultSelection);
   }
 }

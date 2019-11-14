@@ -112,7 +112,7 @@ abstract class HomePageState extends State<HomePage> {
   /// Handles incoming timetable notifications
   Future handleTimetableNotification(Map msg) async {
     print("received timetable notification");
-    await syncWithTags();
+    await syncWithTags(forceSync: true);
     await timetable.download(false);
     Models.Data.substitutionPlan.insert();
     Models.Data.substitutionPlan.updateFilter();

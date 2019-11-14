@@ -32,7 +32,8 @@ Future<bool> isInitialized() async {
   return tags.isInitialized;
 }
 
-Future<bool> syncWithTags({Tags tags}) async {
+Future<bool> syncWithTags(
+    {Tags tags, bool autoSync = true, bool forceSync = false}) async {
   if (tags == null) tags = await getTags();
   if (tags != null) {
     // Sync grade
@@ -41,6 +42,7 @@ Future<bool> syncWithTags({Tags tags}) async {
     // Check if the server hast newer data than the local data
     String _lastModified = Storage.getString(Keys.lastModified);
     bool serverIsNewer = true;
+    bool localIsNewer = false;
 
     // If the server do not has any data of this user, do not sync
     if (!tags.isInitialized) {
@@ -50,10 +52,11 @@ Future<bool> syncWithTags({Tags tags}) async {
     else if (_lastModified != null) {
       DateTime lastModified = DateTime.parse(_lastModified);
       serverIsNewer = tags.timestamp.isAfter(lastModified);
+      localIsNewer = lastModified.isAfter(tags.timestamp);
     }
 
     // If the server has newer data, sync phone
-    if (serverIsNewer) {
+    if (serverIsNewer || forceSync) {
       print('Sync device with server');
 
       // Reset local selections
@@ -76,7 +79,7 @@ Future<bool> syncWithTags({Tags tags}) async {
       });
 
       Storage.setString(Keys.lastModified, tags.timestamp.toIso8601String());
-    }
+    } else if (localIsNewer && autoSync) await syncTags(checkSync: false);
     return serverIsNewer;
   }
   return false;
@@ -141,15 +144,20 @@ void syncDaysLength() {
 }
 
 // Sync the tags...
-Future syncTags({bool syncExams = true, bool syncSelections = true}) async {
+Future syncTags(
+    {bool syncExams = true,
+    bool syncSelections = true,
+    bool checkSync = true}) async {
   if ((await checkOnline) != 1) return;
 
   // Get all server tags...
   Tags allTags = await getTags();
   if (allTags == null) return;
 
-  bool synced = await syncWithTags(tags: allTags);
-  if (synced) return;
+  if (checkSync) {
+    bool synced = await syncWithTags(tags: allTags, autoSync: false);
+    if (synced) return;
+  }
 
   // Set the user group (1 (pupil); 2 (teacher); 4 (developer); 8 (other))
   Storage.setInt(Keys.group, allTags.group);
