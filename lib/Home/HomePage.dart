@@ -99,7 +99,7 @@ abstract class HomePageState extends State<HomePage> {
       scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text(AppLocalizations.of(context)
             .substitutionPlanUpdated
-            .replaceAll('%s', msg['weekday'])),
+            .replaceAll('%s', AppLocalizations.of(context).weekdays[int.parse(msg['weekday'])])),
         action: SnackBarAction(
           label: AppLocalizations.of(context).ok,
           onPressed: () {},
