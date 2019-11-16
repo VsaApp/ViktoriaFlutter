@@ -48,8 +48,8 @@ class CoursesPageView extends CoursesPageState {
     List<Widget> section3Items = [];
 
     courses.keys.toList().forEach((key) {
-      String lesson =
-          Data.subjects[courses[key][0].subjectID] ?? courses[key][0];
+      String lesson = Data.subjects[courses[key][0].subjectID.toUpperCase()] ??
+          courses[key][0].subjectID;
       if (lesson == Data.subjects['D'] ||
           lesson == Data.subjects['E'] ||
           lesson == Data.subjects['F'] ||
@@ -137,9 +137,9 @@ class CourseRowView extends State<CourseRow> {
 
   @override
   void initState() {
-    name = Data.subjects[widget.subjects[0].subjectID] ??
+    name = Data.subjects[widget.subjects[0].subjectID.toUpperCase()] ??
         widget.subjects[0].subjectID;
-    teacher = widget.subjects[0].teacherID;
+    teacher = widget.subjects[0].teacherID.toUpperCase();
     course = '';
     blocks = [];
     _exams = widget.subjects[0].writeExams;
@@ -150,7 +150,11 @@ class CourseRowView extends State<CourseRow> {
       if (!blocks.contains(subject.courseID)) blocks.add(subject.courseID);
     });
 
-    if (course.length == 0) course = '-';
+    if (course.length == 0)
+      course = '-';
+    else {
+      course = course.replaceFirst('l', 'LK ').replaceFirst('g', 'GK ');
+    }
     super.initState();
   }
 

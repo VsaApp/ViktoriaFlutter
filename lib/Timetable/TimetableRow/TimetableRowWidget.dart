@@ -55,7 +55,7 @@ class TimetableRow extends StatelessWidget {
                             ?
                         // Normal name
                         Text(
-                          Data.subjects[subject.subjectID] ?? subject.subjectID,
+                          Data.subjects[subject.subjectID.toUpperCase()] ?? subject.subjectID,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 15.0,
@@ -68,7 +68,7 @@ class TimetableRow extends StatelessWidget {
                         // Lunch break
                         Center(
                           child: Text(
-                            subject.subjectID,
+                            Data.subjects[subject.subjectID.toUpperCase()] ?? subject.subjectID,
                             style: TextStyle(
                               fontSize: 15.0,
                             ),
@@ -78,7 +78,7 @@ class TimetableRow extends StatelessWidget {
                       Expanded(
                         flex: 20,
                         child: Text(
-                          subject.teacherID,
+                          subject.teacherID.toUpperCase(),
                           style: TextStyle(
                             color: Colors.black54,
                           ),

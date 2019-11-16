@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:viktoriaflutter/Utils/Update.dart';
 
 import '../BrotherSisterSubstitutionPlan/BrotherSisterSubstitutionPlanPage.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
@@ -33,7 +34,10 @@ class SubstitutionPlanPageView extends SubstitutionPlanPageState {
           controller: controller,
           onUpdate: () async {
             await syncWithTags();
-            await substitutionPlan.download();
+            await substitutionPlan.download(onFinished: (successfully) {
+              dataUpdated(context, successfully,
+                AppLocalizations.of(context).substitutionPlan);
+            });
             setState(() =>
                 days = generateDays(substitutionPlan.getSubstitutionPlan()));
           },

@@ -90,7 +90,6 @@ abstract class HomePageState extends State<HomePage> {
   }
 
   /// Handles an incoming substitution plan notification
-  // TODO: Check if msg['weekday'] still is the same
   Future handleSubstitutionPlanNotification(Map msg) async {
     print("received substitution plan notification");
     await substitutionPlan.download();
@@ -135,7 +134,7 @@ abstract class HomePageState extends State<HomePage> {
 
   /// Handles events from the platform code (currently only android)
   Future<dynamic> _handleNotification(MethodCall call) async {
-    if (call.method == 'substitutionPlan')
+    if (call.method == 'substitution plan')
       handleSubstitutionPlanNotification(call.arguments);
     else if (call.method == 'timetable')
       handleTimetableNotification(call.arguments);

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
 import 'package:viktoriaflutter/Utils/Week.dart';
@@ -9,6 +11,8 @@ import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/TabProxy.dart';
 import 'package:viktoriaflutter/Utils/Update.dart';
 import 'TimetableData.dart' as timetable;
+import 'package:viktoriaflutter/SubstitutionPlan/SubstitutionPlanData.dart'
+    as substitutionPlan;
 import 'TimetableDayList/TimetableDayListWidget.dart';
 
 class TimetablePage extends StatefulWidget {
@@ -164,16 +168,20 @@ class TimetableView extends State<TimetablePage>
             .toList(),
         controller: controller,
         onUpdate: () async {
-          await timetable.download(false, onFinished: (successfully) {
-            dataUpdated(context, successfully,
-                AppLocalizations.of(context).unitAndSubstitutionPlan);
+          Completer<bool> completer = Completer<bool>();
+          await timetable.download(false, onFinished: (bool successfully) {
+            completer.complete(successfully);
             HomePageState.checkIfTimetableUpdated(context);
           });
           await syncWithTags();
+          await substitutionPlan.download();
+
           Data.substitutionPlan.insert();
           Data.substitutionPlan.updateFilter();
           setWeeks();
           setState(() => days = timetable.getTimetable());
+          dataUpdated(context, await completer.future,
+              AppLocalizations.of(context).unitAndSubstitutionPlan);
         });
   }
 }
