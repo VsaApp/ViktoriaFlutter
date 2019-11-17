@@ -70,18 +70,27 @@ Timetable parseTimetable(String responseBody) {
 
 /// Resets the selected subjects when the timetable changed
 Future checkTimetableUpdated(String version1, String version2) async {
+  version1 = version1.replaceFirst(
+      RegExp('"date":.+,'), '');
+  version2 = version2.replaceFirst(
+      RegExp('"date":.+,'), '');
   if (version1 != version2) {
     Storage.setBool(Keys.timetableIsNew, true);
     print('There is a new timetable, reset old data');
     List<String> keys = Storage.getKeys();
     List<String> keysToReset = keys
-        .where((String key) => key.startsWith(Keys.selection('')) || key.startsWith(Keys.exams('')))
+        .where((String key) =>
+            key.startsWith(Keys.selection('')) ||
+            key.startsWith(Keys.exams('')))
         .toList();
     keysToReset.forEach((String key) => Storage.remove(key));
     await deleteTags({
       'timestamp': Storage.getString(Keys.lastModified),
-      'selected': keys.where((String key) => key.startsWith(Keys.selection(''))).toList(),
-      'exams': keys.where((String key) => key.startsWith(Keys.exams(''))).toList()
+      'selected': keys
+          .where((String key) => key.startsWith(Keys.selection('')))
+          .toList(),
+      'exams':
+          keys.where((String key) => key.startsWith(Keys.exams(''))).toList()
     });
   }
 }
