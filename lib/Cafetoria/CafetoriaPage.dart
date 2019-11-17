@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/Update.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import 'CafetoriaData.dart';
+import 'package:viktoriaflutter/Utils/Downloader/CafetoriaData.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'CafetoriaView.dart';
 
@@ -21,14 +22,11 @@ abstract class CafetoriaPageState extends State<CafetoriaPage> {
     setState(() {
       loading = true;
     });
-    download(onFinished: (successfully) {
-      dataUpdated(
-          context, successfully, AppLocalizations.of(context).cafetoria);
-    }).then((a) {
-      setState(() {
-        saldo = Data.cafetoria.saldo;
-        loading = false;
-      });
+    bool successfully = await CafetoriaData().download(context) == StatusCodes.success;
+    dataUpdated(context, successfully, AppLocalizations.of(context).cafetoria);
+    setState(() {
+      saldo = Data.cafetoria.saldo;
+      loading = false;
     });
   }
 
@@ -41,7 +39,7 @@ abstract class CafetoriaPageState extends State<CafetoriaPage> {
         loading = false;
       });
     } else {
-      download().then((a) {
+      CafetoriaData().download(context).then((_) {
         setState(() {
           saldo = Data.cafetoria.saldo;
           loading = false;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Models.dart';
-import '../SubstitutionPlan/SubstitutionPlanData.dart' as substitutionPlan;
+import 'package:viktoriaflutter/Utils/Downloader/SubstitutionPlanData.dart';
 import '../SubstitutionPlan/SubstitutionPlanDayList/SubstitutionPlanDayListWidget.dart';
 import 'package:viktoriaflutter/Utils/TabProxy.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
@@ -20,7 +20,10 @@ class BrotherSisterSubstitutionPlanPageView
           return Hero(
             tag: 'substitutionPlan-' + widget.grade,
             child: TabProxy(
-              weekdays: days.map((day) => AppLocalizations.of(context).weekdays[day.date.weekday - 1]).toList(),
+              weekdays: days
+                  .map((day) => AppLocalizations.of(context)
+                      .weekdays[day.date.weekday - 1])
+                  .toList(),
               tabs: days
                   .map((day) => SubstitutionPlanDayList(
                         day: day,
@@ -32,9 +35,8 @@ class BrotherSisterSubstitutionPlanPageView
                   .toList(),
               controller: controller,
               onUpdate: () async {
-                substitutionPlan.download(onFinished: (_) => setState(() =>
-                  days = Data.substitutionPlan.days
-                ));
+                await SubstitutionPlanData().download(context);
+                setState(() => days = Data.substitutionPlan.days);
               },
             ),
           );

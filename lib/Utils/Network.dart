@@ -137,7 +137,7 @@ Future<Response> fetch(String url, {Duration timeout, bool auth = true}) async {
     return await request(url, timeout);
   } on TimeoutException catch (_) {
     return Response(body: '', statusCode: StatusCodes.timeout);
-  } on SocketException catch (e) {
+  } on SocketException catch (_) {
     print('Cannot fetch $url');
     return Response(body: '', statusCode: StatusCodes.offline);
   } catch (e) {

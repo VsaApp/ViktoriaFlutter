@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Selection.dart';
-import '../../Timetable/TimetableData.dart' as Timetable;
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'CourseEditView.dart';
 
@@ -28,7 +27,7 @@ abstract class CourseEditState extends State<CourseEdit> {
   @override
   void initState() {
     exams = widget.subject.writeExams;
-    List<TimetableDay> days = Timetable.getTimetable();
+    List<TimetableDay> days = Data.timetable.days;
     days.forEach((day) {
       day.units.forEach((unit) {
         TimetableSubject _selected = getSelectedSubject(unit.subjects);

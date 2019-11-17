@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../Home/HomePage.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import '../Timetable/TimetableData.dart' as timetable;
-import 'SubstitutionPlanData.dart' as substitutionPlan;
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'SubstitutionPlanView.dart';
 
@@ -52,7 +50,7 @@ abstract class SubstitutionPlanPageState extends State<SubstitutionPlanPage>
   void initDays() {
     WidgetsBinding.instance.addPostFrameCallback((a) {
       setState(() {
-        days = generateDays(substitutionPlan.getSubstitutionPlan());
+        days = generateDays(Data.substitutionPlan.days);
         weekdays = days
             .map((day) =>
                 AppLocalizations.of(context).weekdays[day.date.weekday - 1])
@@ -63,15 +61,14 @@ abstract class SubstitutionPlanPageState extends State<SubstitutionPlanPage>
       bool over = false;
       int weekday = DateTime.now().weekday - 1;
       if (weekday <= 4) {
-        if (timetable.getTimetable()[weekday].units.length > 0) {
+        if (Data.timetable.days[weekday].units.length > 0) {
           if (DateTime.now().isAfter(DateTime(DateTime.now().year,
                   DateTime.now().month, DateTime.now().day, 8)
               .add(Duration(
-                  minutes: [60, 130, 210, 280, 360, 420, 480, 545][timetable
-                          .getTimetable()[weekday]
-                          .getUserLessonsCount(
+                  minutes: [60, 130, 210, 280, 360, 420, 480, 545][
+                      Data.timetable.days[weekday].getUserLessonsCount(
                               AppLocalizations.of(context).freeLesson) -
-                      1])))) {
+                          1])))) {
             over = true;
           }
         }

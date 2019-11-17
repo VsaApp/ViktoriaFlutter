@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
 import 'package:viktoriaflutter/Utils/Week.dart';
 
@@ -10,9 +11,8 @@ import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/TabProxy.dart';
 import 'package:viktoriaflutter/Utils/Update.dart';
-import 'TimetableData.dart' as timetable;
-import 'package:viktoriaflutter/SubstitutionPlan/SubstitutionPlanData.dart'
-    as substitutionPlan;
+import 'package:viktoriaflutter/Utils/Downloader/TimetableData.dart';
+import 'package:viktoriaflutter/Utils/Downloader/SubstitutionPlanData.dart';
 import 'TimetableDayList/TimetableDayListWidget.dart';
 
 class TimetablePage extends StatefulWidget {
@@ -106,7 +106,7 @@ class TimetableView extends State<TimetablePage>
 
   @override
   void initState() {
-    listener = () => setState(() => days = timetable.getTimetable());
+    listener = () => setState(() => days = Data.timetable.days);
     HomePageState.substitutionPlanUpdatedListeners.add(listener);
     HomePageState.setWeekChangeable(true);
     WidgetsBinding.instance.addPostFrameCallback((a) {
@@ -143,7 +143,7 @@ class TimetableView extends State<TimetablePage>
           setState(() => Data.timetable.days[controller.index].showWeek = week);
       };
     });
-    setState(() => days = timetable.getTimetable());
+    setState(() => days = Data.timetable.days);
     super.initState();
   }
 
@@ -168,19 +168,16 @@ class TimetableView extends State<TimetablePage>
             .toList(),
         controller: controller,
         onUpdate: () async {
-          Completer<bool> completer = Completer<bool>();
-          await timetable.download(false, onFinished: (bool successfully) {
-            completer.complete(successfully);
-            HomePageState.checkIfTimetableUpdated(context);
-          });
+          bool successfully = await TimetableData().download(context) == StatusCodes.success;
+          HomePageState.checkIfTimetableUpdated(context);
           await syncWithTags();
-          await substitutionPlan.download();
+          successfully = await SubstitutionPlanData().download(context)  == StatusCodes.success && successfully;
 
           Data.substitutionPlan.insert();
           Data.substitutionPlan.updateFilter();
           setWeeks();
-          setState(() => days = timetable.getTimetable());
-          dataUpdated(context, await completer.future,
+          setState(() => days = Data.timetable.days);
+          dataUpdated(context, successfully,
               AppLocalizations.of(context).unitAndSubstitutionPlan);
         });
   }

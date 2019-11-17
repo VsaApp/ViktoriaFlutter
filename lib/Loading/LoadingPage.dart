@@ -4,22 +4,23 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show MethodChannel, rootBundle;
+import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Errors.dart' as bugs;
 import 'package:viktoriaflutter/Utils/Tags.dart';
 
-import '../Cafetoria/CafetoriaData.dart' as Cafetoria;
-import '../Calendar/CalendarData.dart' as Calendar;
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import '../SubstitutionPlan/SubstitutionPlanData.dart' as SubstitutionPlan;
-import '../Rooms/RoomsData.dart' as Rooms;
+import 'package:viktoriaflutter/Utils/Downloader/SubstitutionPlanData.dart';
+import 'package:viktoriaflutter/Utils/Downloader/TimetableData.dart';
+import 'package:viktoriaflutter/Utils/Downloader/UpdatesData.dart';
+import 'package:viktoriaflutter/Utils/Downloader/TeachersData.dart';
+import 'package:viktoriaflutter/Utils/Downloader/SubjectsData.dart';
+import 'package:viktoriaflutter/Utils/Downloader/RoomsData.dart';
+import 'package:viktoriaflutter/Utils/Downloader/CalendarData.dart';
+import 'package:viktoriaflutter/Utils/Downloader/CafetoriaData.dart';
+import 'package:viktoriaflutter/Utils/Downloader/WorkGroupsData.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import '../Subjects/SubjectsData.dart' as Subjects;
-import '../Teachers/TeachersData.dart' as Teachers;
-import '../Timetable/TimetableData.dart' as Timetable;
-import '../WorkGroups/WorkGroupsData.dart' as WorkGroups;
-import '../Updates/UpdatesData.dart' as Updates;
 import 'LoadingView.dart';
 
 class LoadingPage extends StatefulWidget {
@@ -172,21 +173,23 @@ abstract class LoadingPageState extends State<LoadingPage>
     stopwatch = Stopwatch()..start();
 
     // Get current versions of local data
-    final currentData = Updates.getUpdates(loaded: false);
+    final updates = UpdatesData();
+    final currentData = updates.getUpdates(loaded: false);
 
     // Get the versions of server data
-    final completer = Completer<int>();
-    var newData = await Updates.download(onFinished: completer.complete);
-    final status = await completer.future;
+    int status = await updates.download(context);
     if (status == StatusCodes.unauthorized) {
       Navigator.of(context).pushReplacementNamed('/login');
       return;
     }
+
+    Updates newData = Data.updates;
     if (status == StatusCodes.failed ||
         status == StatusCodes.offline ||
         newData == null) {
       print('Offline');
-      newData = await Updates.download(update: false);
+      await updates.download(context, update: false);
+      newData = Data.updates;
     }
 
     // Compares the old and new grade
@@ -231,96 +234,94 @@ abstract class LoadingPageState extends State<LoadingPage>
     () async {
       // Update subjects
       await download(() async {
-        await Subjects.download(
-            update: updated(newData.subjects, currentData.subjects),
-            onFinished: (bool successfully) {
-              if (successfully ?? true) {
-                currentData.subjects = newData.subjects;
-              }
-            });
+        int status = await SubjectsData().download(
+          context,
+          update: updated(newData.subjects, currentData.subjects),
+        );
+        if (status == StatusCodes.success) {
+          currentData.teachers = newData.teachers;
+        }
       }, AppLocalizations.of(context).subjects);
 
       // Update rooms
       await download(() async {
-        await Rooms.download(
-            update: updated(newData.rooms, currentData.rooms),
-            onFinished: (bool successfully) {
-              if (successfully ?? true) {
-                currentData.rooms = newData.rooms;
-              }
-            });
+        await RoomsData().download(
+          context,
+          update: updated(newData.rooms, currentData.rooms),
+        );
+        if (status == StatusCodes.success) {
+          currentData.rooms = newData.rooms;
+        }
       }, AppLocalizations.of(context).rooms);
 
       // Update teachers
       await download(() async {
-        await Teachers.download(
-            update: updated(newData.teachers, currentData.teachers),
-            onFinished: (bool successfully) {
-              if (successfully ?? true) {
-                currentData.teachers = newData.teachers;
-              }
-            });
+        int status = await TeachersData().download(
+          context,
+          update: updated(newData.teachers, currentData.teachers),
+        );
+        if (status == StatusCodes.success) {
+          currentData.teachers = newData.teachers;
+        }
       }, AppLocalizations.of(context).teachers);
 
       // Update timetable
       await download(() async {
-        await Timetable.download(false,
+        int status = await TimetableData().download(context,
             update: updated(newData.timetable, currentData.timetable) ||
-                gradeChanged, onFinished: (bool successfully) {
-          if (successfully ?? true) {
-            currentData.timetable = newData.timetable;
-          }
-        });
+                gradeChanged);
+        if (status == StatusCodes.success) {
+          currentData.timetable = newData.timetable;
+        }
         await initFirebase();
       }, AppLocalizations.of(context).timetable);
 
       // Update substitution plan
       await download(() async {
-        await SubstitutionPlan.download(
-            update:
-                updated(newData.substitutionPlan, currentData.substitutionPlan),
-            onFinished: (bool successfully) {
-              if (successfully ?? true) {
-                currentData.substitutionPlan = newData.substitutionPlan;
-              }
-            });
+        int status = await SubstitutionPlanData().download(
+          context,
+          update:
+              updated(newData.substitutionPlan, currentData.substitutionPlan),
+        );
+        if (status == StatusCodes.success) {
+          currentData.substitutionPlan = newData.substitutionPlan;
+        }
       }, AppLocalizations.of(context).substitutionPlan);
     }();
 
     // Update cafetoria
     download(() async {
-      await Cafetoria.download(
-          update:
-              updated(newData.cafetoria, currentData.cafetoria) || gradeChanged,
-          onFinished: (bool successfully) {
-            if (successfully ?? true) {
-              currentData.cafetoria = newData.cafetoria;
-            }
-          });
+      int status = await CafetoriaData().download(
+        context,
+        update:
+            updated(newData.cafetoria, currentData.cafetoria) || gradeChanged,
+      );
+      if (status == StatusCodes.success) {
+          currentData.cafetoria = newData.cafetoria;
+        }
     }, AppLocalizations.of(context).cafetoria);
 
     // Update calendar
     download(() async {
-      await Calendar.download(
-          update:
-              updated(newData.calendar, currentData.calendar) || gradeChanged,
-          onFinished: (bool successfully) {
-            if (successfully ?? true) {
-              currentData.calendar = newData.calendar;
-            }
-          });
+      int status = await CalendarData().download(
+        context,
+        update: updated(newData.calendar, currentData.calendar) || gradeChanged,
+      );
+      if (status == StatusCodes.success) {
+          currentData.calendar = newData.calendar;
+        }
     }, AppLocalizations.of(context).calendar);
 
     // Update workgroups
     download(() async {
-      await WorkGroups.download(
-          update: updated(newData.workgroups, currentData.workgroups) ||
-              gradeChanged,
-          onFinished: (bool successfully) {
-            if (successfully ?? true) {
-              currentData.workgroups = newData.workgroups;
-            }
-          });
+      int status = await WorkGroupsData().download(
+        context,
+        update:
+            updated(newData.workgroups, currentData.workgroups) || gradeChanged,
+      );
+      if (status == StatusCodes.success) {
+          currentData.workgroups = newData.workgroups;
+        }
     }, AppLocalizations.of(context).workGroups);
   }
 
@@ -335,7 +336,7 @@ abstract class LoadingPageState extends State<LoadingPage>
     if (countCurrentDownloads <= 0) {
       stopwatch.stop();
       print(stopwatch.elapsedMilliseconds);
-      Updates.saveUpdates();
+      UpdatesData().saveUpdates();
       print('everything loaded');
       // After download show app
       WidgetsBinding.instance.addPostFrameCallback((_) async {

@@ -8,7 +8,6 @@ import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import 'package:viktoriaflutter/Utils/Tags.dart';
 import 'LoginView.dart';
 
 class LoginPage extends StatefulWidget {

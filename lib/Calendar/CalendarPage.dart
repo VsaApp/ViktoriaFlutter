@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'CalendarData.dart';
+import 'package:viktoriaflutter/Utils/Downloader/CalendarData.dart';
+import 'package:viktoriaflutter/Utils/Network.dart';
 import 'CalendarGrid/CalendarGridWidget.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'EventCard/EventCard.dart';
@@ -21,14 +22,13 @@ class CalendarPageState extends State<CalendarPage>
   TabController tabController;
 
   Future update() async {
-    await download(onFinished: (successfully) {
-      dataUpdated(context, successfully, AppLocalizations.of(context).calendar);
-    });
+    bool successfully = await CalendarData().download(context) == StatusCodes.success;
+    dataUpdated(context, successfully, AppLocalizations.of(context).calendar);
     setState(() => setEvents());
   }
 
   void setEvents() {
-    List<CalendarEvent> events = getCalendarEvents();
+    List<CalendarEvent> events = Data.calendar.events;
     events = events.where((event) {
       return event.start.isAfter(DateTime.now()) ||
           event.end.isAfter(DateTime.now());

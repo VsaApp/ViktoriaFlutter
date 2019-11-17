@@ -4,7 +4,6 @@ import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/SectionWidget.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
-import '../Timetable/TimetableData.dart' as Timetable;
 import 'CourseEdit/CourseEditWidget.dart';
 import 'CoursesPage.dart';
 
@@ -14,7 +13,7 @@ class CoursesPageView extends CoursesPageState {
     List<TimetableSubject> selectedSubjects = [];
 
     // Get all selected subjects...
-    Timetable.getTimetable().forEach((day) => day.units.forEach((unit) {
+    Data.timetable.days.forEach((day) => day.units.forEach((unit) {
           if (unit.subjects.length > 0) {
             int selectedA = getSelectedIndex(unit.subjects, week: 0) ??
                 unit.subjects.length;

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../SubstitutionPlan/SubstitutionPlanData.dart' as substitutionPlan;
-import '../Timetable/TimetableData.dart' as timetable;
+import 'package:viktoriaflutter/Utils/Downloader/SubstitutionPlanData.dart';
+import 'package:viktoriaflutter/Utils/Downloader/TimetableData.dart';
 import '../Utils/Keys.dart';
 import '../Utils/Localizations.dart';
 import '../Utils/Storage.dart';
@@ -92,14 +92,17 @@ abstract class HomePageState extends State<HomePage> {
   /// Handles an incoming substitution plan notification
   Future handleSubstitutionPlanNotification(Map msg) async {
     print("received substitution plan notification");
-    await substitutionPlan.download();
+    await SubstitutionPlanData().download(context);
     if (appScaffold != null) {
       substitutionPlanUpdatedListeners
           .forEach((substitutionPlanUpdated) => substitutionPlanUpdated());
       scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text(AppLocalizations.of(context)
             .substitutionPlanUpdated
-            .replaceAll('%s', AppLocalizations.of(context).weekdays[int.parse(msg['weekday'])])),
+            .replaceAll(
+                '%s',
+                AppLocalizations.of(context)
+                    .weekdays[int.parse(msg['weekday'])])),
         action: SnackBarAction(
           label: AppLocalizations.of(context).ok,
           onPressed: () {},
@@ -112,7 +115,7 @@ abstract class HomePageState extends State<HomePage> {
   Future handleTimetableNotification(Map msg) async {
     print("received timetable notification");
     await syncWithTags(forceSync: true);
-    await timetable.download(false);
+    await TimetableData().download(context);
     Models.Data.substitutionPlan.insert();
     Models.Data.substitutionPlan.updateFilter();
     if (appScaffold != null) {

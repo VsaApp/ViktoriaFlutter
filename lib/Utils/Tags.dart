@@ -14,7 +14,6 @@ import 'Times.dart';
 import 'Keys.dart';
 import 'Network.dart';
 import 'Storage.dart';
-import '../Timetable/TimetableData.dart';
 
 Future<Tags> getTags() async {
   try {
@@ -150,7 +149,7 @@ Future deleteTags(Map<String, dynamic> tags) async {
 
 void syncDaysLength() {
   String lengths = '';
-  getTimetable().forEach((day) {
+  Data.timetable.days.forEach((day) {
     int count = day.getUserLessonsCount('Freistunde');
     lengths += times[count].split(' - ')[1] + '|';
   });

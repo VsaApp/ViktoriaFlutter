@@ -3,7 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'ActionFAB/ActionFABWidget.dart';
-import 'CafetoriaData.dart';
+import 'package:viktoriaflutter/Utils/Downloader/CafetoriaData.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'CafetoriaPage.dart';
 import 'DayCard/DayCardWidget.dart';
@@ -47,7 +47,7 @@ class CafetoriaPageView extends CafetoriaPageState {
                             Text(AppLocalizations.of(context).cafetoriaLogin),
                         children: <Widget>[
                           LoginDialog(onFinished: () {
-                            download().then((a) {
+                            CafetoriaData().download(context).then((_) {
                               setState(() {
                                 saldo = Data.cafetoria.saldo;
                               });

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Update.dart';
 
 import '../BrotherSisterSubstitutionPlan/BrotherSisterSubstitutionPlanPage.dart';
@@ -8,8 +9,8 @@ import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/TabProxy.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
+import 'package:viktoriaflutter/Utils/Downloader/SubstitutionPlanData.dart';
 import 'GradeFAB/GradeFABWidget.dart';
-import 'SubstitutionPlanData.dart' as substitutionPlan;
 import 'SubstitutionPlanDayList/SubstitutionPlanDayListWidget.dart';
 import 'SubstitutionPlanPage.dart';
 
@@ -34,12 +35,13 @@ class SubstitutionPlanPageView extends SubstitutionPlanPageState {
           controller: controller,
           onUpdate: () async {
             await syncWithTags();
-            await substitutionPlan.download(onFinished: (successfully) {
-              dataUpdated(context, successfully,
+            bool successfully =
+                await SubstitutionPlanData().download(context) ==
+                    StatusCodes.success;
+            dataUpdated(context, successfully,
                 AppLocalizations.of(context).substitutionPlan);
-            });
             setState(() =>
-                days = generateDays(substitutionPlan.getSubstitutionPlan()));
+                days = generateDays(Data.substitutionPlan.days));
           },
         ),
         // FAB

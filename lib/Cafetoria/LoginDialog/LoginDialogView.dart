@@ -4,7 +4,7 @@ import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
-import '../CafetoriaData.dart';
+import 'package:viktoriaflutter/Utils/Downloader/CafetoriaData.dart';
 import 'LoginDialogWidget.dart';
 
 class LoginDialogView extends LoginDialogState {
@@ -16,7 +16,7 @@ class LoginDialogView extends LoginDialogState {
 
   // Check the login
   void checkForm() async {
-    credentialsCorrect = await checkLogin(
+    credentialsCorrect = await CafetoriaData().checkLogin(
         id: idController.text, password: passwordController.text);
     if (formKey.currentState.validate()) {
       // Save correct credentials

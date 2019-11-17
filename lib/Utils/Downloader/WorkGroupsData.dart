@@ -1,0 +1,35 @@
+import 'dart:convert';
+
+import 'package:viktoriaflutter/Utils/Downloader.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Network.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
+
+class WorkGroupsData extends Downloader<WorkGroups> {
+  WorkGroupsData()
+      : super(
+          url: Urls.workgroups,
+          key: Keys.workGroups,
+          defaultData: [],
+        );
+
+  @override
+  WorkGroups getData() {
+    return Data.workGroups;
+  }
+
+  @override
+  void saveStatic(WorkGroups data) {
+    Data.workGroups = data;
+  }
+
+  @override
+  WorkGroups parse(String responseBody) {
+    final parsed = json.decode(responseBody);
+    return WorkGroups(
+      days: parsed
+          .map<WorkGroupsDay>((json) => WorkGroupsDay.fromJson(json))
+          .toList(),
+    );
+  }
+}
