@@ -14,8 +14,11 @@ class TimetableSelectDialogOptionView extends TimetableSelectDialogOptionState {
 
         if (!subject.examIsSet &&
             subject.block != null &&
-            subject.subjectID !=
-                AppLocalizations.of(context).freeLesson) {
+            subject.subjectID != AppLocalizations.of(context).freeLesson) {
+          if (subject.courseID.split('-')[1].startsWith('l')) {
+            subject.writeExams = true;
+            return;
+          }
           // Show writing option dialog
           showDialog<String>(
             context: context,
