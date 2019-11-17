@@ -11,13 +11,11 @@ class LoginDialogView extends LoginDialogState {
   final formKey = GlobalKey<FormState>();
   final focus = FocusNode();
   bool credentialsCorrect = true;
-  final idController = TextEditingController();
-  final passwordController = TextEditingController();
 
   // Check the login
   void checkForm() async {
-    credentialsCorrect = await CafetoriaData().checkLogin(
-        id: idController.text, password: passwordController.text);
+    credentialsCorrect = await CafetoriaData()
+        .checkLogin(id: idController.text, password: passwordController.text);
     if (formKey.currentState.validate()) {
       // Save correct credentials
       Storage.setString(Keys.cafetoriaId, idController.text);
@@ -116,19 +114,37 @@ class LoginDialogView extends LoginDialogState {
                         focusNode: focus,
                       ),
                       // Login button
-                      Container(
-                        margin: EdgeInsets.only(top: 20.0),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: RaisedButton(
-                            color: Theme.of(context).accentColor,
-                            onPressed: () {
-                              checkForm();
-                            },
-                            child: Text(AppLocalizations.of(context).login),
-                          ),
+                      Row(children: <Widget>[
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 10, right: 5),
+                            child: RaisedButton(
+                              color: Theme.of(context).accentColor,
+                              onPressed: () {
+                                checkForm();
+                              },
+                              child: Text(AppLocalizations.of(context).login),
+                            ),
+                          )
                         ),
-                      ),
+                        if (isLoggedIn) 
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 10, left: 5),
+                              child: RaisedButton(
+                                color: Theme.of(context).accentColor,
+                                onPressed: () {
+                                  Storage.remove(Keys.cafetoriaId);
+                                  Storage.remove(Keys.cafetoriaPassword);
+                                  syncTags(syncExams: false, syncSelections: false);
+                                  Navigator.pop(context);
+                                },
+                                child: Text(AppLocalizations.of(context).logout),
+                              ),
+                            )
+                          ),
+                        
+                      ])
                     ],
                   ),
                 ))

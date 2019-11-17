@@ -39,6 +39,35 @@ Future<bool> syncWithTags(
     // Sync grade
     Storage.setString(Keys.grade, tags.grade);
 
+    // Check if the cafetoria data on the server is newer than the local
+    bool cafetoriaIsNewer = false;
+    if (tags.isInitialized) {
+      String cafetoriaModified = Storage.getString(Keys.cafetoriaModified);
+      if (cafetoriaModified != null) {
+        DateTime local = DateTime.parse(cafetoriaModified);
+        if (tags.cafetoriaLogin.timestamp.isAfter(local)) {
+          cafetoriaIsNewer = true;
+        }
+      } else if (tags.cafetoriaLogin.id != null) {
+        cafetoriaIsNewer = true;
+      }
+    }
+
+    if (cafetoriaIsNewer) {
+      if (tags.cafetoriaLogin.id == null) {
+        Storage.remove(Keys.cafetoriaId, autoSet: true);
+        Storage.remove(Keys.cafetoriaPassword, autoSet: true);
+      } else {
+        String decryptedID = decryptText(tags.cafetoriaLogin.id);
+        String decryptedPassword = decryptText(tags.cafetoriaLogin.password);
+        Storage.setString(Keys.cafetoriaId, decryptedID, autoSet: true);
+        Storage.setString(Keys.cafetoriaPassword, decryptedPassword,
+            autoSet: true);
+      }
+      Storage.setString(Keys.cafetoriaModified,
+          tags.cafetoriaLogin.timestamp.toIso8601String());
+    }
+
     // Check if the server hast newer data than the local data
     String _lastModified = Storage.getString(Keys.lastModified);
     bool serverIsNewer = true;
@@ -55,19 +84,6 @@ Future<bool> syncWithTags(
       localIsNewer = lastModified.isAfter(tags.timestamp);
     }
 
-    if (tags.isInitialized && tags.cafetoriaLogin != null) {
-      String cafetoriaModified = Storage.getString(Keys.cafetoriaModified);
-      DateTime local = cafetoriaModified != null
-          ? DateTime.parse(cafetoriaModified)
-          : DateTime.now();
-      if (cafetoriaModified == null || tags.timestamp.isAfter(local)) {
-        String decryptedID = decryptText(tags.cafetoriaLogin.id);
-        String decryptedPassword = decryptText(tags.cafetoriaLogin.password);
-        Storage.setString(Keys.cafetoriaId, decryptedID);
-        Storage.setString(Keys.cafetoriaPassword, decryptedPassword);
-      }
-    }
-
     // If the server has newer data, sync phone
     if (serverIsNewer || forceSync) {
       print('Sync device with server');
@@ -75,20 +91,20 @@ Future<bool> syncWithTags(
       // Reset local selections
       Storage.getKeys()
           .where((key) => key.startsWith(Keys.selection('')))
-          .forEach((key) => Storage.remove(key));
+          .forEach((key) => Storage.remove(key, autoSet: true));
       // Set all courses to non writing
       Storage.getKeys()
           .where((key) => key.startsWith(Keys.exams('')))
-          .forEach((key) => Storage.setBool(key, false));
+          .forEach((key) => Storage.setBool(key, false, autoSet: true));
 
       // Set new selections
       tags.selected.forEach((course) {
-        Storage.setBool(Keys.selection(course), true);
+        Storage.setBool(Keys.selection(course), true, autoSet: true);
       });
 
       // Set new exam settings
       tags.exams.forEach((course) {
-        Storage.setBool(Keys.exams(course), true);
+        Storage.setBool(Keys.exams(course), true, autoSet: true);
       });
 
       Storage.setString(Keys.lastModified, tags.timestamp.toIso8601String());
@@ -221,21 +237,26 @@ Future syncTags(
   if (syncCafetoria) {
     String id = Storage.getString(Keys.cafetoriaId);
     String password = Storage.getString(Keys.cafetoriaPassword);
+    String lastModified = Storage.getString(Keys.cafetoriaModified);
 
-    if (id != null &&
-        password != null &&
-        Storage.getString(Keys.cafetoriaModified) != null) {
+    if (id != null && password != null && lastModified != null) {
       final encryptedId = encryptText(id);
       final encryptedPassword = encryptText(password);
 
-      if (allTags.cafetoriaLogin == null ||
+      if (allTags.cafetoriaLogin.id == null ||
           (allTags.cafetoriaLogin.id != encryptedId &&
               allTags.cafetoriaLogin.password != encryptedPassword)) {
         tagsToUpdate['cafetoria'] = CafetoriaTags(
                 id: encryptedId,
                 password: encryptedPassword,
-                timestamp:
-                    DateTime.parse(Storage.getString(Keys.cafetoriaModified)))
+                timestamp: DateTime.parse(lastModified))
+            .toMap();
+      }
+    } else if (lastModified != null) {
+      if (allTags.cafetoriaLogin.timestamp
+          .isBefore(DateTime.parse(lastModified))) {
+        tagsToRemove['cafetoria'] = CafetoriaTags(
+                id: '', password: '', timestamp: DateTime.parse(lastModified))
             .toMap();
       }
     }
@@ -251,7 +272,7 @@ Future syncTags(
           tagsToUpdate['selected'].length > 0) ||
       (tagsToUpdate['exams'] != null && tagsToUpdate['exams'].length > 0) ||
       tagsToUpdate['device'] != null ||
-      tagsToRemove['cafetoria'] != null) {
+      tagsToUpdate['cafetoria'] != null) {
     await sendTags(tagsToUpdate);
   }
 }

@@ -31,7 +31,7 @@ class Tags {
     return Tags(
       grade: json['grade'] as String,
       group: json['group'] as int,
-      cafetoriaLogin: json['cafetoria'] != null ? CafetoriaTags.fromJson(json['cafetoria']) : null,
+      cafetoriaLogin: CafetoriaTags.fromJson(json['cafetoria']),
       selected: json['selected'].cast<String>().toList(),
       exams: json['exams'].cast<String>().toList(),
       timestamp: DateTime.parse(json['timestamp'] as String),
@@ -89,6 +89,7 @@ class CafetoriaTags {
     return CafetoriaTags(
       id: json['id'] as String,
       password: json['password'] as String,
+      timestamp: DateTime.parse(json['timestamp'] as String)
     );
   }
 

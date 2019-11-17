@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'LoginDialogView.dart';
 
 class LoginDialog extends StatefulWidget {
@@ -13,10 +15,18 @@ class LoginDialog extends StatefulWidget {
 }
 
 abstract class LoginDialogState extends State<LoginDialog> {
+  TextEditingController idController;
+  TextEditingController passwordController;
+  bool isLoggedIn = false;
   int online = 1;
 
   @override
   void initState() {
+    isLoggedIn = Storage.getString(Keys.cafetoriaPassword) != null;
+    idController =
+        TextEditingController(text: Storage.getString(Keys.cafetoriaId));
+    passwordController = TextEditingController();
+
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {

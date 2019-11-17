@@ -22,8 +22,8 @@ class Storage {
     }
   }
 
-  static void setString(String key, String value) {
-    if (key.startsWith(Keys.cafetoriaId)) {
+  static void setString(String key, String value, {bool autoSet = false}) {
+    if (!autoSet && key.startsWith(Keys.cafetoriaId)) {
       setString(Keys.cafetoriaModified, DateTime.now().toIso8601String());
     }
     if (_isDesktop) {
@@ -111,7 +111,7 @@ class Storage {
         (key.startsWith(Keys.selection('')) ||
             key.startsWith(Keys.exams('')))) {
       setString(Keys.lastModified, DateTime.now().toIso8601String());
-    } else if (key.startsWith(Keys.cafetoriaId)) {
+    } else if (!autoSet && key.startsWith(Keys.cafetoriaId)) {
       setString(Keys.cafetoriaModified, DateTime.now().toIso8601String());
     }
     if (_isDesktop) {
