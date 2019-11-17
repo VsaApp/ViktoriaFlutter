@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
+import '../Nextcloud/NextcloudPage.dart';
 import '../Cafetoria/CafetoriaPage.dart';
 import '../Calendar/CalendarPage.dart';
 import '../Courses/CoursesPage.dart';
@@ -31,6 +32,9 @@ class HomePageView extends HomePageState {
       Page(AppLocalizations.of(context).cafetoria, Icons.fastfood,
           CafetoriaPage(),
           url: 'https://www.opc-asp.de/vs-aachen/'),
+      Page(AppLocalizations.of(context).cloud, Icons.cloud,
+          NextcloudPage(),
+          url: 'https://nextcloud.aachen-vsa.logoip.de/'),
       Page(AppLocalizations.of(context).workGroups, MdiIcons.soccer,
           WorkGroupsPage()),
       Page(AppLocalizations.of(context).courses, Icons.person, CoursesPage()),

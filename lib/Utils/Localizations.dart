@@ -186,6 +186,7 @@ class AppLocalizations {
           'Fehler beim überprüfen der Logindaten! Versuche es später erneut.',
       'unitAndSubstitutionPlan': 'Stunden- und Vertretungsplan',
       'updated': ' aktualisiert',
+      'cloud': 'Cloud'
       'updatedFailed': ' aktualisieren fehlgeschlagen',
       'exam': 'Klausur'
     },
@@ -196,6 +197,10 @@ class AppLocalizations {
   }
 
 // All getter defined...
+  String get cloud {
+    return _localizedValues[locale.languageCode]['cloud'];
+  }
+
   String get updated {
     return _localizedValues[locale.languageCode]['updated'];
   }
