@@ -23,6 +23,9 @@ class Storage {
   }
 
   static void setString(String key, String value) {
+    if (key.startsWith(Keys.cafetoriaId)) {
+      setString(Keys.cafetoriaModified, DateTime.now().toIso8601String());
+    }
     if (_isDesktop) {
       data[key] = value;
     } else {
@@ -42,7 +45,8 @@ class Storage {
 
   // ignore: avoid_positional_boolean_parameters
   static void setBool(String key, bool value, {bool autoSet = false}) {
-    if (!autoSet && (key.startsWith(Keys.selection('')) || key.startsWith(Keys.exams(''))))
+    if (!autoSet &&
+        (key.startsWith(Keys.selection('')) || key.startsWith(Keys.exams(''))))
       setString(Keys.lastModified, DateTime.now().toIso8601String());
     if (_isDesktop) {
       data[key] = value;
@@ -103,8 +107,12 @@ class Storage {
   }
 
   static void remove(String key, {bool autoSet = false}) {
-    if (!autoSet && (key.startsWith(Keys.selection('')) || key.startsWith(Keys.exams('')))) {
+    if (!autoSet &&
+        (key.startsWith(Keys.selection('')) ||
+            key.startsWith(Keys.exams('')))) {
       setString(Keys.lastModified, DateTime.now().toIso8601String());
+    } else if (key.startsWith(Keys.cafetoriaId)) {
+      setString(Keys.cafetoriaModified, DateTime.now().toIso8601String());
     }
     if (_isDesktop) {
       data.remove(key);

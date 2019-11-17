@@ -6,6 +6,7 @@ import 'package:device_info/device_info.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:viktoriaflutter/Utils/Encrypt.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 
@@ -18,11 +19,11 @@ import '../Timetable/TimetableData.dart';
 Future<Tags> getTags() async {
   try {
     Response response = await fetch(Urls.tags);
-    assert(response.statusCode == StatusCodes.success);
+    if (response.statusCode != StatusCodes.success) throw 'Failed to load tags';
     Tags tags = Tags.fromJson(json.decode(response.body));
     Data.tags = tags;
     return tags;
-  } on Exception catch (_) {
+  } catch (_) {
     return null;
   }
 }
@@ -53,6 +54,19 @@ Future<bool> syncWithTags(
       DateTime lastModified = DateTime.parse(_lastModified);
       serverIsNewer = tags.timestamp.isAfter(lastModified);
       localIsNewer = lastModified.isAfter(tags.timestamp);
+    }
+
+    if (tags.isInitialized && tags.cafetoriaLogin != null) {
+      String cafetoriaModified = Storage.getString(Keys.cafetoriaModified);
+      DateTime local = cafetoriaModified != null
+          ? DateTime.parse(cafetoriaModified)
+          : DateTime.now();
+      if (cafetoriaModified == null || tags.timestamp.isAfter(local)) {
+        String decryptedID = decryptText(tags.cafetoriaLogin.id);
+        String decryptedPassword = decryptText(tags.cafetoriaLogin.password);
+        Storage.setString(Keys.cafetoriaId, decryptedID);
+        Storage.setString(Keys.cafetoriaPassword, decryptedPassword);
+      }
     }
 
     // If the server has newer data, sync phone
@@ -147,6 +161,7 @@ void syncDaysLength() {
 Future syncTags(
     {bool syncExams = true,
     bool syncSelections = true,
+    bool syncCafetoria = true,
     bool checkSync = true}) async {
   if ((await checkOnline) != 1) return;
 
@@ -176,8 +191,7 @@ Future syncTags(
     List<TimetableSubject> subjects = Data.timetable
         .getAllSelectedSubjects()
         .where((TimetableSubject subject) {
-          return subject.subjectID != 'Mittagspause' &&
-              subject.subjectID != 'Freistunde';
+          return subject.subjectID != 'Mittagspause';
         })
         .toSet()
         .toList();
@@ -205,15 +219,40 @@ Future syncTags(
         allTags.selected.where((tag) => !selected.contains(tag)).toList();
   }
 
+  if (syncCafetoria) {
+    String id = Storage.getString(Keys.cafetoriaId);
+    String password = Storage.getString(Keys.cafetoriaPassword);
+
+    if (id != null &&
+        password != null &&
+        Storage.getString(Keys.cafetoriaModified) != null) {
+      final encryptedId = encryptText(id);
+      final encryptedPassword = encryptText(password);
+
+      if (allTags.cafetoriaLogin == null ||
+          (allTags.cafetoriaLogin.id != encryptedId &&
+              allTags.cafetoriaLogin.password != encryptedPassword)) {
+        tagsToUpdate['cafetoria'] = CafetoriaTags(
+                id: encryptedId,
+                password: encryptedPassword,
+                timestamp:
+                    DateTime.parse(Storage.getString(Keys.cafetoriaModified)))
+            .toMap();
+      }
+    }
+  }
+
   if ((tagsToRemove['selected'] != null &&
           tagsToRemove['selected'].length > 0) ||
-      (tagsToRemove['exams'] != null && tagsToRemove['exams'].length > 0)) {
+      (tagsToRemove['exams'] != null && tagsToRemove['exams'].length > 0) ||
+      tagsToRemove['cafetoria'] != null) {
     await deleteTags(tagsToRemove);
   }
   if ((tagsToUpdate['selected'] != null &&
           tagsToUpdate['selected'].length > 0) ||
       (tagsToUpdate['exams'] != null && tagsToUpdate['exams'].length > 0) ||
-      tagsToUpdate['device'] != null) {
+      tagsToUpdate['device'] != null ||
+      tagsToRemove['cafetoria'] != null) {
     await sendTags(tagsToUpdate);
   }
 }

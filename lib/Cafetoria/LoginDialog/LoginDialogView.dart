@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
+import 'package:viktoriaflutter/Utils/Tags.dart';
 import '../CafetoriaData.dart';
 import 'LoginDialogWidget.dart';
 
@@ -21,6 +22,7 @@ class LoginDialogView extends LoginDialogState {
       // Save correct credentials
       Storage.setString(Keys.cafetoriaId, idController.text);
       Storage.setString(Keys.cafetoriaPassword, passwordController.text);
+      syncTags(syncExams: false, syncSelections: false);
       Navigator.pop(context);
       // Update UI
       widget.onFinished();

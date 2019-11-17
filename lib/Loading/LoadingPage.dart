@@ -271,6 +271,7 @@ abstract class LoadingPageState extends State<LoadingPage>
             currentData.timetable = newData.timetable;
           }
         });
+        await initFirebase();
       }, AppLocalizations.of(context).timetable);
 
       // Update substitution plan
@@ -335,7 +336,6 @@ abstract class LoadingPageState extends State<LoadingPage>
       stopwatch.stop();
       print(stopwatch.elapsedMilliseconds);
       Updates.saveUpdates();
-      await initFirebase();
       print('everything loaded');
       // After download show app
       WidgetsBinding.instance.addPostFrameCallback((_) async {

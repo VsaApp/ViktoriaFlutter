@@ -104,16 +104,19 @@ Future fetchDataAndSave(String url, String key, String defaultValue,
     } else {
       response = await request(url, timeout);
     }
-    if (response.statusCode == 404 || response.body.contains('404 Not Found')) {
+    if (response.statusCode == StatusCodes.notFound ||
+        response.body.contains('404 Not Found')) {
       throw "404 Not Found";
     }
-    Storage.setString(key, response.body);
+    if (response.statusCode == StatusCodes.success)
+      Storage.setString(key, response.body);
     if (onFinished != null) onFinished(response.statusCode);
   } catch (e) {
     print("Error during downloading \'$key\': " + e.toString());
     if (Storage.getString(key) == null) {
       Storage.setString(key, defaultValue);
     }
+    if (response == null) response = Response(statusCode: StatusCodes.offline);
     if (onFinished != null)
       onFinished(response.statusCode ?? StatusCodes.offline);
   }

@@ -44,6 +44,11 @@ class Keys {
     return 'cafetoria';
   }
 
+  // Saves the cafetoria data...
+  static String get cafetoriaModified {
+    return 'cafetoriaModified';
+  }
+
   // Saves the keyfob id...
   static String get cafetoriaId {
     return 'cafetoriaUsername';
