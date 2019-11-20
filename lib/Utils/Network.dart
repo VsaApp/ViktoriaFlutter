@@ -12,7 +12,7 @@ String apiUrl = 'https://vsa.fingeg.de';
 String lookupUrl = 'vsa.fingeg.de';
 String agbUrl = 'https://vsa.2bad2c0.de/agb.html';
 String historyUrl = 'https://vsa.fingeg.de/history';
-bool logRequest = true;
+bool logRequest = false;
 
 class Urls {
   static String get updates => '/updates?v=$_getRandomInt';

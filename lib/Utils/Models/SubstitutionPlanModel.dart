@@ -11,6 +11,7 @@ class SubstitutionPlan {
   }
 
   void insert() {
+    Data.timetable.getAllSubjects(reset: true);
     days.forEach((day) => day.insertInTimetable());
   }
 
@@ -44,8 +45,7 @@ class SubstitutionPlanDay {
   }
 
   void insertInTimetable() {
-    List<TimetableSubject> subjects =
-        Data.timetable.getAllSubjects(reset: true);
+    List<TimetableSubject> subjects = Data.timetable.getAllSubjects();
     List<String> subjectsIds = subjects.map((s) => s.id).toList();
     List<String> subjectsCourseIDs = subjects.map((s) => s.courseID).toList();
 

@@ -149,7 +149,7 @@ class CourseRowView extends State<CourseRow> {
       if (!blocks.contains(subject.courseID)) blocks.add(subject.courseID);
     });
 
-    if (course.length == 0)
+    if (course.length == 0 || course.contains('+'))
       course = '-';
     else {
       course = course.replaceFirst('l', 'LK ').replaceFirst('g', 'GK ');
