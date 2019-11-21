@@ -29,7 +29,9 @@ class NextcloudFolderPageView extends NextcloudFolderPageState {
                     parent: this,
                     element: element,
                     onTap: () async {
-                      if (element.isDirectory() && !element.loading && !directory.loading) {
+                      if (element.isDirectory() &&
+                          !element.loading &&
+                          !directory.loading) {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -55,6 +57,8 @@ class NextcloudFolderPageView extends NextcloudFolderPageState {
                                                   .elements
                                                   .insert(0, dir);
                                               element.onUpdate(false);
+                                            } else if (choice == 1) {
+                                              uploadFiles(element as Directory);
                                             }
                                           },
                                           icon: Icon(Icons.add),

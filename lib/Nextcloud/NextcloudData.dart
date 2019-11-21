@@ -43,10 +43,10 @@ class Nextcloud {
   }
 
   static Future uploadFile(File file) async {
-    if (file.loading) return;
     file.onUpdate(true);
     await client.webDav.upload(file.content, file.path);
     file.onUpdate(false);
+    save();
   }
 
   static Future mkDir(Directory directory) async {
@@ -54,6 +54,7 @@ class Nextcloud {
     directory.onUpdate(true);
     await client.webDav.mkdir(directory.path);
     directory.onUpdate(false);
+    save();
   }
 
   static Future rename(Element element, String newName) async {
@@ -70,15 +71,21 @@ class Nextcloud {
       await client.webDav.move(oldPath, element.path);
     } catch (_) {}
     element.onUpdate(false);
+    save();
   }
 
-  static Future delete(Element element) async {
+  static Future delete(Element element, Directory parentDir) async {
     if (element.loading) return;
+    element.isDeleted = true;
+    element.isCreated = 1;
     element.onUpdate(true);
     try {
       await client.webDav.delete(element.path);
     } catch (_) {}
+    parentDir.elements.remove(element);
     element.onUpdate(false);
+    parentDir.onUpdate(false);
+    save();
   }
 
   static Future<void> loadDirectory(Directory directory) async {
@@ -109,6 +116,7 @@ class Nextcloud {
               directory.elements[oldNames.indexOf(element.name)];
           oldElement.modificationTime = element.modificationTime;
           oldElement.shareTypes = element.shareTypes;
+          oldElement.path = element.path;
         } else {
           directory.elements.add(element);
         }

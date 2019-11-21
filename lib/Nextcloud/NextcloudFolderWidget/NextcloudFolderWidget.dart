@@ -22,19 +22,23 @@ abstract class NextcloudFolderWidgetState extends State<NextcloudFolderWidget> {
   FocusNode textFocus;
   bool isLoading = false;
   bool edit = false;
-  void Function() _listener;
+  void Function() listener;
 
   @override
   void initState() {
-    _listener = widget.element.addListener(() {
+    newListener();
+    super.initState();
+  }
+
+  void newListener() {
+    listener = widget.element.addListener(() {
       if (mounted) setState(() => null);
     });
-    super.initState();
   }
 
   @override
   void dispose() {
-    widget.element.removeListener(_listener);
+    widget.element.removeListener(listener);
     super.dispose();
   }
 

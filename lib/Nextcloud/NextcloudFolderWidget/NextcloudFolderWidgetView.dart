@@ -10,9 +10,12 @@ class NextcloudFolderWidgetView extends NextcloudFolderWidgetState {
   @override
   Widget build(BuildContext context) {
     if (widget.element.isCreated == 2) onEdit();
+    if (!widget.element.containsListener(listener)) {
+      newListener();
+    }
 
     List<Choice> choices = [
-      Choice(Icons.share, AppLocalizations.of(context).share),
+      Choice(Icons.share, AppLocalizations.of(context).share, enabled: false),
       Choice(Icons.edit, AppLocalizations.of(context).rename),
       Choice(Icons.file_download, AppLocalizations.of(context).download,
           enabled: !widget.element.isDirectory()),
@@ -35,7 +38,9 @@ class NextcloudFolderWidgetView extends NextcloudFolderWidgetState {
                                   widget.element.isDirectory()
                                       ? Icons.folder
                                       : MdiIcons.file,
-                                  color: Theme.of(context).primaryColor,
+                                  color: widget.element.isDeleted
+                                      ? Colors.grey
+                                      : Theme.of(context).primaryColor,
                                   size: 50,
                                 )
                               : SizedBox(
@@ -58,8 +63,10 @@ class NextcloudFolderWidgetView extends NextcloudFolderWidgetState {
                                         widget.element.name,
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            color:
-                                                Theme.of(context).primaryColor),
+                                            color: widget.element.isDeleted
+                                                ? Colors.grey
+                                                : Theme.of(context)
+                                                    .primaryColor),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       Text(
@@ -85,19 +92,16 @@ class NextcloudFolderWidgetView extends NextcloudFolderWidgetState {
                                   ),
                           ),
                         ),
-                        if (choices != null && widget.element.isCreated != 2 && !widget.element.loading && !widget.parent.directory.loading)
+                        if (choices != null &&
+                            widget.element.isCreated != 2 &&
+                            !widget.element.loading &&
+                            !widget.parent.directory.loading)
                           PopupMenuButton<IconData>(
                             onSelected: (choice) async {
                               int icon = choice.codePoint;
 
                               if (icon == Icons.delete.codePoint) {
-                                widget.parent.directory.elements
-                                    .remove(widget.element);
-                                widget.parent.setState(() {
-                                  widget.parent.directory =
-                                      widget.parent.directory;
-                                });
-                                Nextcloud.delete(widget.element);
+                                Nextcloud.delete(widget.element, widget.parent.directory);
                               } else if (icon ==
                                   Icons.file_download.codePoint) {
                                 if (!widget.element.isDirectory()) {
@@ -139,7 +143,8 @@ class NextcloudFolderWidgetView extends NextcloudFolderWidgetState {
                             icon: Icon(Icons.check),
                             onPressed: () => textFocus.unfocus(),
                           )
-                        else if (widget.element.loading || widget.parent.directory.loading) 
+                        else if (widget.element.loading ||
+                            widget.parent.directory.loading)
                           SizedBox(
                             width: 20,
                             height: 20,

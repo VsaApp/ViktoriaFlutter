@@ -10,6 +10,7 @@ abstract class Element {
 
   /// 0: created, 1: created local, 2: not created
   int isCreated = 0;
+  bool isDeleted = false;
   List<void Function()> _listeners = [];
   bool loading = false;
 
@@ -26,6 +27,8 @@ abstract class Element {
   }
 
   void removeListener(void Function() listener) => _listeners.remove(listener);
+  bool containsListener(void Function() listener) =>
+      _listeners.contains(listener);
 
   void onUpdate(bool loading) {
     this.loading = loading;
@@ -80,7 +83,8 @@ class Directory extends Element {
       'modificationTime': modificationTime.toIso8601String(),
       'shareTypes': shareTypes,
       'isDir': true,
-      'elements': elements != null ? elements.map((e) => e.toJson()).toList() : null
+      'elements':
+          elements != null ? elements.map((e) => e.toJson()).toList() : null
     };
   }
 
@@ -91,7 +95,9 @@ class Directory extends Element {
       modificationTime: DateTime.parse(json['modificationTime'] as String),
       shareTypes: json['shareTypes'].cast<int>().toList(),
       elements: json['elements'] != null
-          ? json['elements'].map<Element>((json) => Element.fromJson(json)).toList()
+          ? json['elements']
+              .map<Element>((json) => Element.fromJson(json))
+              .toList()
           : null,
     );
   }
