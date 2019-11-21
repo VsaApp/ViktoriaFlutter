@@ -29,7 +29,6 @@ abstract class Element {
 
   void onUpdate(bool loading) {
     this.loading = loading;
-    print('update all listeners');
     _listeners.forEach((_l) => _l());
   }
 

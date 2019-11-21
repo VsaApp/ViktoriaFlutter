@@ -27,7 +27,6 @@ abstract class NextcloudFolderWidgetState extends State<NextcloudFolderWidget> {
   @override
   void initState() {
     _listener = widget.element.addListener(() {
-      print('update one folder ${widget.element.name}');
       if (mounted) setState(() => null);
     });
     super.initState();

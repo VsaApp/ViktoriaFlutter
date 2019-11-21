@@ -27,7 +27,6 @@ abstract class NextcloudFolderPageState extends State<NextcloudFolderPage> {
   void initState() {
     directory = widget.directory;
     _listener = directory.addListener(() {
-      print('update folder page ${directory.name}');
       if (mounted) setState(() => null);
     });
     load();
