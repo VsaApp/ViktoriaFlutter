@@ -1,100 +1,126 @@
-import 'package:webdav/webdav.dart';
-import 'dart:io';
 import 'dart:convert';
-import 'package:xml/xml.dart' as xml;
+
+import 'package:nextcloud/nextcloud.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'dart:io';
+import 'dart:typed_data';
 
 import './NextcloudModel.dart';
 
-const baseUrl = 'https://nextcloud.aachen-vsa.logoip.de/remote.php/dav';
+const baseUrl = 'nextcloud.aachen-vsa.logoip.de';
 
-Future<Directory> load() async {
-  Directory rootDirectory = Directory(name: 'Home', path: '/');
-  return await loadDirectory(rootDirectory, 'fingege', 'infonatik2');
-}
+class Nextcloud {
+  static NextCloudClient client;
+  static Directory baseDir;
 
-Future<File> loadFile(File file, String username, String password) async {
-  String data = await openUrl('$baseUrl/files/$username/${file.path}', username, password, 'GET');
-  file.content = data;
-  return file;
-}
-
-Future uploadFile(File file, String username, String password) async {
-  await openUrl('$baseUrl/files/$username/${file.path}', username, password, 'POST');
-}
-
-Future<Directory> loadDirectory(Directory directory, String username, String password) async {
-  String data = await openUrl('$baseUrl/files/$username/${directory.path}', username, password, 'PROPFIND');
-  print('loaded');
-  List<FileInfo> content = treeFromWebDavXml(data);
-
-  List<Element> elements = content.sublist(1).map((element) {
-    element.path = element.path.split('$username/')[1];
-    if (element.isDirectory) {
-      return Directory.fromFileInfo(element);
+  static void init() {
+    if (client != null && baseDir != null) return;
+    client = NextCloudClient(baseUrl, Storage.getString(Keys.username),
+        Storage.getString(Keys.password));
+    String savedJson = Storage.getString(Keys.nextcloud);
+    if (savedJson != null) {
+      baseDir = Directory.fromJson(json.decode(savedJson));
+    } else {
+      baseDir = Directory(
+          name: 'Home',
+          path: '/',
+          modificationTime: DateTime.now(),
+          shareTypes: []);
     }
-    else {
-      return File.fromFileInfo(element);
+  }
+
+  static void save() async {
+    String parsed = json.encode(baseDir.toJson());
+    Storage.setString(Keys.nextcloud, parsed);
+  }
+
+  static Future<File> loadFile(File file) async {
+    if (file.loading) return file;
+    Uint8List data = await client.webDav.download(file.path);
+    file.content = data;
+    return file;
+  }
+
+  static Future uploadFile(File file) async {
+    if (file.loading) return;
+    file.onUpdate(true);
+    await client.webDav.upload(file.content, file.path);
+    file.onUpdate(false);
+  }
+
+  static Future mkDir(Directory directory) async {
+    if (directory.loading) return;
+    directory.onUpdate(true);
+    await client.webDav.mkdir(directory.path);
+    directory.onUpdate(false);
+  }
+
+  static Future rename(Element element, String newName) async {
+    if (element.loading) return;
+    element.onUpdate(true);
+    String encodedName = Uri.encodeFull(newName);
+    String oldPath = element.path;
+    List<String> path = element.path.split('/');
+    path.removeAt(path.length - 2);
+    path.insert(path.length - 1, encodedName);
+    element.path = path.join('/');
+    element.name = newName;
+    try {
+      await client.webDav.move(oldPath, element.path);
+    } catch (_) {}
+    element.onUpdate(false);
+  }
+
+  static Future delete(Element element) async {
+    if (element.loading) return;
+    element.onUpdate(true);
+    try {
+      await client.webDav.delete(element.path);
+    } catch (_) {}
+    element.onUpdate(false);
+  }
+
+  static Future<void> loadDirectory(Directory directory) async {
+    if (directory.loading) return;
+    directory.loading = true;
+    List<WebDavFile> files = await client.webDav.ls(directory.path);
+
+    if (directory.path == '/')
+      files = files.where((file) => file.name != 'Programme').toList();
+
+    List<Element> elements = files.map((element) {
+      if (element.isDirectory) {
+        return Directory.fromFileInfo(element);
+      } else {
+        return File.fromFileInfo(element);
+      }
+    }).toList();
+    if (directory.elements != null) {
+      List<String> newNames = elements.map((e) => e.name).toList();
+      directory.elements = directory.elements
+          .where((element) => newNames.contains(element.name))
+          .toList();
+      List<String> oldNames = directory.elements.map((e) => e.name).toList();
+      // Update the elements of the directory
+      elements.forEach((element) {
+        if (oldNames.contains(element.name)) {
+          Element oldElement =
+              directory.elements[oldNames.indexOf(element.name)];
+          oldElement.modificationTime = element.modificationTime;
+          oldElement.shareTypes = element.shareTypes;
+        } else {
+          directory.elements.add(element);
+        }
+      });
+    } else {
+      directory.elements = elements;
     }
-  }).toList();
-  directory.elements = elements;
-  return directory;
+    // Sort the elements
+    directory.elements.sort((e1, e2) => e1.isDirectory()
+        ? e2.isDirectory() ? 0 : -1
+        : e2.isDirectory() ? 1 : 0);
+    directory.onUpdate(false);
+    save();
+  }
 }
-
-Future<String> openUrl(String url, String username, String password, String method, {Function decoder}) async {
-  HttpClient client = HttpClient();
-  client.addCredentials(Uri.parse(url), '', HttpClientBasicCredentials(username, password));
-  HttpClientRequest request = await client.openUrl(method, Uri.parse(url));
-  HttpClientResponse response = await request.close();
-  return await response.transform(decoder  ?? utf8.decoder).join();
-} 
-
-List<FileInfo> treeFromWebDavXml(String xmlStr) {
-  // Initialize a list to store the FileInfo Objects
-  var tree = new List<FileInfo>();
-
-  // parse the xml using the xml.parse method
-  var xmlDocument = xml.parse(xmlStr);
-
-  // Iterate over the response to find all folders / files and parse the information
-  findAllElementsFromDocument(xmlDocument, "response").forEach((response) {
-    var davItemName = findElementsFromElement(response, "href").single.text;
-    findElementsFromElement(
-            findElementsFromElement(response, "propstat").first, "prop")
-        .forEach((element) {
-      final contentLengthElements =
-          findElementsFromElement(element, "getcontentlength");
-      final contentLength = contentLengthElements.isNotEmpty
-          ? contentLengthElements.single.text
-          : "";
-
-      final lastModifiedElements =
-          findElementsFromElement(element, "getlastmodified");
-      final lastModified = lastModifiedElements.isNotEmpty
-          ? lastModifiedElements.single.text
-          : "";
-
-      final creationTimeElements =
-          findElementsFromElement(element, "creationdate");
-      final creationTime = creationTimeElements.isNotEmpty
-          ? creationTimeElements.single.text
-          : DateTime.fromMillisecondsSinceEpoch(0).toIso8601String();
-
-      // Add the just found file to the tree
-      tree.add(new FileInfo(davItemName, contentLength, lastModified,
-          DateTime.parse(creationTime), ""));
-    });
-  });
-
-  // Return the tree
-  return tree;
-}
-
-List<xml.XmlElement> findAllElementsFromDocument(
-        xml.XmlDocument document, String tag) =>
-    (document.findAllElements("d:$tag").toList()
-      ..addAll(document.findAllElements("D:$tag")));
-
-List<xml.XmlElement> findElementsFromElement(
-        xml.XmlElement element, String tag) =>
-    (element.findElements("d:$tag").toList()
-      ..addAll(element.findElements("D:$tag")));

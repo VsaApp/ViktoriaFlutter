@@ -179,4 +179,8 @@ class Keys {
   static String get lastModified {
     return 'lastModified';
   }
+
+  static String get nextcloud {
+    return 'nextcloud';
+  }
 }

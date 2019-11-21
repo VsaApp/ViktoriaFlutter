@@ -100,7 +100,7 @@ class TimetableDayListView extends TimetableDayListState {
                             unit: widget.day.units.indexOf(unit),
                           ),
                         ]))))
-            : (selected.substitutions.length == 0 ||
+            : (selected.getSubstitutions().length == 0 ||
                     !Storage.getBool(Keys.showSubstitutionPlanInTimetable)
                 ?
                 // Show normal subject
@@ -131,18 +131,6 @@ class TimetableDayListView extends TimetableDayListState {
                                       padding: EdgeInsets.only(
                                           left: 2.5, right: 2.5),
                                       child: SubstitutionPlanRow(
-                                        showUnit: (selected
-                                                .getSubstitutions()
-                                                .map((change) => change.isExam)
-                                                .toList()
-                                                .contains(true) &&
-                                            selected
-                                                    .getSubstitutions()
-                                                    .where((change) =>
-                                                        !change.isExam)
-                                                    .toList()
-                                                    .length ==
-                                                0),
                                         substitution: change,
                                         changes: selected
                                             .getSubstitutions(),

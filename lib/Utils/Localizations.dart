@@ -186,9 +186,17 @@ class AppLocalizations {
           'Fehler beim überprüfen der Logindaten! Versuche es später erneut.',
       'unitAndSubstitutionPlan': 'Stunden- und Vertretungsplan',
       'updated': ' aktualisiert',
-      'cloud': 'Cloud'
+      'cloud': 'Cloud',
       'updatedFailed': ' aktualisieren fehlgeschlagen',
-      'exam': 'Klausur'
+      'exam': 'Klausur',
+      'delete': 'Löschen',
+      'rename': 'Umbenennen',
+      'share': 'Teilen',
+      'download': 'Herunterladen',
+      'details': 'Details',
+      'file': 'Datei',
+      'folder': 'Ordner',
+      'newDirectory': 'Neuer Ordner',
     },
   };
 
@@ -197,6 +205,38 @@ class AppLocalizations {
   }
 
 // All getter defined...
+  String get newDirectory {
+    return _localizedValues[locale.languageCode]['newDirectory'];
+  }
+
+  String get details {
+    return _localizedValues[locale.languageCode]['details'];
+  }
+
+  String get file {
+    return _localizedValues[locale.languageCode]['file'];
+  }
+
+  String get folder {
+    return _localizedValues[locale.languageCode]['folder'];
+  }
+
+  String get delete {
+    return _localizedValues[locale.languageCode]['delete'];
+  }
+
+  String get rename {
+    return _localizedValues[locale.languageCode]['rename'];
+  }
+
+  String get share {
+    return _localizedValues[locale.languageCode]['share'];
+  }
+
+  String get download {
+    return _localizedValues[locale.languageCode]['download'];
+  }
+
   String get cloud {
     return _localizedValues[locale.languageCode]['cloud'];
   }
@@ -256,7 +296,6 @@ class AppLocalizations {
   String get oldApp {
     return _localizedValues[locale.languageCode]['oldApp'];
   }
-
 
   String get aWeek {
     return _localizedValues[locale.languageCode]['aWeek'];

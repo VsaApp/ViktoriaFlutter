@@ -9,10 +9,9 @@ import '../NextcloudModel.dart' as cloud;
 import '../NextcloudData.dart';
 
 class NextcloudFolderPage extends StatefulWidget {
-  final String name;
-  final String path;
+  final cloud.Directory directory;
 
-  NextcloudFolderPage({this.name, this.path});
+  NextcloudFolderPage({this.directory});
 
   @override
   State<StatefulWidget> createState() {
@@ -21,47 +20,53 @@ class NextcloudFolderPage extends StatefulWidget {
 }
 
 abstract class NextcloudFolderPageState extends State<NextcloudFolderPage> {
-  cloud.User user;
   cloud.Directory directory;
+  void Function() _listener;
 
   @override
   void initState() {
-    user = cloud.User(name: 'fingege', password: 'infonatik2');
-    directory = cloud.Directory(name: widget.name, path: widget.path);
+    directory = widget.directory;
+    _listener = directory.addListener(() {
+      print('update folder page ${directory.name}');
+      if (mounted) setState(() => null);
+    });
     load();
     super.initState();
   }
 
+  @override
+  void dispose() {
+    directory.removeListener(_listener);
+    super.dispose();
+  }
+
   Future openFile(cloud.File file) async {
-    file = await loadFile(file, user.name, user.password);
-    String fileEnd = file.name.split('.')[file.name.split('.').length - 1];
+    // Download file content
+    file = await Nextcloud.loadFile(file);
+
+    // Get file path
     String localPath = await _localPath;
-    File localFile = await _localFile(fileEnd);
-    localFile.writeAsString(file.content);
-    String newContent = await OpenFile.open('$localPath/tmp.$fileEnd');
-    print(newContent);
-    file.content = newContent;
+    String absoluteFilePath = '$localPath${Uri.decodeFull(file.path)}';
+
+    // Create directory
+    Directory(absoluteFilePath.replaceAll('/${file.name}', ''))
+        .createSync(recursive: true);
+
+    // Write and open file
+    File(absoluteFilePath).writeAsBytes(file.content);
+    await OpenFile.open(absoluteFilePath);
   }
 
   Future onReload() async {
-    cloud.Directory dir = await loadDirectory(directory, user.name, user.password);
-    setState(() => directory = dir);
+    return Nextcloud.loadDirectory(directory);
   }
 
   void load() {
-    loadDirectory(directory, user.name, user.password).then((cloud.Directory dir) {
-      setState(() => directory = dir);
-    });
+    Nextcloud.loadDirectory(directory);
   }
 
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
-
     return directory.path;
-  }
-
-  Future<File> _localFile(String type) async {
-    final path = await _localPath;
-    return File('$path/tmp.$type');
   }
 }

@@ -1,51 +1,71 @@
-import 'package:webdav/webdav.dart';
-import 'package:flutter/semantics.dart';
-import 'NextcloudData.dart';
+import 'package:flutter/material.dart';
+import 'package:nextcloud/nextcloud.dart';
+import 'dart:typed_data';
 
-class Nextcloud {
-  static User user;
-  static Element dir;
-}
-
-class User {
-  String name;
-  String password;
-
-  User({this.name, this.password});
-}
-
-class Element {
+abstract class Element {
   String name;
   String path;
-  String modificationTime;
-  DateTime creationTime;
+  DateTime modificationTime;
+  List<int> shareTypes;
 
-  Element({this.name, this.path, this.modificationTime, this.creationTime});
+  /// 0: created, 1: created local, 2: not created
+  int isCreated = 0;
+  List<void Function()> _listeners = [];
+  bool loading = false;
 
-  isDirectory() => null;
+  Element(
+      {this.name,
+      this.path,
+      this.modificationTime,
+      this.shareTypes,
+      this.isCreated = 0});
 
-  load() {
-    
+  void Function() addListener(void Function() listener) {
+    _listeners.add(listener);
+    return listener;
+  }
+
+  void removeListener(void Function() listener) => _listeners.remove(listener);
+
+  void onUpdate(bool loading) {
+    this.loading = loading;
+    print('update all listeners');
+    _listeners.forEach((_l) => _l());
+  }
+
+  bool isDirectory();
+
+  Map<String, dynamic> toJson();
+
+  factory Element.fromJson(Map<String, dynamic> json) {
+    bool isDir = json['isDir'] as bool;
+    return isDir ? Directory.fromJson(json) : File.fromJson(json);
   }
 }
 
 class Directory extends Element {
   List<Element> elements;
 
-  Directory({name, path, modificationTime, creationTime, this.elements}) {
-    super.name = name;
-    super.path = path;
-    super.modificationTime = modificationTime;
-    super.creationTime = creationTime;
-  }
+  Directory(
+      {String name,
+      String path,
+      DateTime modificationTime,
+      List<int> shareTypes,
+      this.elements,
+      int isCreated = 0})
+      : super(
+            name: name,
+            path: path,
+            modificationTime: modificationTime,
+            shareTypes: shareTypes,
+            isCreated: isCreated);
 
-  factory Directory.fromFileInfo(FileInfo fileInfo) {
+  factory Directory.fromFileInfo(WebDavFile fileInfo) {
     return Directory(
-      name: fileInfo.name,
-      path: fileInfo.path,
-      modificationTime: fileInfo.modificationTime,
-      creationTime: fileInfo.creationTime
-    );
+        name: fileInfo.name,
+        path: fileInfo.path,
+        modificationTime: fileInfo.lastModified,
+        shareTypes: fileInfo.shareTypes);
   }
 
   @override
@@ -53,32 +73,68 @@ class Directory extends Element {
     return true;
   }
 
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'path': path,
+      'modificationTime': modificationTime.toIso8601String(),
+      'shareTypes': shareTypes,
+      'isDir': true,
+      'elements': elements != null ? elements.map((e) => e.toJson()).toList() : null
+    };
+  }
+
+  factory Directory.fromJson(Map<String, dynamic> json) {
+    return Directory(
+      name: json['name'] as String,
+      path: json['path'] as String,
+      modificationTime: DateTime.parse(json['modificationTime'] as String),
+      shareTypes: json['shareTypes'].cast<int>().toList(),
+      elements: json['elements'] != null
+          ? json['elements'].map<Element>((json) => Element.fromJson(json)).toList()
+          : null,
+    );
+  }
+
   List<File> getFiles() {
-    return elements.where((element) => !element.isDirectory()).toList().cast<File>();
+    return elements
+        .where((element) => !element.isDirectory())
+        .toList()
+        .cast<File>();
   }
 
   List<Directory> getDirectories() {
-    return elements.where((element) => element.isDirectory()).toList().cast<Directory>();
+    return elements
+        .where((element) => element.isDirectory())
+        .toList()
+        .cast<Directory>();
   }
 }
 
 class File extends Element {
-  String content;
+  Uint8List content;
 
-  File({name, path, modificationTime, creationTime, this.content}) {
-    super.name = name;
-    super.path = path;
-    super.modificationTime = modificationTime;
-    super.creationTime = creationTime;
-  }
+  File(
+      {String name,
+      String path,
+      DateTime modificationTime,
+      List<int> shareTypes,
+      this.content,
+      int isCreated = 0})
+      : super(
+            name: name,
+            path: path,
+            modificationTime: modificationTime,
+            shareTypes: shareTypes,
+            isCreated: isCreated);
 
-  factory File.fromFileInfo(FileInfo fileInfo) {
+  factory File.fromFileInfo(WebDavFile fileInfo) {
     return File(
-      name: fileInfo.name,
-      path: fileInfo.path,
-      modificationTime: fileInfo.modificationTime,
-      creationTime: fileInfo.creationTime
-    );
+        name: fileInfo.name,
+        path: fileInfo.path,
+        modificationTime: fileInfo.lastModified,
+        shareTypes: fileInfo.shareTypes);
   }
 
   @override
@@ -86,11 +142,40 @@ class File extends Element {
     return false;
   }
 
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'path': path,
+      'modificationTime': modificationTime.toIso8601String(),
+      'shareTypes': shareTypes,
+      'isDir': false
+    };
+  }
+
+  factory File.fromJson(Map<String, dynamic> json) {
+    return File(
+        name: json['name'] as String,
+        path: json['path'] as String,
+        modificationTime: DateTime.parse(json['modificationTime'] as String),
+        shareTypes: json['shareTypes'].cast<int>().toList());
+  }
+
   getContent() {
     return content;
   }
 
-  loadContent() {
+  loadContent() {}
+}
 
-  }
+class Choice {
+  Choice(
+    this.icon,
+    this.label, {
+    this.enabled = true,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool enabled;
 }
