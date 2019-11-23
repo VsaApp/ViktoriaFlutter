@@ -38,7 +38,9 @@ class HomePage extends StatefulWidget {
   State<StatefulWidget> createState() => HomePageView();
 }
 
-abstract class HomePageState extends State<HomePage> {
+abstract class HomePageState extends State<HomePage>
+    with WidgetsBindingObserver {
+  static AppLifecycleState lifecycleState;
   int currentWeek = 0;
   bool showWeek = false;
   static bool weekChangeable = true;
@@ -57,6 +59,9 @@ abstract class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
   static List<Function()> substitutionPlanUpdatedListeners = [];
+
+  /// Checks if the app is in foreground
+  static bool get isInForeground => lifecycleState == null || lifecycleState.index == 0;
 
   void _showWeek(bool value) {
     if (mounted && value != showWeek) setState(() => showWeek = value);
@@ -93,7 +98,7 @@ abstract class HomePageState extends State<HomePage> {
   Future handleSubstitutionPlanNotification(Map msg) async {
     print("received substitution plan notification");
     await SubstitutionPlanData().download(context);
-    if (appScaffold != null) {
+    if (appScaffold != null && isInForeground) {
       substitutionPlanUpdatedListeners
           .forEach((substitutionPlanUpdated) => substitutionPlanUpdated());
       scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -145,7 +150,18 @@ abstract class HomePageState extends State<HomePage> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    setState(() {
+      lifecycleState = state;
+      print('State changed: ${state.index}');
+    });
+  }
+
+  @override
   void initState() {
+    // Set listener for widget bindings
+    WidgetsBinding.instance.addObserver(this);
+
     // Load data
     grade = Storage.get(Keys.grade) ?? '';
     showDialog1 = Storage.getBool(Keys.showShortCutDialog) ?? false;
@@ -174,6 +190,13 @@ abstract class HomePageState extends State<HomePage> {
         .forEach((substitutionPlanUpdated) => substitutionPlanUpdated());
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // Remove listener for widget bindings
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   static void checkIfTimetableUpdated(BuildContext context) {

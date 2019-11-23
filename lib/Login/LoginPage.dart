@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:viktoriaflutter/Home/HomePage.dart';
 
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
@@ -55,15 +56,17 @@ abstract class LoginPageState extends State<LoginPage> {
       pupilCredentialsCorrect = response.statusCode == StatusCodes.success;
     } catch (e) {
       online = -1;
-      Scaffold.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context).failedToCheckLogin),
-          action: SnackBarAction(
-            label: AppLocalizations.of(context).ok,
-            onPressed: () {},
+      if (HomePageState.isInForeground) {
+        Scaffold.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context).failedToCheckLogin),
+            action: SnackBarAction(
+              label: AppLocalizations.of(context).ok,
+              onPressed: () {},
+            ),
           ),
-        ),
-      );
+        );
+      }
       setState(() => isCheckingForm = false);
       return;
     }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:viktoriaflutter/Home/HomePage.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Update.dart';
 
@@ -79,7 +80,7 @@ class SubstitutionPlanPageView extends SubstitutionPlanPageState {
                 },
                 onSelected: (String grade) async {
                   int online = await checkOnline;
-                  if (online != 1) {
+                  if (online != 1 && HomePageState.isInForeground) {
                     Scaffold.of(context).showSnackBar(
                       SnackBar(
                         content: Text(online == -1
