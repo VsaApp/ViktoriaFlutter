@@ -187,7 +187,7 @@ class TimetableSubject {
 
   /// Returns all changes with this subject id
   List<Substitution> getSubstitutions() {
-    return (substitutions ?? [])
+    return []..addAll(substitutions ?? [])
       ..addAll(Data.timetable.days[day].units[unit].substitutions ?? []);
   }
 

@@ -163,7 +163,6 @@ class TimetableView extends State<TimetablePage>
         tabs: days
             .map((day) => TimetableDayList(
                   day: day,
-                  dayIndex: days.indexOf(day),
                 ))
             .toList(),
         controller: controller,

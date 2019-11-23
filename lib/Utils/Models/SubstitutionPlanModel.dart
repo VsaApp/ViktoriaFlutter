@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Models.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
 
 // Describes the substitution plan
 class SubstitutionPlan {
@@ -45,6 +47,7 @@ class SubstitutionPlanDay {
   }
 
   void insertInTimetable() {
+    print('insert ${date.weekday}');
     List<TimetableSubject> subjects = Data.timetable.getAllSubjects();
     List<String> subjectsIds = subjects.map((s) => s.id).toList();
     List<String> subjectsCourseIDs = subjects.map((s) => s.courseID).toList();
@@ -59,14 +62,9 @@ class SubstitutionPlanDay {
           subjectsCourseIDs.contains(substitution.courseID)) {
         List<TimetableSubject> _subjects =
             subjects.where((s) => s.courseID == substitution.courseID).toList();
-        try {
-          _subjects
-              .where((s) =>
-                  s.day == date.weekday - 1 && s.unit == substitution.unit)
-              .single
-              .substitutions
-              .add(substitution);
-        } on StateError catch (_) {
+        if (_subjects.length > 0) {
+          if (Data.timetable.days[date.weekday - 1].units.length <=
+              substitution.unit) return;
           Data.timetable.days[date.weekday - 1].units[substitution.unit]
               .substitutions
               .add(substitution);
@@ -76,6 +74,7 @@ class SubstitutionPlanDay {
   }
 
   List<String> filterUnparsed({String grade}) {
+    print('filter u ${date.weekday}');
     myUnparsed = [];
     if (grade == null) {
       filteredGrade = Data.timetable.grade;
@@ -105,11 +104,25 @@ class SubstitutionPlanDay {
               selectedIds.contains(substitution.id)) ||
           (substitution.courseID != null &&
               selectedCourseIds.contains(substitution.courseID))) {
-        myChanges.add(substitution);
+        // If it is no exam, add to my changes
+        if (!substitution.isExam)
+          myChanges.add(substitution);
+        // If it is an exam, check if the user write exams in this course
+        else if (selectedSubjects[
+                selectedCourseIds.indexOf(substitution.courseID)]
+            .writeExams) {
+          myChanges.add(substitution);
+        } else {
+          otherChanges.add(substitution);
+        }
       } else {
         otherChanges.add(substitution);
       }
     });
+  }
+
+  bool isMySubstitution(Substitution substitution) {
+    return myChanges.contains(substitution);
   }
 
   factory SubstitutionPlanDay.fromJson(Map<String, dynamic> json) {
@@ -147,7 +160,7 @@ class Substitution {
 
   bool get isExam => type == 2;
 
-  bool get sure => id != null;
+  bool get sure => id != null && courseID != null;
 
   bool equals(Substitution c) {
     return unit == c.unit &&

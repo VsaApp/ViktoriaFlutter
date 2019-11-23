@@ -8,13 +8,11 @@ import 'package:viktoriaflutter/Utils/Models.dart';
 import 'TimetableDayListView.dart';
 
 class TimetableDayList extends StatefulWidget {
-  TimetableDay day;
-  int dayIndex;
+  final TimetableDay day;
 
   TimetableDayList({
     Key key,
     @required this.day,
-    @required this.dayIndex,
   }) : super(key: key);
 
   @override

@@ -28,6 +28,14 @@ class TimetableDayListView extends TimetableDayListState {
       bool nothingSelected = _selected == null;
       if (nothingSelected) _selected = 0;
       TimetableSubject selected = unit.subjects[_selected];
+      List<SubstitutionPlanDay> sDays = Data.substitutionPlan.days
+          .where((day) => day.date.weekday - 1 == widget.day.day)
+          .toList();
+      SubstitutionPlanDay sDay = sDays.length > 0 ? sDays[0] : null;
+      List<Substitution> substitutions =
+          selected.getSubstitutions().where((substitution) {
+        return !substitution.isExam || sDay.isMySubstitution(substitution);
+      }).toList();
       return GestureDetector(
         onTap: () {
           if (unit.subjects.length > 1) {
@@ -46,10 +54,8 @@ class TimetableDayListView extends TimetableDayListState {
         },
         onLongPress: () {
           if (selected.block != null &&
-              selected.subjectID !=
-                  AppLocalizations.of(context).freeLesson &&
-              selected.subjectID !=
-                  AppLocalizations.of(context).lunchBreak &&
+              selected.subjectID != AppLocalizations.of(context).freeLesson &&
+              selected.subjectID != AppLocalizations.of(context).lunchBreak &&
               !nothingSelected) {
             if (!selected.examIsSet) {
               selected.writeExams = true;
@@ -85,7 +91,7 @@ class TimetableDayListView extends TimetableDayListState {
                         padding: EdgeInsets.only(bottom: 10),
                         child: Column(children: [
                           TimetableRow(
-                            weekday: widget.dayIndex,
+                            weekday: widget.day.day,
                             subject: TimetableSubject(
                                 id: 'selection',
                                 unit: unit.unit,
@@ -100,21 +106,21 @@ class TimetableDayListView extends TimetableDayListState {
                             unit: widget.day.units.indexOf(unit),
                           ),
                         ]))))
-            : (selected.getSubstitutions().length == 0 ||
+            : (substitutions.length == 0 ||
                     !Storage.getBool(Keys.showSubstitutionPlanInTimetable)
                 ?
                 // Show normal subject
                 Padding(
                     padding: EdgeInsets.only(left: 2.5, right: 2.5),
                     child: TimetableRow(
-                      weekday: widget.dayIndex,
+                      weekday: widget.day.day,
                       subject: selected,
                       unit: widget.day.units.indexOf(unit),
                     ),
                   )
                 :
                 // Show list of changes
-                selected.getSubstitutions().length > 0
+                substitutions.length > 0
                     ? Padding(
                         padding: EdgeInsets.only(
                             left: 0,
@@ -124,17 +130,15 @@ class TimetableDayListView extends TimetableDayListState {
                           child: Padding(
                             padding: EdgeInsets.only(bottom: 10),
                             child: Column(
-                              children: selected
-                                  .getSubstitutions()
+                              children: substitutions
                                   .map((change) {
                                     return Padding(
                                       padding: EdgeInsets.only(
                                           left: 2.5, right: 2.5),
                                       child: SubstitutionPlanRow(
                                         substitution: change,
-                                        changes: selected
-                                            .getSubstitutions(),
-                                        weekday: widget.dayIndex,
+                                        changes: substitutions,
+                                        weekday: widget.day.day,
                                       ),
                                     );
                                   })
@@ -144,7 +148,7 @@ class TimetableDayListView extends TimetableDayListState {
                           ),
                         ))
                     : TimetableRow(
-                        weekday: widget.dayIndex,
+                        weekday: widget.day.day,
                         subject: selected,
                         unit: widget.day.units.indexOf(unit),
                       ))),
@@ -152,7 +156,7 @@ class TimetableDayListView extends TimetableDayListState {
     }).toList());
     List<Widget> infoItems = [];
     if (showCalendar) {
-      getEventsForWeekday(widget.dayIndex).forEach((event) {
+      getEventsForWeekday(widget.day.day).forEach((event) {
         infoItems.add(Padding(
           padding: EdgeInsets.only(top: 10),
           child: EventCard(
@@ -165,7 +169,7 @@ class TimetableDayListView extends TimetableDayListState {
       infoItems.add(Padding(
         padding: EdgeInsets.only(top: 10),
         child: CafetoriaDayCard(
-          day: Data.cafetoria.days[widget.dayIndex],
+          day: Data.cafetoria.days[widget.day.day],
           showWeekday: false,
         ),
       ));
@@ -174,7 +178,7 @@ class TimetableDayListView extends TimetableDayListState {
       infoItems.add(Padding(
         padding: EdgeInsets.only(top: 10),
         child: WorkGroupsDayCard(
-          day: Data.workGroups.days[widget.dayIndex],
+          day: Data.workGroups.days[widget.day.day],
           showWeekday: false,
         ),
       ));
