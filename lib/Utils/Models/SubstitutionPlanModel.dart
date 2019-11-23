@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Models.dart';
-import 'package:viktoriaflutter/Utils/Storage.dart';
-import 'package:viktoriaflutter/Utils/Keys.dart';
 
 // Describes the substitution plan
 class SubstitutionPlan {

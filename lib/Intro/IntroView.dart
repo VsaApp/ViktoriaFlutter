@@ -58,6 +58,7 @@ class IntroPageView extends IntroPageState {
       Slide(
         title: AppLocalizations.of(context).introTimetableTitle,
         description: AppLocalizations.of(context).introTimetableDescription,
+        backgroundColor: Theme.of(context).primaryColor,
         centerWidget: Container(
           margin: EdgeInsets.all(10),
           child: Card(
@@ -98,6 +99,7 @@ class IntroPageView extends IntroPageState {
             ),
           ],
         ),
+        backgroundColor: Theme.of(context).primaryColor,
       ),
     );
     if (Platform.isIOS || Platform.isAndroid) {
@@ -108,6 +110,7 @@ class IntroPageView extends IntroPageState {
         description: AppLocalizations
             .of(context)
             .introNotificationsDescription,
+        backgroundColor: Theme.of(context).primaryColor,
       ));
     }
     CalendarEvent event = CalendarEvent(
@@ -123,6 +126,7 @@ class IntroPageView extends IntroPageState {
         margin: EdgeInsets.all(10),
         child: EventCard(event: event),
       ),
+      backgroundColor: Theme.of(context).primaryColor,
     ));
     CafetoriaDay cafetoriaDay = CafetoriaDay(
       day: 0,
@@ -155,6 +159,7 @@ class IntroPageView extends IntroPageState {
           showWeekday: true,
         ),
       ),
+      backgroundColor: Theme.of(context).primaryColor,
     ));
 
     WorkGroupsDay workGroupsDay = WorkGroupsDay(
@@ -196,15 +201,18 @@ class IntroPageView extends IntroPageState {
           showWeekday: true,
         ),
       ),
+      backgroundColor: Theme.of(context).primaryColor,
     ));
     slides.add(Slide(
       title: AppLocalizations.of(context).introExtendedTimetableTitle,
       description:
       AppLocalizations.of(context).introExtendedTimetableDescription,
+      backgroundColor: Theme.of(context).primaryColor,
     ));
     slides.add(Slide(
       title: AppLocalizations.of(context).introCoursesTitle,
       description: AppLocalizations.of(context).introCoursesDescription,
+      backgroundColor: Theme.of(context).primaryColor,
     ));
 
     String grade = Storage.getString(Keys.grade);
@@ -217,17 +225,16 @@ class IntroPageView extends IntroPageState {
         description: AppLocalizations
             .of(context)
             .introScannerDescription,
+        backgroundColor: Theme.of(context).primaryColor,
       ));
     }
 
     slides.add(Slide(
       title: AppLocalizations.of(context).introVsaAppTitle,
       description: AppLocalizations.of(context).introVsaAppDescription,
+      backgroundColor: Theme.of(context).primaryColor,
     ));
 
-    slides.forEach((slide) {
-      slide.backgroundColor = Theme.of(context).primaryColor;
-    });
     return Scaffold(
       body: IntroSlider(
         slides: this.slides,

@@ -4,7 +4,7 @@ import 'package:viktoriaflutter/Utils/Models.dart';
 import 'SubstitutionPlanDayListView.dart';
 
 class SubstitutionPlanDayList extends StatefulWidget {
-  SubstitutionPlanDay day;
+  final SubstitutionPlanDay day;
   final bool sort;
   final bool temp;
   final String grade;

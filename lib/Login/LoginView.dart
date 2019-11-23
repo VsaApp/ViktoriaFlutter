@@ -6,7 +6,6 @@ import 'package:viktoriaflutter/Utils/Network.dart';
 import 'LoginPage.dart';
 
 class LoginPageView extends LoginPageState {
-
   @override
   void dispose() {
     usernameController.dispose();
@@ -93,6 +92,7 @@ class LoginPageView extends LoginPageState {
                               return AppLocalizations.of(context)
                                   .credentialsNotCorrect;
                             }
+                            return '';
                           },
                           decoration: InputDecoration(
                               hintText:
@@ -113,6 +113,7 @@ class LoginPageView extends LoginPageState {
                               return AppLocalizations.of(context)
                                   .credentialsNotCorrect;
                             }
+                            return '';
                           },
                           decoration: InputDecoration(
                               hintText:
@@ -129,18 +130,21 @@ class LoginPageView extends LoginPageState {
                           child: SizedBox(
                             width: double.infinity,
                             child: RaisedButton(
-                              color: Theme.of(context).accentColor,
-                              onPressed: () {
-                                checkForm();
-                              },
-                              child: !isCheckingForm ? Text(AppLocalizations.of(context).login) : Padding(
-                                padding: EdgeInsets.all(0),
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                  strokeWidth: 1,
-                                ),
-                              )
-                            ),
+                                color: Theme.of(context).accentColor,
+                                onPressed: () {
+                                  checkForm();
+                                },
+                                child: !isCheckingForm
+                                    ? Text(AppLocalizations.of(context).login)
+                                    : Padding(
+                                        padding: EdgeInsets.all(0),
+                                        child: CircularProgressIndicator(
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                  Colors.white),
+                                          strokeWidth: 1,
+                                        ),
+                                      )),
                           ),
                         ),
                       ],

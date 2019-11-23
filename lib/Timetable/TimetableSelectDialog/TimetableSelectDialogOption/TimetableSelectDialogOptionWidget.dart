@@ -4,9 +4,9 @@ import 'package:viktoriaflutter/Utils/Models.dart';
 import 'TimetableSelectDialogOptionView.dart';
 
 class TimetableSelectDialogOption extends StatefulWidget {
-  TimetableDay day;
-  TimetableUnit unit;
-  TimetableSubject subject;
+  final TimetableDay day;
+  final TimetableUnit unit;
+  final TimetableSubject subject;
   final Function(TimetableSubject subject) onSelected;
 
   TimetableSelectDialogOption({

@@ -84,6 +84,7 @@ class LoginDialogView extends LoginDialogState {
                             return AppLocalizations.of(context)
                                 .credentialsNotCorrect;
                           }
+                          return '';
                         },
                         decoration: InputDecoration(
                             hintText: AppLocalizations.of(context).cafetoriaId),
@@ -103,6 +104,7 @@ class LoginDialogView extends LoginDialogState {
                             return AppLocalizations.of(context)
                                 .credentialsNotCorrect;
                           }
+                          return '';
                         },
                         decoration: InputDecoration(
                             hintText:
@@ -116,34 +118,32 @@ class LoginDialogView extends LoginDialogState {
                       // Login button
                       Row(children: <Widget>[
                         Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 10, right: 5),
+                            child: Padding(
+                          padding: EdgeInsets.only(top: 10, right: 5),
+                          child: RaisedButton(
+                            color: Theme.of(context).accentColor,
+                            onPressed: () {
+                              checkForm();
+                            },
+                            child: Text(AppLocalizations.of(context).login),
+                          ),
+                        )),
+                        if (isLoggedIn)
+                          Expanded(
+                              child: Padding(
+                            padding: EdgeInsets.only(top: 10, left: 5),
                             child: RaisedButton(
                               color: Theme.of(context).accentColor,
                               onPressed: () {
-                                checkForm();
+                                Storage.remove(Keys.cafetoriaId);
+                                Storage.remove(Keys.cafetoriaPassword);
+                                syncTags(
+                                    syncExams: false, syncSelections: false);
+                                Navigator.pop(context);
                               },
-                              child: Text(AppLocalizations.of(context).login),
+                              child: Text(AppLocalizations.of(context).logout),
                             ),
-                          )
-                        ),
-                        if (isLoggedIn) 
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 10, left: 5),
-                              child: RaisedButton(
-                                color: Theme.of(context).accentColor,
-                                onPressed: () {
-                                  Storage.remove(Keys.cafetoriaId);
-                                  Storage.remove(Keys.cafetoriaPassword);
-                                  syncTags(syncExams: false, syncSelections: false);
-                                  Navigator.pop(context);
-                                },
-                                child: Text(AppLocalizations.of(context).logout),
-                              ),
-                            )
-                          ),
-                        
+                          )),
                       ])
                     ],
                   ),

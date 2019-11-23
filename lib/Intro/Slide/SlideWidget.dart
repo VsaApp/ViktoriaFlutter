@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class Slide extends StatelessWidget {
-  String title;
-  String description;
-  Widget centerWidget;
-  Color backgroundColor;
+  final String title;
+  final String description;
+  final Widget centerWidget;
+  final Color backgroundColor;
 
   Slide({
     Key key,
