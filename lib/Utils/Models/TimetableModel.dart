@@ -32,15 +32,16 @@ class Timetable {
     );
   }
 
-  List<TimetableSubject> getAllSubjects({bool reset = false}) {
+  void resetAllSelections() {
+    days.forEach((d) => d.units.forEach((u) {
+          u.substitutions = [];
+          u.subjects.forEach((s) => s.substitutions = []);
+        }));
+  }
+
+  List<TimetableSubject> getAllSubjects() {
     return days
-        .map((d) => d.units.map((u) {
-              if (reset) {
-                u.substitutions = [];
-                u.subjects.forEach((s) => s.substitutions = []);
-              }
-              return u.subjects;
-            }).toList())
+        .map((d) => d.units.map((u) => u.subjects).toList())
         .toList()
         .reduce((i1, i2) => List.from(i1)..addAll(i2))
         .reduce((i1, i2) => List.from(i1)..addAll(i2));
@@ -187,7 +188,8 @@ class TimetableSubject {
 
   /// Returns all changes with this subject id
   List<Substitution> getSubstitutions() {
-    return []..addAll(substitutions ?? [])
+    return []
+      ..addAll(substitutions ?? [])
       ..addAll(Data.timetable.days[day].units[unit].substitutions ?? []);
   }
 

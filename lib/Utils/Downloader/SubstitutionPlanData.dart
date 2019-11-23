@@ -26,6 +26,7 @@ class SubstitutionPlanData extends Downloader<SubstitutionPlan> {
   @override
   SubstitutionPlan parse(String responseBody) {
     final parsed = json.decode(responseBody);
+    if (Data.timetable != null) Data.timetable.resetAllSelections();
     return SubstitutionPlan(
       days: parsed
           .map<SubstitutionPlanDay>((day) => SubstitutionPlanDay.fromJson(day))

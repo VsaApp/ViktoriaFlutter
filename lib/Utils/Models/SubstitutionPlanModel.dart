@@ -11,7 +11,7 @@ class SubstitutionPlan {
   }
 
   void insert() {
-    Data.timetable.getAllSubjects(reset: true);
+    Data.timetable.resetAllSelections();
     days.forEach((day) => day.insertInTimetable());
   }
 
