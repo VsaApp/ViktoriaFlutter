@@ -3,7 +3,7 @@ import 'package:viktoriaflutter/Home/HomePage.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Update.dart';
 
-import '../BrotherSisterSubstitutionPlan/BrotherSisterSubstitutionPlanPage.dart';
+import 'package:viktoriaflutter/BrotherSisterSubstitutionPlan/BrotherSisterSubstitutionPlanPage.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
@@ -11,10 +11,11 @@ import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/TabProxy.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
 import 'package:viktoriaflutter/Utils/Downloader/SubstitutionPlanData.dart';
-import 'GradeFAB/GradeFABWidget.dart';
-import 'SubstitutionPlanDayList/SubstitutionPlanDayListWidget.dart';
-import 'SubstitutionPlanPage.dart';
+import 'package:viktoriaflutter/SubstitutionPlan/GradeFAB/GradeFABWidget.dart';
+import 'package:viktoriaflutter/SubstitutionPlan/SubstitutionPlanDayList/SubstitutionPlanDayListWidget.dart';
+import 'package:viktoriaflutter/SubstitutionPlan/SubstitutionPlanPage.dart';
 
+// ignore: public_member_api_docs
 class SubstitutionPlanPageView extends SubstitutionPlanPageState {
   @override
   Widget build(BuildContext context) {
@@ -36,7 +37,7 @@ class SubstitutionPlanPageView extends SubstitutionPlanPageState {
           controller: controller,
           onUpdate: () async {
             await syncWithTags();
-            bool successfully =
+            final bool successfully =
                 await SubstitutionPlanData().download(context) ==
                     StatusCodes.success;
             dataUpdated(context, successfully,
@@ -47,8 +48,8 @@ class SubstitutionPlanPageView extends SubstitutionPlanPageState {
         ),
         // FAB
         Positioned(
-            bottom: 16.0,
-            right: 16.0,
+            bottom: 16,
+            right: 16,
             child: Container(
               child: GradeFab(
                 onSelectPressed: (Function(String grade) selected) async {
@@ -79,7 +80,7 @@ class SubstitutionPlanPageView extends SubstitutionPlanPageState {
                       });
                 },
                 onSelected: (String grade) async {
-                  int online = await checkOnline;
+                  final int online = await checkOnline;
                   if (online != 1 && HomePageState.isInForeground) {
                     Scaffold.of(context).showSnackBar(
                       SnackBar(

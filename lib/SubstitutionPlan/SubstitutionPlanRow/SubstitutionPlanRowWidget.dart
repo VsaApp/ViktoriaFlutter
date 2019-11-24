@@ -1,25 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 
-import 'package:viktoriaflutter/Utils/Rooms.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 
+/// A row for one substitution
 class SubstitutionPlanRow extends StatelessWidget {
+  // ignore: public_member_api_docs
   const SubstitutionPlanRow({
-    Key key,
     @required this.substitution,
     @required this.changes,
     @required this.weekday,
     this.isDialog = false,
     this.showUnit = true,
+    Key key,
   }) : super(key: key);
 
+  /// The substitution of the row
   final Substitution substitution;
+
+  /// All substitutions in this unit
+  ///
+  /// To show if the row should has an unit number or not
   final List<dynamic> changes;
+
+  /// The weekday of the substitution
   final int weekday;
+
+  /// If the substitution is shown in a dialog
   final bool isDialog;
+
+  /// If the unit should be shown
   final bool showUnit;
 
+  /// Get the description of the substitution type
   String getSubstitutionDescription(BuildContext context, int type) {
     switch (type) {
       case 0:
@@ -33,15 +46,15 @@ class SubstitutionPlanRow extends StatelessWidget {
     }
   }
 
+  /// Get the substitution extra information text
   String getInfoText(BuildContext context, Substitution substitution) {
     String info = '';
-    String description = getSubstitutionDescription(context, substitution.type);
+    final String description = getSubstitutionDescription(context, substitution.type);
     if (description.isNotEmpty) {
       info += description;
     } else if (substitution.changed.subjectID.isNotEmpty) {
-      info += Data.subjects[substitution.changed.subjectID
-                                  .toUpperCase()] ??
-                              substitution.changed.subjectID;
+      info += Data.subjects[substitution.changed.subjectID.toUpperCase()] ??
+          substitution.changed.subjectID;
     }
     if (substitution.info.isNotEmpty) {
       if (info.isNotEmpty) {
@@ -72,7 +85,7 @@ class SubstitutionPlanRow extends StatelessWidget {
             flex: 7,
             child: Center(
               child: Text(
-                (show) ? '${substitution.unit + 1}' : '',
+                show ? '${substitution.unit + 1}' : '',
                 style: TextStyle(
                   color: Colors.black54,
                 ),
@@ -115,7 +128,7 @@ class SubstitutionPlanRow extends StatelessWidget {
                               substitution.original.subjectID,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 15.0,
+                            fontSize: 15,
                             color: Theme.of(context).primaryColor,
                           ),
                         ),
@@ -123,12 +136,7 @@ class SubstitutionPlanRow extends StatelessWidget {
                       Expanded(
                         flex: 20,
                         child: Text(
-                          getRoom(
-                            weekday,
-                            substitution.unit,
-                            substitution.original.subjectID,
-                            substitution.original.roomID,
-                          ),
+                          substitution.original.roomID,
                           style: TextStyle(
                             color: Theme.of(context).primaryColor,
                           ),

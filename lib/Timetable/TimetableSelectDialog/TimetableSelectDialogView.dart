@@ -5,61 +5,55 @@ import 'package:viktoriaflutter/Utils/SectionWidget.dart';
 import 'TimetableSelectDialogOption/TimetableSelectDialogOptionWidget.dart';
 import 'TimetableSelectDialogWidget.dart';
 
+// ignore: public_member_api_docs
 class TimetableSelectDialogView extends TimetableSelectDialogState {
   @override
   Widget build(BuildContext context) {
-    Widget item = Container(
+    final Widget item = Container(
       child: Column(
         children: [
           getABSubjects().map((subject) =>
               TimetableSelectDialogOption(
-                  day: day,
                   unit: unit,
                   subject: subject,
                   onSelected: optionSelected)),
           [
-            (getASubjects().length > 0)
-                ? Padding(
+            if (getASubjects().isNotEmpty) Padding(
                   padding: EdgeInsets.only(left: 10, right: 10),
                   child: Section(
               title: AppLocalizations
                   .of(context)
                   .aWeek,
+              paddingTop: 0,
+              paddingBottom: 0,
+              margin: 0,
               children: getASubjects()
                   .map((subject) =>
                   TimetableSelectDialogOption(
-                      day: day,
                       unit: unit,
                       subject: subject,
                       onSelected: optionSelected))
                   .cast<Widget>()
                   .toList(),
-              paddingTop: 0,
-              paddingBottom: 0,
-              margin: 0,
-            ))
-                : Container(),
-            getBSubjects().length > 0
-                ? Padding(
+            )),
+            if (getBSubjects().isNotEmpty) Padding(
                   padding: EdgeInsets.only(left: 10, right: 10),
                   child: Section(
               title: AppLocalizations
                   .of(context)
                   .bWeek,
+              paddingTop: 0,
+              paddingBottom: 0,
+              margin: 0,
               children: getBSubjects()
                   .map((subject) =>
                   TimetableSelectDialogOption(
-                      day: day,
                       unit: unit,
                       subject: subject,
                       onSelected: optionSelected))
                   .cast<Widget>()
                   .toList(),
-              paddingTop: 0,
-              paddingBottom: 0,
-              margin: 0,
             ))
-                : Container()
           ]
         ].expand((i) => i).cast<Widget>().toList(),
       ),

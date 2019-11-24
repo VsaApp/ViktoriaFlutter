@@ -5,7 +5,9 @@ import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 
+/// Rooms data downloader
 class RoomsData extends Downloader<Map<String, String>> {
+  // ignore: public_member_api_docs
   RoomsData()
       : super(
           url: Urls.rooms,

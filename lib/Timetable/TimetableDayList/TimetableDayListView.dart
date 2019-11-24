@@ -2,37 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import 'package:viktoriaflutter/Utils/Models.dart';
-import '../../Cafetoria/DayCard/DayCardWidget.dart';
-import '../../Calendar/EventCard/EventCard.dart';
-import '../../Courses/CourseEdit/CourseEditWidget.dart';
+import 'package:viktoriaflutter/Cafetoria/DayCard/DayCardWidget.dart';
+import 'package:viktoriaflutter/Calendar/EventCard/EventCard.dart';
+import 'package:viktoriaflutter/Courses/CourseEdit/CourseEditWidget.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import '../../SubstitutionPlan/SubstitutionPlanRow/SubstitutionPlanRowWidget.dart';
+import 'package:viktoriaflutter/SubstitutionPlan/SubstitutionPlanRow/SubstitutionPlanRowWidget.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import '../../WorkGroups/DayCard/DayCardWidget.dart';
-import '../TimetableRow/TimetableRowWidget.dart';
-import '../TimetableSelectDialog/TimetableSelectDialogWidget.dart';
-import 'TimetableDayListWidget.dart';
+import 'package:viktoriaflutter/WorkGroups/DayCard/DayCardWidget.dart';
+import 'package:viktoriaflutter/Timetable/TimetableRow/TimetableRowWidget.dart';
+import 'package:viktoriaflutter/Timetable/TimetableSelectDialog/TimetableSelectDialogWidget.dart';
+import 'package:viktoriaflutter/Timetable/TimetableDayList/TimetableDayListWidget.dart';
 
+// ignore: public_member_api_docs
 class TimetableDayListView extends TimetableDayListState {
   @override
   Widget build(BuildContext context) {
-    List<Widget> items = [];
-    items.addAll(widget.day.units.map((unit) {
+    final List<Widget> items = widget.day.units.map((unit) {
       // Check which subject is selected
       int _selected = getSelectedIndex(
         unit.subjects,
         week: widget.day.showWeek,
       );
-      bool nothingSelected = _selected == null;
-      if (nothingSelected) _selected = 0;
-      TimetableSubject selected = unit.subjects[_selected];
-      List<SubstitutionPlanDay> sDays = Data.substitutionPlan.days
+      final bool nothingSelected = _selected == null;
+      if (nothingSelected) {
+        _selected = 0;
+      }
+      final TimetableSubject selected = unit.subjects[_selected];
+      final List<SubstitutionPlanDay> sDays = Data.substitutionPlan.days
           .where((day) => day.date.weekday - 1 == widget.day.day)
           .toList();
-      SubstitutionPlanDay sDay = sDays.length > 0 ? sDays[0] : null;
-      List<Substitution> substitutions =
+      final SubstitutionPlanDay sDay = sDays.isNotEmpty ? sDays[0] : null;
+      final List<Substitution> substitutions =
           selected.getSubstitutions().where((substitution) {
         return !substitution.isExam || sDay.isMySubstitution(substitution);
       }).toList();
@@ -67,7 +69,6 @@ class TimetableDayListView extends TimetableDayListState {
               builder: (BuildContext context1) {
                 return CourseEdit(
                   subject: selected,
-                  blocks: [selected.block],
                   onExamChange: (_) {
                     setState(() {
                       Data.timetable.setAllSelections();
@@ -78,7 +79,7 @@ class TimetableDayListView extends TimetableDayListState {
             );
           }
         },
-        child: (nothingSelected
+        child: nothingSelected
             ?
             // Show select lesson information
             Padding(
@@ -91,7 +92,6 @@ class TimetableDayListView extends TimetableDayListState {
                         padding: EdgeInsets.only(bottom: 10),
                         child: Column(children: [
                           TimetableRow(
-                            weekday: widget.day.day,
                             subject: TimetableSubject(
                                 id: 'selection',
                                 unit: unit.unit,
@@ -103,24 +103,21 @@ class TimetableDayListView extends TimetableDayListState {
                                 block: '',
                                 courseID: '',
                                 week: 2),
-                            unit: widget.day.units.indexOf(unit),
                           ),
                         ]))))
-            : (substitutions.length == 0 ||
+            : (substitutions.isEmpty ||
                     !Storage.getBool(Keys.showSubstitutionPlanInTimetable)
                 ?
                 // Show normal subject
                 Padding(
                     padding: EdgeInsets.only(left: 2.5, right: 2.5),
                     child: TimetableRow(
-                      weekday: widget.day.day,
                       subject: selected,
-                      unit: widget.day.units.indexOf(unit),
                     ),
                   )
                 :
                 // Show list of changes
-                substitutions.length > 0
+                substitutions.isNotEmpty
                     ? Padding(
                         padding: EdgeInsets.only(
                             left: 0,
@@ -148,13 +145,11 @@ class TimetableDayListView extends TimetableDayListState {
                           ),
                         ))
                     : TimetableRow(
-                        weekday: widget.day.day,
                         subject: selected,
-                        unit: widget.day.units.indexOf(unit),
-                      ))),
+                      )),
       );
-    }).toList());
-    List<Widget> infoItems = [];
+    }).toList();
+    final List<Widget> infoItems = [];
     if (showCalendar) {
       getEventsForWeekday(widget.day.day).forEach((event) {
         infoItems.add(Padding(
@@ -183,7 +178,7 @@ class TimetableDayListView extends TimetableDayListState {
         ),
       ));
     }
-    if (infoItems.length > 0) {
+    if (infoItems.isNotEmpty) {
       return Stack(children: [
         ListView(
           padding: EdgeInsets.only(bottom: 110),
@@ -212,12 +207,12 @@ class TimetableDayListView extends TimetableDayListState {
                             gradient: LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
-                                stops: [
+                                stops: const [
                                   0,
                                   0.6,
                                   1
                                 ],
-                                colors: [
+                                colors: const [
                                   Color.fromARGB(20, 100, 100, 100),
                                   Color.fromARGB(10, 100, 100, 100),
                                   Color.fromARGB(0, 100, 100, 100)
@@ -232,7 +227,7 @@ class TimetableDayListView extends TimetableDayListState {
                                 width: 70,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(16.0),
+                                    borderRadius: BorderRadius.circular(16),
                                     color: Theme.of(context).accentColor,
                                   ),
                                 ),

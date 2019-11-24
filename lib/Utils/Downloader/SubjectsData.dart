@@ -5,7 +5,9 @@ import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 
+/// Subjects data downloader
 class SubjectsData extends Downloader<Map<String, String>> {
+  // ignore: public_member_api_docs
   SubjectsData()
       : super(
           url: Urls.subjects,

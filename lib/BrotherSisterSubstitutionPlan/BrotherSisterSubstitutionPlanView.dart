@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Downloader/SubstitutionPlanData.dart';
-import '../SubstitutionPlan/SubstitutionPlanDayList/SubstitutionPlanDayListWidget.dart';
 import 'package:viktoriaflutter/Utils/TabProxy.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
+import 'package:viktoriaflutter/SubstitutionPlan/SubstitutionPlanDayList/SubstitutionPlanDayListWidget.dart';
 import 'BrotherSisterSubstitutionPlanPage.dart';
 
+/// View for a substitution plan for other grades
 class BrotherSisterSubstitutionPlanPageView
     extends BrotherSisterSubstitutionPlanPageState {
   @override
@@ -14,11 +15,11 @@ class BrotherSisterSubstitutionPlanPageView
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.grade),
-          elevation: 0.0,
+          elevation: 0,
         ),
         body: LayoutBuilder(builder: (context, constraints) {
           return Hero(
-            tag: 'substitutionPlan-' + widget.grade,
+            tag: 'substitutionPlan-${widget.grade}',
             child: TabProxy(
               weekdays: days
                   .map((day) => AppLocalizations.of(context)
@@ -28,7 +29,6 @@ class BrotherSisterSubstitutionPlanPageView
                   .map((day) => SubstitutionPlanDayList(
                         day: day,
                         dayIndex: days.indexOf(day),
-                        temp: true,
                         grade: widget.grade,
                         sort: false,
                       ))

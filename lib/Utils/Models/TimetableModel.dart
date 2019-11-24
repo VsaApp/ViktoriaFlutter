@@ -8,10 +8,16 @@ import 'package:viktoriaflutter/Utils/Keys.dart';
 
 /// Describes the whole timetable...
 class Timetable {
+  /// All timetable days
   List<TimetableDay> days;
+
+  /// The updated day of the timetable
   DateTime date;
+
+  /// The grade of the timetable
   String grade;
 
+  // ignore: public_member_api_docs
   Timetable({@required this.days, @required this.date, @required this.grade});
 
   /// Set all default selections...
@@ -21,6 +27,7 @@ class Timetable {
     }
   }
 
+  /// Creates a timetable for json map
   factory Timetable.fromJSON(Map<String, dynamic> json) {
     return Timetable(
       grade: json['grade'] as String,
@@ -32,6 +39,7 @@ class Timetable {
     );
   }
 
+  /// Resets all selection in the timetable
   void resetAllSelections() {
     days.forEach((d) => d.units.forEach((u) {
           u.substitutions = [];
@@ -39,6 +47,7 @@ class Timetable {
         }));
   }
 
+  /// Returns all timetable subjects
   List<TimetableSubject> getAllSubjects() {
     return days
         .map((d) => d.units.map((u) => u.subjects).toList())
@@ -47,6 +56,7 @@ class Timetable {
         .reduce((i1, i2) => List.from(i1)..addAll(i2));
   }
 
+  /// return all selected subjects
   List<TimetableSubject> getAllSelectedSubjects() {
     return days
         .map((TimetableDay day) {
@@ -61,6 +71,7 @@ class Timetable {
         .toList();
   }
 
+  /// Returns all subjects with the given [courseID]
   List<TimetableUnit> getAllSubjectsWithCourseID(String courseID) {
     return days
         .map((TimetableDay day) => day.units
@@ -75,16 +86,25 @@ class Timetable {
 
 /// Describes a day of the timetable...
 class TimetableDay {
+  /// The weekday (0 to 4)
   final int day;
+
+  /// The list of all timetable units on this day
   final List<TimetableUnit> units;
+
+  /// Which week should be shown in the view
   int showWeek;
 
+  // ignore: public_member_api_docs
   TimetableDay({@required this.day, @required this.units}) {
     int week = Date.now().getWeekOfYear();
-    if (DateTime.now().day > 5) week++;
+    if (DateTime.now().day > 5) {
+      week++;
+    }
     showWeek = week % 2;
   }
 
+  /// Creates a timetable day from json map
   factory TimetableDay.fromJson(Map<String, dynamic> json) {
     return TimetableDay(
       day: json['day'] as int,
@@ -95,10 +115,13 @@ class TimetableDay {
     );
   }
 
+  /// Returns the lessons on this day for the user
+  ///
+  /// Without free lesson in the end
   int getUserLessonsCount(String freeLesson) {
     for (int i = units.length - 1; i >= 0; i--) {
-      TimetableUnit unit = units[i];
-      TimetableSubject selected = getSelectedSubject(
+      final TimetableUnit unit = units[i];
+      final TimetableSubject selected = getSelectedSubject(
         unit.subjects,
         week: showWeek,
       );
@@ -126,19 +149,30 @@ class TimetableDay {
   }
 }
 
-// Describes a Lesson of a timetable day...
+/// Describes a Lesson of a timetable day...
 class TimetableUnit {
+  /// The unit number (starts with 0)
   final int unit;
+
+  /// All subject in this unit
   final List<TimetableSubject> subjects;
+
+  /// The day index (0 to 4)
   final int day;
+
+  /// All substitution for this unit
+  ///
+  /// Here will be only the exams. The other substitutions will be directly in the subject
   List<Substitution> substitutions = [];
 
+  // ignore: public_member_api_docs
   TimetableUnit({
     @required this.unit,
     @required this.subjects,
     @required this.day,
   });
 
+  /// Creates a timetable unit from json map
   factory TimetableUnit.fromJson(Map<String, dynamic> json, int day) {
     return TimetableUnit(
         unit: json['unit'] as int,
@@ -149,31 +183,52 @@ class TimetableUnit {
         day: day);
   }
 
-  // Set the default selection...
+  /// Set the default selection...
   void setSelection(int day, int unit) {
     if (subjects.length == 1) {
       setSelectedSubject(subjects[0], defaultSelection: true);
     }
   }
 
+  /// Return the selected subject
   TimetableSubject getSelected() {
     return getSelectedSubject(subjects);
   }
 }
 
-// Describes a subject of a timetable unit...
+/// Describes a subject of a timetable unit...
 class TimetableSubject {
+  /// The unit index (starts with 0)
   final int unit;
+
+  /// The uniq subject identifier
   final String id;
+
+  /// The subject name identifier
   final String subjectID;
+
+  /// The teacher name identifier
   final String teacherID;
+
+  /// The room name identifier
   final String roomID;
+
+  /// The uniq course identifier
   final String courseID;
+
+  /// The week (A: 0; B: 1; AB: 2)
   final int week;
+
+  /// The block of the subject
   final String block;
+
+  /// The day index of the subject (0 to 4)
   final int day;
+
+  /// All substitution for this subject
   List<Substitution> substitutions = [];
 
+  // ignore: public_member_api_docs
   TimetableSubject({
     @required this.unit,
     @required this.id,
@@ -188,16 +243,22 @@ class TimetableSubject {
 
   /// Returns all changes with this subject id
   List<Substitution> getSubstitutions() {
-    return []
-      ..addAll(substitutions ?? [])
-      ..addAll(Data.timetable.days[day].units[unit].substitutions ?? []);
+    return [
+      ...?substitutions,
+      ...?Data.timetable.days[day].units[unit].substitutions
+    ];
   }
 
-  /// Define exams settings
+  /// Check if the exams is already set
   bool get examIsSet => Storage.getBool(Keys.exams(courseID)) != null;
+
+  /// Get writing exams
   bool get writeExams => Storage.getBool(Keys.exams(courseID)) ?? true;
+
+  /// Set writing exams
   set writeExams(bool write) => Storage.setBool(Keys.exams(courseID), write);
 
+  /// Creates a subject from json map
   factory TimetableSubject.fromJson(Map<String, dynamic> json, int day) {
     return TimetableSubject(
         unit: json['unit'] as int,

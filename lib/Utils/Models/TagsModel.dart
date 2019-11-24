@@ -1,6 +1,9 @@
 /// All tags of the current user
 class Tags {
+  /// The user grade
   final String grade;
+
+  /// The user group (pupil/developer/teacher)
   final int group;
 
   /// List of course ids
@@ -15,6 +18,7 @@ class Tags {
   /// Timestamp of last tags modified
   final DateTime timestamp;
 
+  // ignore: public_member_api_docs
   Tags({
     this.group,
     this.grade,
@@ -24,10 +28,14 @@ class Tags {
     this.timestamp,
   });
 
+  /// Checks if the user is already initialized in the server
   bool get isInitialized => grade != null;
 
+  /// Creates the tags model from json map
   factory Tags.fromJson(Map<String, dynamic> json) {
-    if (json.keys.isEmpty) return Tags();
+    if (json.keys.isEmpty) {
+      return Tags();
+    }
     return Tags(
       grade: json['grade'] as String,
       group: json['group'] as int,
@@ -39,14 +47,22 @@ class Tags {
   }
 }
 
+/// Describes a device
 class Device {
+  // ignore: public_member_api_docs
   final String os;
+  // ignore: public_member_api_docs
   final String name;
+  // ignore: public_member_api_docs
   final String appVersion;
+  // ignore: public_member_api_docs
   final bool notifications;
+  // ignore: public_member_api_docs
   final String firebaseId;
+  // ignore: public_member_api_docs
   final String language;
 
+  // ignore: public_member_api_docs
   Device(
       {this.os,
       this.name,
@@ -55,6 +71,7 @@ class Device {
       this.firebaseId,
       this.language});
 
+  /// Creates a device from json map
   factory Device.fromJson(Map<String, dynamic> json) {
     return Device(
       os: json['os'] as String,
@@ -66,6 +83,7 @@ class Device {
     );
   }
 
+  /// Convert a device to a json map
   Map<String, dynamic> toMap() {
     return {
       'os': os,
@@ -78,21 +96,28 @@ class Device {
   }
 }
 
+/// Describes the cafetoria tags
 class CafetoriaTags {
+  // ignore: public_member_api_docs
   final String id;
+  // ignore: public_member_api_docs
   final String password;
+
+  /// Last updated timestamp
   final DateTime timestamp;
 
+  // ignore: public_member_api_docs
   CafetoriaTags({this.id, this.password, this.timestamp});
 
+  /// Creates cafetoria tags from json map
   factory CafetoriaTags.fromJson(Map<String, dynamic> json) {
     return CafetoriaTags(
-      id: json['id'] as String,
-      password: json['password'] as String,
-      timestamp: DateTime.parse(json['timestamp'] as String)
-    );
+        id: json['id'] as String,
+        password: json['password'] as String,
+        timestamp: DateTime.parse(json['timestamp'] as String));
   }
 
+  /// Converts cafetoria tags to json map
   Map<String, dynamic> toMap() {
     return {
       'id': id,

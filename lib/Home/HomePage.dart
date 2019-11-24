@@ -4,99 +4,156 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:viktoriaflutter/Home/HomeView.dart';
+import 'package:viktoriaflutter/Home/NewTimetableDialog/NewTimetableDialogModel.dart';
 import 'package:viktoriaflutter/Utils/Downloader/SubstitutionPlanData.dart';
 import 'package:viktoriaflutter/Utils/Downloader/TimetableData.dart';
-import '../Utils/Keys.dart';
-import '../Utils/Localizations.dart';
-import '../Utils/Storage.dart';
-import '../Utils/Tags.dart';
-import '../Utils/Models.dart' as Models;
-import 'HomeView.dart';
-import 'NewTimetableDialog/NewTimetableDialogModel.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
+import 'package:viktoriaflutter/Utils/Tags.dart';
+import 'package:viktoriaflutter/Utils/Models.dart' as models;
 
-// Define drawer item
+/// Define drawer item
 class DrawerItem {
+  /// Title of drawer item
   String title;
+
+  /// Icon of drawer item
   IconData icon;
+
+  /// Url of drawer item
   String url;
 
+  // ignore: public_member_api_docs
   DrawerItem(this.title, this.icon, this.url);
 }
 
-// Define page
+/// Define page
 class Page {
+  // ignore: public_member_api_docs
   String url;
+  // ignore: public_member_api_docs
   IconData icon;
+  // ignore: public_member_api_docs
   String name;
+  // ignore: public_member_api_docs
   Widget page;
 
+  // ignore: public_member_api_docs
   Page(this.name, this.icon, this.page, {this.url});
 }
 
+/// The home page of the app
 class HomePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => HomePageView();
 }
 
+// ignore: public_member_api_docs
 abstract class HomePageState extends State<HomePage>
-    with WidgetsBindingObserver {
-  static AppLifecycleState lifecycleState;
-  int currentWeek = 0;
-  bool showWeek = false;
-  static bool weekChangeable = true;
-  Scaffold appScaffold;
-  int selectedDrawerIndex = 0;
-  static String grade = '';
-  bool dialogShown = false;
-  bool timetableChanged = false;
-  String currentTimetableDate;
-  bool showDialog1 = true;
-  bool offlineShown = false;
-  static const platform = const MethodChannel('viktoriaflutter');
-  static Function(int week) weekChanged;
-  static Function(int week) updateWeek;
-  static Function(bool value) setShowWeek;
-  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
+    with
+        // ignore: prefer_mixin
+        WidgetsBindingObserver {
+  static AppLifecycleState _lifecycleState;
 
+  /// The current week
+  ///
+  /// Used by timetable and substitution plan
+  int currentWeek = 0;
+
+  /// Sets if [currentWeek] should be shown
+  bool showWeek = false;
+
+  /// Sets if [currentWeek] should be changeable
+  static bool weekChangeable = true;
+
+  /// Defines the highest app scaffold
+  Scaffold appScaffold;
+
+  /// Defines the selected drawer index in the side menu
+  int selectedDrawerIndex = 0;
+
+  /// Defines the grade of the user
+  static String grade = '';
+
+  /// Sets if the shortcut dialog should be shown
+  bool showShortcutDialog = true;
+
+  /// Defines if the offline dialog was already shown
+  ///
+  /// Important if a user switched back from an other feature and the home page rebuilds
+  bool offlineShown = false;
+
+  /// Defines the method channel to communicate with the platform specific code
+  static const platform = MethodChannel('viktoriaflutter');
+
+  /// [currentWeek] changed listener
+  static Function(int week) weekChanged;
+
+  /// Static function to update [currentWeek] attribute from everywhere in the app
+  static Function(int week) updateWeek;
+
+  /// Static function to set the [showWeek] attribute from everywhere in the app
+  static Function(bool value) setShowWeek;
+
+  /// The static scaffold key to get this scaffold from everywhere in the app
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  /// A list of substitution plan updated listeners
+  ///
+  /// This listeners would be triggered when the app receives a silent notification from the server
   static List<Function()> substitutionPlanUpdatedListeners = [];
 
   /// Checks if the app is in foreground
-  static bool get isInForeground => lifecycleState == null || lifecycleState.index == 0;
+  static bool get isInForeground =>
+      _lifecycleState == null || _lifecycleState.index == 0;
 
   void _showWeek(bool value) {
-    if (mounted && value != showWeek) setState(() => showWeek = value);
+    if (mounted && value != showWeek) {
+      setState(() => showWeek = value);
+    }
   }
 
+  // ignore: use_setters_to_change_properties
   /// Activates od Deactivates the week toggle button
-  static setWeekChangeable(bool value) {
+  static void setWeekChangeable(bool value) {
     HomePageState.weekChangeable = value;
   }
 
   /// Updates the week of the week button
   void _updateWeek(int week) {
-    if (mounted && week != currentWeek) setState(() => currentWeek = week);
+    if (mounted && week != currentWeek) {
+      setState(() => currentWeek = week);
+    }
   }
 
   /// Calls the listener and updates wee
   void weekPressed() {
-    if (!weekChangeable) return;
+    if (!weekChangeable) {
+      return;
+    }
     setState(() => currentWeek = currentWeek == 1 ? 0 : 1);
-    if (weekChanged != null) weekChanged(currentWeek);
+    if (weekChanged != null) {
+      weekChanged(currentWeek);
+    }
   }
 
   /// Launches an url in browser
-  launchURL(String url) async {
-    if (url == null) return;
+  Future launchURL(String url) async {
+    if (url == null) {
+      return;
+    }
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      throw 'Could not launch $url';
+      throw Exception('Could not launch $url');
     }
   }
 
   /// Handles an incoming substitution plan notification
   Future handleSubstitutionPlanNotification(Map msg) async {
-    print("received substitution plan notification");
+    print('received substitution plan notification');
     await SubstitutionPlanData().download(context);
     if (appScaffold != null && isInForeground) {
       substitutionPlanUpdatedListeners
@@ -118,11 +175,11 @@ abstract class HomePageState extends State<HomePage>
 
   /// Handles incoming timetable notifications
   Future handleTimetableNotification(Map msg) async {
-    print("received timetable notification");
+    print('received timetable notification');
     await syncWithTags(forceSync: true);
     await TimetableData().download(context);
-    Models.Data.substitutionPlan.insert();
-    Models.Data.substitutionPlan.updateFilter();
+    models.Data.substitutionPlan.insert();
+    models.Data.substitutionPlan.updateFilter();
     if (appScaffold != null) {
       substitutionPlanUpdatedListeners
           .forEach((substitutionPlanUpdated) => substitutionPlanUpdated());
@@ -132,27 +189,30 @@ abstract class HomePageState extends State<HomePage>
 
   /// Handles incoming notifications opened signals
   Future notificationOpenedHandler(String msg) async {
-    print("opened: $msg");
+    print('opened: $msg');
     // Delete all notifications
     platform.invokeMethod('clearNotifications');
     // Switch to substitution plan page
-    if (msg == 'substitutionPlan_channel')
+    if (msg == 'substitutionPlan_channel') {
       setState(() => selectedDrawerIndex = 1);
+    }
   }
 
   /// Handles events from the platform code (currently only android)
   Future<dynamic> _handleNotification(MethodCall call) async {
-    if (call.method == 'substitution plan')
+    if (call.method == 'substitution plan') {
       handleSubstitutionPlanNotification(call.arguments);
-    else if (call.method == 'timetable')
+    } else if (call.method == 'timetable') {
       handleTimetableNotification(call.arguments);
-    else if (call.method == 'opened') notificationOpenedHandler(call.arguments);
+    } else if (call.method == 'opened') {
+      notificationOpenedHandler(call.arguments);
+    }
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     setState(() {
-      lifecycleState = state;
+      _lifecycleState = state;
       print('State changed: ${state.index}');
     });
   }
@@ -164,7 +224,7 @@ abstract class HomePageState extends State<HomePage>
 
     // Load data
     grade = Storage.get(Keys.grade) ?? '';
-    showDialog1 = Storage.getBool(Keys.showShortCutDialog) ?? false;
+    showShortcutDialog = Storage.getBool(Keys.showShortCutDialog) ?? false;
     selectedDrawerIndex = Storage.getInt(Keys.initialPage) ?? 0;
 
     // Set listeners
@@ -199,6 +259,7 @@ abstract class HomePageState extends State<HomePage>
     super.dispose();
   }
 
+  /// Show a dialog when the timetable was updated
   static void checkIfTimetableUpdated(BuildContext context) {
     if (Storage.getBool(Keys.timetableIsNew) ?? false) {
       showDialog<String>(
@@ -211,20 +272,22 @@ abstract class HomePageState extends State<HomePage>
     }
   }
 
-  // Return the widget of the page
-  getDrawerItemWidget(int pos, List<Page> pages) {
-    if (pos < pages.length)
+  /// Returns the widget of the page
+  Widget getDrawerItemWidget(int pos, List<Page> pages) {
+    if (pos < pages.length) {
       return pages[pos].page;
-    else
+    } else {
       return Text('Error');
+    }
   }
 
-  // Change page
-  onSelectItem(int index) {
-    if (index > 1)
+  /// Changes page
+  void onSelectItem(int index) {
+    if (index > 1) {
       setShowWeek(false);
-    else
+    } else {
       setShowWeek(true);
+    }
     setState(() => selectedDrawerIndex = index);
     Navigator.of(context).pop();
   }

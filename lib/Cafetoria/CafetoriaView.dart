@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import 'ActionFAB/ActionFABWidget.dart';
 import 'package:viktoriaflutter/Utils/Downloader/CafetoriaData.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
+import 'ActionFAB/ActionFABWidget.dart';
 import 'CafetoriaPage.dart';
 import 'DayCard/DayCardWidget.dart';
 import 'LoginDialog/LoginDialogWidget.dart';
 
+// ignore: public_member_api_docs
 class CafetoriaPageView extends CafetoriaPageState {
-  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +32,8 @@ class CafetoriaPageView extends CafetoriaPageState {
             ),
           ),
           Positioned(
-            bottom: 16.0,
-            right: 16.0,
+            bottom: 16,
+            right: 16,
             child: Container(
               child: ActionFab(
                 onLogin: () {

@@ -4,9 +4,10 @@ import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 
-void init() async {
-  List<String> bugs = Storage.getStringList(Keys.bugs) ?? [];
-  if (bugs.length > 0 && (await checkOnline) == 1) {
+/// Initialize bugs report
+Future init() async {
+  final List<String> bugs = Storage.getStringList(Keys.bugs) ?? [];
+  if (bugs.isNotEmpty && (await checkOnline) == 1) {
     bugs.forEach((String bug) {
       reportError(bug.split(':|:')[0], bug.split(':|:')[1]);
     });
@@ -14,8 +15,10 @@ void init() async {
   }
 }
 
-void reportError(error, stackTrace) async {
-  print("Report new bug ($error)");
+/// Report a new error
+// ignore: type_annotate_public_apis
+Future<void> reportError(error, stackTrace) async {
+  print('Report new bug ($error)');
   if ((await checkOnline) == 1) {
     String version;
     try {
@@ -31,10 +34,10 @@ void reportError(error, stackTrace) async {
     }
     try {
       httpPost(Urls.bugReport, body: {
-        "username": Storage.getString(Keys.username),
-        "title": error.toString(),
-        "error": stackTrace.toString(),
-        "version": version == '' ? null : version
+        'username': Storage.getString(Keys.username),
+        'title': error.toString(),
+        'error': stackTrace.toString(),
+        'version': version == '' ? null : version
       });
     } catch (_) {
       Storage.setStringList(Keys.bugs, Storage.getStringList(Keys.bugs)..add('$error:|:$stackTrace'));

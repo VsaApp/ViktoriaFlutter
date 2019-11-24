@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'NewTimetableDialogModel.dart';
 
+// ignore: public_member_api_docs
 class NewTimetableDialogDialogView extends NewTimetableDialogState {
   @override
   Widget build(BuildContext context) {
@@ -18,9 +19,9 @@ class NewTimetableDialogDialogView extends NewTimetableDialogState {
                 child: Center(
                     child: Text(AppLocalizations.of(context).newTimetableInfo))),
             FlatButton(
+              onPressed: Navigator.of(context).pop,
               child: Text(AppLocalizations.of(context).ok,
                   style: TextStyle(color: Theme.of(context).accentColor)),
-              onPressed: Navigator.of(context).pop,
             )
           ])
         ]);

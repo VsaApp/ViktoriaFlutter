@@ -1,46 +1,35 @@
 import 'package:flutter/material.dart';
 
-import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'CourseEditView.dart';
 
+/// Dialog to edit course properties
 class CourseEdit extends StatefulWidget {
+  /// One subject of the course to edit
   final TimetableSubject subject;
-  final List<String> blocks;
+
+  /// Exam changed listener
   final Function onExamChange;
 
-  CourseEdit(
-      {Key key,
-      @required this.subject,
-      @required this.blocks,
-      this.onExamChange})
-      : super(key: key);
+  // ignore: public_member_api_docs
+  const CourseEdit({
+    @required this.subject,
+    this.onExamChange,
+    Key key,
+  }) : super(key: key);
 
   @override
   CourseEditView createState() => CourseEditView();
 }
 
+// ignore: public_member_api_docs
 abstract class CourseEditState extends State<CourseEdit> {
+  /// Writing exams option
   bool exams = false;
-  List<dynamic> subjects1 = [];
 
   @override
   void initState() {
     exams = widget.subject.writeExams;
-    List<TimetableDay> days = Data.timetable.days;
-    days.forEach((day) {
-      day.units.forEach((unit) {
-        TimetableSubject _selected = getSelectedSubject(unit.subjects);
-        if (_selected == null) return;
-        if (_selected.subjectID == widget.subject.subjectID) {
-          subjects1.add({
-            'weekday': days.indexOf(day),
-            'unit': day.units.indexOf(unit),
-            'subject': _selected
-          });
-        }
-      });
-    });
     super.initState();
   }
 }

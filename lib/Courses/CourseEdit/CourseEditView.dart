@@ -5,11 +5,12 @@ import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
 import 'CourseEditWidget.dart';
 
+// ignore: public_member_api_docs
 class CourseEditView extends CourseEditState {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: Text((Data.subjects[widget.subject.subjectID.toUpperCase()] ?? widget.subject.subjectID) + ' ' + widget.subject.teacherID.toUpperCase()),
+      title: Text('${Data.subjects[widget.subject.subjectID.toUpperCase()] ?? widget.subject.subjectID} ${widget.subject.teacherID.toUpperCase()}'),
       children: <Widget>[
         // Writing option
         CheckboxListTile(
@@ -30,8 +31,8 @@ class CourseEditView extends CourseEditState {
         ),
         Container(
           margin: EdgeInsets.only(
-            left: 10.0,
-            right: 10.0,
+            left: 10,
+            right: 10,
           ),
           child: SizedBox(
             width: double.infinity,

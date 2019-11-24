@@ -10,7 +10,9 @@ import 'package:viktoriaflutter/Utils/Tags.dart';
 
 import 'package:viktoriaflutter/Utils/Models.dart';
 
+/// Timetable data downloader
 class TimetableData extends Downloader<Timetable> {
+  // ignore: public_member_api_docs
   TimetableData()
       : super(
           url: Urls.timetable,
@@ -27,9 +29,9 @@ class TimetableData extends Downloader<Timetable> {
 
   @override
   Future<int> download(BuildContext context, {bool update = true}) async {
-    String currentTimetable = Storage.getString(key);
-    int status = await super.download(context, update: update);
-    String newTimetable = Storage.getString(key);
+    final String currentTimetable = Storage.getString(key);
+    final int status = await super.download(context, update: update);
+    final String newTimetable = Storage.getString(key);
     checkTimetableUpdated(currentTimetable, newTimetable);
     return status;
   }
@@ -53,19 +55,19 @@ class TimetableData extends Downloader<Timetable> {
 
   /// Resets the selected subjects when the timetable changed
   Future checkTimetableUpdated(String version1, String version2) async {
-    if (version1 == null || version2 == null) return;
+    if (version1 == null || version2 == null) {
+      return;
+    }
     version1 = version1.replaceFirst(RegExp('"date":.+,'), '');
     version2 = version2.replaceFirst(RegExp('"date":.+,'), '');
     if (version1 != version2) {
       Storage.setBool(Keys.timetableIsNew, true);
       print('There is a new timetable, reset old data');
-      List<String> keys = Storage.getKeys();
-      List<String> keysToReset = keys
-          .where((String key) =>
-              key.startsWith(Keys.selection('')) ||
-              key.startsWith(Keys.exams('')))
-          .toList();
-      keysToReset.forEach((String key) => Storage.remove(key));
+      final List<String> keys = Storage.getKeys()
+        ..where((String key) =>
+            key.startsWith(Keys.selection('')) ||
+            key.startsWith(Keys.exams(''))).toList()
+        ..forEach(Storage.remove);
       await deleteTags({
         'timestamp': Storage.getString(Keys.lastModified),
         'selected': keys

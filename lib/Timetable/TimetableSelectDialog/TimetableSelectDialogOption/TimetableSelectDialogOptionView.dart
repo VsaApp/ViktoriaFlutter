@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../../Courses/CourseEdit/CourseEditWidget.dart';
+import 'package:viktoriaflutter/Courses/CourseEdit/CourseEditWidget.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import '../../TimetableRow/TimetableRowWidget.dart';
+import 'package:viktoriaflutter/Timetable/TimetableRow/TimetableRowWidget.dart';
 import 'TimetableSelectDialogOptionWidget.dart';
 
+// ignore: public_member_api_docs
 class TimetableSelectDialogOptionView extends TimetableSelectDialogOptionState {
   @override
   Widget build(BuildContext context) {
@@ -26,12 +27,12 @@ class TimetableSelectDialogOptionView extends TimetableSelectDialogOptionState {
             builder: (BuildContext context2) {
               return CourseEdit(
                 subject: subject,
-                blocks: [subject.block],
                 onExamChange: (_) {
-                  if (mounted)
+                  if (mounted) {
                     setState(() {
                       //Data.timetable.setAllSelections();
                     });
+                  }
                 },
               );
             },
@@ -39,9 +40,7 @@ class TimetableSelectDialogOptionView extends TimetableSelectDialogOptionState {
         }
       },
       child: TimetableRow(
-        weekday: day.day,
         subject: subject,
-        unit: unit.unit,
         showUnit: false,
         isDialog: true,
       ),

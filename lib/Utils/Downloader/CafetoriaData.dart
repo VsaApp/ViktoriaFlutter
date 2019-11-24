@@ -6,15 +6,17 @@ import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 
+/// Cafetoria data downloader
 class CafetoriaData extends Downloader<Cafetoria> {
+  // ignore: public_member_api_docs
   CafetoriaData()
       : super(
           url: _url,
           key: Keys.cafetoria,
-          defaultData: {
-            "saldo": null,
-            "error": null,
-            "days": [],
+          defaultData: const {
+            'saldo': null,
+            'error': null,
+            'days': [],
           },
         );
 
@@ -34,13 +36,14 @@ class CafetoriaData extends Downloader<Cafetoria> {
     return Cafetoria.fromJson(parsed);
   }
 
-  // Check the login data of the keyfob...
+  /// Check the login data of the keyfob...
   Future<bool> checkLogin({String id, String password}) async {
     try {
-      String url = Urls.cafetoriaLogin(id, password);
-      Response response = await fetch(url);
-      if (response.statusCode != StatusCodes.success)
-        throw 'Failed to check login';
+      final String url = Urls.cafetoriaLogin(id, password);
+      final Response response = await fetch(url);
+      if (response.statusCode != StatusCodes.success) {
+        throw Exception('Failed to check login');
+      }
       return json.decode(response.body)['error'] == null;
     } catch (e) {
       return false;
@@ -48,8 +51,8 @@ class CafetoriaData extends Downloader<Cafetoria> {
   }
 
   static String get _url {
-    String id = Storage.getString(Keys.cafetoriaId);
-    String password = Storage.getString(Keys.cafetoriaPassword);
+    final String id = Storage.getString(Keys.cafetoriaId);
+    final String password = Storage.getString(Keys.cafetoriaPassword);
 
     if (id != null && password != null) {
       return Urls.cafetoriaLogin(id, password);

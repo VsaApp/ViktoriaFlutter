@@ -4,61 +4,66 @@ import 'dart:io' show File, Platform;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 
-// ignore: avoid_classes_with_only_static_members
+/// Static class to save and get saved date
 class Storage {
   static SharedPreferences _sharedPreferences;
   static File _file;
-  static Map<String, dynamic> data;
+  static Map<String, dynamic> _data;
 
+  /// Init shared preferences plugin
   static Future init() async {
     if (_isDesktop) {
       _file = File('.data.json');
       if (!_file.existsSync()) {
         _file.writeAsStringSync('{}');
       }
-      data = json.decode(_file.readAsStringSync());
+      _data = json.decode(_file.readAsStringSync());
     } else {
       _sharedPreferences = await SharedPreferences.getInstance();
     }
   }
 
+  // ignore: public_member_api_docs
   static void setString(String key, String value, {bool autoSet = false}) {
     if (!autoSet && key.startsWith(Keys.cafetoriaId)) {
       setString(Keys.cafetoriaModified, DateTime.now().toIso8601String());
     }
     if (_isDesktop) {
-      data[key] = value;
+      _data[key] = value;
     } else {
       _sharedPreferences.setString(key, value);
     }
     _save();
   }
 
+  // ignore: public_member_api_docs
   static void setStringList(String key, List<String> value) {
     if (_isDesktop) {
-      data[key] = value;
+      _data[key] = value;
     } else {
       _sharedPreferences.setStringList(key, value);
     }
     _save();
   }
-
-  // ignore: avoid_positional_boolean_parameters
+  
+  // ignore: public_member_api_docs
   static void setBool(String key, bool value, {bool autoSet = false}) {
     if (!autoSet &&
-        (key.startsWith(Keys.selection('')) || key.startsWith(Keys.exams(''))))
+        (key.startsWith(Keys.selection('')) || key.startsWith(Keys.exams('')))) {
       setString(Keys.lastModified, DateTime.now().toIso8601String());
+    }
     if (_isDesktop) {
-      data[key] = value;
+      _data[key] = value;
     } else {
       _sharedPreferences.setBool(key, value);
     }
     _save();
   }
 
+  // ignore: public_member_api_docs
   static void setInt(String key, int value) {
     if (_isDesktop) {
-      data[key] = value;
+      _data[key] = value;
     } else {
       _sharedPreferences.setInt(key, value);
     }
@@ -68,44 +73,49 @@ class Storage {
   /// Returns the saved string for the given key
   static String getString(String key) {
     if (_isDesktop) {
-      return data[key];
+      return _data[key];
     } else {
       return _sharedPreferences.getString(key);
     }
   }
 
+  // ignore: public_member_api_docs
   static List<dynamic> getStringList(String key) {
     if (_isDesktop) {
-      return data[key];
+      return _data[key];
     } else {
       return _sharedPreferences.getStringList(key);
     }
   }
 
+  // ignore: public_member_api_docs
   static bool getBool(String key) {
     if (_isDesktop) {
-      return data[key];
+      return _data[key];
     } else {
       return _sharedPreferences.getBool(key);
     }
   }
 
+  // ignore: public_member_api_docs
   static int getInt(String key) {
     if (_isDesktop) {
-      return data[key];
+      return _data[key];
     } else {
       return _sharedPreferences.getInt(key);
     }
   }
 
+  // ignore: public_member_api_docs
   static dynamic get(String key) {
     if (_isDesktop) {
-      return data[key];
+      return _data[key];
     } else {
       return _sharedPreferences.get(key);
     }
   }
 
+  // ignore: public_member_api_docs
   static void remove(String key, {bool autoSet = false}) {
     if (!autoSet &&
         (key.startsWith(Keys.selection('')) ||
@@ -115,16 +125,17 @@ class Storage {
       setString(Keys.cafetoriaModified, DateTime.now().toIso8601String());
     }
     if (_isDesktop) {
-      data.remove(key);
+      _data.remove(key);
     } else {
       _sharedPreferences.remove(key);
     }
     _save();
   }
 
+  /// Returns all saved keys
   static List<String> getKeys() {
     if (_isDesktop) {
-      return data.keys.toSet().toList();
+      return _data.keys.toSet().toList();
     } else {
       return _sharedPreferences.getKeys().toList();
     }
@@ -132,7 +143,7 @@ class Storage {
 
   static void _save() {
     if (_isDesktop) {
-      _file.writeAsStringSync(json.encode(data));
+      _file.writeAsStringSync(json.encode(_data));
     }
   }
 

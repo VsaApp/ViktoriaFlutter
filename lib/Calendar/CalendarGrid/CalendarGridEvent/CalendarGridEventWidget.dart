@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import '../../EventCard/EventCard.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
+import 'package:viktoriaflutter/Calendar/EventCard/EventCard.dart';
 
+/// A card with name, icon and date for one calendar event
 class CalendarGridEvent extends StatelessWidget {
+  /// The event that should be shown
   final CalendarEvent event;
 
-  CalendarGridEvent({this.event});
+  // ignore: public_member_api_docs
+  const CalendarGridEvent({this.event});
 
   @override
   Widget build(BuildContext context) {
@@ -23,14 +26,15 @@ class CalendarGridEvent extends StatelessWidget {
                     children: <Widget>[EventCard(event: event)]),
                 actions: <Widget>[
                   FlatButton(
-                      color: Theme.of(context).accentColor,
-                      child: Text(
-                        AppLocalizations.of(context).ok,
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      }),
+                    color: Theme.of(context).accentColor,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      AppLocalizations.of(context).ok,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
                 ],
               );
             },

@@ -5,22 +5,32 @@ import 'package:flutter/material.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 
+/// The downloader structure
 abstract class Downloader<type> {
+  /// The default data that should be used in the case of errors
   final dynamic defaultData;
+
+  /// The download url
   final String url;
+
+  /// The storage key
   final String key;
 
+  // ignore: public_member_api_docs
   Downloader({
     @required this.defaultData,
     @required this.url,
     @required this.key,
   });
 
+  /// Downloads and saves the data
+  ///
+  /// If the login data is wrong, the login page will be opened
   Future<int> download(BuildContext context, {bool update = true}) async {
     int status = StatusCodes.success;
 
     if (update || Storage.getString(key) == null) {
-      Completer<int> statusCompleter = Completer();
+      final Completer<int> statusCompleter = Completer();
       // Default timetable (Only for download errors)
       await fetchDataAndSave(url, key, json.encode(defaultData),
           onFinished: statusCompleter.complete);
@@ -37,16 +47,17 @@ abstract class Downloader<type> {
     return status;
   }
 
+  /// Saves the data in the static `Data` class
   void saveStatic(type data);
 
-  /// Returns the static data...
+  /// Returns the static data
   type getData();
 
-  /// Get data from preferences...
+  /// Get data from preferences
   type fetch() {
     return parse(Storage.getString(key));
   }
 
-  /// Returns parsed data...
+  /// Returns parsed data
   type parse(String responseBody);
 }

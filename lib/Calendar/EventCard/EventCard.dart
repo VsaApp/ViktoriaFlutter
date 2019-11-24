@@ -3,39 +3,27 @@ import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Models.dart';
 
+/// A card with all infos to one event
 class EventCard extends StatelessWidget {
-  EventCard({@required this.event}) : super();
+  // ignore: public_member_api_docs
+  const EventCard({@required this.event}) : super();
+
+  /// The event for the card
   final CalendarEvent event;
 
   @override
   Widget build(BuildContext context) {
-    String startDate = event.start != null
-        ? event.start.day.toString() +
-            '.' +
-            event.start.month.toString() +
-            '.' +
-            event.start.year.toString()
+    final String startDate = event.start != null
+        ? '${event.start.day.toString()}.${event.start.month.toString()}.${event.start.year.toString()}'
         : '';
-    String startTime = event.start != null
-        ? (event.start.hour.toString().length == 1 ? '0' : '') +
-            event.start.hour.toString() +
-            ':' +
-            (event.start.minute.toString().length == 1 ? '0' : '') +
-            event.start.minute.toString()
+    final String startTime = event.start != null
+        ? '${event.start.hour.toString().padLeft(2, '0')}:${event.start.minute.toString().padLeft(2, '0')}'
         : '';
-    String endDate = event.end != null
-        ? event.end.day.toString() +
-            '.' +
-            event.end.month.toString() +
-            '.' +
-            event.end.year.toString()
+    final String endDate = event.end != null
+        ? '${event.end.day.toString()}.${event.end.month.toString()}.${event.end.year.toString()}'
         : '';
-    String endTime = event.end != null
-        ? (event.end.hour.toString().length == 1 ? '0' : '') +
-            event.end.hour.toString() +
-            ':' +
-            (event.end.minute.toString().length == 1 ? '0' : '') +
-            event.end.minute.toString()
+    final String endTime = event.end != null
+        ? '${event.end.hour.toString().padLeft(2, '0')}:${event.end.minute.toString().padLeft(2, '0')}'
         : '';
     String line1 = startDate;
     String line2 = 'bis $endDate';

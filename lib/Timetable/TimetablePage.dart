@@ -3,7 +3,7 @@ import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
 import 'package:viktoriaflutter/Utils/Week.dart';
 
-import '../Home/HomePage.dart';
+import 'package:viktoriaflutter/Home/HomePage.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
@@ -11,47 +11,61 @@ import 'package:viktoriaflutter/Utils/TabProxy.dart';
 import 'package:viktoriaflutter/Utils/Update.dart';
 import 'package:viktoriaflutter/Utils/Downloader/TimetableData.dart';
 import 'package:viktoriaflutter/Utils/Downloader/SubstitutionPlanData.dart';
-import 'TimetableDayList/TimetableDayListWidget.dart';
+import 'package:viktoriaflutter/Timetable/TimetableDayList/TimetableDayListWidget.dart';
 
+/// Page with a sliding page of all timetable days
 class TimetablePage extends StatefulWidget {
   @override
   TimetableView createState() => TimetableView();
 }
 
+// ignore: public_member_api_docs
 class TimetableView extends State<TimetablePage>
     with SingleTickerProviderStateMixin {
-  Function() listener;
+  
+  /// Timetable updated listener
+  Function() updatedListener;
+
+  /// The current A/B week
   bool thisWeek = true;
+
+  /// All timetable days
   List<TimetableDay> days;
-  TabController controller;
-  int originalWeek;
-  List<String> weekdays;
+
+  /// The tab controller to sync day titles with day lists
+  TabController _controller;
+
+  int _originalWeek;
+  List<String> _weekdays;
 
   /// Sets the week for each day
   void setWeeks() {
     // Get the week number of the shown week...
-    DateTime today = DateTime(
+    final DateTime today = DateTime(
         DateTime.now().year, DateTime.now().month, DateTime.now().day + 1);
     int weeks = Date.now().getWeekOfYear();
-    if (!thisWeek) weeks++;
-    int currentWeek = weeks % 2;
+    if (!thisWeek) {
+      weeks++;
+    }
+    final int currentWeek = weeks % 2;
 
     // Set all days to this week...
     Data.timetable.days.forEach((TimetableDay day) => day.showWeek = weeks % 2);
 
     // If there are changes for other weeks, set that days to this week...
-    DateTime dateOfMonday = today.add(Duration(
+    final DateTime dateOfMonday = today.add(Duration(
         days: thisWeek ? -today.weekday : DateTime.sunday + 1 - today.weekday));
     for (int i = 0; i < Data.substitutionPlan.days.length; i++) {
-      SubstitutionPlanDay day = Data.substitutionPlan.days[i];
+      final SubstitutionPlanDay day = Data.substitutionPlan.days[i];
       if (day.week != currentWeek) {
-        DateTime date = day.date;
+        final DateTime date = day.date;
         for (int j = 0; j < Data.timetable.days.length; j++) {
-          DateTime dateOfDay = dateOfMonday.add(Duration(days: j));
-          if (date.isAfter(today) && dateOfDay.weekday <= date.weekday)
+          final DateTime dateOfDay = dateOfMonday.add(Duration(days: j));
+          if (date.isAfter(today) && dateOfDay.weekday <= date.weekday) {
             Data.timetable.days[j - 1 > 0 ? j - 1 : 0].showWeek = day.week;
-          else if (date.isBefore(today) && dateOfDay.weekday >= date.weekday)
+          } else if (date.isBefore(today) && dateOfDay.weekday >= date.weekday) {
             Data.timetable.days[j].showWeek = day.week;
+          }
         }
       }
     }
@@ -60,10 +74,12 @@ class TimetableView extends State<TimetablePage>
   /// There is a day with a lesson that still is not selected, go to this day
   int getFirstPageToSelect() {
     for (int i = 0; i < Data.timetable.days.length; i++) {
-      TimetableDay day = Data.timetable.days[i];
+      final TimetableDay day = Data.timetable.days[i];
       for (int j = 0; j < day.units.length; j++) {
-        TimetableUnit unit = day.units[j];
-        if (getSelectedIndex(unit.subjects) == null) return i;
+        final TimetableUnit unit = day.units[j];
+        if (getSelectedIndex(unit.subjects) == null) {
+          return i;
+        }
       }
     }
     return -1;
@@ -76,7 +92,7 @@ class TimetableView extends State<TimetablePage>
     if (weekday > 4) {
       weekday = 0;
       thisWeek = false;
-    } else if (days[weekday].units.length > 0) {
+    } else if (days[weekday].units.isNotEmpty) {
       if (DateTime.now().isAfter(DateTime(
         DateTime.now().year,
         DateTime.now().month,
@@ -104,41 +120,43 @@ class TimetableView extends State<TimetablePage>
 
   @override
   void initState() {
-    listener = () => setState(() => days = Data.timetable.days);
-    HomePageState.substitutionPlanUpdatedListeners.add(listener);
+    updatedListener = () => setState(() => days = Data.timetable.days);
+    HomePageState.substitutionPlanUpdatedListeners.add(updatedListener);
     HomePageState.setWeekChangeable(true);
     WidgetsBinding.instance.addPostFrameCallback((a) {
       setState(() {
-        weekdays = AppLocalizations.of(context)
+        _weekdays = AppLocalizations.of(context)
             .weekdays
             .map((day) => day.substring(0, 2).toUpperCase())
             .toList();
       });
 
       // Select correct tab
-      controller = TabController(vsync: this, length: days.length);
+      _controller = TabController(vsync: this, length: days.length);
 
       int firstPage = getFirstPageToSelect();
-      if (firstPage == -1) firstPage = getCurrentWeekday();
-      controller.animateTo(firstPage);
+      if (firstPage == -1) {
+        firstPage = getCurrentWeekday();
+      }
+      _controller.animateTo(firstPage);
       setWeeks();
 
       HomePageState.updateWeek(Data.timetable.days[firstPage].showWeek);
-      controller.addListener(() {
-        if (originalWeek != null) {
-          Data.timetable.days[controller.previousIndex].showWeek = originalWeek;
-          originalWeek = null;
+      _controller.addListener(() {
+        if (_originalWeek != null) {
+          Data.timetable.days[_controller.previousIndex].showWeek = _originalWeek;
+          _originalWeek = null;
         }
         HomePageState.updateWeek(
-            Data.timetable.days[controller.index].showWeek);
+            Data.timetable.days[_controller.index].showWeek);
       });
 
       // Add week listener...
       HomePageState.weekChanged = (int week) {
-        if (originalWeek == null)
-          originalWeek = Data.timetable.days[controller.index].showWeek;
-        if (mounted)
-          setState(() => Data.timetable.days[controller.index].showWeek = week);
+        _originalWeek ??= Data.timetable.days[_controller.index].showWeek;
+        if (mounted) {
+          setState(() => Data.timetable.days[_controller.index].showWeek = week);
+        }
       };
     });
     setState(() => days = Data.timetable.days);
@@ -147,23 +165,23 @@ class TimetableView extends State<TimetablePage>
 
   @override
   void dispose() {
-    HomePageState.substitutionPlanUpdatedListeners.remove(listener);
+    HomePageState.substitutionPlanUpdatedListeners.remove(updatedListener);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (days.length == 0 || weekdays == null) {
+    if (days.isEmpty || _weekdays == null) {
       return Container();
     }
     return TabProxy(
-        weekdays: weekdays,
+        weekdays: _weekdays,
         tabs: days
             .map((day) => TimetableDayList(
                   day: day,
                 ))
             .toList(),
-        controller: controller,
+        controller: _controller,
         onUpdate: () async {
           bool successfully = await TimetableData().download(context) == StatusCodes.success;
           HomePageState.checkIfTimetableUpdated(context);

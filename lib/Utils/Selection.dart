@@ -5,15 +5,17 @@ import 'package:viktoriaflutter/Utils/Models.dart';
 /// Returns the selected index for the given week
 int getSelectedIndex(List<TimetableSubject> subjects, {int week = 0}) {
   // If it is the lunch break, it is always the first
-  if (subjects.length > 0 && subjects[0].unit == 5) return 0;
+  if (subjects.isNotEmpty && subjects[0].unit == 5) {
+    return 0;
+  }
 
   // Get all selected courses
-  List<String> courseIDs = Storage.getKeys()
+  final List<String> courseIDs = Storage.getKeys()
       .where((key) => key.startsWith(Keys.selection('')))
       .toList();
 
   // Get all subjects for the correct week and with a selected course
-  List<TimetableSubject> selectedForWeek = subjects
+  final List<TimetableSubject> selectedForWeek = subjects
       .where((s) =>
           (s.week == 2 || week == s.week) &&
           courseIDs.contains(Keys.selection(s.courseID)))
@@ -23,21 +25,23 @@ int getSelectedIndex(List<TimetableSubject> subjects, {int week = 0}) {
     selectedForWeek.forEach((s) => Storage.remove(Keys.selection(s.courseID)));
     return null;
   }
-  return selectedForWeek.length > 0
+  return selectedForWeek.isNotEmpty
       ? subjects.indexOf(selectedForWeek.single)
       : null;
 }
 
+/// Return the selected subject of a [subjects] list for a given [week]
 TimetableSubject getSelectedSubject(List<TimetableSubject> subjects,
     {int week = 0}) {
-  int index = getSelectedIndex(subjects, week: week);
+  final int index = getSelectedIndex(subjects, week: week);
   return index == null ? null : subjects[index];
 }
 
+/// Set the selected subject 
 void setSelectedSubject(TimetableSubject selected,
     {TimetableSubject selectedB, bool defaultSelection = false}) {
   // Get all selected courses
-  List<String> courseIDs = Storage.getKeys()
+  final List<String> courseIDs = Storage.getKeys()
       .where((key) => key.startsWith(Keys.selection('')))
       .toList();
 

@@ -7,48 +7,52 @@ import 'package:viktoriaflutter/Utils/Models.dart';
 import 'CourseEdit/CourseEditWidget.dart';
 import 'CoursesPage.dart';
 
+// ignore: public_member_api_docs
 class CoursesPageView extends CoursesPageState {
   @override
   Widget build(BuildContext context) {
-    List<TimetableSubject> selectedSubjects = [];
+    final List<TimetableSubject> selectedSubjects = [];
 
     // Get all selected subjects...
     Data.timetable.days.forEach((day) => day.units.forEach((unit) {
-          if (unit.subjects.length > 0) {
-            int selectedA = getSelectedIndex(unit.subjects, week: 0) ??
+          if (unit.subjects.isNotEmpty) {
+            final int selectedA = getSelectedIndex(unit.subjects, week: 0) ??
                 unit.subjects.length;
-            int selectedB = getSelectedIndex(unit.subjects, week: 1) ??
+            final int selectedB = getSelectedIndex(unit.subjects, week: 1) ??
                 unit.subjects.length;
-            if (selectedA < unit.subjects.length)
+            if (selectedA < unit.subjects.length) {
               selectedSubjects.add(unit.subjects[selectedA]);
-            if (selectedB != selectedA && selectedB < unit.subjects.length)
+            }
+            if (selectedB != selectedA && selectedB < unit.subjects.length) {
               selectedSubjects.add(unit.subjects[selectedB]);
+            }
           }
         }));
 
-    Map<String, List<TimetableSubject>> courses = {};
+    final Map<String, List<TimetableSubject>> courses = {};
 
     // Add to subjects to map
     selectedSubjects.forEach((subject) {
       if (subject.subjectID != AppLocalizations.of(context).lunchBreak &&
           subject.subjectID != AppLocalizations.of(context).freeLesson) {
-        String key = subject.subjectID + subject.teacherID;
+        final String key = subject.subjectID + subject.teacherID;
         if (courses.containsKey(key)) {
           courses[key].add(subject);
-        } else
+        } else {
           courses[key] = [subject];
+        }
       }
     });
 
-    List<Widget> sections = [];
-    List<Widget> section0Items = [];
-    List<Widget> section1Items = [];
-    List<Widget> section2Items = [];
-    List<Widget> section3Items = [];
+    final List<Widget> section0Items = [];
+    final List<Widget> section1Items = [];
+    final List<Widget> section2Items = [];
+    final List<Widget> section3Items = [];
 
     courses.keys.toList().forEach((key) {
-      String lesson = Data.subjects[courses[key][0].subjectID.toUpperCase()] ??
-          courses[key][0].subjectID;
+      final String lesson =
+          Data.subjects[courses[key][0].subjectID.toUpperCase()] ??
+              courses[key][0].subjectID;
       if (lesson == Data.subjects['D'] ||
           lesson == Data.subjects['E'] ||
           lesson == Data.subjects['F'] ||
@@ -87,26 +91,29 @@ class CoursesPageView extends CoursesPageState {
         ));
       }
     });
-    sections.add(Section(
-      title: AppLocalizations.of(context).coursesLanguagesArts,
-      children: section0Items,
-    ));
-    sections.add(Section(
-      title: AppLocalizations.of(context).coursesSocialSciences,
-      children: section1Items,
-    ));
-    sections.add(Section(
-      title: AppLocalizations.of(context).coursesNatureSciences,
-      children: section2Items,
-    ));
-    sections.add(Section(
-      title: AppLocalizations.of(context).coursesOthers,
-      children: section3Items,
-    ));
+
+    final List<Widget> sections = [
+      Section(
+        title: AppLocalizations.of(context).coursesLanguagesArts,
+        children: section0Items,
+      ),
+      Section(
+        title: AppLocalizations.of(context).coursesSocialSciences,
+        children: section1Items,
+      ),
+      Section(
+        title: AppLocalizations.of(context).coursesNatureSciences,
+        children: section2Items,
+      ),
+      Section(
+        title: AppLocalizations.of(context).coursesOthers,
+        children: section3Items,
+      ),
+    ];
 
     return ListView(
       shrinkWrap: true,
-      children: (courses.keys.toList().length > 0)
+      children: (courses.keys.toList().isNotEmpty)
           ? sections
           :
           // No subjects are selected in the timetable
@@ -115,51 +122,61 @@ class CoursesPageView extends CoursesPageState {
   }
 }
 
+/// Shows all infos of o course
 class CourseRow extends StatefulWidget {
+  /// All subjects of this course
   final List<TimetableSubject> subjects;
 
-  CourseRow({
+  // ignore: public_member_api_docs
+  const CourseRow({
+    @required this.subjects,
     Key key,
-    this.subjects,
   }) : super(key: key);
 
   @override
   CourseRowView createState() => CourseRowView();
 }
 
+// ignore: public_member_api_docs
 class CourseRowView extends State<CourseRow> {
-  String name;
-  String teacher;
-  String course;
-  List<String> blocks;
+  String _name;
+  String _teacher;
+  String _course;
+  List<String> _blocks;
   bool _exams;
 
   @override
   void initState() {
-    name = Data.subjects[widget.subjects[0].subjectID.toUpperCase()] ??
+    _name = Data.subjects[widget.subjects[0].subjectID.toUpperCase()] ??
         widget.subjects[0].subjectID;
-    teacher = widget.subjects[0].teacherID.toUpperCase();
-    course = '';
-    blocks = [];
+    _teacher = widget.subjects[0].teacherID.toUpperCase();
+    _course = '';
+    _blocks = [];
     _exams = widget.subjects[0].writeExams;
 
     // Create list of blocks
     widget.subjects.forEach((subject) {
-      if (course.length == 0) course = subject.courseID.split('-')[1];
-      if (!blocks.contains(subject.courseID)) blocks.add(subject.courseID);
+      if (_course.isEmpty) {
+        _course = subject.courseID.split('-')[1];
+      }
+      if (!_blocks.contains(subject.courseID)) {
+        _blocks.add(subject.courseID);
+      }
     });
 
-    if (course.length == 0 || course.contains('+'))
-      course = '-';
-    else {
-      course = course.replaceFirst('l', 'LK ').replaceFirst('g', 'GK ');
+    if (_course.isEmpty || _course.contains('+')) {
+      _course = '-';
+    } else {
+      _course = _course.replaceFirst('l', 'LK ').replaceFirst('g', 'GK ');
     }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (name == null) return Container();
+    if (_name == null) {
+      return Container();
+    }
 
     return Container(
       padding: EdgeInsets.only(top: 10, bottom: 0, left: 20, right: 20),
@@ -176,10 +193,10 @@ class CourseRowView extends State<CourseRow> {
                         Container(
                           width: constraints.maxWidth * 0.70,
                           child: Text(
-                            name,
+                            _name,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 15.0,
+                              fontSize: 15,
                               color: Theme.of(context).primaryColor,
                             ),
                           ),
@@ -188,7 +205,7 @@ class CourseRowView extends State<CourseRow> {
                         Container(
                             width: constraints.maxWidth * 0.70,
                             child: Text(
-                              teacher,
+                              _teacher,
                               style: TextStyle(
                                 color: Colors.black54,
                               ),
@@ -201,7 +218,7 @@ class CourseRowView extends State<CourseRow> {
                         Container(
                           width: constraints.maxWidth * 0.20,
                           child: Text(
-                            course,
+                            _course,
                             style: TextStyle(
                               color: Theme.of(context).primaryColor,
                             ),
@@ -211,7 +228,7 @@ class CourseRowView extends State<CourseRow> {
                         Container(
                           width: constraints.maxWidth * 0.20,
                           child: Text(
-                            (_exams)
+                            _exams
                                 ? AppLocalizations.of(context).writing
                                 : AppLocalizations.of(context).speaking,
                             style: TextStyle(
@@ -236,7 +253,6 @@ class CourseRowView extends State<CourseRow> {
                                   builder: (BuildContext context1) =>
                                       CourseEdit(
                                     subject: widget.subjects[0],
-                                    blocks: blocks,
                                     onExamChange: (exams) {
                                       setState(() {
                                         _exams = exams;

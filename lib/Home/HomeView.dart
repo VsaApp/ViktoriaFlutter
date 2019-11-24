@@ -2,38 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-import '../Nextcloud/NextcloudPage.dart';
-import '../Cafetoria/CafetoriaPage.dart';
-import '../Calendar/CalendarPage.dart';
-import '../Courses/CoursesPage.dart';
+import 'package:viktoriaflutter/Nextcloud/NextcloudPage.dart';
+import 'package:viktoriaflutter/Cafetoria/CafetoriaPage.dart';
+import 'package:viktoriaflutter/Calendar/CalendarPage.dart';
+import 'package:viktoriaflutter/Courses/CoursesPage.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import '../SubstitutionPlan/SubstitutionPlanPage.dart';
-import '../Settings/SettingsPage.dart';
-import '../Timetable/TimetablePage.dart';
-import '../WorkGroups/WorkGroupsPage.dart';
-import 'HomePage.dart';
-import 'OfflineWidget.dart';
+import 'package:viktoriaflutter/SubstitutionPlan/SubstitutionPlanPage.dart';
+import 'package:viktoriaflutter/Settings/SettingsPage.dart';
+import 'package:viktoriaflutter/Timetable/TimetablePage.dart';
+import 'package:viktoriaflutter/WorkGroups/WorkGroupsPage.dart';
+import 'package:viktoriaflutter/Home/HomePage.dart';
+import 'package:viktoriaflutter/Home/OfflineWidget.dart';
 
+// ignore: public_member_api_docs
 class HomePageView extends HomePageState {
   @override
   Widget build(BuildContext context) {
     // List of pages
-    List<Page> pages = [
+    final List<Page> pages = [
       Page(AppLocalizations.of(context).timetable, Icons.event_note,
           TimetablePage(),
-          url:
-              'https://www.viktoriaschule-aachen.de/sundvplan/sps/index.html'),
+          url: 'https://www.viktoriaschule-aachen.de/sundvplan/sps/index.html'),
       Page(AppLocalizations.of(context).substitutionPlan,
           Icons.format_list_numbered, SubstitutionPlanPage(),
-          url:
-              'https://www.viktoriaschule-aachen.de/sundvplan/vps/index.html'),
+          url: 'https://www.viktoriaschule-aachen.de/sundvplan/vps/index.html'),
       Page(AppLocalizations.of(context).calendar, Icons.calendar_today,
           CalendarPage()),
       Page(AppLocalizations.of(context).cafetoria, Icons.fastfood,
           CafetoriaPage(),
           url: 'https://www.opc-asp.de/vs-aachen/'),
-      Page(AppLocalizations.of(context).cloud, Icons.cloud,
-          NextcloudPage(),
+      Page(AppLocalizations.of(context).cloud, Icons.cloud, NextcloudPage(),
           url: 'https://nextcloud.aachen-vsa.logoip.de/'),
       Page(AppLocalizations.of(context).workGroups, MdiIcons.soccer,
           WorkGroupsPage()),
@@ -43,14 +41,14 @@ class HomePageView extends HomePageState {
     ];
 
     // Map pages to drawer items
-    List<DrawerItem> drawerItems = pages
+    final List<DrawerItem> drawerItems = pages
         .map((Page page) => DrawerItem(page.name, page.icon, page.url))
         .toList();
 
     // Create list of widget options
-    var drawerOptions = <Widget>[];
-    for (var i = 0; i < drawerItems.length; i++) {
-      var d = drawerItems[i];
+    final drawerOptions = <Widget>[];
+    for (int i = 0; i < drawerItems.length; i++) {
+      final d = drawerItems[i];
       drawerOptions.add(ListTile(
         leading: Icon(d.icon),
         title: Text(
@@ -64,43 +62,41 @@ class HomePageView extends HomePageState {
       ));
     }
 
-    // TODO: Show scan dialog
-
     appScaffold = Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
         // Current page's title
         title: FlatButton(
           padding: EdgeInsets.only(left: 0),
+          onPressed: () => launchURL(drawerItems[selectedDrawerIndex].url),
           child: Text(drawerItems[selectedDrawerIndex].title,
               style: TextStyle(color: Colors.white, fontSize: 20)),
-          onPressed: () => launchURL(drawerItems[selectedDrawerIndex].url),
         ),
-        elevation: 0.0,
+        elevation: 0,
         actions: <Widget>[
-          showWeek
-              ? Container(
-                  margin: EdgeInsets.all(10),
-                  child: OutlineButton(
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 1.0,
-                      ),
-                      color: Colors.white,
-                      highlightedBorderColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      child: Text(
-                        currentWeek == 0 ? 'A' : 'B',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                        ),
-                      ),
-                      onPressed: weekPressed),
-                )
-              : Container()
+          if (showWeek)
+            Container(
+              margin: EdgeInsets.all(10),
+              child: OutlineButton(
+                borderSide: BorderSide(
+                  color: Colors.white,
+                  width: 1,
+                ),
+                color: Colors.white,
+                highlightedBorderColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                onPressed: weekPressed,
+                child: Text(
+                  currentWeek == 0 ? 'A' : 'B',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+            )
         ],
       ),
       drawer: Drawer(
@@ -108,11 +104,12 @@ class HomePageView extends HomePageState {
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
+              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
               child: Column(
                 children: <Widget>[
                   // Logo
                   Container(
-                    height: 100.0,
+                    height: 100,
                     child: SvgPicture.asset(
                       'assets/images/logo_white.svg',
                     ),
@@ -127,7 +124,6 @@ class HomePageView extends HomePageState {
                   )
                 ],
               ),
-              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
             ),
             // Drawer options
             Column(children: drawerOptions)
@@ -137,7 +133,7 @@ class HomePageView extends HomePageState {
       // Current page
       body: Stack(
         children: <Widget>[
-          !offlineShown ? OfflineWidget() : Container(),
+          if(!offlineShown) OfflineWidget(),
           getDrawerItemWidget(selectedDrawerIndex, pages),
         ],
       ),

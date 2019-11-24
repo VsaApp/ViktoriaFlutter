@@ -11,20 +11,33 @@ import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'LoginView.dart';
 
+/// Page to handle the user login
 class LoginPage extends StatefulWidget {
   @override
   LoginPageView createState() => LoginPageView();
 }
 
+// ignore: public_member_api_docs
 abstract class LoginPageState extends State<LoginPage> {
-  final pupilFormKey = GlobalKey<FormState>();
-  final pupilFocus = FocusNode();
+  /// Key of the login form
+  final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
+
+  /// Focus node for the password text field
+  final FocusNode passwordFocus = FocusNode();
+
+  /// Defines if the app is online
   int online;
-  bool pupilCredentialsCorrect = true;
-  bool teacherCredentialsCorrect = true;
-  final usernameController = TextEditingController();
-  final passwordController = TextEditingController();
-  final idController = TextEditingController();
+
+  /// Defines if the credentials are correct
+  bool credentialsCorrect = true;
+
+  /// Controller for username text field
+  final TextEditingController usernameController = TextEditingController();
+
+  /// Controller for password text field
+  final TextEditingController passwordController = TextEditingController();
+
+  /// Defines if currently checks the credentials
   bool isCheckingForm = false;
 
   @override
@@ -44,16 +57,16 @@ abstract class LoginPageState extends State<LoginPage> {
     super.initState();
   }
 
-  // Check if credentials entered are correct
-  void checkForm() async {
+  /// Check if credentials entered are correct
+  Future checkForm() async {
     setState(() => isCheckingForm = true);
-    Response response = await fetch(
+    final Response response = await fetch(
         '$apiUrl/login/'.replaceFirst(
             '://', '://${usernameController.text}:${passwordController.text}@'),
         auth: true);
 
     try {
-      pupilCredentialsCorrect = response.statusCode == StatusCodes.success;
+      credentialsCorrect = response.statusCode == StatusCodes.success;
     } catch (e) {
       online = -1;
       if (HomePageState.isInForeground) {
@@ -71,7 +84,7 @@ abstract class LoginPageState extends State<LoginPage> {
       return;
     }
 
-    if (pupilFormKey.currentState.validate()) {
+    if (loginFormKey.currentState.validate()) {
       // Save correct credentials
 
       askAgbDse(() async {
@@ -86,15 +99,19 @@ abstract class LoginPageState extends State<LoginPage> {
     setState(() => isCheckingForm = false);
   }
 
-  launchURL(String url) async {
-    if (url == null) return;
+  /// Launches an url in the default browser
+  Future launchURL(String url) async {
+    if (url == null) {
+      return;
+    }
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      throw 'Could not launch $url';
+      throw Exception('Could not launch $url');
     }
   }
 
+  /// Ask the user to accept the agb and dse
   void askAgbDse(Function onOk) {
     showDialog<String>(
         context: context,
@@ -114,38 +131,38 @@ abstract class LoginPageState extends State<LoginPage> {
                         children: <Widget>[
                           FlatButton(
                             padding: EdgeInsets.all(0),
+                            onPressed: () => launchURL(agbUrl),
                             child: Text(
                               AppLocalizations.of(context).readAgbDse,
                               style: TextStyle(
                                   color: Theme.of(context).accentColor),
                               textAlign: TextAlign.end,
                             ),
-                            onPressed: () => launchURL(agbUrl),
                           ),
                           Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
                                 FlatButton(
                                   padding: EdgeInsets.all(0),
+                                  onPressed: () => Navigator.pop(context),
                                   child: Text(
                                       AppLocalizations.of(context).reject,
                                       style: TextStyle(
                                           color: Theme.of(context).accentColor),
                                       textAlign: TextAlign.end),
-                                  onPressed: () => Navigator.pop(context),
                                 ),
                                 FlatButton(
-                                    padding: EdgeInsets.all(0),
-                                    child: Text(
-                                        AppLocalizations.of(context).accept,
-                                        style: TextStyle(
-                                            color:
-                                                Theme.of(context).accentColor),
-                                        textAlign: TextAlign.end),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      onOk();
-                                    }),
+                                  padding: EdgeInsets.all(0),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    onOk();
+                                  },
+                                  child: Text(
+                                      AppLocalizations.of(context).accept,
+                                      style: TextStyle(
+                                          color: Theme.of(context).accentColor),
+                                      textAlign: TextAlign.end),
+                                ),
                               ])
                         ]))
               ]);

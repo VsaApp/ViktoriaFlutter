@@ -5,6 +5,7 @@ import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'ShortCutDialogWidget.dart';
 
+// ignore: public_member_api_docs
 class ShortCutDialogView extends ShortCutDialogState {
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class ShortCutDialogView extends ShortCutDialogState {
                   child: Transform(
                     transform: Matrix4.identity()..scale(0.8),
                     child: Container(
-                      margin: EdgeInsets.all(3.0),
+                      margin: EdgeInsets.all(3),
                       child: Icon(item.icon),
                     ),
                   ),
@@ -36,11 +37,11 @@ class ShortCutDialogView extends ShortCutDialogState {
           }).toList()),
           // Short cut option
           CheckboxListTile(
-            value: showDialog1,
+            value: showShortCutDialog,
             onChanged: (value) {
               Storage.setBool(Keys.showShortCutDialog, value);
               setState(() {
-                showDialog1 = value;
+                showShortCutDialog = value;
               });
             },
             title: Text(AppLocalizations.of(context).showShortCutDialog),

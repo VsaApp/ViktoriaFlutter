@@ -7,30 +7,37 @@ import 'package:viktoriaflutter/Utils/Downloader/WorkGroupsData.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'WorkGroupsView.dart';
 
+/// Page with a list of all work groups
 class WorkGroupsPage extends StatefulWidget {
   @override
   WorkGroupsPageView createState() => WorkGroupsPageView();
 }
 
+// ignore: public_member_api_docs
 abstract class WorkGroupsPageState extends State<WorkGroupsPage> {
+  // ignore: public_member_api_docs
   WorkGroups data;
 
+  /// Updates the work groups
   Future update() async {
-    bool successfully =
+    final bool successfully =
         await WorkGroupsData().download(context) == StatusCodes.success;
     dataUpdated(context, successfully, AppLocalizations.of(context).workGroups);
     data = Data.workGroups;
-    if (mounted) setState(() => this.data = data);
+    if (mounted) {
+      setState(() => null);
+    }
   }
 
   @override
   void initState() {
     // Download data
     WorkGroupsData().download(context).then((_) {
-      if (mounted)
+      if (mounted) {
         setState(() {
-          this.data = Data.workGroups;
+          data = Data.workGroups;
         });
+      }
     });
     super.initState();
   }

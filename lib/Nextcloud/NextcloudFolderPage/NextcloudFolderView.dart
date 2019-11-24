@@ -5,19 +5,20 @@ import 'package:viktoriaflutter/Utils/Localizations.dart';
 import '../NextcloudFolderWidget/NextcloudFolderWidget.dart';
 import 'NextcloudFolderPage.dart';
 
+// ignore: public_member_api_docs
 class NextcloudFolderPageView extends NextcloudFolderPageState {
   @override
   Widget build(BuildContext context) {
-    List<Choice> choices = [
+    final List<Choice> choices = [
       Choice(Icons.folder, AppLocalizations.of(context).folder),
       Choice(MdiIcons.file, AppLocalizations.of(context).file),
     ];
     return directory.elements == null
         ? Center(
             child: SizedBox(
-              child: CircularProgressIndicator(strokeWidth: 5.0),
-              height: 50.0,
-              width: 50.0,
+              height: 50,
+              width: 50,
+              child: CircularProgressIndicator(strokeWidth: 5),
             ),
           )
         : RefreshIndicator(
@@ -26,7 +27,7 @@ class NextcloudFolderPageView extends NextcloudFolderPageState {
               padding: EdgeInsets.only(top: 10),
               children: directory.elements.map((element) {
                 return NextcloudFolderWidget(
-                    parent: this,
+                    parentDir: directory,
                     element: element,
                     onTap: () async {
                       if (element.isDirectory() &&
@@ -47,7 +48,7 @@ class NextcloudFolderPageView extends NextcloudFolderPageState {
                                                       .newDirectory;
                                               final path =
                                                   '${element.path}${Uri.encodeFull(name)}/';
-                                              Directory dir = Directory(
+                                              final Directory dir = Directory(
                                                   name: name,
                                                   path: path,
                                                   modificationTime:

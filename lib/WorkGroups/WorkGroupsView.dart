@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'DayCard/DayCardWidget.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
+import 'DayCard/DayCardWidget.dart';
 import 'WorkGroupsPage.dart';
 
+// ignore: public_member_api_docs
 class WorkGroupsPageView extends WorkGroupsPageState {
+  /// The refresh indicator key to refresh programmatically
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 

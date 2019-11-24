@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Models.dart';
-import 'CalendarGridView.dart';
 import 'CalendarGridEvent/CalendarGridEventWidget.dart';
+import 'CalendarGridView.dart';
 
+/// A grid with a month overview about all events
 class CalendarGrid extends StatefulWidget {
+  /// The events for this month
   final List<CalendarEvent> events;
 
-  CalendarGrid({
+  // ignore: public_member_api_docs
+  const CalendarGrid({
     @required this.events,
   }) : super();
 
@@ -15,11 +18,16 @@ class CalendarGrid extends StatefulWidget {
   CalendarGridView createState() => CalendarGridView();
 }
 
+// ignore: public_member_api_docs
 abstract class CalendarGridState extends State<CalendarGrid>
     with SingleTickerProviderStateMixin {
-  CalendarGridState({@required events}) : super();
+  /// The first event in the month
   DateTime firstEvent;
+
+  /// The last event in the month
   DateTime lastEvent;
+
+  /// The tab controller to slide between the months
   TabController controller;
 
   @override
@@ -48,47 +56,30 @@ abstract class CalendarGridState extends State<CalendarGrid>
     super.initState();
   }
 
-  daysInMonth(int monthNum, int year) {
-    List<int> monthLength = List(12);
-
-    monthLength[0] = 31;
-    monthLength[1] = leapYear(year) ? 29 : 28;
-    monthLength[2] = 31;
-    monthLength[3] = 30;
-    monthLength[4] = 31;
-    monthLength[5] = 30;
-    monthLength[6] = 31;
-    monthLength[7] = 31;
-    monthLength[8] = 30;
-    monthLength[9] = 31;
-    monthLength[10] = 30;
-    monthLength[11] = 31;
-
-    return monthLength[monthNum];
+  /// Returns the number of days in a given month
+  int daysInMonth(int monthNum, int year) {
+    DateTime date = DateTime(year, monthNum + 2);
+    date = date.add(Duration(days: -1));
+    return date.day;
   }
 
-  leapYear(int year) {
-    bool leapYear = false;
-
-    bool leap = ((year % 100 == 0) && (year % 400 != 0));
-    if (leap == true)
-      leapYear = false;
-    else if (year % 4 == 0) leapYear = true;
-
-    return leapYear;
-  }
-
+  /// Returns the number of days that the event should be shown in the given week
   int getDayOfWeek(DateTime monday, DateTime sunday, DateTime date) {
-    if (date.isBefore(monday)) return 0;
-    if (date.isAfter(sunday)) return 6;
+    if (date.isBefore(monday)) {
+      return 0;
+    }
+    if (date.isAfter(sunday)) {
+      return 6;
+    }
     return date.weekday - 1;
   }
 
+  /// Creates all views for the events
   List<Positioned> getEventViewsForWeek(
       DateTime monday, DateTime sunday, double width, double height) {
-    List<Positioned> views = getEventsForWeek(monday, sunday)
+    return getEventsForWeek(monday, sunday)
         .map((event) {
-          List<Positioned> lines = [];
+          final List<Positioned> lines = [];
           // Show a point in the corner top right when...
           // ... the hight is too small to show an event
           // ... the hight is too small to show two events
@@ -126,7 +117,7 @@ abstract class CalendarGridState extends State<CalendarGrid>
                     ),
                   )));
             }
-          } else
+          } else {
             lines.add(Positioned(
                 top: 25.0 *
                     (getEventsForDate(event.start)
@@ -145,14 +136,15 @@ abstract class CalendarGridState extends State<CalendarGrid>
                       6,
                   child: CalendarGridEvent(event: event),
                 )));
+          }
           return lines;
         })
         .toList()
         .expand((x) => x)
         .toList();
-    return views;
   }
 
+  /// Returns all events for a given date
   List<CalendarEvent> getEventsForDate(DateTime date) {
     return Data.calendar.events.where((event) {
       return event.start != null &&
@@ -162,6 +154,7 @@ abstract class CalendarGridState extends State<CalendarGrid>
     }).toList();
   }
 
+  /// Returns all events for a given week
   List<CalendarEvent> getEventsForWeek(DateTime monday, DateTime sunday) {
     return Data.calendar.events.where((event) {
       return event.start != null &&

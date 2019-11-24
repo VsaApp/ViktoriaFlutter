@@ -21,26 +21,50 @@ import 'package:viktoriaflutter/Utils/Downloader/CalendarData.dart';
 import 'package:viktoriaflutter/Utils/Downloader/CafetoriaData.dart';
 import 'package:viktoriaflutter/Utils/Downloader/WorkGroupsData.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import 'LoadingView.dart';
+import 'package:viktoriaflutter/Loading/LoadingView.dart';
 
+/// Downloads all data and visualize the process
 class LoadingPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => LoadingPageView();
 }
 
+// ignore: public_member_api_docs
 abstract class LoadingPageState extends State<LoadingPage>
     with TickerProviderStateMixin {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-  int allDownloadsCount = 9;
+
+  /// The number of download that must be downloaded
+  final int allDownloadsCount = 9;
+
+  /// The number of downloads that still have to download
   int countCurrentDownloads = 9;
+
+  /// The dimension of the ginko image
   double centerWidgetDimensions = 150;
+
+  /// All download info texts
   List<String> texts = [];
+
+  /// Defines if the [texts] should be shown
   bool showTexts = false;
+
+  /// Defines the current animation direction
   bool animationForward = true;
+
+  /// Defines the timer to hide the [texts] for a short time
   Timer textTimer;
+
+  /// The animation for the ginko animation
   Animation animation;
+
+  /// The controller for the ginko animation
   AnimationController controller;
-  Stopwatch stopwatch;
+
+  /// The stopwatch for the download process
+  Stopwatch _stopwatch;
+
+  /// Defines if the user is logged in
   bool loggedIn = true;
 
   @override
@@ -85,16 +109,17 @@ abstract class LoadingPageState extends State<LoadingPage>
         }
 
         // Add all download texts
-        texts.add(AppLocalizations.of(context).updates);
-        texts.add(AppLocalizations.of(context).timetable);
-        texts.add(AppLocalizations.of(context).substitutionPlan);
-        texts.add(AppLocalizations.of(context).workGroups);
-        texts.add(AppLocalizations.of(context).calendar);
-        texts.add(AppLocalizations.of(context).subjects);
-        texts.add(AppLocalizations.of(context).rooms);
-        texts.add(AppLocalizations.of(context).teachers);
-        texts.add(AppLocalizations.of(context).cafetoria);
-        texts.shuffle();
+        texts = [
+          AppLocalizations.of(context).updates,
+          AppLocalizations.of(context).timetable,
+          AppLocalizations.of(context).substitutionPlan,
+          AppLocalizations.of(context).workGroups,
+          AppLocalizations.of(context).calendar,
+          AppLocalizations.of(context).subjects,
+          AppLocalizations.of(context).rooms,
+          AppLocalizations.of(context).teachers,
+          AppLocalizations.of(context).cafetoria,
+        ]..shuffle();
         downloadAll();
       });
 
@@ -113,7 +138,7 @@ abstract class LoadingPageState extends State<LoadingPage>
 
       // Animate from one site to the other and so on
       setState(() {
-        animation = Tween<double>(begin: -0.0, end: 0.01).animate(controller)
+        animation = Tween<double>(begin: -0, end: 0.01).animate(controller)
           ..addStatusListener((status) {
             if (status == AnimationStatus.completed) {
               controller.reverse();
@@ -129,11 +154,16 @@ abstract class LoadingPageState extends State<LoadingPage>
 
   @override
   void dispose() {
-    if (textTimer != null) textTimer.cancel();
-    if (controller != null) controller.dispose();
+    if (textTimer != null) {
+      textTimer.cancel();
+    }
+    if (controller != null) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
+  /// Inform the user about a too old app version
   void showOldAppDialog(String version) {
     showDialog<String>(
         context: context,
@@ -152,32 +182,36 @@ abstract class LoadingPageState extends State<LoadingPage>
         });
   }
 
+  /// Initialize firebase cloud messaging
   Future initFirebase() async {
     if (Platform.isIOS || Platform.isAndroid) {
       _firebaseMessaging.requestNotificationPermissions(
           const IosNotificationSettings(sound: true, badge: true, alert: true));
       _firebaseMessaging.onIosSettingsRegistered
           .listen((IosNotificationSettings settings) {
-        print("Settings registered: $settings");
+        print('Settings registered: $settings');
       });
-      String token = await _firebaseMessaging.getToken();
-      assert(token != null);
-
-      // Synchronize tags for notifications
-      await initTags(context);
-      await syncTags();
+      final String token = await _firebaseMessaging.getToken();
+      if (token != null) {
+        // Synchronize tags for notifications
+        await initTags(context);
+        await syncTags();
+      } else {
+        print('Error: Firebase token is null');
+      }
     }
   }
 
+  /// Downloads all data from server
   Future downloadAll() async {
-    stopwatch = Stopwatch()..start();
+    _stopwatch = Stopwatch()..start();
 
     // Get current versions of local data
     final updates = UpdatesData();
     final currentData = updates.getUpdates(loaded: false);
 
     // Get the versions of server data
-    int status = await updates.download(context);
+    final int status = await updates.download(context);
     if (status == StatusCodes.unauthorized) {
       Navigator.of(context).pushReplacementNamed('/login');
       return;
@@ -193,9 +227,9 @@ abstract class LoadingPageState extends State<LoadingPage>
     }
 
     // Compares the old and new grade
-    String oldGrade = Storage.getString(Keys.grade) ?? '--';
-    String newGrade = newData.grade;
-    bool gradeChanged = newGrade != oldGrade;
+    final String oldGrade = Storage.getString(Keys.grade) ?? '--';
+    final String newGrade = newData.grade;
+    final bool gradeChanged = newGrade != oldGrade;
     Storage.setString(Keys.grade, newGrade);
 
     // Download updates finished
@@ -205,7 +239,7 @@ abstract class LoadingPageState extends State<LoadingPage>
     });
 
     // Get the current app version to check the min app level
-    String appVersion = (await rootBundle.loadString('pubspec.yaml'))
+    final String appVersion = (await rootBundle.loadString('pubspec.yaml'))
         .split('\n')
         .where((line) => line.startsWith('version'))
         .toList()[0]
@@ -219,8 +253,10 @@ abstract class LoadingPageState extends State<LoadingPage>
     }
 
     // Print data count to download
-    Map<String, dynamic> newDataMap = newData.toMap();
-    Map<String, dynamic> currentDataMap = currentData.toMap();
+    final Map<String, dynamic> newDataMap = newData.toMap();
+    final Map<String, dynamic> currentDataMap = currentData.toMap();
+
+    // ignore: prefer_interpolation_to_compose_strings
     print('Downloading ' +
         (newDataMap.keys
                 .map((key) =>
@@ -234,7 +270,7 @@ abstract class LoadingPageState extends State<LoadingPage>
     () async {
       // Update subjects
       await download(() async {
-        int status = await SubjectsData().download(
+        final int status = await SubjectsData().download(
           context,
           update: updated(newData.subjects, currentData.subjects),
         );
@@ -245,7 +281,7 @@ abstract class LoadingPageState extends State<LoadingPage>
 
       // Update rooms
       await download(() async {
-        await RoomsData().download(
+        final int status = await RoomsData().download(
           context,
           update: updated(newData.rooms, currentData.rooms),
         );
@@ -256,7 +292,7 @@ abstract class LoadingPageState extends State<LoadingPage>
 
       // Update teachers
       await download(() async {
-        int status = await TeachersData().download(
+        final int status = await TeachersData().download(
           context,
           update: updated(newData.teachers, currentData.teachers),
         );
@@ -267,7 +303,7 @@ abstract class LoadingPageState extends State<LoadingPage>
 
       // Update timetable
       await download(() async {
-        int status = await TimetableData().download(context,
+        final int status = await TimetableData().download(context,
             update: updated(newData.timetable, currentData.timetable) ||
                 gradeChanged);
         if (status == StatusCodes.success) {
@@ -278,7 +314,7 @@ abstract class LoadingPageState extends State<LoadingPage>
 
       // Update substitution plan
       await download(() async {
-        int status = await SubstitutionPlanData().download(
+        final int status = await SubstitutionPlanData().download(
           context,
           update:
               updated(newData.substitutionPlan, currentData.substitutionPlan),
@@ -291,57 +327,61 @@ abstract class LoadingPageState extends State<LoadingPage>
 
     // Update cafetoria
     download(() async {
-      int status = await CafetoriaData().download(
+      final int status = await CafetoriaData().download(
         context,
         update:
             updated(newData.cafetoria, currentData.cafetoria) || gradeChanged,
       );
       if (status == StatusCodes.success) {
-          currentData.cafetoria = newData.cafetoria;
-        }
+        currentData.cafetoria = newData.cafetoria;
+      }
     }, AppLocalizations.of(context).cafetoria);
 
     // Update calendar
     download(() async {
-      int status = await CalendarData().download(
+      final int status = await CalendarData().download(
         context,
         update: updated(newData.calendar, currentData.calendar) || gradeChanged,
       );
       if (status == StatusCodes.success) {
-          currentData.calendar = newData.calendar;
-        }
+        currentData.calendar = newData.calendar;
+      }
     }, AppLocalizations.of(context).calendar);
 
     // Update workgroups
     download(() async {
-      int status = await WorkGroupsData().download(
+      final int status = await WorkGroupsData().download(
         context,
         update:
             updated(newData.workgroups, currentData.workgroups) || gradeChanged,
       );
       if (status == StatusCodes.success) {
-          currentData.workgroups = newData.workgroups;
-        }
+        currentData.workgroups = newData.workgroups;
+      }
     }, AppLocalizations.of(context).workGroups);
   }
 
+  /// Compares the dates
   bool updated(DateTime oldValue, DateTime newValue) =>
       !oldValue.isAtSameMomentAs(newValue);
 
+  /// Executes one download process and removes the download text
+  /// 
+  /// If it was the last process, it starts the app
   Future<void> download(Future<void> Function() process, String text) async {
     await process();
     countCurrentDownloads--;
     setState(() => texts.remove(text));
 
     if (countCurrentDownloads <= 0) {
-      stopwatch.stop();
-      print(stopwatch.elapsedMilliseconds);
+      _stopwatch.stop();
+      print(_stopwatch.elapsedMilliseconds);
       UpdatesData().saveUpdates();
       print('everything loaded');
       // After download show app
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        int storedVersion = Storage.getInt(Keys.slidesVersion) ?? 0;
-        int currentVersion = 3;
+        final int storedVersion = Storage.getInt(Keys.slidesVersion) ?? 0;
+        const int currentVersion = 3;
         if (currentVersion != storedVersion) {
           Storage.setInt(Keys.slidesVersion, currentVersion);
           print('open intro');

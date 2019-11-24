@@ -5,7 +5,9 @@ import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 
+/// Teachers data downloader
 class TeachersData extends Downloader<List<Teacher>> {
+  // ignore: public_member_api_docs
   TeachersData()
       : super(
           url: Urls.teachers,

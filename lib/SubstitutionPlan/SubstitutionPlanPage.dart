@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 
-import '../Home/HomePage.dart';
+import 'package:viktoriaflutter/Home/HomePage.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
-import 'SubstitutionPlanView.dart';
+import 'package:viktoriaflutter/SubstitutionPlan/SubstitutionPlanView.dart';
 
+/// Sliding page for all substitution plan days
 class SubstitutionPlanPage extends StatefulWidget {
   @override
   SubstitutionPlanPageView createState() => SubstitutionPlanPageView();
 }
 
+// ignore: public_member_api_docs
 abstract class SubstitutionPlanPageState extends State<SubstitutionPlanPage>
     with SingleTickerProviderStateMixin {
-  Function() listener;
+
+  /// The substitution plan updated listener
+  Function() updatesListener;
+
+  /// List of grade to show a list for switching
   static List<String> grades = [
     '5a',
     '5b',
@@ -34,19 +40,27 @@ abstract class SubstitutionPlanPageState extends State<SubstitutionPlanPage>
     'Q2'
   ];
 
+  /// The weekday name in the correct language fot the tab titles
   List<String> weekdays;
+
+  /// All substitution plan days
   List<SubstitutionPlanDay> days;
+
+  /// The tab controller to sync tabs and swipe pages
   TabController controller;
 
   @override
   void initState() {
-    listener = initDays;
-    HomePageState.substitutionPlanUpdatedListeners.add(listener);
+    updatesListener = initDays;
+    HomePageState.substitutionPlanUpdatedListeners.add(updatesListener);
     HomePageState.setWeekChangeable(false);
     initDays();
     super.initState();
   }
 
+  /// Initialize the substitution plan days
+  /// 
+  /// Sort them by date and in some cases add an empty one to inform the user about a missing day
   void initDays() {
     WidgetsBinding.instance.addPostFrameCallback((a) {
       setState(() {
@@ -59,9 +73,9 @@ abstract class SubstitutionPlanPageState extends State<SubstitutionPlanPage>
       });
       int day = 0;
       bool over = false;
-      int weekday = DateTime.now().weekday - 1;
+      final int weekday = DateTime.now().weekday - 1;
       if (weekday <= 4) {
-        if (Data.timetable.days[weekday].units.length > 0) {
+        if (Data.timetable.days[weekday].units.isNotEmpty) {
           if (DateTime.now().isAfter(DateTime(DateTime.now().year,
                   DateTime.now().month, DateTime.now().day, 8)
               .add(Duration(
@@ -79,7 +93,9 @@ abstract class SubstitutionPlanPageState extends State<SubstitutionPlanPage>
         DateTime.now().year,
         DateTime.now().month,
         DateTime.now().day,
-      ).add(Duration(days: (over) ? 1 : 0)).isAfter(days[0].date)) day = 1;
+      ).add(Duration(days: over ? 1 : 0)).isAfter(days[0].date)) {
+        day = 1;
+      }
       controller.animateTo(day);
       HomePageState.updateWeek(days[controller.index].week);
       controller.addListener(
@@ -112,7 +128,7 @@ abstract class SubstitutionPlanPageState extends State<SubstitutionPlanPage>
 
   @override
   void dispose() {
-    HomePageState.substitutionPlanUpdatedListeners.remove(listener);
+    HomePageState.substitutionPlanUpdatedListeners.remove(updatesListener);
     super.dispose();
   }
 }

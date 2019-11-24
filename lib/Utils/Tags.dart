@@ -10,16 +10,19 @@ import 'package:viktoriaflutter/Utils/Encrypt.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 
-import 'Times.dart';
 import 'Keys.dart';
 import 'Network.dart';
 import 'Storage.dart';
+import 'Times.dart';
 
+/// Returns all saved tags from the server
 Future<Tags> getTags() async {
   try {
-    Response response = await fetch(Urls.tags);
-    if (response.statusCode != StatusCodes.success) throw 'Failed to load tags';
-    Tags tags = Tags.fromJson(json.decode(response.body));
+    final Response response = await fetch(Urls.tags);
+    if (response.statusCode != StatusCodes.success) {
+      throw Exception('Failed to load tags');
+    }
+    final Tags tags = Tags.fromJson(json.decode(response.body));
     Data.tags = tags;
     return tags;
   } catch (_) {
@@ -27,14 +30,16 @@ Future<Tags> getTags() async {
   }
 }
 
+/// Checks if the tags on the server are already initialized
 Future<bool> isInitialized() async {
-  Tags tags = await getTags();
+  final Tags tags = await getTags();
   return tags.isInitialized;
 }
 
+/// Synchronize local data with server tags
 Future<bool> syncWithTags(
     {Tags tags, bool autoSync = true, bool forceSync = false}) async {
-  if (tags == null) tags = await getTags();
+  tags ??= await getTags();
   if (tags != null) {
     // Sync grade
     Storage.setString(Keys.grade, tags.grade);
@@ -42,9 +47,9 @@ Future<bool> syncWithTags(
     // Check if the cafetoria data on the server is newer than the local
     bool cafetoriaIsNewer = false;
     if (tags.isInitialized) {
-      String cafetoriaModified = Storage.getString(Keys.cafetoriaModified);
+      final String cafetoriaModified = Storage.getString(Keys.cafetoriaModified);
       if (cafetoriaModified != null) {
-        DateTime local = DateTime.parse(cafetoriaModified);
+        final DateTime local = DateTime.parse(cafetoriaModified);
         if (tags.cafetoriaLogin.timestamp.isAfter(local)) {
           cafetoriaIsNewer = true;
         }
@@ -58,8 +63,8 @@ Future<bool> syncWithTags(
         Storage.remove(Keys.cafetoriaId, autoSet: true);
         Storage.remove(Keys.cafetoriaPassword, autoSet: true);
       } else {
-        String decryptedID = decryptText(tags.cafetoriaLogin.id);
-        String decryptedPassword = decryptText(tags.cafetoriaLogin.password);
+        final String decryptedID = decryptText(tags.cafetoriaLogin.id);
+        final String decryptedPassword = decryptText(tags.cafetoriaLogin.password);
         Storage.setString(Keys.cafetoriaId, decryptedID, autoSet: true);
         Storage.setString(Keys.cafetoriaPassword, decryptedPassword,
             autoSet: true);
@@ -69,7 +74,7 @@ Future<bool> syncWithTags(
     }
 
     // Check if the server hast newer data than the local data
-    String _lastModified = Storage.getString(Keys.lastModified);
+    final String _lastModified = Storage.getString(Keys.lastModified);
     bool serverIsNewer = true;
     bool localIsNewer = false;
 
@@ -79,7 +84,7 @@ Future<bool> syncWithTags(
     }
     // If there are already local changes compare the newer version
     else if (_lastModified != null) {
-      DateTime lastModified = DateTime.parse(_lastModified);
+      final DateTime lastModified = DateTime.parse(_lastModified);
       serverIsNewer = tags.timestamp.isAfter(lastModified);
       localIsNewer = lastModified.isAfter(tags.timestamp);
     }
@@ -108,16 +113,21 @@ Future<bool> syncWithTags(
       });
 
       Storage.setString(Keys.lastModified, tags.timestamp.toIso8601String());
-    } else if (localIsNewer && autoSync) await syncTags(checkSync: false);
+    } else if (localIsNewer && autoSync) {
+      await syncTags(checkSync: false);
+    }
     return serverIsNewer;
   }
   return false;
 }
 
+/// Initialize device tags
 Future initTags(BuildContext context) async {
-  if ((await checkOnline) == -1) return;
-  String id = await FirebaseMessaging().getToken();
-  String appVersion = (await rootBundle.loadString('pubspec.yaml'))
+  if ((await checkOnline) == -1) {
+    return;
+  }
+  final String id = await FirebaseMessaging().getToken();
+  final String appVersion = (await rootBundle.loadString('pubspec.yaml'))
       .split('\n')
       .where((line) => line.startsWith('version'))
       .toList()[0]
@@ -125,18 +135,18 @@ Future initTags(BuildContext context) async {
       .trim();
   String os = '';
   String deviceName = '';
-  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
   if (Platform.isAndroid) {
-    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-    os = 'Android ' + androidInfo.version.release;
-    deviceName = androidInfo.model + ' ' + androidInfo.manufacturer;
+    final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    os = 'Android ${androidInfo.version.release}';
+    deviceName = '${androidInfo.model} ${androidInfo.manufacturer}';
   } else if (Platform.isIOS) {
-    IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-    os = 'iOS ' + iosInfo.systemVersion;
+    final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+    os = 'iOS ${iosInfo.systemVersion}';
     deviceName = iosInfo.utsname.machine;
   }
-  String language = AppLocalizations.of(context).locale.languageCode;
-  Device device = Device(
+  final String language = AppLocalizations.of(context).locale.languageCode;
+  final Device device = Device(
       language: language,
       firebaseId: id,
       notifications:
@@ -150,60 +160,70 @@ Future initTags(BuildContext context) async {
   });
 }
 
+/// Send tags to server
 Future sendTags(Map<String, dynamic> tags) async {
   try {
     await httpPost(Urls.tags, body: tags);
   } catch (_) {}
 }
 
+/// Delete tags from server
 Future deleteTags(Map<String, dynamic> tags) async {
-  String url = Urls.tags;
+  final String url = Urls.tags;
   try {
     await httpDelete(url, body: tags);
   } catch (_) {}
 }
 
+/// Sync the length of each day
 void syncDaysLength() {
   String lengths = '';
   Data.timetable.days.forEach((day) {
-    int count = day.getUserLessonsCount('Freistunde');
+    final int count = day.getUserLessonsCount('Freistunde');
+    // ignore: prefer_interpolation_to_compose_strings
     lengths += times[count].split(' - ')[1] + '|';
   });
   Storage.setString(Keys.daysLengths, lengths);
 }
 
-// Sync the tags...
+/// Sync the tags
 Future syncTags(
     {bool syncExams = true,
     bool syncSelections = true,
     bool syncCafetoria = true,
     bool checkSync = true}) async {
-  if ((await checkOnline) != 1) return;
+  if ((await checkOnline) != 1) {
+    return;
+  }
 
   // Get all server tags...
-  Tags allTags = await getTags();
-  if (allTags == null) return;
+  final Tags allTags = await getTags();
+  if (allTags == null) {
+    return;
+  }
 
   if (checkSync) {
-    bool synced = await syncWithTags(tags: allTags, autoSync: false);
-    if (synced) return;
+    final bool synced = await syncWithTags(tags: allTags, autoSync: false);
+    if (synced) {
+      return;
+    }
   }
 
   // Set the user group (1 (pupil); 2 (teacher); 4 (developer); 8 (other))
   Storage.setInt(Keys.group, allTags.group);
 
   // Compare new and old tags...
-  String lastModified = Storage.getString(Keys.lastModified);
-  Map<String, dynamic> tagsToRemove = {
+  final String lastModified = Storage.getString(Keys.lastModified);
+  final Map<String, dynamic> tagsToRemove = {
     'timestamp': lastModified,
   };
-  Map<String, dynamic> tagsToUpdate = {
+  final Map<String, dynamic> tagsToUpdate = {
     'timestamp': lastModified,
   };
 
   if (syncExams || syncSelections) {
     // Get all selected subjects
-    List<TimetableSubject> subjects = Data.timetable
+    final List<TimetableSubject> subjects = Data.timetable
         .getAllSelectedSubjects()
         .where((TimetableSubject subject) {
           return subject.subjectID != 'Mittagspause';
@@ -212,7 +232,7 @@ Future syncTags(
         .toList();
 
     // Sync all selected exams
-    List<String> exams = subjects
+    final List<String> exams = subjects
         .where((TimetableSubject subject) => subject.writeExams)
         .map((TimetableSubject subject) => subject.courseID)
         .toSet()
@@ -225,7 +245,7 @@ Future syncTags(
 
     // Sync all selected subjects
     syncDaysLength();
-    List<String> selected =
+    final List<String> selected =
         subjects.map((TimetableSubject subject) => subject.courseID).toList();
 
     tagsToUpdate['selected'] =
@@ -235,9 +255,9 @@ Future syncTags(
   }
 
   if (syncCafetoria) {
-    String id = Storage.getString(Keys.cafetoriaId);
-    String password = Storage.getString(Keys.cafetoriaPassword);
-    String lastModified = Storage.getString(Keys.cafetoriaModified);
+    final String id = Storage.getString(Keys.cafetoriaId);
+    final String password = Storage.getString(Keys.cafetoriaPassword);
+    final String lastModified = Storage.getString(Keys.cafetoriaModified);
 
     if (id != null && password != null && lastModified != null) {
       final encryptedId = encryptText(id);

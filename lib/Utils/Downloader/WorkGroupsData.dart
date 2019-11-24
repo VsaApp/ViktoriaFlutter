@@ -5,7 +5,9 @@ import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 
+/// Work groups data downloader
 class WorkGroupsData extends Downloader<WorkGroups> {
+  // ignore: public_member_api_docs
   WorkGroupsData()
       : super(
           url: Urls.workgroups,

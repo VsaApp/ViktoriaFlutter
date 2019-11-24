@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/SectionWidget.dart';
 
+/// Card for one substitution plan section (for example: my changes)
 class SectionView extends State<Section> {
   @override
   Widget build(BuildContext context) {

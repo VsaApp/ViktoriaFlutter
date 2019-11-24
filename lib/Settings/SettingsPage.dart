@@ -5,6 +5,7 @@ import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'SettingsView.dart';
 
+/// Page with user settings
 class SettingsPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -12,39 +13,31 @@ class SettingsPage extends StatefulWidget {
   }
 }
 
+// ignore: public_member_api_docs
 abstract class SettingsPageState extends State<SettingsPage> {
-  static List<String> grades = [
-    '5a',
-    '5b',
-    '5c',
-    '6a',
-    '6b',
-    '6c',
-    '7a',
-    '7b',
-    '7c',
-    '8a',
-    '8b',
-    '8c',
-    '9a',
-    '9b',
-    '9c',
-    'EF',
-    'Q1',
-    'Q2'
-  ];
-  String grade = grades[0];
+  /// The grade of the user
+  String grade = '5a';
+
+  /// All shortcuts pages
   List<String> pages = [];
+
+  /// The current shortcut page
   String page = '';
+
+  // ignore: public_member_api_docs
   bool sortSubstitutionPlan = true;
+  // ignore: public_member_api_docs
   bool showSubstitutionPlanInTimetable = true;
+  // ignore: public_member_api_docs
   bool getSubstitutionPlanNotifications = true;
+  // ignore: public_member_api_docs
   bool showShortCutDialog = true;
+  // ignore: public_member_api_docs
   bool showWorkGroupsInTimetable = true;
+  // ignore: public_member_api_docs
   bool showCalendarInTimetable = true;
+  // ignore: public_member_api_docs
   bool showCafetoriaInTimetable = true;
-  bool muteDevice = false;
-  bool dev = false;
 
   @override
   void initState() {
@@ -54,11 +47,10 @@ abstract class SettingsPageState extends State<SettingsPage> {
     super.initState();
   }
 
-  // Load saved settings
-  void loadSettings() async {
+  /// Load saved settings
+  Future<void> loadSettings() async {
     setState(() {
       grade = Storage.get(Keys.grade) ?? '';
-      dev = Storage.get(Keys.dev) ?? false;
       sortSubstitutionPlan = Storage.getBool(Keys.sortSubstitutionPlan) ?? true;
       showSubstitutionPlanInTimetable =
           Storage.getBool(Keys.showSubstitutionPlanInTimetable) ?? true;
@@ -79,7 +71,6 @@ abstract class SettingsPageState extends State<SettingsPage> {
         AppLocalizations.of(context).workGroups,
         AppLocalizations.of(context).courses
       ];
-      muteDevice = Storage.getBool(Keys.muteService);
       page = pages[Storage.getInt(Keys.initialPage) ?? 0];
     });
   }

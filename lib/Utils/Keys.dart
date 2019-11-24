@@ -1,185 +1,181 @@
-// Defines all preferences keys...
+/// Defines all preferences keys...
 class Keys {
-  // Saves the selected grade...
+  /// Saves the selected grade...
   static String get grade {
     return 'grade';
   }
 
+  /// Saves the user group (pupil/developer/teacher)
   static String get group {
     return 'group';
   }
 
+  /// Saves the current timetable date
   static String get timetableDate {
     return 'timetableDate';
   }
 
+  /// Saves the length of the timetable days
   static String get daysLengths {
     return 'daysLengths';
   }
 
+  /// Saves if the user is a developer
   static String get dev {
     return 'dev';
   }
 
+  /// Saves all offline bugs
   static String get bugs {
     return 'bugs';
   }
 
-  static String get userId {
-    return 'userId';
-  }
-
-  // Saves the two last selected grades...
+  /// Saves the two last selected grades...
   static String get lastGrades {
     return 'lastGrades';
   }
 
-  // Saves the last notification received time...
+  /// Saves the last notification received time...
   static String get lastUpdate {
     return 'lastUpdate';
   }
 
-  // Saves the cafetoria data...
+  /// Saves the cafetoria data...
   static String get cafetoria {
     return 'cafetoria';
   }
 
-  // Saves the cafetoria data...
+  /// Saves the cafetoria data...
   static String get cafetoriaModified {
     return 'cafetoriaModified';
   }
 
-  // Saves the keyfob id...
+  /// Saves the keyfob id...
   static String get cafetoriaId {
     return 'cafetoriaUsername';
   }
 
-  // Saves the keyfob password...
+  /// Saves the keyfob password...
   static String get cafetoriaPassword {
     return 'cafetoriaPassword';
   }
 
-  // Saves the app username...
+  /// Saves the app username...
   static String get username {
     return 'username';
   }
 
-  // Saves the app password...
+  /// Saves the app password...
   static String get password {
     return 'password';
   }
 
-  // Saves if the substitution plan should be sorted...
+  /// Saves if the substitution plan should be sorted...
   static String get sortSubstitutionPlan {
     return 'sortSubstitutionPlan';
   }
 
-  // Saves if the replacemetplan should shown in the timetable...
+  /// Saves if the substitution plan should shown in the timetable...
   static String get showSubstitutionPlanInTimetable {
     return 'showSubstitutionPlanInTimetable';
   }
 
-  // Saves if the user get substitution plan notifications...
+  /// Saves if the user get substitution plan notifications...
   static String get getSubstitutionPlanNotifications {
     return 'getSubstitutionPlanNotifications';
   }
 
-  // timetable-GRADE saves the timetable json string...
+  /// timetable-GRADE saves the timetable json string...
   static String timetable(String grade) {
     return 'timetable-$grade';
   }
 
-  // selection-courseID saves the selected course
+  /// selection-courseID saves the selected course
   static String selection(String courseID) {
     return 'selection-$courseID';
   }
 
-  // substitutionPlan saves the substitution plan...
+  /// substitutionPlan saves the substitution plan...
   static String get substitutionPlan {
     return 'substitutionPlan';
   }
 
-  // exams-courseID saves if user writing exams in this course...
+  /// exams-courseID saves if user writing exams in this course...
   static String exams(String courseID) {
     return 'exams-$courseID';
   }
 
-  // Saves if the shortcut dialog should be shown...
+  /// Saves if the shortcut dialog should be shown...
   static String get showShortCutDialog {
     return 'showShortCut';
   }
 
-  // Saves the initialPage...
+  /// Saves the initialPage...
   static String get initialPage {
     return 'initialPage';
   }
 
-  // Saves the work groups...
+  /// Saves the work groups...
   static String get workGroups {
     return 'workGroups';
   }
 
-  // Saves the calendar...
+  /// Saves the calendar...
   static String get calendar {
     return 'calendar';
   }
 
-  static String room(int weekday, int unit, String subject) {
-    return 'room-' + weekday.toString() + '-' + unit.toString() + '-' + subject;
-  }
-
+  /// Saves the version of the shown intro slides
   static String get slidesVersion {
     return 'slidesVersion';
   }
 
+  /// Saves all subject names
   static String get subjects {
     return 'subjects';
   }
 
+  /// Saves all room names
   static String get rooms {
     return 'rooms';
   }
 
+  /// Saves all teacher names
   static String get teachers {
     return 'teachers';
   }
 
+  /// Saves if the work groups should be shown in the timetable
   static String get showWorkGroupsInTimetable {
     return 'showWorkGroupsInTimetable';
   }
 
+  /// Saves if the calendar should be shown in the timetable
   static String get showCalendarInTimetable {
     return 'showCalendarInTimetable';
   }
 
+  /// Saves if the cafetoria should be shown in the timetable
   static String get showCafetoriaInTimetable {
     return 'showCafetoriaInTimetable';
   }
 
-  static String get id {
-    return 'id';
-  }
-
+  /// Saves all updates dates
   static String get updates {
     return 'updates';
   }
 
-  static String get oldGrade {
-    return 'oldGrade';
-  }
-
+  /// Saves is the timetable is updates
   static String get timetableIsNew {
     return 'timetableIsNew';
   }
 
-  static String get muteService {
-    return 'muteService';
-  }
-
+  /// Saves the last modified timetable selection / exams
   static String get lastModified {
     return 'lastModified';
   }
 
+  /// Saves the loaded nextcloud folder structure
   static String get nextcloud {
     return 'nextcloud';
   }

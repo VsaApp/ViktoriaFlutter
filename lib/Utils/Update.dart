@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:viktoriaflutter/Home/HomePage.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 
+/// Show snackbar for update data
 void dataUpdated(BuildContext context, bool successfully, String name) {
-  print("Show snackbar");
+  print('Show snackbar');
   if (HomePageState.isInForeground) {
     Scaffold.of(context).showSnackBar(
       SnackBar(

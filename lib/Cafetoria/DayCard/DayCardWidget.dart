@@ -4,14 +4,19 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 
+/// Shows a card with all cafetoria menus for one day
 class CafetoriaDayCard extends StatelessWidget {
+  // ignore: public_member_api_docs
   const CafetoriaDayCard({
-    Key key,
     @required this.day,
     @required this.showWeekday,
+    Key key,
   }) : super(key: key);
 
+  /// The loaded cafetoria day
   final CafetoriaDay day;
+
+  /// Option to de-/activate the weekday title
   final bool showWeekday;
 
   @override
@@ -29,14 +34,13 @@ class CafetoriaDayCard extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                menu.time != '' ? Text(menu.time) : Container(),
-                day.menus.indexOf(menu) != day.menus.length - 1
-                    ? Text('')
-                    : Container(),
+                if(menu.time != '') Text(menu.time),
+                if(day.menus.indexOf(menu) != day.menus.length - 1)
+                    Text('')
               ],
             ))
         .toList();
-    if (menus.length == 0) {
+    if (menus.isEmpty) {
       menus = [
         Text(
           AppLocalizations.of(context).cafetoriaNoMenus,
@@ -61,7 +65,8 @@ class CafetoriaDayCard extends StatelessWidget {
                 title: showWeekday
                     ? Padding(
                         padding: EdgeInsets.only(bottom: 5),
-                        child: Text(AppLocalizations.of(context).weekdays[day.day]),
+                        child: Text(
+                            AppLocalizations.of(context).weekdays[day.day]),
                       )
                     : null,
                 subtitle: Column(

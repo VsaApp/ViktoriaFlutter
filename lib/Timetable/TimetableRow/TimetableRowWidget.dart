@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 
-import 'package:viktoriaflutter/Utils/Rooms.dart';
 import 'package:viktoriaflutter/Utils/Times.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 
+/// One unit in the timetable
 class TimetableRow extends StatelessWidget {
+  /// The selected subject
   final TimetableSubject subject;
-  final int unit;
+
+  /// Defines if the unit should be shown
   final bool showUnit;
-  final int weekday;
+
+  /// Defines if the unit is shown in a dialog
   final bool isDialog;
 
-  TimetableRow({
-    Key key,
+  // ignore: public_member_api_docs
+  const TimetableRow({
     @required this.subject,
-    @required this.unit,
-    @required this.weekday,
     this.showUnit = true,
     this.isDialog = false,
+    Key key,
   }) : super(key: key);
 
   @override
@@ -30,10 +32,10 @@ class TimetableRow extends StatelessWidget {
             flex: showUnit ? 8 : 0,
             child: Center(
               child: Text(
-                (showUnit)
-                    ? '${((unit != 5 && showUnit)
-                    ? (unit + 1).toString()
-                    : '')}'
+                showUnit
+                    ? (subject.unit != 5 && showUnit)
+                        ? (subject.unit + 1).toString()
+                        : ''
                     : '',
                 style: TextStyle(
                   color: Colors.black54,
@@ -51,29 +53,31 @@ class TimetableRow extends StatelessWidget {
                     children: <Widget>[
                       Expanded(
                         flex: 76,
-                        child: (unit != 5
+                        child: subject.unit != 5
                             ?
-                        // Normal name
-                        Text(
-                          Data.subjects[subject.subjectID.toUpperCase()] ?? subject.subjectID,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15.0,
-                            color: Theme
-                                .of(context)
-                                .primaryColor,
-                          ),
-                        )
+                            // Normal name
+                            Text(
+                                Data.subjects[
+                                        subject.subjectID.toUpperCase()] ??
+                                    subject.subjectID,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              )
                             :
-                        // Lunch break
-                        Center(
-                          child: Text(
-                            Data.subjects[subject.subjectID.toUpperCase()] ?? subject.subjectID,
-                            style: TextStyle(
-                              fontSize: 15.0,
-                            ),
-                          ),
-                        )),
+                            // Lunch break
+                            Center(
+                                child: Text(
+                                  Data.subjects[
+                                          subject.subjectID.toUpperCase()] ??
+                                      subject.subjectID,
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
                       ),
                       Expanded(
                         flex: 20,
@@ -91,7 +95,7 @@ class TimetableRow extends StatelessWidget {
                       Expanded(
                         flex: 76,
                         child: Text(
-                          (unit != 5 ? times[unit] : ''),
+                          subject.unit != 5 ? times[subject.unit] : '',
                           style: TextStyle(
                             color: Colors.black54,
                           ),
@@ -100,7 +104,7 @@ class TimetableRow extends StatelessWidget {
                       Expanded(
                         flex: 20,
                         child: Text(
-                          getRoom(weekday, unit, subject.subjectID, subject.roomID),
+                          subject.roomID,
                           style: TextStyle(
                             color: Colors.black54,
                           ),

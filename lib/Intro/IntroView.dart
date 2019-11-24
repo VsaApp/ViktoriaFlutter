@@ -14,11 +14,13 @@ import 'package:viktoriaflutter/SubstitutionPlan/SubstitutionPlanRow/Substitutio
 import 'package:viktoriaflutter/Timetable/TimetableRow/TimetableRowWidget.dart';
 import 'package:viktoriaflutter/WorkGroups/DayCard/DayCardWidget.dart';
 
-import 'IntroPage.dart';
-import 'IntroSlider/IntroSliderWidget.dart';
-import 'Slide/SlideWidget.dart';
+import 'package:viktoriaflutter/Intro/IntroPage.dart';
+import 'package:viktoriaflutter/Intro/IntroSlider/IntroSliderWidget.dart';
+import 'package:viktoriaflutter/Intro/Slide/SlideWidget.dart';
 
+// ignore: public_member_api_docs
 class IntroPageView extends IntroPageState {
+  /// Open the home page
   void onFinished() {
     Navigator.of(context).pushReplacementNamed('/home');
   }
@@ -26,94 +28,82 @@ class IntroPageView extends IntroPageState {
   @override
   Widget build(BuildContext context) {
     slides.clear();
-    TimetableSubject subject = TimetableSubject(
-      unit: 2,
-      teacherID: 'STA',
-      subjectID: 'Erdkunde',
-      roomID: '525',
-      id: '',
-      courseID: '',
-      week: 2,
-      block: '',
-      day: 1
-    );
-    Substitution change = Substitution(
+    final TimetableSubject subject = TimetableSubject(
+        unit: 2,
+        teacherID: 'STA',
+        subjectID: 'Erdkunde',
+        roomID: '525',
+        id: '',
+        courseID: '',
+        week: 2,
+        block: '',
+        day: 1);
+    final Substitution change = Substitution(
       unit: 1,
       id: null,
       courseID: null,
       info: '',
       type: 1,
       original: SubstitutionDetails(
-        roomID: '233',
-        teacherID: 'HIM',
-        subjectID: 'Englisch'
-      ),
-      changed: SubstitutionDetails(
-          subjectID: 'Deutsch',
-          teacherID: '',
-          roomID: ''
-      ),
+          roomID: '233', teacherID: 'HIM', subjectID: 'Englisch'),
+      changed:
+          SubstitutionDetails(subjectID: 'Deutsch', teacherID: '', roomID: ''),
     );
-    slides.add(
-      Slide(
-        title: AppLocalizations.of(context).introTimetableTitle,
-        description: AppLocalizations.of(context).introTimetableDescription,
-        backgroundColor: Theme.of(context).primaryColor,
-        centerWidget: Container(
-          margin: EdgeInsets.all(10),
-          child: Card(
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 10),
-              child: Column(children: [
-                TimetableRow(
-                  weekday: 0,
-                  subject: subject,
-                  unit: 0,
-                  isDialog: !(Platform.isIOS || Platform.isAndroid),
-                ),
-                SubstitutionPlanRow(
-                  substitution: change,
-                  changes: [change],
-                  weekday: 0,
-                  isDialog: !(Platform.isIOS || Platform.isAndroid),
-                )
-              ]),
+    slides
+      ..add(
+        Slide(
+          title: AppLocalizations.of(context).introTimetableTitle,
+          description: AppLocalizations.of(context).introTimetableDescription,
+          backgroundColor: Theme.of(context).primaryColor,
+          centerWidget: Container(
+            margin: EdgeInsets.all(10),
+            child: Card(
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 10),
+                child: Column(children: [
+                  TimetableRow(
+                    subject: subject,
+                    isDialog: !(Platform.isIOS || Platform.isAndroid),
+                  ),
+                  SubstitutionPlanRow(
+                    substitution: change,
+                    changes: [change],
+                    weekday: 0,
+                    isDialog: !(Platform.isIOS || Platform.isAndroid),
+                  )
+                ]),
+              ),
             ),
           ),
         ),
-      ),
-    );
-    slides.add(
-      Slide(
-        title: AppLocalizations.of(context).introSubstitutionPlanTitle,
-        description:
-        AppLocalizations.of(context).introSubstitutionPlanDescription,
-        centerWidget: Section(
-          isLast: false,
-          title: AppLocalizations.of(context).myChanges,
-          children: [
-            SubstitutionPlanRow(
-              substitution: change,
-              changes: [change],
-              weekday: 0,
-            ),
-          ],
+      )
+      ..add(
+        Slide(
+          title: AppLocalizations.of(context).introSubstitutionPlanTitle,
+          description:
+              AppLocalizations.of(context).introSubstitutionPlanDescription,
+          centerWidget: Section(
+            isLast: false,
+            title: AppLocalizations.of(context).myChanges,
+            children: [
+              SubstitutionPlanRow(
+                substitution: change,
+                changes: [change],
+                weekday: 0,
+              ),
+            ],
+          ),
+          backgroundColor: Theme.of(context).primaryColor,
         ),
-        backgroundColor: Theme.of(context).primaryColor,
-      ),
-    );
+      );
     if (Platform.isIOS || Platform.isAndroid) {
       slides.add(Slide(
-        title: AppLocalizations
-            .of(context)
-            .introNotificationsTitle,
-        description: AppLocalizations
-            .of(context)
-            .introNotificationsDescription,
+        title: AppLocalizations.of(context).introNotificationsTitle,
+        description: AppLocalizations.of(context).introNotificationsDescription,
         backgroundColor: Theme.of(context).primaryColor,
       ));
     }
-    CalendarEvent event = CalendarEvent(
+    final CalendarEvent event = CalendarEvent(
       name: 'Elternsprechtag',
       info: '',
       start: DateTime(2019, 3, 12, 15),
@@ -128,7 +118,7 @@ class IntroPageView extends IntroPageState {
       ),
       backgroundColor: Theme.of(context).primaryColor,
     ));
-    CafetoriaDay cafetoriaDay = CafetoriaDay(
+    final CafetoriaDay cafetoriaDay = CafetoriaDay(
       day: 0,
       date: '11.3.2019',
       menus: [
@@ -162,7 +152,7 @@ class IntroPageView extends IntroPageState {
       backgroundColor: Theme.of(context).primaryColor,
     ));
 
-    WorkGroupsDay workGroupsDay = WorkGroupsDay(
+    final WorkGroupsDay workGroupsDay = WorkGroupsDay(
       weekday: 0,
       data: [
         WorkGroup(
@@ -191,40 +181,37 @@ class IntroPageView extends IntroPageState {
         ),
       ],
     );
-    slides.add(Slide(
-      title: AppLocalizations.of(context).introWorkGroupsTitle,
-      description: AppLocalizations.of(context).introWorkGroupsDescription,
-      centerWidget: Container(
-        margin: EdgeInsets.all(10),
-        child: WorkGroupsDayCard(
-          day: workGroupsDay,
-          showWeekday: true,
+    slides
+      ..add(Slide(
+        title: AppLocalizations.of(context).introWorkGroupsTitle,
+        description: AppLocalizations.of(context).introWorkGroupsDescription,
+        centerWidget: Container(
+          margin: EdgeInsets.all(10),
+          child: WorkGroupsDayCard(
+            day: workGroupsDay,
+            showWeekday: true,
+          ),
         ),
-      ),
-      backgroundColor: Theme.of(context).primaryColor,
-    ));
-    slides.add(Slide(
-      title: AppLocalizations.of(context).introExtendedTimetableTitle,
-      description:
-      AppLocalizations.of(context).introExtendedTimetableDescription,
-      backgroundColor: Theme.of(context).primaryColor,
-    ));
-    slides.add(Slide(
-      title: AppLocalizations.of(context).introCoursesTitle,
-      description: AppLocalizations.of(context).introCoursesDescription,
-      backgroundColor: Theme.of(context).primaryColor,
-    ));
+        backgroundColor: Theme.of(context).primaryColor,
+      ))
+      ..add(Slide(
+        title: AppLocalizations.of(context).introExtendedTimetableTitle,
+        description:
+            AppLocalizations.of(context).introExtendedTimetableDescription,
+        backgroundColor: Theme.of(context).primaryColor,
+      ))
+      ..add(Slide(
+        title: AppLocalizations.of(context).introCoursesTitle,
+        description: AppLocalizations.of(context).introCoursesDescription,
+        backgroundColor: Theme.of(context).primaryColor,
+      ));
 
-    String grade = Storage.getString(Keys.grade);
+    final String grade = Storage.getString(Keys.grade);
     if ((grade == 'EF' || grade == 'Q1' || grade == 'Q2') &&
         (Platform.isIOS || Platform.isAndroid)) {
       slides.add(Slide(
-        title: AppLocalizations
-            .of(context)
-            .introScannerTitle,
-        description: AppLocalizations
-            .of(context)
-            .introScannerDescription,
+        title: AppLocalizations.of(context).introScannerTitle,
+        description: AppLocalizations.of(context).introScannerDescription,
         backgroundColor: Theme.of(context).primaryColor,
       ));
     }
@@ -237,7 +224,7 @@ class IntroPageView extends IntroPageState {
 
     return Scaffold(
       body: IntroSlider(
-        slides: this.slides,
+        slides: slides,
         onFinished: onFinished,
       ),
     );
