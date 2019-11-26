@@ -66,10 +66,9 @@ class IntroPageView extends IntroPageState {
                     isDialog: !(Platform.isIOS || Platform.isAndroid),
                   ),
                   SubstitutionPlanRow(
-                    substitution: change,
-                    changes: [change],
-                    weekday: 0,
-                    isDialog: !(Platform.isIOS || Platform.isAndroid),
+                    index: 0,
+                    substitutions: [change],
+                    context: context
                   )
                 ]),
               ),
@@ -87,9 +86,9 @@ class IntroPageView extends IntroPageState {
             title: AppLocalizations.of(context).myChanges,
             children: [
               SubstitutionPlanRow(
-                substitution: change,
-                changes: [change],
-                weekday: 0,
+                context: context,
+                index: 0,
+                substitutions: [change],
               ),
             ],
           ),

@@ -58,8 +58,8 @@ class TimetableData extends Downloader<Timetable> {
     if (version1 == null || version2 == null) {
       return;
     }
-    version1 = version1.replaceFirst(RegExp('"date":.+,'), '');
-    version2 = version2.replaceFirst(RegExp('"date":.+,'), '');
+    version1 = version1.replaceFirst(RegExp('"date":"(.*?)"'), '');
+    version2 = version2.replaceFirst(RegExp('"date":"(.*?)"'), '');
     if (version1 != version2) {
       Storage.setBool(Keys.timetableIsNew, true);
       print('There is a new timetable, reset old data');
@@ -67,7 +67,7 @@ class TimetableData extends Downloader<Timetable> {
         ..where((String key) =>
             key.startsWith(Keys.selection('')) ||
             key.startsWith(Keys.exams(''))).toList()
-        ..forEach(Storage.remove);
+        .forEach(Storage.remove);
       await deleteTags({
         'timestamp': Storage.getString(Keys.lastModified),
         'selected': keys

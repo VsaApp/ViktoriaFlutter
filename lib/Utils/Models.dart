@@ -8,6 +8,7 @@ import 'Models/UpdatesModel.dart';
 import 'Models/WorkGroupsModel.dart';
 export 'Models/CafetoriaModel.dart';
 export 'Models/CalendarModel.dart';
+export 'Models/SubjectRowDetails.dart';
 export 'Models/SubstitutionPlanModel.dart';
 export 'Models/TagsModel.dart';
 export 'Models/TeachersModel.dart';

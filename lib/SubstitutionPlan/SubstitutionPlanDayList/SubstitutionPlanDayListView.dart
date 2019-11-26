@@ -106,10 +106,11 @@ class SubstitutionPlanDayListView extends SubstitutionPlanDayListState {
               ?
               // Show all changes in a list...
               getUnsortedList(widget.day).map((change) {
+                final substitutions = getUnsortedList(widget.day);
                   return SubstitutionPlanRow(
-                    changes: getUnsortedList(widget.day),
-                    substitution: change,
-                    weekday: widget.day.date.weekday - 1,
+                    substitutions: substitutions,
+                    index: substitutions.indexOf(change),
+                    context: context,
                   );
                 }).toList()
               :
@@ -124,9 +125,9 @@ class SubstitutionPlanDayListView extends SubstitutionPlanDayListState {
                         // Show my changes
                         widget.day.myChanges.map((change) {
                             return SubstitutionPlanRow(
-                              changes: widget.day.myChanges,
-                              substitution: change,
-                              weekday: widget.day.date.weekday - 1,
+                              substitutions: widget.day.myChanges,
+                              index: widget.day.myChanges.indexOf(change),
+                              context: context,
                             );
                           }).toList()
                         :
@@ -150,10 +151,10 @@ class SubstitutionPlanDayListView extends SubstitutionPlanDayListState {
                         title: AppLocalizations.of(context).undefChanges,
                         children: widget.day.undefinedChanges.map((change) {
                           return SubstitutionPlanRow(
-                            changes: widget.day.undefinedChanges,
-                            substitution: change,
-                            weekday: widget.day.date.weekday - 1,
-                          );
+                              substitutions: widget.day.undefinedChanges,
+                              index: widget.day.undefinedChanges.indexOf(change),
+                              context: context,
+                            );
                         }).toList()),
                   if (widget.day.otherChanges.isNotEmpty)
                     Section(
@@ -161,10 +162,10 @@ class SubstitutionPlanDayListView extends SubstitutionPlanDayListState {
                         title: AppLocalizations.of(context).otherChanges,
                         children: widget.day.otherChanges.map((change) {
                           return SubstitutionPlanRow(
-                            changes: widget.day.otherChanges,
-                            substitution: change,
-                            weekday: widget.day.date.weekday - 1,
-                          );
+                              substitutions: widget.day.otherChanges,
+                              index: widget.day.otherChanges.indexOf(change),
+                              context: context,
+                            );
                         }).toList()),
                 ],
         ],

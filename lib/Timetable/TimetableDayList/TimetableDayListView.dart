@@ -124,23 +124,33 @@ class TimetableDayListView extends TimetableDayListState {
                             right: 0,
                             top: widget.day.units.indexOf(unit) == 0 ? 10 : 0),
                         child: Card(
+                          shape: BeveledRectangleBorder(
+                            borderRadius: BorderRadius.circular(0),
+                          ),
+                          margin: EdgeInsets.only(left: 0, right: 0, bottom: 4, top: 4),
+                          clipBehavior: Clip.antiAlias,
                           child: Padding(
                             padding: EdgeInsets.only(bottom: 10),
                             child: Column(
-                              children: substitutions
-                                  .map((change) {
+                              children: [
+                                if (substitutions[0].isExam && substitutions.length == 1) TimetableRow(
+                                  subject: selected,
+                                ),
+                                ...substitutions
+                                  .map<Widget>((change) {
                                     return Padding(
                                       padding: EdgeInsets.only(
                                           left: 2.5, right: 2.5),
                                       child: SubstitutionPlanRow(
-                                        substitution: change,
-                                        changes: substitutions,
-                                        weekday: widget.day.day,
+                                        index: substitutions.indexOf(change),
+                                        substitutions: substitutions,
+                                        context: context,
+                                        showUnit: !(substitutions[0].isExam && substitutions.length == 1),
                                       ),
                                     );
                                   })
                                   .toList()
-                                  .cast<Widget>(),
+                              ]
                             ),
                           ),
                         ))
@@ -248,6 +258,7 @@ class TimetableDayListView extends TimetableDayListState {
     } else {
       return ListView(
         shrinkWrap: true,
+        padding: EdgeInsets.only(bottom: 20),
         children: items,
       );
     }
