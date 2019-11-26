@@ -36,7 +36,7 @@ abstract class Downloader<type> {
           onFinished: statusCompleter.complete);
       status = await statusCompleter.future;
 
-      if (status == StatusCodes.unauthorized) {
+      if (status == StatusCodes.unauthorized && context != null) {
         Navigator.of(context).pushReplacementNamed('/login');
       }
     }
