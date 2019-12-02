@@ -22,7 +22,7 @@ import 'package:viktoriaflutter/Intro/Slide/SlideWidget.dart';
 class IntroPageView extends IntroPageState {
   /// Open the home page
   void onFinished() {
-    Navigator.of(context).pushReplacementNamed('/home');
+    Navigator.of(context).pushReplacementNamed('/main');
   }
 
   @override
@@ -66,10 +66,7 @@ class IntroPageView extends IntroPageState {
                     isDialog: !(Platform.isIOS || Platform.isAndroid),
                   ),
                   SubstitutionPlanRow(
-                    index: 0,
-                    substitutions: [change],
-                    context: context
-                  )
+                      index: 0, substitutions: [change], context: context)
                 ]),
               ),
             ),

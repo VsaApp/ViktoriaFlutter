@@ -25,8 +25,6 @@ abstract class SettingsPageState extends State<SettingsPage> {
   String page = '';
 
   // ignore: public_member_api_docs
-  bool sortSubstitutionPlan = true;
-  // ignore: public_member_api_docs
   bool showSubstitutionPlanInTimetable = true;
   // ignore: public_member_api_docs
   bool getSubstitutionPlanNotifications = true;
@@ -51,7 +49,6 @@ abstract class SettingsPageState extends State<SettingsPage> {
   Future<void> loadSettings() async {
     setState(() {
       grade = Storage.get(Keys.grade) ?? '';
-      sortSubstitutionPlan = Storage.getBool(Keys.sortSubstitutionPlan) ?? true;
       showSubstitutionPlanInTimetable =
           Storage.getBool(Keys.showSubstitutionPlanInTimetable) ?? true;
       getSubstitutionPlanNotifications =

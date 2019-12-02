@@ -41,7 +41,6 @@ class AppLocalizations {
       'appSettings': 'App',
       'logout': 'Abmelden',
       'freeLesson': 'Freistunde',
-      'sortSubstitutionPlan': 'Sortieren',
       'showSubstitutionPlanInTimetable': 'Vertretungsplan anzeigen',
       'getSubstitutionPlanNotifications': 'Benachrichtigungen für Änderungen',
       'nUnit': '. Stunde',
@@ -543,12 +542,6 @@ class AppLocalizations {
   String get nUnit {
 
     return _localizedValues[locale.languageCode]['nUnit'];
-  }
-
-  // ignore: public_member_api_docs
-  String get sortSubstitutionPlan {
-
-    return _localizedValues[locale.languageCode]['sortSubstitutionPlan'];
   }
 
   // ignore: public_member_api_docs

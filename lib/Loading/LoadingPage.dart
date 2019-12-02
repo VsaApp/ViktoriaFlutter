@@ -74,13 +74,11 @@ abstract class LoadingPageState extends State<LoadingPage>
       bugs.init();
 
       // Set default options
-      if (Storage.get(Keys.sortSubstitutionPlan) == null ||
-          Storage.get(Keys.showSubstitutionPlanInTimetable) == null ||
+      if (Storage.get(Keys.showSubstitutionPlanInTimetable) == null ||
           Storage.get(Keys.getSubstitutionPlanNotifications) == null ||
           Storage.get(Keys.showWorkGroupsInTimetable) == null ||
           Storage.get(Keys.showCalendarInTimetable) == null ||
           Storage.get(Keys.showCafetoriaInTimetable) == null) {
-        Storage.setBool(Keys.sortSubstitutionPlan, true);
         Storage.setBool(Keys.showSubstitutionPlanInTimetable, true);
         Storage.setBool(Keys.getSubstitutionPlanNotifications, true);
         Storage.setBool(Keys.showWorkGroupsInTimetable, false);
@@ -366,7 +364,7 @@ abstract class LoadingPageState extends State<LoadingPage>
       !oldValue.isAtSameMomentAs(newValue);
 
   /// Executes one download process and removes the download text
-  /// 
+  ///
   /// If it was the last process, it starts the app
   Future<void> download(Future<void> Function() process, String text) async {
     await process();
@@ -388,7 +386,7 @@ abstract class LoadingPageState extends State<LoadingPage>
           Navigator.of(context).pushReplacementNamed('/intro');
         } else {
           print('open home');
-          Navigator.of(context).pushReplacementNamed('/home');
+          Navigator.of(context).pushReplacementNamed('/main');
         }
       });
     }

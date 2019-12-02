@@ -22,57 +22,6 @@ class SettingsPageView extends SettingsPageState {
           Section(
             title: AppLocalizations.of(context).appSettings.toUpperCase(),
             children: <Widget>[
-              // Show short cut dialog option
-              CheckboxListTile(
-                value: showShortCutDialog,
-                onChanged: (bool value) {
-                  setState(() {
-                    Storage.setBool(Keys.showShortCutDialog, value);
-                    showShortCutDialog = value;
-                  });
-                },
-                title: Text(AppLocalizations.of(context).showShortCutDialog),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 15, right: 22.5),
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(
-                      width: double.infinity,
-                      child: Text(
-                        AppLocalizations.of(context).initialPage,
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                    // Initial page selector
-                    SizedBox(
-                      width: double.infinity,
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          isDense: true,
-                          items: pages.map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          value: page,
-                          onChanged: (p) async {
-                            setState(() {
-                              page = p;
-                              Storage.setInt(
-                                  Keys.initialPage, pages.indexOf(page));
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               Container(
                 margin: EdgeInsets.only(top: 20, left: 15, right: 15),
                 child: SizedBox(
@@ -93,18 +42,6 @@ class SettingsPageView extends SettingsPageState {
                 .substitutionPlanSettings
                 .toUpperCase(),
             children: <Widget>[
-              // Sort substitution plan option
-              CheckboxListTile(
-                value: sortSubstitutionPlan,
-                onChanged: (bool value) {
-                  setState(() {
-                    Storage.setBool(Keys.sortSubstitutionPlan, value);
-                    sortSubstitutionPlan = value;
-                  });
-                },
-                title: Text(AppLocalizations.of(context).sortSubstitutionPlan),
-                controlAffinity: ListTileControlAffinity.trailing,
-              ),
               // Get substitutionPlan notifications option
               if (Platform.isIOS || Platform.isAndroid)
                 CheckboxListTile(

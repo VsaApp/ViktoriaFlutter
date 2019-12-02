@@ -3,7 +3,7 @@ import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
 import 'package:viktoriaflutter/Utils/Week.dart';
 
-import 'package:viktoriaflutter/Home/HomePage.dart';
+import 'package:viktoriaflutter/MainFrame/MainFramePage.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
@@ -22,7 +22,6 @@ class TimetablePage extends StatefulWidget {
 // ignore: public_member_api_docs
 class TimetableView extends State<TimetablePage>
     with SingleTickerProviderStateMixin {
-  
   /// Timetable updated listener
   Function() updatedListener;
 
@@ -63,7 +62,8 @@ class TimetableView extends State<TimetablePage>
           final DateTime dateOfDay = dateOfMonday.add(Duration(days: j));
           if (date.isAfter(today) && dateOfDay.weekday <= date.weekday) {
             Data.timetable.days[j - 1 > 0 ? j - 1 : 0].showWeek = day.week;
-          } else if (date.isBefore(today) && dateOfDay.weekday >= date.weekday) {
+          } else if (date.isBefore(today) &&
+              dateOfDay.weekday >= date.weekday) {
             Data.timetable.days[j].showWeek = day.week;
           }
         }
@@ -121,8 +121,8 @@ class TimetableView extends State<TimetablePage>
   @override
   void initState() {
     updatedListener = () => setState(() => days = Data.timetable.days);
-    HomePageState.substitutionPlanUpdatedListeners.add(updatedListener);
-    HomePageState.setWeekChangeable(true);
+    MainFrameState.substitutionPlanUpdatedListeners.add(updatedListener);
+    MainFrameState.setWeekChangeable(true);
     WidgetsBinding.instance.addPostFrameCallback((a) {
       setState(() {
         _weekdays = AppLocalizations.of(context)
@@ -141,21 +141,23 @@ class TimetableView extends State<TimetablePage>
       _controller.animateTo(firstPage);
       setWeeks();
 
-      HomePageState.updateWeek(Data.timetable.days[firstPage].showWeek);
+      MainFrameState.updateWeek(Data.timetable.days[firstPage].showWeek);
       _controller.addListener(() {
         if (_originalWeek != null) {
-          Data.timetable.days[_controller.previousIndex].showWeek = _originalWeek;
+          Data.timetable.days[_controller.previousIndex].showWeek =
+              _originalWeek;
           _originalWeek = null;
         }
-        HomePageState.updateWeek(
+        MainFrameState.updateWeek(
             Data.timetable.days[_controller.index].showWeek);
       });
 
       // Add week listener...
-      HomePageState.weekChanged = (int week) {
+      MainFrameState.weekChanged = (int week) {
         _originalWeek ??= Data.timetable.days[_controller.index].showWeek;
         if (mounted) {
-          setState(() => Data.timetable.days[_controller.index].showWeek = week);
+          setState(
+              () => Data.timetable.days[_controller.index].showWeek = week);
         }
       };
     });
@@ -165,7 +167,7 @@ class TimetableView extends State<TimetablePage>
 
   @override
   void dispose() {
-    HomePageState.substitutionPlanUpdatedListeners.remove(updatedListener);
+    MainFrameState.substitutionPlanUpdatedListeners.remove(updatedListener);
     super.dispose();
   }
 
@@ -183,10 +185,13 @@ class TimetableView extends State<TimetablePage>
             .toList(),
         controller: _controller,
         onUpdate: () async {
-          bool successfully = await TimetableData().download(context) == StatusCodes.success;
-          HomePageState.checkIfTimetableUpdated(context);
+          bool successfully =
+              await TimetableData().download(context) == StatusCodes.success;
+          MainFrameState.checkIfTimetableUpdated(context);
           await syncWithTags();
-          successfully = await SubstitutionPlanData().download(context)  == StatusCodes.success && successfully;
+          successfully = await SubstitutionPlanData().download(context) ==
+                  StatusCodes.success &&
+              successfully;
 
           Data.substitutionPlan.insert();
           Data.substitutionPlan.updateFilter();

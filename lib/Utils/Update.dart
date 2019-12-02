@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:viktoriaflutter/Home/HomePage.dart';
+import 'package:viktoriaflutter/MainFrame/MainFramePage.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 
 /// Show snackbar for update data
 void dataUpdated(BuildContext context, bool successfully, String name) {
   print('Show snackbar');
-  if (HomePageState.isInForeground) {
+  if (MainFrameState.isInForeground) {
     Scaffold.of(context).showSnackBar(
       SnackBar(
         duration: Duration(milliseconds: successfully ? 1400 : 3000),

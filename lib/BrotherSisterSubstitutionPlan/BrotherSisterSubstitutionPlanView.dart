@@ -30,7 +30,6 @@ class BrotherSisterSubstitutionPlanPageView
                         day: day,
                         dayIndex: days.indexOf(day),
                         grade: widget.grade,
-                        sort: false,
                       ))
                   .toList(),
               controller: controller,

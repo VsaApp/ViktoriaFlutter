@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:viktoriaflutter/Home/HomePage.dart';
+import 'package:viktoriaflutter/MainFrame/MainFramePage.dart';
 
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
@@ -9,7 +9,7 @@ class OfflineWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     checkOnline.then((online) {
-      if (online != 1 && HomePageState.isInForeground) {
+      if (online != 1 && MainFrameState.isInForeground) {
         // Show offline information
         Scaffold.of(context).showSnackBar(
           SnackBar(

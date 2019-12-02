@@ -45,12 +45,8 @@ class SubstitutionPlanDayListView extends SubstitutionPlanDayListState {
     }
     // List of substitution plan days
     return Container(
-      width: double.infinity,
-      height: double.infinity,
       color: Colors.white,
-      child: ListView(
-        padding: EdgeInsets.only(bottom: 70),
-        shrinkWrap: true,
+      child: Column(
         children: <Widget>[
           // For date information
           Center(
@@ -102,72 +98,56 @@ class SubstitutionPlanDayListView extends SubstitutionPlanDayListState {
                     widget.day.unparsed[Data.timetable.grade].map((change) {
                   return SubstitutionPlanUnparsedRow(substitution: change);
                 }).toList()),
-          ...(!widget.sort)
-              ?
-              // Show all changes in a list...
-              getUnsortedList(widget.day).map((change) {
-                final substitutions = getUnsortedList(widget.day);
+          Section(
+            title: AppLocalizations.of(context).myChanges,
+            isLast: widget.day.undefinedChanges.isEmpty &&
+                widget.day.otherChanges.isEmpty,
+            children: widget.day.myChanges.isNotEmpty
+                ?
+                // Show my changes
+                widget.day.myChanges.map((change) {
+                    return SubstitutionPlanRow(
+                      substitutions: widget.day.myChanges,
+                      index: widget.day.myChanges.indexOf(change),
+                      context: context,
+                    );
+                  }).toList()
+                :
+                // Show no changes information
+                <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(top: 10),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: Center(
+                          child: Text(AppLocalizations.of(context).noChanges),
+                        ),
+                      ),
+                    ),
+                  ],
+          ),
+          if (widget.day.undefinedChanges.isNotEmpty)
+            Section(
+                isLast: widget.day.otherChanges.isEmpty,
+                title: AppLocalizations.of(context).undefChanges,
+                children: widget.day.undefinedChanges.map((change) {
                   return SubstitutionPlanRow(
-                    substitutions: substitutions,
-                    index: substitutions.indexOf(change),
+                    substitutions: widget.day.undefinedChanges,
+                    index: widget.day.undefinedChanges.indexOf(change),
                     context: context,
                   );
-                }).toList()
-              :
-              // Show the changes in three categories...
-              [
-                  Section(
-                    title: AppLocalizations.of(context).myChanges,
-                    isLast: widget.day.undefinedChanges.isEmpty &&
-                        widget.day.otherChanges.isEmpty,
-                    children: widget.day.myChanges.isNotEmpty
-                        ?
-                        // Show my changes
-                        widget.day.myChanges.map((change) {
-                            return SubstitutionPlanRow(
-                              substitutions: widget.day.myChanges,
-                              index: widget.day.myChanges.indexOf(change),
-                              context: context,
-                            );
-                          }).toList()
-                        :
-                        // Show no changes information
-                        <Widget>[
-                            Container(
-                              margin: EdgeInsets.only(top: 10),
-                              child: SizedBox(
-                                width: double.infinity,
-                                child: Center(
-                                  child: Text(
-                                      AppLocalizations.of(context).noChanges),
-                                ),
-                              ),
-                            ),
-                          ],
-                  ),
-                  if (widget.day.undefinedChanges.isNotEmpty)
-                    Section(
-                        isLast: widget.day.otherChanges.isEmpty,
-                        title: AppLocalizations.of(context).undefChanges,
-                        children: widget.day.undefinedChanges.map((change) {
-                          return SubstitutionPlanRow(
-                              substitutions: widget.day.undefinedChanges,
-                              index: widget.day.undefinedChanges.indexOf(change),
-                              context: context,
-                            );
-                        }).toList()),
-                  if (widget.day.otherChanges.isNotEmpty)
-                    Section(
-                        isLast: true,
-                        title: AppLocalizations.of(context).otherChanges,
-                        children: widget.day.otherChanges.map((change) {
-                          return SubstitutionPlanRow(
-                              substitutions: widget.day.otherChanges,
-                              index: widget.day.otherChanges.indexOf(change),
-                              context: context,
-                            );
-                        }).toList()),
-                ],
+                }).toList()),
+          if (widget.day.otherChanges.isNotEmpty)
+            Section(
+                isLast: true,
+                title: AppLocalizations.of(context).otherChanges,
+                children: widget.day.otherChanges.map((change) {
+                  return SubstitutionPlanRow(
+                    substitutions: widget.day.otherChanges,
+                    index: widget.day.otherChanges.indexOf(change),
+                    context: context,
+                  );
+                }).toList()),
         ],
       ),
     );

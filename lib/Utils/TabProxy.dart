@@ -74,37 +74,17 @@ class TabProxyState extends State<TabProxy> {
         ),
       );
     } else {
-      return DefaultTabController(
-        length: widget.tabs.length,
-        child: Scaffold(
-          backgroundColor: Theme.of(context).primaryColor,
-          // Tab bar views
-          appBar: TabBar(
-            controller: widget.controller,
-            indicatorColor: Theme.of(context).accentColor,
-            indicatorWeight: 2.5,
-            tabs: widget.weekdays.map((day) {
-              return Container(
-                padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                child: Text(day), // Show all weekday names
-              );
-            }).toList(),
-          ),
-          body: TabBarView(
-            controller: widget.controller,
-            // List of days
-            children: widget.tabs.map((tab) {
-              return RefreshIndicator(
-                onRefresh: widget.onUpdate,
-                child: Container(
-                  height: double.infinity,
-                  color: Colors.white,
-                  child: tab,
-                ),
-              );
-            }).toList(),
-          ),
-        ),
+      return TabBarView(
+        controller: widget.controller,
+        children:  widget.tabs.map((tab) {
+            return RefreshIndicator(
+              onRefresh: widget.onUpdate,
+              child: Container(
+                color: Colors.white,
+                child: tab,
+              ),
+            );
+          }).toList()
       );
     }
   }

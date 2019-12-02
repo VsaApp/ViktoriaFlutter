@@ -70,11 +70,6 @@ class Keys {
     return 'password';
   }
 
-  /// Saves if the substitution plan should be sorted...
-  static String get sortSubstitutionPlan {
-    return 'sortSubstitutionPlan';
-  }
-
   /// Saves if the substitution plan should shown in the timetable...
   static String get showSubstitutionPlanInTimetable {
     return 'showSubstitutionPlanInTimetable';

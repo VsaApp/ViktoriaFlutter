@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:viktoriaflutter/Home/HomePage.dart';
+import 'package:viktoriaflutter/MainFrame/MainFramePage.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/SubstitutionPlan/SubstitutionPlanView.dart';
@@ -14,7 +14,6 @@ class SubstitutionPlanPage extends StatefulWidget {
 // ignore: public_member_api_docs
 abstract class SubstitutionPlanPageState extends State<SubstitutionPlanPage>
     with SingleTickerProviderStateMixin {
-
   /// The substitution plan updated listener
   Function() updatesListener;
 
@@ -52,14 +51,14 @@ abstract class SubstitutionPlanPageState extends State<SubstitutionPlanPage>
   @override
   void initState() {
     updatesListener = initDays;
-    HomePageState.substitutionPlanUpdatedListeners.add(updatesListener);
-    HomePageState.setWeekChangeable(false);
+    MainFrameState.substitutionPlanUpdatedListeners.add(updatesListener);
+    MainFrameState.setWeekChangeable(false);
     initDays();
     super.initState();
   }
 
   /// Initialize the substitution plan days
-  /// 
+  ///
   /// Sort them by date and in some cases add an empty one to inform the user about a missing day
   void initDays() {
     WidgetsBinding.instance.addPostFrameCallback((a) {
@@ -97,9 +96,9 @@ abstract class SubstitutionPlanPageState extends State<SubstitutionPlanPage>
         day = 1;
       }
       controller.animateTo(day);
-      HomePageState.updateWeek(days[controller.index].week);
+      MainFrameState.updateWeek(days[controller.index].week);
       controller.addListener(
-          () => HomePageState.updateWeek(days[controller.index].week));
+          () => MainFrameState.updateWeek(days[controller.index].week));
     });
   }
 
@@ -128,7 +127,7 @@ abstract class SubstitutionPlanPageState extends State<SubstitutionPlanPage>
 
   @override
   void dispose() {
-    HomePageState.substitutionPlanUpdatedListeners.remove(updatesListener);
+    MainFrameState.substitutionPlanUpdatedListeners.remove(updatesListener);
     super.dispose();
   }
 }

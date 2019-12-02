@@ -8,9 +8,6 @@ class SubstitutionPlanDayList extends StatefulWidget {
   /// The day of the substitutions
   final SubstitutionPlanDay day;
 
-  /// If the substitutions should by sort (personalized)
-  final bool sort;
-
   /// The grade to show
   final String grade;
 
@@ -21,7 +18,6 @@ class SubstitutionPlanDayList extends StatefulWidget {
   const SubstitutionPlanDayList({
     @required this.day,
     @required this.dayIndex,
-    @required this.sort,
     @required this.grade,
     Key key,
   }) : super(key: key);
