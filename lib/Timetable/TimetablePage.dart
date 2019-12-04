@@ -126,9 +126,7 @@ class TimetableView extends State<TimetablePage>
     WidgetsBinding.instance.addPostFrameCallback((a) {
       setState(() {
         _weekdays = AppLocalizations.of(context)
-            .weekdays
-            .map((day) => day.substring(0, 2).toUpperCase())
-            .toList();
+            .weekdays;
       });
 
       // Select correct tab

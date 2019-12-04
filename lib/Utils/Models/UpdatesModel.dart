@@ -41,17 +41,26 @@ class Updates {
   /// Creates updates from json map
   factory Updates.fromJson(Map<String, dynamic> json) {
     return Updates(
-      timetable: DateTime.parse(json['timetable'] as String),
-      substitutionPlan: DateTime.parse(json['substitutionPlan'] as String),
-      cafetoria: DateTime.parse(json['cafetoria'] as String),
-      calendar: DateTime.parse(json['calendar'] as String),
-      teachers: DateTime.parse(json['teachers'] as String),
-      workgroups: DateTime.parse(json['workgroups'] as String),
+      timetable: Updates.getDate(json['timetable'] as String),
+      substitutionPlan: Updates.getDate(json['substitutionPlan'] as String),
+      cafetoria: Updates.getDate(json['cafetoria'] as String),
+      calendar: Updates.getDate(json['calendar'] as String),
+      teachers: Updates.getDate(json['teachers'] as String),
+      workgroups: Updates.getDate(json['workgroups'] as String),
       minAppLevel: json['minAppLevel'] as int,
-      subjects: DateTime.parse(json['subjects'] as String),
-      rooms: DateTime.parse(json['rooms'] as String),
+      subjects: Updates.getDate(json['subjects'] as String),
+      rooms: Updates.getDate(json['rooms'] as String),
       grade: json['grade'] as String,
     );
+  }
+
+  /// Tries to parse a date string to object
+  static DateTime getDate(String raw) {
+    try {
+      return DateTime.parse(raw);
+    } catch (_) {
+      return DateTime.now();
+    }
   }
 
   /// Converts updates to json string

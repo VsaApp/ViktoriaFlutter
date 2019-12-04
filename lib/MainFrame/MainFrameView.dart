@@ -27,22 +27,7 @@ class MainFrameView extends MainFrameState {
               icon: Icon(MdiIcons.timetable), title: Container()),
         ],
       ),
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            backgroundColor: Colors.white,
-            title: Text('Home', style: TextStyle(color: Colors.black45, fontWeight: FontWeight.w100)),
-            floating: true,
-          ),
-          SliverToBoxAdapter(
-            child: [
-              if (selectedIndex == 0) SubstitutionPlanPage(),
-              if (selectedIndex == 1) HomePage(),
-              if (selectedIndex == 2) TimetablePage()
-            ][0],
-          )
-        ],
-      ),
+      body: TimetablePage(),
     );
   }
 }

@@ -29,6 +29,8 @@ abstract class Downloader<type> {
   Future<int> download(BuildContext context, {bool update = true}) async {
     int status = StatusCodes.success;
 
+    final String oldData = Storage.getString(key);
+
     if (update || Storage.getString(key) == null) {
       final Completer<int> statusCompleter = Completer();
       // Default timetable (Only for download errors)
@@ -42,7 +44,15 @@ abstract class Downloader<type> {
     }
 
     // Parse and save data...
-    saveStatic(fetch());
+    try {
+      saveStatic(fetch());
+    } catch (e) {
+      print('Error: Cannot fetch $key:\n$e');
+      if (!update) {
+        Storage.setString(key, oldData);
+        download(context, update: false);
+      }
+    }
 
     return status;
   }
