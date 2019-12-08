@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 
 import 'package:viktoriaflutter/Utils/Models.dart';
-import 'package:viktoriaflutter/Utils/SubjectRow.dart';
+import 'package:viktoriaflutter/Utils/Widgets/SubjectRow.dart';
 
 /// A row for one substitution
 class SubstitutionPlanRow extends SubjectRow {

@@ -7,7 +7,7 @@ import 'package:viktoriaflutter/MainFrame/MainFramePage.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
-import 'package:viktoriaflutter/Utils/TabProxy.dart';
+import 'package:viktoriaflutter/Utils/Widgets/TabProxy.dart';
 import 'package:viktoriaflutter/Utils/Update.dart';
 import 'package:viktoriaflutter/Utils/Downloader/TimetableData.dart';
 import 'package:viktoriaflutter/Utils/Downloader/SubstitutionPlanData.dart';

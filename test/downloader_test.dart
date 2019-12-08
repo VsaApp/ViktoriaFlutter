@@ -21,6 +21,7 @@ void main({bool main = true}) {
   if (main) {
     storage.init();
   }
+  // ignore: unused_local_variable
   final Map<String, Downloader> _downloader = {
     'timetable': TimetableData(),
     'substitution plan': SubstitutionPlanData(),

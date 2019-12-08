@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:viktoriaflutter/Utils/WeekdayTabBar.dart';
+import 'package:viktoriaflutter/Utils/Widgets/WeekdayTabBar.dart';
 
 /// Defines a tab bar view for mobile and desktop
 class TabProxy extends StatefulWidget {

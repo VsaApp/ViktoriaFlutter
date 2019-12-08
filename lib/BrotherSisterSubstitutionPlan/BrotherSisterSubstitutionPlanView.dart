@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Downloader/SubstitutionPlanData.dart';
-import 'package:viktoriaflutter/Utils/TabProxy.dart';
+import 'package:viktoriaflutter/Utils/Widgets/TabProxy.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/SubstitutionPlan/SubstitutionPlanDayList/SubstitutionPlanDayListWidget.dart';
 import 'BrotherSisterSubstitutionPlanPage.dart';

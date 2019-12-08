@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:viktoriaflutter/Home/HomePage.dart';
 import 'package:viktoriaflutter/MainFrame/MainFramePage.dart';
-import 'package:viktoriaflutter/SubstitutionPlan/SubstitutionPlanPage.dart';
 import 'package:viktoriaflutter/Timetable/TimetablePage.dart';
 
 /// The main frame of the app
