@@ -31,6 +31,15 @@ class TabProxy extends StatefulWidget {
 class TabProxyState extends State<TabProxy> {
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((a) {
+      GlobalAppBar.updateBottom(
+        WeekdayTabBar(
+          key: ValueKey(widget.weekdays.length),
+          weekdays: widget.weekdays,
+          controller: widget.controller,
+        ),
+      );
+    });
     super.initState();
   }
 
@@ -76,15 +85,6 @@ class TabProxyState extends State<TabProxy> {
         ),
       );
     } else {
-      WidgetsBinding.instance.addPostFrameCallback((a) {
-        GlobalAppBar.updateBottom(
-          WeekdayTabBar(
-            key: ValueKey(widget.weekdays.length),
-            weekdays: widget.weekdays,
-            controller: widget.controller,
-          ),
-        );
-      });
       return TabBarView(
           controller: widget.controller,
           children: widget.tabs.map((tab) {

@@ -257,7 +257,7 @@ class TimetableDayListView extends TimetableDayListState {
       ]);
     } else {
       return ListView(
-        shrinkWrap: true,
+        shrinkWrap: false,
         padding: EdgeInsets.only(bottom: 20),
         children: items,
       );
