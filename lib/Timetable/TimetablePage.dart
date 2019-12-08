@@ -7,6 +7,7 @@ import 'package:viktoriaflutter/MainFrame/MainFramePage.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
+import 'package:viktoriaflutter/Utils/Widgets/AppBar.dart';
 import 'package:viktoriaflutter/Utils/Widgets/TabProxy.dart';
 import 'package:viktoriaflutter/Utils/Update.dart';
 import 'package:viktoriaflutter/Utils/Downloader/TimetableData.dart';
@@ -124,9 +125,10 @@ class TimetableView extends State<TimetablePage>
     MainFrameState.substitutionPlanUpdatedListeners.add(updatedListener);
     MainFrameState.setWeekChangeable(true);
     WidgetsBinding.instance.addPostFrameCallback((a) {
+      GlobalAppBar.updateTitle(AppLocalizations.of(context).timetable);
+
       setState(() {
-        _weekdays = AppLocalizations.of(context)
-            .weekdays;
+        _weekdays = AppLocalizations.of(context).weekdays;
       });
 
       // Select correct tab

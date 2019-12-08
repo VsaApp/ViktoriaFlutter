@@ -4,6 +4,7 @@ import 'package:viktoriaflutter/MainFrame/MainFramePage.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/SubstitutionPlan/SubstitutionPlanView.dart';
+import 'package:viktoriaflutter/Utils/Widgets/AppBar.dart';
 
 /// Sliding page for all substitution plan days
 class SubstitutionPlanPage extends StatefulWidget {
@@ -50,6 +51,9 @@ abstract class SubstitutionPlanPageState extends State<SubstitutionPlanPage>
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((a) {
+      GlobalAppBar.updateTitle(AppLocalizations.of(context).substitutionPlan);
+    });
     updatesListener = initDays;
     MainFrameState.substitutionPlanUpdatedListeners.add(updatesListener);
     MainFrameState.setWeekChangeable(false);

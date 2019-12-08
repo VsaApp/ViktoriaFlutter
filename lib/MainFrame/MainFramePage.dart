@@ -13,7 +13,7 @@ import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
 import 'package:viktoriaflutter/Utils/Models.dart' as models;
-
+import 'package:viktoriaflutter/Utils/Widgets/AppBar.dart';
 
 /// The home page of the app
 class MainFrame extends StatefulWidget {
@@ -193,6 +193,8 @@ abstract class MainFrameState extends State<MainFrame>
     WidgetsBinding.instance
         .addPostFrameCallback((_) => checkIfTimetableUpdated(context));
 
+    GlobalAppBar.addListener(_update);
+
     // Set the listener for android functions (Currently for incoming notifications and intents)...
     platform.setMethodCallHandler(_handleNotification);
 
@@ -212,8 +214,15 @@ abstract class MainFrameState extends State<MainFrame>
   @override
   void dispose() {
     // Remove listener for widget bindings
+    GlobalAppBar.removeListener(_update);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  void _update() {
+    if (mounted) {
+      setState(() => null);
+    }
   }
 
   /// Show a dialog when the timetable was updated

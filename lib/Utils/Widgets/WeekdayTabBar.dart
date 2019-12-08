@@ -18,7 +18,7 @@ class WeekdayTabBar extends StatefulWidget implements PreferredSizeWidget {
 
   // ignore: public_member_api_docs
   const WeekdayTabBar(
-      {@required this.controller, @required this.weekdays, this.height = 50});
+      {@required this.controller, @required this.weekdays, this.height = 50, Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => WeekdayTabBarView();

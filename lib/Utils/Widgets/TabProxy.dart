@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:viktoriaflutter/Utils/Widgets/AppBar.dart';
 import 'package:viktoriaflutter/Utils/Widgets/WeekdayTabBar.dart';
 
 /// Defines a tab bar view for mobile and desktop
@@ -75,36 +76,26 @@ class TabProxyState extends State<TabProxy> {
         ),
       );
     } else {
-      return NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return [
-            SliverAppBar(
-              backgroundColor: Colors.white,
-              title: Text('Home',
-                  style: TextStyle(
-                      color: Colors.black45, fontWeight: FontWeight.w100)),
-              floating: true,
-              forceElevated: true,
-              pinned: true,
-              bottom: WeekdayTabBar(
-                weekdays: widget.weekdays,
-                controller: widget.controller,
-              ),
-            ),
-          ];
-        },
-        body: TabBarView(
+      WidgetsBinding.instance.addPostFrameCallback((a) {
+        GlobalAppBar.updateBottom(
+          WeekdayTabBar(
+            key: ValueKey(widget.weekdays.length),
+            weekdays: widget.weekdays,
             controller: widget.controller,
-            children: widget.tabs.map((tab) {
-              return RefreshIndicator(
-                onRefresh: widget.onUpdate,
-                child: Container(
-                  color: Colors.white,
-                  child: tab,
-                ),
-              );
-            }).toList()),
-      );
+          ),
+        );
+      });
+      return TabBarView(
+          controller: widget.controller,
+          children: widget.tabs.map((tab) {
+            return RefreshIndicator(
+              onRefresh: widget.onUpdate,
+              child: Container(
+                color: Colors.white,
+                child: tab,
+              ),
+            );
+          }).toList());
     }
   }
 }
