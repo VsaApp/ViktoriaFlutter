@@ -5,13 +5,11 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:viktoriaflutter/Utils/Localizations.dart';
+import 'package:viktoriaflutter/Pages/Loading/LoadingPage.dart';
+import 'package:viktoriaflutter/Pages/Login/LoginPage.dart';
+import 'package:viktoriaflutter/Pages/MainFrame/MainFramePage.dart';
 import 'package:viktoriaflutter/Utils/Errors.dart' as bugs;
-
-import 'Intro/IntroPage.dart';
-import 'Loading/LoadingPage.dart';
-import 'Login/LoginPage.dart';
-import 'MainFrame/MainFramePage.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
 
 /// This is the first functions which is called in the app...
 Future main() async {
@@ -83,7 +81,6 @@ Future launch() async {
       '/': (BuildContext context) => LoadingPage(),
       '/main': (BuildContext context) => MainFrame(),
       '/login': (BuildContext context) => LoginPage(),
-      '/intro': (BuildContext context) => IntroPage(),
       //'/scan': (BuildContext context) => ScanPage()
     },
   ));

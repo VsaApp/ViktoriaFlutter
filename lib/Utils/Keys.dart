@@ -120,11 +120,6 @@ class Keys {
     return 'calendar';
   }
 
-  /// Saves the version of the shown intro slides
-  static String get slidesVersion {
-    return 'slidesVersion';
-  }
-
   /// Saves all subject names
   static String get subjects {
     return 'subjects';

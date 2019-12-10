@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:viktoriaflutter/MainFrame/MainFramePage.dart';
+import 'package:viktoriaflutter/Pages/MainFrame/MainFramePage.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 
 /// Show snackbar for update data
