@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 
-import 'package:viktoriaflutter/Utils/Models.dart';
+import 'package:viktoriaflutter/Models/Models.dart';
 
 /// A card to show the work groups for one day
 class WorkGroupsDayCard extends StatelessWidget {

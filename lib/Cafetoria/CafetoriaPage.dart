@@ -6,8 +6,8 @@ import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
 import 'package:viktoriaflutter/Utils/Update.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import 'package:viktoriaflutter/Utils/Downloader/CafetoriaData.dart';
-import 'package:viktoriaflutter/Utils/Models.dart';
+import 'package:viktoriaflutter/Downloader/CafetoriaData.dart';
+import 'package:viktoriaflutter/Models/Models.dart';
 import 'CafetoriaView.dart';
 
 /// This Page shows all menus for the current week and the user saldo if logged in

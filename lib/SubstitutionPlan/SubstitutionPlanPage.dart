@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/MainFrame/MainFramePage.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import 'package:viktoriaflutter/Utils/Models.dart';
+import 'package:viktoriaflutter/Models/Models.dart';
 import 'package:viktoriaflutter/SubstitutionPlan/SubstitutionPlanView.dart';
 import 'package:viktoriaflutter/Utils/Widgets/AppBar.dart';
 
@@ -56,7 +56,6 @@ abstract class SubstitutionPlanPageState extends State<SubstitutionPlanPage>
     });
     updatesListener = initDays;
     MainFrameState.substitutionPlanUpdatedListeners.add(updatesListener);
-    MainFrameState.setWeekChangeable(false);
     initDays();
     super.initState();
   }
@@ -100,9 +99,6 @@ abstract class SubstitutionPlanPageState extends State<SubstitutionPlanPage>
         day = 1;
       }
       controller.animateTo(day);
-      MainFrameState.updateWeek(days[controller.index].week);
-      controller.addListener(
-          () => MainFrameState.updateWeek(days[controller.index].week));
     });
   }
 

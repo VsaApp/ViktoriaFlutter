@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
-import 'package:viktoriaflutter/Utils/Models.dart';
+import 'package:viktoriaflutter/Models/Models.dart';
 import 'TimetableSelectDialogView.dart';
 
 /// Dialog to select a timetable subject

@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:viktoriaflutter/Utils/Encrypt.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import 'package:viktoriaflutter/Utils/Models.dart';
+import 'package:viktoriaflutter/Models/Models.dart';
 
 import 'Keys.dart';
 import 'Network.dart';

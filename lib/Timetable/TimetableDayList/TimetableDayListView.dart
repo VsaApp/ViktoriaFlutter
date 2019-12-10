@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-import 'package:viktoriaflutter/Utils/Models.dart';
+import 'package:viktoriaflutter/Models/Models.dart';
 import 'package:viktoriaflutter/Cafetoria/DayCard/DayCardWidget.dart';
 import 'package:viktoriaflutter/Calendar/EventCard/EventCard.dart';
 import 'package:viktoriaflutter/Courses/CourseEdit/CourseEditWidget.dart';

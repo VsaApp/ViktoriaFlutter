@@ -2,12 +2,12 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 
-import '../Utils/Keys.dart';
-import '../Utils/Localizations.dart';
-import '../Utils/SectionWidget.dart';
-import '../Utils/Storage.dart';
-import '../Utils/Tags.dart';
-import 'SettingsPage.dart';
+import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Localizations.dart';
+import 'package:viktoriaflutter/Utils/Widgets/SectionWidget.dart';
+import 'package:viktoriaflutter/Utils/Storage.dart';
+import 'package:viktoriaflutter/Utils/Tags.dart';
+import 'package:viktoriaflutter/Settings/SettingsPage.dart';
 
 // ignore: public_member_api_docs
 class SettingsPageView extends SettingsPageState {

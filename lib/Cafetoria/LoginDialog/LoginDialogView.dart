@@ -4,7 +4,7 @@ import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
-import 'package:viktoriaflutter/Utils/Downloader/CafetoriaData.dart';
+import 'package:viktoriaflutter/Downloader/CafetoriaData.dart';
 import 'LoginDialogWidget.dart';
 
 

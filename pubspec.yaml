@@ -39,7 +39,13 @@ flutter:
   fonts:
     - family: Ubuntu
       fonts:
-        - asset: assets/fonts/Ubuntu-R.ttf
+        - asset: assets/fonts/Ubuntu-Regular.ttf
+        - asset: assets/fonts/Ubuntu-Italic.ttf
+          style: italic
+        - asset: assets/fonts/Ubuntu-Light.ttf
+          weight: 100
+        - asset: assets/fonts/Ubuntu-Bold.ttf
+          weight: 700
   uses-material-design: true
   assets:
     - assets/images/logo.svg

@@ -3,8 +3,8 @@ import 'package:viktoriaflutter/Utils/Network.dart';
 
 import 'package:viktoriaflutter/Utils/Update.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import 'package:viktoriaflutter/Utils/Downloader/WorkGroupsData.dart';
-import 'package:viktoriaflutter/Utils/Models.dart';
+import 'package:viktoriaflutter/Downloader/WorkGroupsData.dart';
+import 'package:viktoriaflutter/Models/Models.dart';
 import 'WorkGroupsView.dart';
 
 /// Page with a list of all work groups

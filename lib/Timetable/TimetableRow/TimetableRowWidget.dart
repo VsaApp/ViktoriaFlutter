@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:viktoriaflutter/Utils/Widgets/SubjectRow.dart';
 
 import 'package:viktoriaflutter/Utils/Times.dart';
-import 'package:viktoriaflutter/Utils/Models.dart';
+import 'package:viktoriaflutter/Models/Models.dart';
 
 /// One unit in the timetable
 class TimetableRow extends SubjectRow {

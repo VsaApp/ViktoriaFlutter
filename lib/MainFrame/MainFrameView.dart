@@ -8,29 +8,19 @@ import 'package:viktoriaflutter/Utils/Widgets/AppBar.dart';
 
 /// The main frame of the app
 class MainFrameView extends MainFrameState {
+  
   @override
   Widget build(BuildContext context) {
     final bool offline = offlineShown;
     if (offline) {
       offlineShown = true;
     }
-    Widget page;
-    switch (selectedIndex) {
-      case 0:
-        page = SubstitutionPlanPage();
-        break;
-      case 1:
-        page = HomePage();
-        break;
-      case 2:
-        page = TimetablePage();
-        break;
-    }
     return Scaffold(
       appBar: GlobalAppBar.appBar,
       key: scaffoldKey,
+      backgroundColor: Colors.white,
       bottomNavigationBar: BottomNavigationBar(
-        onTap: (int index) => setState(() => selectedIndex = index),
+        onTap: (int index) => setSelectedIndex(index, jump: true),
         currentIndex: selectedIndex,
         items: [
           BottomNavigationBarItem(
@@ -41,7 +31,22 @@ class MainFrameView extends MainFrameState {
               icon: Icon(MdiIcons.timetable), title: Container()),
         ],
       ),
-      body: page,
+      body: PageView.builder(
+        controller: MainFrameState.pageController,
+        itemCount: 4,
+        itemBuilder: (BuildContext context, int index) {
+          switch (index) {
+            case 0:
+              return SubstitutionPlanPage();
+            case 1:
+              return HomePage();
+            case 2:
+              return TimetablePage();
+            default:
+              return Container();
+          }
+        },
+      ),
     );
   }
 }

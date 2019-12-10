@@ -1,6 +1,6 @@
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import 'package:viktoriaflutter/Utils/Models.dart';
+import 'package:viktoriaflutter/Models/Models.dart';
 
 /// Returns the selected index for the given week
 int getSelectedIndex(List<TimetableSubject> subjects, {int week = 0}) {

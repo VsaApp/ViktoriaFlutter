@@ -1,8 +1,12 @@
+import 'package:intl/intl.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import 'package:viktoriaflutter/Utils/Models.dart';
-import 'package:viktoriaflutter/Utils/SectionWidget.dart';
+import 'package:viktoriaflutter/Models/Models.dart';
+import 'package:viktoriaflutter/Utils/Widgets/GroupHeader.dart';
+import 'package:viktoriaflutter/Utils/Widgets/GroupList.dart';
 import '../SubstitutionPlanRow/SubstitutionPlanRowWidget.dart';
 import '../SubstitutionPlanRow/SubstitutionPlanUnparsedRowWidget.dart';
 import 'SubstitutionPlanDayListWidget.dart';
@@ -44,107 +48,91 @@ class SubstitutionPlanDayListView extends SubstitutionPlanDayListState {
       );
     }
     // List of substitution plan days
-    return ListView(
-      children: <Widget>[
-        // For date information
-        Center(
-          child: Padding(
-            padding: EdgeInsets.only(top: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(AppLocalizations.of(context).substitutionPlanFor),
-                Text(
-                    AppLocalizations.of(context)
-                        .weekdays[widget.day.date.weekday - 1],
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                Text(AppLocalizations.of(context).substitutionPlanThe),
-                Text(
-                    '${widget.day.date.day}.${widget.day.date.month}.${widget.day.date.year}',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-              ],
-            ),
-          ),
-        ),
-        // Update date information
-        Center(
+    return GroupList(groups: [
+      Group(
+        header: PreferredSize(
+          preferredSize: Size.fromHeight(40),
           child: Container(
-            margin: EdgeInsets.only(bottom: 10),
+            alignment: Alignment.bottomLeft,
+            padding: const EdgeInsets.only(left: 10, right: 10),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text(AppLocalizations.of(context).substitutionPlanLastUpdated),
-                Text(
-                    '${widget.day.updated.day}.${widget.day.updated.month}.${widget.day.updated.year}',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                Text(AppLocalizations.of(context).substitutionPlanAt),
-                Text(
-                    '${widget.day.updated.hour.toString().padLeft(2, '0')}:${widget.day.updated.minute.toString().padLeft(2, '0')}',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                Icon(MdiIcons.timer, color: Colors.black54),
+                Padding(
+                  padding: const EdgeInsets.only(left: 6),
+                  child: Text(
+                    timeago.format(widget.day.updated.toLocal(),
+                        locale:
+                            AppLocalizations.of(context).locale.languageCode),
+                    style: TextStyle(color: Colors.black45),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 30),
+                  child: Icon(MdiIcons.calendarToday, color: Colors.black54),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 6),
+                  child: Text(
+                    DateFormat('dd.MM.yyyy').format(widget.day.date.toLocal()),
+                    style: TextStyle(color: Colors.black45),
+                  ),
+                ),
               ],
             ),
           ),
         ),
-        if (widget.day
-            .filterUnparsed(grade: widget.grade.toLowerCase())
-            .isNotEmpty)
-          Section(
-              title: AppLocalizations.of(context).unparsed,
-              // Show unparsed changes...
-              children: widget.day.unparsed[Data.timetable.grade].map((change) {
-                return SubstitutionPlanUnparsedRow(substitution: change);
-              }).toList()),
-        Section(
-          title: AppLocalizations.of(context).myChanges,
-          isLast: widget.day.undefinedChanges.isEmpty &&
-              widget.day.otherChanges.isEmpty,
-          children: widget.day.myChanges.isNotEmpty
-              ?
-              // Show my changes
-              widget.day.myChanges.map((change) {
-                  return SubstitutionPlanRow(
-                    substitutions: widget.day.myChanges,
-                    index: widget.day.myChanges.indexOf(change),
-                    context: context,
-                  );
-                }).toList()
-              :
-              // Show no changes information
-              <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(top: 10),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: Center(
-                        child: Text(AppLocalizations.of(context).noChanges),
-                      ),
-                    ),
-                  ),
-                ],
-        ),
-        if (widget.day.undefinedChanges.isNotEmpty)
-          Section(
-              isLast: widget.day.otherChanges.isEmpty,
+        children: [],
+      ),
+      if (widget.day
+          .filterUnparsed(grade: widget.grade.toLowerCase())
+          .isNotEmpty)
+        Group(
+            header: GroupHeader(
+                title: AppLocalizations.of(context).unparsed,
+                count: widget.day.unparsed[Data.timetable.grade].length),
+            children: widget.day.unparsed[Data.timetable.grade]
+                .map((u) => SubstitutionPlanUnparsedRow(substitution: u))
+                .toList()),
+
+      // Show always the users changes
+      Group(
+        header: GroupHeader(
+            title: AppLocalizations.of(context).myChanges,
+            count: widget.day.myChanges.length),
+        children: _getRows(widget.day.myChanges),
+        emptyInfo: AppLocalizations.of(context).noChanges
+      ),
+
+      // Show undefined changes
+      if (widget.day.undefinedChanges.isNotEmpty)
+        Group(
+          header: GroupHeader(
               title: AppLocalizations.of(context).undefChanges,
-              children: widget.day.undefinedChanges.map((change) {
-                return SubstitutionPlanRow(
-                  substitutions: widget.day.undefinedChanges,
-                  index: widget.day.undefinedChanges.indexOf(change),
-                  context: context,
-                );
-              }).toList()),
-        if (widget.day.otherChanges.isNotEmpty)
-          Section(
-              isLast: true,
+              count: widget.day.undefinedChanges.length),
+          children: _getRows(widget.day.undefinedChanges),
+        ),
+
+      // Show all other changes
+      if (widget.day.otherChanges.isNotEmpty)
+        Group(
+          header: GroupHeader(
               title: AppLocalizations.of(context).otherChanges,
-              children: widget.day.otherChanges.map((change) {
-                return SubstitutionPlanRow(
-                  substitutions: widget.day.otherChanges,
-                  index: widget.day.otherChanges.indexOf(change),
-                  context: context,
-                );
-              }).toList()),
-      ],
-    );
+              count: widget.day.otherChanges.length),
+          children: _getRows(widget.day.otherChanges),
+        ),
+    ]);
+  }
+
+  List<SubstitutionPlanRow> _getRows(List<Substitution> substitutions) {
+    return substitutions
+        .map(
+          (substitution) => SubstitutionPlanRow(
+            context: context,
+            substitutions: substitutions,
+            index: substitutions.indexOf(substitution),
+          ),
+        )
+        .toList();
   }
 }

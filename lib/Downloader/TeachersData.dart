@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:viktoriaflutter/Utils/Downloader.dart';
+import 'package:viktoriaflutter/Downloader/Downloader.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
-import 'package:viktoriaflutter/Utils/Models.dart';
+import 'package:viktoriaflutter/Models/Models.dart';
 
 /// Teachers data downloader
 class TeachersData extends Downloader<List<Teacher>> {

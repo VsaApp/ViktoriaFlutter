@@ -2,10 +2,10 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 
-import 'package:viktoriaflutter/Utils/Models.dart';
+import 'package:viktoriaflutter/Models/Models.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import 'package:viktoriaflutter/Utils/SectionWidget.dart';
+import 'package:viktoriaflutter/Utils/Widgets/SectionWidget.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 
 import 'package:viktoriaflutter/Cafetoria/DayCard/DayCardWidget.dart';

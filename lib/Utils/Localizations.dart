@@ -201,6 +201,10 @@ class AppLocalizations {
       'file': 'Datei',
       'folder': 'Ordner',
       'newDirectory': 'Neuer Ordner',
+      'nextLessons': 'Nächste Stunden',
+      'moreUnits': 'weitere Stunden',
+      'moreChanges': 'weitere Änderungen',
+      'home': 'Home',
     },
   };
   // ignore: public_member_api_docs
@@ -210,8 +214,28 @@ class AppLocalizations {
 
   // All getter defined...
   // ignore: public_member_api_docs
+  String get moreUnits {
+    return _localizedValues[locale.languageCode]['moreUnits'];
+  }
+
+  // ignore: public_member_api_docs
+  String get home {
+    return _localizedValues[locale.languageCode]['home'];
+  }
+
+  // ignore: public_member_api_docs
+  String get moreChanges {
+    return _localizedValues[locale.languageCode]['moreChanges'];
+  }
+
+  // ignore: public_member_api_docs
   String get newDirectory {
     return _localizedValues[locale.languageCode]['newDirectory'];
+  }
+
+  // ignore: public_member_api_docs
+  String get nextLessons {
+    return _localizedValues[locale.languageCode]['nextLessons'];
   }
 
   // ignore: public_member_api_docs

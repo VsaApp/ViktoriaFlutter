@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:viktoriaflutter/Utils/Models.dart';
+import 'package:viktoriaflutter/Models/Models.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Calendar/EventCard/EventCard.dart';
 

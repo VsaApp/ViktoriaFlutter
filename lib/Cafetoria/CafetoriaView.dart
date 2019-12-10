@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import 'package:viktoriaflutter/Utils/Downloader/CafetoriaData.dart';
-import 'package:viktoriaflutter/Utils/Models.dart';
+import 'package:viktoriaflutter/Downloader/CafetoriaData.dart';
+import 'package:viktoriaflutter/Models/Models.dart';
 import 'ActionFAB/ActionFABWidget.dart';
 import 'CafetoriaPage.dart';
 import 'DayCard/DayCardWidget.dart';

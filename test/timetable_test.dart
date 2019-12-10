@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
-import 'package:viktoriaflutter/Utils/Downloader/TimetableData.dart';
-import 'package:viktoriaflutter/Utils/Models.dart';
+import 'package:viktoriaflutter/Downloader/TimetableData.dart';
+import 'package:viktoriaflutter/Models/Models.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 

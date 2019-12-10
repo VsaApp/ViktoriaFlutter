@@ -6,13 +6,13 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:viktoriaflutter/Home/NewTimetableDialog/NewTimetableDialogModel.dart';
 import 'package:viktoriaflutter/MainFrame/MainFrameView.dart';
-import 'package:viktoriaflutter/Utils/Downloader/SubstitutionPlanData.dart';
-import 'package:viktoriaflutter/Utils/Downloader/TimetableData.dart';
+import 'package:viktoriaflutter/Downloader/SubstitutionPlanData.dart';
+import 'package:viktoriaflutter/Downloader/TimetableData.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
-import 'package:viktoriaflutter/Utils/Models.dart' as models;
+import 'package:viktoriaflutter/Models/Models.dart' as models;
 import 'package:viktoriaflutter/Utils/Widgets/AppBar.dart';
 
 /// The home page of the app
@@ -28,25 +28,8 @@ abstract class MainFrameState extends State<MainFrame>
         WidgetsBindingObserver {
   static AppLifecycleState _lifecycleState;
 
-  /// The current week
-  ///
-  /// Used by timetable and substitution plan
-  int currentWeek = 0;
-
-  /// Sets if [currentWeek] should be shown
-  bool showWeek = false;
-
-  /// Sets if [currentWeek] should be changeable
-  static bool weekChangeable = true;
-
-  /// [currentWeek] changed listener
-  static Function(int week) weekChanged;
-
-  /// Static function to update [currentWeek] attribute from everywhere in the app
-  static Function(int week) updateWeek;
-
-  /// Static function to set the [showWeek] attribute from everywhere in the app
-  static Function(bool value) setShowWeek;
+  /// The app pages controller
+  static PageController pageController;
 
   /// Defines the highest app scaffold
   Scaffold appScaffold;
@@ -73,37 +56,31 @@ abstract class MainFrameState extends State<MainFrame>
   /// This listeners would be triggered when the app receives a silent notification from the server
   static List<Function()> substitutionPlanUpdatedListeners = [];
 
+  /// An main frame update listener
+  static void Function(String type, dynamic value) _onUpdateListener;
+
   /// Checks if the app is in foreground
   static bool get isInForeground =>
       _lifecycleState == null || _lifecycleState.index == 0;
 
-  void _showWeek(bool value) {
-    if (mounted && value != showWeek) {
-      setState(() => showWeek = value);
+  /// Animates or jump to the given [index]
+  void setSelectedIndex(int index, {bool jump}) {
+    jump ??= selectedIndex != 1;
+    if (!jump) {
+      pageController.animateToPage(
+        index,
+        curve: Curves.ease,
+        duration: Duration(milliseconds: 200),
+      );
+    } else {
+      pageController.jumpToPage(index);
     }
   }
 
-  // ignore: use_setters_to_change_properties
-  /// Activates od Deactivates the week toggle button
-  static void setWeekChangeable(bool value) {
-    MainFrameState.weekChangeable = value;
-  }
-
-  /// Updates the week of the week button
-  void _updateWeek(int week) {
-    if (mounted && week != currentWeek) {
-      setState(() => currentWeek = week);
-    }
-  }
-
-  /// Calls the listener and updates wee
-  void weekPressed() {
-    if (!weekChangeable) {
-      return;
-    }
-    setState(() => currentWeek = currentWeek == 1 ? 0 : 1);
-    if (weekChanged != null) {
-      weekChanged(currentWeek);
+  /// Set the selected page
+  static void setPage(int page) {
+    if (_onUpdateListener != null) {
+      _onUpdateListener('page', page);
     }
   }
 
@@ -187,6 +164,13 @@ abstract class MainFrameState extends State<MainFrame>
 
   @override
   void initState() {
+    /// Set the static update listeners
+    _onUpdateListener = _onUpdate;
+
+    pageController = PageController(initialPage: 1);
+    pageController.addListener(
+        () => setState(() => selectedIndex = pageController.page.toInt()));
+
     // Set listener for widget bindings
     WidgetsBinding.instance.addObserver(this);
 
@@ -197,9 +181,6 @@ abstract class MainFrameState extends State<MainFrame>
 
     // Set the listener for android functions (Currently for incoming notifications and intents)...
     platform.setMethodCallHandler(_handleNotification);
-
-    MainFrameState.updateWeek = _updateWeek;
-    MainFrameState.setShowWeek = _showWeek;
 
     if (Platform.isAndroid) {
       platform.invokeMethod('channelRegistered');
@@ -217,6 +198,16 @@ abstract class MainFrameState extends State<MainFrame>
     GlobalAppBar.removeListener(_update);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  void _onUpdate(String type, dynamic value) {
+    print('On update: $type $value');
+    switch (type) {
+      case 'page':
+        selectedIndex = value;
+        break;
+    }
+    _update();
   }
 
   void _update() {

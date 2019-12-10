@@ -4,7 +4,7 @@ import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-import 'package:viktoriaflutter/Utils/Models.dart';
+import 'package:viktoriaflutter/Models/Models.dart';
 import 'package:viktoriaflutter/Timetable/TimetableDayList/TimetableDayListView.dart';
 
 /// A list of all units of one day
