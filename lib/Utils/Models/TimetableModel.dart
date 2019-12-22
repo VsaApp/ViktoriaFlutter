@@ -216,9 +216,6 @@ class TimetableSubject {
   /// The uniq course identifier
   final String courseID;
 
-  /// The week (A: 0; B: 1; AB: 2)
-  final int week;
-
   /// The block of the subject
   final String block;
 
@@ -236,7 +233,6 @@ class TimetableSubject {
     @required this.subjectID,
     @required this.roomID,
     @required this.courseID,
-    @required this.week,
     @required this.block,
     @required this.day,
   });
@@ -250,25 +246,29 @@ class TimetableSubject {
   }
 
   /// Check if the exams is already set
-  bool get examIsSet => Storage.getBool(Keys.exams(courseID)) != null;
+  bool get examIsSet => Storage.getBool(Keys.exams(subjectID)) != null;
 
   /// Get writing exams
-  bool get writeExams => Storage.getBool(Keys.exams(courseID)) ?? true;
+  bool get writeExams => Storage.getBool(Keys.exams(subjectID)) ?? true;
 
   /// Set writing exams
-  set writeExams(bool write) => Storage.setBool(Keys.exams(courseID), write);
+  set writeExams(bool write) {
+    Storage.setBool(Keys.exams(subjectID), write);
+    Storage.setString(
+        Keys.examTimestamp(subjectID), DateTime.now().toIso8601String());
+  }
 
   /// Creates a subject from json map
   factory TimetableSubject.fromJson(Map<String, dynamic> json, int day) {
     return TimetableSubject(
-        unit: json['unit'] as int,
-        id: json['id'] as String,
-        teacherID: json['teacherID'] as String,
-        subjectID: json['subjectID'] as String,
-        roomID: json['roomID'] as String,
-        courseID: json['courseID'] as String,
-        week: json['week'] as int,
-        block: json['block'] as String,
-        day: day);
+      unit: json['unit'] as int,
+      id: json['id'] as String,
+      teacherID: json['teacherID'] as String,
+      subjectID: json['subjectID'] as String,
+      roomID: json['roomID'] as String,
+      courseID: json['courseID'] as String,
+      block: json['block'] as String,
+      day: day,
+    );
   }
 }

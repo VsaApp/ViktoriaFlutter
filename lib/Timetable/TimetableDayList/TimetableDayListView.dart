@@ -101,8 +101,7 @@ class TimetableDayListView extends TimetableDayListState {
                                     AppLocalizations.of(context).selectLesson,
                                 roomID: '',
                                 block: '',
-                                courseID: '',
-                                week: 2),
+                                courseID: ''),
                           ),
                         ]))))
             : (substitutions.isEmpty ||

@@ -4,16 +4,13 @@ import 'dart:io' show Platform;
 import 'package:device_info/device_info.dart';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:viktoriaflutter/Utils/Encrypt.dart';
-import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 
 import 'Keys.dart';
 import 'Network.dart';
 import 'Storage.dart';
-import 'Times.dart';
 
 /// Returns all saved tags from the server
 Future<Tags> getTags() async {
@@ -36,18 +33,23 @@ Future<bool> isInitialized() async {
   return tags.isInitialized;
 }
 
+//TODO: Test synchronization
 /// Synchronize local data with server tags
-Future<bool> syncWithTags(
+Future<void> syncWithTags(
     {Tags tags, bool autoSync = true, bool forceSync = false}) async {
   tags ??= await getTags();
   if (tags != null) {
     // Sync grade
     Storage.setString(Keys.grade, tags.grade);
 
+    // Set the user group (1 (pupil); 2 (teacher); 4 (developer); 8 (other))
+    Storage.setInt(Keys.group, tags.group);
+
     // Check if the cafetoria data on the server is newer than the local
     bool cafetoriaIsNewer = false;
     if (tags.isInitialized) {
-      final String cafetoriaModified = Storage.getString(Keys.cafetoriaModified);
+      final String cafetoriaModified =
+          Storage.getString(Keys.cafetoriaModified);
       if (cafetoriaModified != null) {
         final DateTime local = DateTime.parse(cafetoriaModified);
         if (tags.cafetoriaLogin.timestamp.isAfter(local)) {
@@ -60,69 +62,65 @@ Future<bool> syncWithTags(
 
     if (cafetoriaIsNewer) {
       if (tags.cafetoriaLogin.id == null) {
-        Storage.remove(Keys.cafetoriaId, autoSet: true);
-        Storage.remove(Keys.cafetoriaPassword, autoSet: true);
+        Storage.remove(Keys.cafetoriaId);
+        Storage.remove(Keys.cafetoriaPassword);
       } else {
         final String decryptedID = decryptText(tags.cafetoriaLogin.id);
-        final String decryptedPassword = decryptText(tags.cafetoriaLogin.password);
-        Storage.setString(Keys.cafetoriaId, decryptedID, autoSet: true);
-        Storage.setString(Keys.cafetoriaPassword, decryptedPassword,
-            autoSet: true);
+        final String decryptedPassword =
+            decryptText(tags.cafetoriaLogin.password);
+        Storage.setString(Keys.cafetoriaId, decryptedID);
+        Storage.setString(Keys.cafetoriaPassword, decryptedPassword);
       }
       Storage.setString(Keys.cafetoriaModified,
           tags.cafetoriaLogin.timestamp.toIso8601String());
     }
 
-    // Check if the server hast newer data than the local data
-    final String _lastModified = Storage.getString(Keys.lastModified);
-    bool serverIsNewer = true;
-    bool localIsNewer = false;
-
     // If the server do not has any data of this user, do not sync
-    if (!tags.isInitialized) {
-      serverIsNewer = false;
-    }
-    // If there are already local changes compare the newer version
-    else if (_lastModified != null) {
-      final DateTime lastModified = DateTime.parse(_lastModified);
-      serverIsNewer = tags.timestamp.isAfter(lastModified);
-      localIsNewer = lastModified.isAfter(tags.timestamp);
-    }
-
-    // If the server has newer data, sync phone
-    if (serverIsNewer || forceSync) {
-      print('Sync device with server');
-
-      // Reset local selections
-      Storage.getKeys()
-          .where((key) => key.startsWith(Keys.selection('')))
-          .forEach((key) => Storage.remove(key, autoSet: true));
-      // Set all courses to non writing
-      Storage.getKeys()
-          .where((key) => key.startsWith(Keys.exams('')))
-          .forEach((key) => Storage.setBool(key, false, autoSet: true));
-
-      // Set new selections
-      tags.selected.forEach((course) {
-        Storage.setBool(Keys.selection(course), true, autoSet: true);
+    if (tags.isInitialized) {
+      // Sync selections
+      tags.selected.forEach((selection) {
+        final String selectedCourseId =
+            Storage.getString(Keys.selection(selection.block));
+        // If the course id changed, check wich version is newer
+        if (selectedCourseId != selection.courseID) {
+          final String selectedTimestamp =
+              Storage.getString(Keys.selectionTimestamp(selection.block));
+          // If the server is newer, sync the new course id
+          if (selectedCourseId == null ||
+              selection.timestamp.isAfter(DateTime.parse(selectedTimestamp))) {
+            Storage.setString(
+                Keys.selection(selection.block), selection.courseID);
+            Storage.setString(Keys.selectionTimestamp(selection.block),
+                selection.timestamp.toIso8601String());
+          }
+        }
       });
 
-      // Set new exam settings
-      tags.exams.forEach((course) {
-        Storage.setBool(Keys.exams(course), true, autoSet: true);
+      // Sync exams
+      tags.exams.forEach((exam) {
+        final bool writing = Storage.getBool(Keys.exams(exam.subject));
+        // If the course id changed, check wich version is newer
+        if (writing != exam.writing) {
+          final String examTimestamp =
+              Storage.getString(Keys.examTimestamp(exam.subject));
+          // If the server is newer, sync the new course id
+          if (writing == null ||
+              exam.timestamp.isAfter(DateTime.parse(examTimestamp))) {
+            Storage.setBool(Keys.exams(exam.subject), exam.writing);
+            Storage.setString(Keys.examTimestamp(exam.subject),
+                exam.timestamp.toIso8601String());
+          }
+        }
       });
-
-      Storage.setString(Keys.lastModified, tags.timestamp.toIso8601String());
-    } else if (localIsNewer && autoSync) {
+    } else if (autoSync) {
       await syncTags(checkSync: false);
     }
-    return serverIsNewer;
   }
-  return false;
+  return;
 }
 
 /// Initialize device tags
-Future initTags(BuildContext context) async {
+Future initTags() async {
   if ((await checkOnline) == -1) {
     return;
   }
@@ -145,19 +143,16 @@ Future initTags(BuildContext context) async {
     os = 'iOS ${iosInfo.systemVersion}';
     deviceName = iosInfo.utsname.machine;
   }
-  final String language = AppLocalizations.of(context).locale.languageCode;
   final Device device = Device(
-      language: language,
       firebaseId: id,
-      notifications:
-          Storage.getBool(Keys.getSubstitutionPlanNotifications) ?? true,
       appVersion: appVersion.isEmpty ? null : appVersion,
       name: deviceName.isEmpty ? null : deviceName,
-      os: os.isEmpty ? null : os);
-  await sendTags({
-    'device': device.toMap(),
-    'timestamp': DateTime.now().toIso8601String()
-  });
+      os: os.isEmpty ? null : os,
+      deviceSettings: DeviceSettings(
+        spNotifications:
+            Storage.getBool(Keys.getSubstitutionPlanNotifications) ?? true,
+      ));
+  await sendTags({'device': device.toMap()});
 }
 
 /// Send tags to server
@@ -165,25 +160,6 @@ Future sendTags(Map<String, dynamic> tags) async {
   try {
     await httpPost(Urls.tags, body: tags);
   } catch (_) {}
-}
-
-/// Delete tags from server
-Future deleteTags(Map<String, dynamic> tags) async {
-  final String url = Urls.tags;
-  try {
-    await httpDelete(url, body: tags);
-  } catch (_) {}
-}
-
-/// Sync the length of each day
-void syncDaysLength() {
-  String lengths = '';
-  Data.timetable.days.forEach((day) {
-    final int count = day.getUserLessonsCount('Freistunde');
-    // ignore: prefer_interpolation_to_compose_strings
-    lengths += times[count].split(' - ')[1] + '|';
-  });
-  Storage.setString(Keys.daysLengths, lengths);
 }
 
 /// Sync the tags
@@ -203,55 +179,58 @@ Future syncTags(
   }
 
   if (checkSync) {
-    final bool synced = await syncWithTags(tags: allTags, autoSync: false);
-    if (synced) {
-      return;
-    }
+    await syncWithTags(tags: allTags, autoSync: false);
   }
 
-  // Set the user group (1 (pupil); 2 (teacher); 4 (developer); 8 (other))
-  Storage.setInt(Keys.group, allTags.group);
-
-  // Compare new and old tags...
-  final String lastModified = Storage.getString(Keys.lastModified);
-  final Map<String, dynamic> tagsToRemove = {
-    'timestamp': lastModified,
-  };
-  final Map<String, dynamic> tagsToUpdate = {
-    'timestamp': lastModified,
-  };
+  // Get all changed tags
+  final Map<String, dynamic> tagsToUpdate = {};
 
   if (syncExams || syncSelections) {
-    // Get all selected subjects
-    final List<TimetableSubject> subjects = Data.timetable
-        .getAllSelectedSubjects()
-        .where((TimetableSubject subject) {
-          return subject.subjectID != 'Mittagspause';
-        })
-        .toSet()
-        .toList();
+    final List<String> keys = Storage.getKeys();
+    final List<Selection> selections = [];
+    final List<Exam> exams = [];
 
-    // Sync all selected exams
-    final List<String> exams = subjects
-        .where((TimetableSubject subject) => subject.writeExams)
-        .map((TimetableSubject subject) => subject.courseID)
-        .toSet()
-        .toList();
+    // Get all selections and exams
+    keys.forEach((key) {
+      // If the preference key is a selection
+      if (key.startsWith(Keys.selection(''))) {
+        final selection = Selection(
+          block: key.split('-').sublist(1).join('-'),
+          courseID: Storage.getString(key),
+          timestamp: DateTime.parse(Storage.getString('timestamp-$key') ?? '20000101'),
+        );
+        // Check if the local selection is newer than the server selection
+        final serverSelection =
+            allTags.selected.where((s) => s.block == selection.block).toList();
+        // If the server does not have this selection,
+        // or the selection changed and the local version is newer, sync the selection
+        if (serverSelection.isEmpty ||
+            (serverSelection[0].courseID != selection.courseID &&
+                selection.timestamp.isAfter(serverSelection[0].timestamp))) {
+          selections.add(selection);
+        }
+      }
+      // If the preference key is an exam
+      else if (key.startsWith(Keys.exams(''))) {
+        final exam = Exam(
+            subject: key.split('-').sublist(1).join('-'),
+            writing: Storage.getBool(key),
+            timestamp: DateTime.parse(Storage.getString('timestamp-$key') ?? '20000101'));
+        // Check if the local exam is newer than the server exam
+        final serverExam =
+            allTags.exams.where((e) => e.subject == exam.subject).toList();
+        // If the server does not have this exam,
+        // or the exam changed and the local version is newer, sync the exam
+        if (serverExam.isEmpty ||
+            (serverExam[0].writing != exam.writing &&
+                exam.timestamp.isAfter(serverExam[0].timestamp))) {
+          exams.add(exam);
+        }
+      }
+    });
 
-    tagsToUpdate['exams'] =
-        exams.where((tag) => !allTags.exams.contains(tag)).toList();
-    tagsToRemove['exams'] =
-        allTags.exams.where((tag) => !exams.contains(tag)).toList();
-
-    // Sync all selected subjects
-    syncDaysLength();
-    final List<String> selected =
-        subjects.map((TimetableSubject subject) => subject.courseID).toList();
-
-    tagsToUpdate['selected'] =
-        selected.where((tag) => !allTags.selected.contains(tag)).toList();
-    tagsToRemove['selected'] =
-        allTags.selected.where((tag) => !selected.contains(tag)).toList();
+    tagsToUpdate['selected'] = selections.map((s) => s.toMap()).toList();
+    tagsToUpdate['exams'] = exams.map((e) => e.toMap()).toList();
   }
 
   if (syncCafetoria) {
@@ -259,35 +238,24 @@ Future syncTags(
     final String password = Storage.getString(Keys.cafetoriaPassword);
     final String lastModified = Storage.getString(Keys.cafetoriaModified);
 
-    if (id != null && password != null && lastModified != null) {
-      final encryptedId = encryptText(id);
-      final encryptedPassword = encryptText(password);
+    // If the local cafetoria login data is set and newer than the server login data
+    if (lastModified != null &&
+        DateTime.parse(lastModified)
+            .isAfter(allTags.cafetoriaLogin.timestamp)) {
+      final encryptedId = id == null ? null : encryptText(id);
+      final encryptedPassword = password == null ? null : encryptText(password);
 
-      if (allTags.cafetoriaLogin.id == null ||
-          (allTags.cafetoriaLogin.id != encryptedId &&
-              allTags.cafetoriaLogin.password != encryptedPassword)) {
+      if (allTags.cafetoriaLogin.id != encryptedId ||
+          allTags.cafetoriaLogin.password != encryptedPassword) {
         tagsToUpdate['cafetoria'] = CafetoriaTags(
                 id: encryptedId,
                 password: encryptedPassword,
                 timestamp: DateTime.parse(lastModified))
             .toMap();
       }
-    } else if (lastModified != null) {
-      if (allTags.cafetoriaLogin.timestamp
-          .isBefore(DateTime.parse(lastModified))) {
-        tagsToRemove['cafetoria'] = CafetoriaTags(
-                id: '', password: '', timestamp: DateTime.parse(lastModified))
-            .toMap();
-      }
     }
   }
 
-  if ((tagsToRemove['selected'] != null &&
-          tagsToRemove['selected'].length > 0) ||
-      (tagsToRemove['exams'] != null && tagsToRemove['exams'].length > 0) ||
-      tagsToRemove['cafetoria'] != null) {
-    await deleteTags(tagsToRemove);
-  }
   if ((tagsToUpdate['selected'] != null &&
           tagsToUpdate['selected'].length > 0) ||
       (tagsToUpdate['exams'] != null && tagsToUpdate['exams'].length > 0) ||

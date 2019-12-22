@@ -5,21 +5,17 @@ import 'package:flutter/material.dart';
 /// Defines all updates
 class Updates {
   // ignore: public_member_api_docs
-  DateTime timetable;
+  String timetable;
   // ignore: public_member_api_docs
-  DateTime substitutionPlan;
+  String substitutionPlan;
   // ignore: public_member_api_docs
-  DateTime cafetoria;
+  String cafetoria;
   // ignore: public_member_api_docs
-  DateTime calendar;
+  String calendar;
   // ignore: public_member_api_docs
-  DateTime teachers;
+  String workgroups;
   // ignore: public_member_api_docs
-  DateTime workgroups;
-  // ignore: public_member_api_docs
-  DateTime subjects;
-  // ignore: public_member_api_docs
-  DateTime rooms;
+  String subjects;
   // ignore: public_member_api_docs
   final int minAppLevel;
   // ignore: public_member_api_docs
@@ -31,25 +27,21 @@ class Updates {
       @required this.substitutionPlan,
       @required this.cafetoria,
       @required this.calendar,
-      @required this.teachers,
       @required this.workgroups,
       @required this.minAppLevel,
       @required this.subjects,
-      @required this.rooms,
       @required this.grade});
 
   /// Creates updates from json map
   factory Updates.fromJson(Map<String, dynamic> json) {
     return Updates(
-      timetable: DateTime.parse(json['timetable'] as String),
-      substitutionPlan: DateTime.parse(json['substitutionPlan'] as String),
-      cafetoria: DateTime.parse(json['cafetoria'] as String),
-      calendar: DateTime.parse(json['calendar'] as String),
-      teachers: DateTime.parse(json['teachers'] as String),
-      workgroups: DateTime.parse(json['workgroups'] as String),
+      timetable: json['timetable'] as String,
+      substitutionPlan: json['substitutionPlan'] as String,
+      cafetoria: json['cafetoria'] as String,
+      calendar: json['calendar'] as String,
+      workgroups: json['workgroups'] as String,
       minAppLevel: json['minAppLevel'] as int,
-      subjects: DateTime.parse(json['subjects'] as String),
-      rooms: DateTime.parse(json['rooms'] as String),
+      subjects: json['subjects'] as String,
       grade: json['grade'] as String,
     );
   }
@@ -62,15 +54,13 @@ class Updates {
   /// Converts updates to json map
   Map<String, dynamic> toMap() {
     return {
-      'timetable': timetable.toIso8601String(),
-      'substitutionPlan': substitutionPlan.toIso8601String(),
-      'cafetoria': cafetoria.toIso8601String(),
-      'calendar': calendar.toIso8601String(),
-      'teachers': teachers.toIso8601String(),
-      'workgroups': workgroups.toIso8601String(),
+      'timetable': timetable,
+      'substitutionPlan': substitutionPlan,
+      'cafetoria': cafetoria,
+      'calendar': calendar,
+      'workgroups': workgroups,
       'minAppLevel': minAppLevel,
-      'subjects': subjects.toIso8601String(),
-      'rooms': rooms.toIso8601String(),
+      'subjects': subjects,
       'grade': grade
     };
   }

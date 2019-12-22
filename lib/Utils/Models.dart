@@ -2,7 +2,6 @@ import 'Models/CafetoriaModel.dart';
 import 'Models/CalendarModel.dart';
 import 'Models/SubstitutionPlanModel.dart';
 import 'Models/TagsModel.dart';
-import 'Models/TeachersModel.dart';
 import 'Models/TimetableModel.dart';
 import 'Models/UpdatesModel.dart';
 import 'Models/WorkGroupsModel.dart';
@@ -11,7 +10,6 @@ export 'Models/CalendarModel.dart';
 export 'Models/SubjectRowDetails.dart';
 export 'Models/SubstitutionPlanModel.dart';
 export 'Models/TagsModel.dart';
-export 'Models/TeachersModel.dart';
 export 'Models/TimetableModel.dart';
 export 'Models/UpdatesModel.dart';
 export 'Models/WorkGroupsModel.dart';
@@ -28,8 +26,6 @@ class Data {
   static Cafetoria cafetoria;
   // ignore: public_member_api_docs
   static Map<String, String> rooms;
-  // ignore: public_member_api_docs
-  static List<Teacher> teachers;
   // ignore: public_member_api_docs
   static WorkGroups workGroups;
   // ignore: public_member_api_docs

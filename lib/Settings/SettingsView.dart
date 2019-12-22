@@ -115,7 +115,7 @@ class SettingsPageView extends SettingsPageState {
                           Keys.getSubstitutionPlanNotifications, value);
                       getSubstitutionPlanNotifications = value;
                       // Synchronize tags for notifications
-                      initTags(context);
+                      initTags();
                     });
                   },
                   title: Text(AppLocalizations.of(context)

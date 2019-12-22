@@ -51,37 +51,37 @@ class CoursesPageView extends CoursesPageState {
 
     courses.keys.toList().forEach((key) {
       final String lesson =
-          Data.subjects[courses[key][0].subjectID.toUpperCase()] ??
+          Data.subjects[courses[key][0].subjectID] ??
               courses[key][0].subjectID;
-      if (lesson == Data.subjects['D'] ||
-          lesson == Data.subjects['E'] ||
-          lesson == Data.subjects['F'] ||
-          lesson == Data.subjects['L'] ||
-          lesson == Data.subjects['S'] ||
-          lesson == Data.subjects['KU'] ||
-          lesson == Data.subjects['MU'] ||
-          lesson == Data.subjects['MC'] ||
-          lesson == Data.subjects['UC'] ||
-          lesson == Data.subjects['SG']) {
+      if (lesson == Data.subjects['d'] ||
+          lesson == Data.subjects['e'] ||
+          lesson == Data.subjects['f'] ||
+          lesson == Data.subjects['k'] ||
+          lesson == Data.subjects['s'] ||
+          lesson == Data.subjects['ku'] ||
+          lesson == Data.subjects['mu'] ||
+          lesson == Data.subjects['mc'] ||
+          lesson == Data.subjects['uc'] ||
+          lesson == Data.subjects['sg']) {
         section0Items.add(CourseRow(
           subjects: courses[key].toList(),
         ));
-      } else if (lesson == Data.subjects['EK'] ||
-          lesson == Data.subjects['GE'] ||
-          lesson == Data.subjects['PL'] ||
-          lesson == Data.subjects['SW'] ||
-          lesson == Data.subjects['DP'] ||
-          lesson == Data.subjects['PK']) {
+      } else if (lesson == Data.subjects['ek'] ||
+          lesson == Data.subjects['ge'] ||
+          lesson == Data.subjects['pl'] ||
+          lesson == Data.subjects['sw'] ||
+          lesson == Data.subjects['dp'] ||
+          lesson == Data.subjects['pk']) {
         section1Items.add(CourseRow(
           subjects: courses[key].toList(),
         ));
-      } else if (lesson == Data.subjects['BI'] ||
-          lesson == Data.subjects['CH'] ||
-          lesson == Data.subjects['NW'] ||
-          lesson == Data.subjects['IF'] ||
-          lesson == Data.subjects['MI'] ||
-          lesson == Data.subjects['M'] ||
-          lesson == Data.subjects['PH']) {
+      } else if (lesson == Data.subjects['bi'] ||
+          lesson == Data.subjects['ch'] ||
+          lesson == Data.subjects['nw'] ||
+          lesson == Data.subjects['if'] ||
+          lesson == Data.subjects['mi'] ||
+          lesson == Data.subjects['m'] ||
+          lesson == Data.subjects['ph']) {
         section2Items.add(CourseRow(
           subjects: courses[key].toList(),
         ));
@@ -147,7 +147,7 @@ class CourseRowView extends State<CourseRow> {
 
   @override
   void initState() {
-    _name = Data.subjects[widget.subjects[0].subjectID.toUpperCase()] ??
+    _name = Data.subjects[widget.subjects[0].subjectID] ??
         widget.subjects[0].subjectID;
     _teacher = widget.subjects[0].teacherID.toUpperCase();
     _course = '';

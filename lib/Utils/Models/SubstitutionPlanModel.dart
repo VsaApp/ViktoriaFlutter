@@ -65,6 +65,9 @@ class SubstitutionPlanDay {
       @required this.week,
       @required this.unparsed,
       @required this.isEmpty}) {
+    if (isEmpty) {
+      return;
+    }
     insertInTimetable();
     filterSubstitutions();
     filterUnparsed();

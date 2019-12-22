@@ -67,14 +67,12 @@ class UpdatesData extends Downloader<Updates> {
   }
 
   static Map<String, dynamic> get _defaultValue => Updates(
-          timetable: DateTime.fromMillisecondsSinceEpoch(0),
-          substitutionPlan: DateTime.fromMillisecondsSinceEpoch(0),
-          cafetoria: DateTime.fromMillisecondsSinceEpoch(0),
-          calendar: DateTime.fromMillisecondsSinceEpoch(0),
-          teachers: DateTime.fromMillisecondsSinceEpoch(0),
-          workgroups: DateTime.fromMillisecondsSinceEpoch(0),
-          rooms: DateTime.fromMillisecondsSinceEpoch(0),
-          subjects: DateTime.fromMillisecondsSinceEpoch(0),
+          timetable: '',
+          substitutionPlan: '',
+          cafetoria: '',
+          calendar: '',
+          workgroups: '',
+          subjects: '',
           minAppLevel: 1,
           grade: '')
       .toMap();

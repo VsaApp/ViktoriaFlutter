@@ -14,9 +14,7 @@ import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Downloader/SubstitutionPlanData.dart';
 import 'package:viktoriaflutter/Utils/Downloader/TimetableData.dart';
 import 'package:viktoriaflutter/Utils/Downloader/UpdatesData.dart';
-import 'package:viktoriaflutter/Utils/Downloader/TeachersData.dart';
 import 'package:viktoriaflutter/Utils/Downloader/SubjectsData.dart';
-import 'package:viktoriaflutter/Utils/Downloader/RoomsData.dart';
 import 'package:viktoriaflutter/Utils/Downloader/CalendarData.dart';
 import 'package:viktoriaflutter/Utils/Downloader/CafetoriaData.dart';
 import 'package:viktoriaflutter/Utils/Downloader/WorkGroupsData.dart';
@@ -35,10 +33,10 @@ abstract class LoadingPageState extends State<LoadingPage>
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   /// The number of download that must be downloaded
-  final int allDownloadsCount = 9;
+  final int allDownloadsCount = 7;
 
   /// The number of downloads that still have to download
-  int countCurrentDownloads = 9;
+  int countCurrentDownloads = 7;
 
   /// The dimension of the ginko image
   double centerWidgetDimensions = 150;
@@ -116,8 +114,6 @@ abstract class LoadingPageState extends State<LoadingPage>
           AppLocalizations.of(context).workGroups,
           AppLocalizations.of(context).calendar,
           AppLocalizations.of(context).subjects,
-          AppLocalizations.of(context).rooms,
-          AppLocalizations.of(context).teachers,
           AppLocalizations.of(context).cafetoria,
         ]..shuffle();
         downloadAll();
@@ -194,7 +190,7 @@ abstract class LoadingPageState extends State<LoadingPage>
       final String token = await _firebaseMessaging.getToken();
       if (token != null) {
         // Synchronize tags for notifications
-        await initTags(context);
+        await initTags();
         await syncTags();
       } else {
         print('Error: Firebase token is null');
@@ -275,31 +271,9 @@ abstract class LoadingPageState extends State<LoadingPage>
           update: updated(newData.subjects, currentData.subjects),
         );
         if (status == StatusCodes.success) {
-          currentData.teachers = newData.teachers;
+          currentData.subjects = newData.subjects;
         }
       }, AppLocalizations.of(context).subjects);
-
-      // Update rooms
-      await download(() async {
-        final int status = await RoomsData().download(
-          context,
-          update: updated(newData.rooms, currentData.rooms),
-        );
-        if (status == StatusCodes.success) {
-          currentData.rooms = newData.rooms;
-        }
-      }, AppLocalizations.of(context).rooms);
-
-      // Update teachers
-      await download(() async {
-        final int status = await TeachersData().download(
-          context,
-          update: updated(newData.teachers, currentData.teachers),
-        );
-        if (status == StatusCodes.success) {
-          currentData.teachers = newData.teachers;
-        }
-      }, AppLocalizations.of(context).teachers);
 
       // Update timetable
       await download(() async {
@@ -362,8 +336,8 @@ abstract class LoadingPageState extends State<LoadingPage>
   }
 
   /// Compares the dates
-  bool updated(DateTime oldValue, DateTime newValue) =>
-      !oldValue.isAtSameMomentAs(newValue);
+  bool updated(String oldValue, String newValue) =>
+      oldValue != newValue;
 
   /// Executes one download process and removes the download text
   /// 

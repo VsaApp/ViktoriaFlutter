@@ -39,7 +39,7 @@ class SubstitutionPlanRow extends SubjectRow {
 
   /// Returns the full substitution name
   static String getTitle(Substitution substitution) {
-    return Data.subjects[substitution.original.subjectID.toUpperCase()] ??
+    return Data.subjects[substitution.original.subjectID] ??
         substitution.original.subjectID;
   }
 
@@ -76,7 +76,7 @@ class SubstitutionPlanRow extends SubjectRow {
     if (description.isNotEmpty) {
       info += description;
     } else if (substitution.changed.subjectID.isNotEmpty) {
-      info += Data.subjects[substitution.changed.subjectID.toUpperCase()] ??
+      info += Data.subjects[substitution.changed.subjectID] ??
           substitution.changed.subjectID;
     }
     if (substitution.info.isNotEmpty) {

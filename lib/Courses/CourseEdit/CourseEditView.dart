@@ -10,7 +10,7 @@ class CourseEditView extends CourseEditState {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: Text('${Data.subjects[widget.subject.subjectID.toUpperCase()] ?? widget.subject.subjectID} ${widget.subject.teacherID.toUpperCase()}'),
+      title: Text('${Data.subjects[widget.subject.subjectID] ?? widget.subject.subjectID} ${widget.subject.teacherID.toUpperCase()}'),
       children: <Widget>[
         // Writing option
         CheckboxListTile(

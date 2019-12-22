@@ -90,9 +90,14 @@ class Keys {
     return 'timetable-$grade';
   }
 
-  /// selection-courseID saves the selected course
-  static String selection(String courseID) {
-    return 'selection-$courseID';
+  /// selection-block saves the selected course for a block
+  static String selection(String block) {
+    return 'selection-$block';
+  }
+
+  /// timestamp-selection-block saves the last changed timestamp of a course selection
+  static String selectionTimestamp(String block) {
+    return 'timestamp-selection-$block';
   }
 
   /// substitutionPlan saves the substitution plan...
@@ -100,9 +105,14 @@ class Keys {
     return 'substitutionPlan';
   }
 
-  /// exams-courseID saves if user writing exams in this course...
-  static String exams(String courseID) {
-    return 'exams-$courseID';
+  /// exams-subject saves if user writing exams in this course...
+  static String exams(String subject) {
+    return 'exams-$subject';
+  }
+
+  /// timestamp-exams-subject saves the last changed timestamp of a writing option
+  static String examTimestamp(String subject) {
+    return 'timestamp-exam-$subject';
   }
 
   /// Saves if the shortcut dialog should be shown...
@@ -168,11 +178,6 @@ class Keys {
   /// Saves is the timetable is updates
   static String get timetableIsNew {
     return 'timetableIsNew';
-  }
-
-  /// Saves the last modified timetable selection / exams
-  static String get lastModified {
-    return 'lastModified';
   }
 
   /// Saves the loaded nextcloud folder structure

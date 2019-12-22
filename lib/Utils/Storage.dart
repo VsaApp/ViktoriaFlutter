@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io' show File, Platform;
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:viktoriaflutter/Utils/Keys.dart';
 
 /// Static class to save and get saved date
 class Storage {
@@ -24,10 +23,7 @@ class Storage {
   }
 
   // ignore: public_member_api_docs
-  static void setString(String key, String value, {bool autoSet = false}) {
-    if (!autoSet && key.startsWith(Keys.cafetoriaId)) {
-      setString(Keys.cafetoriaModified, DateTime.now().toIso8601String());
-    }
+  static void setString(String key, String value) {
     if (_isDesktop) {
       _data[key] = value;
     } else {
@@ -47,11 +43,7 @@ class Storage {
   }
   
   // ignore: public_member_api_docs
-  static void setBool(String key, bool value, {bool autoSet = false}) {
-    if (!autoSet &&
-        (key.startsWith(Keys.selection('')) || key.startsWith(Keys.exams('')))) {
-      setString(Keys.lastModified, DateTime.now().toIso8601String());
-    }
+  static void setBool(String key, bool value) {
     if (_isDesktop) {
       _data[key] = value;
     } else {
@@ -116,14 +108,7 @@ class Storage {
   }
 
   // ignore: public_member_api_docs
-  static void remove(String key, {bool autoSet = false}) {
-    if (!autoSet &&
-        (key.startsWith(Keys.selection('')) ||
-            key.startsWith(Keys.exams('')))) {
-      setString(Keys.lastModified, DateTime.now().toIso8601String());
-    } else if (!autoSet && key.startsWith(Keys.cafetoriaId)) {
-      setString(Keys.cafetoriaModified, DateTime.now().toIso8601String());
-    }
+  static void remove(String key) {
     if (_isDesktop) {
       _data.remove(key);
     } else {

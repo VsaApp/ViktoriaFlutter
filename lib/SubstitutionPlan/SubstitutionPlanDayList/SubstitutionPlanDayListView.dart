@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Localizations.dart';
@@ -25,7 +26,7 @@ class SubstitutionPlanDayListView extends SubstitutionPlanDayListState {
                         .weekdays[widget.day.date.weekday - 1],
                     style: TextStyle(fontWeight: FontWeight.bold)),
                 Text(AppLocalizations.of(context).substitutionPlanThe),
-                Text('${widget.day.date}',
+                Text('${DateFormat('dd.MM.yyyy').format(widget.day.date)}',
                     style: TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),

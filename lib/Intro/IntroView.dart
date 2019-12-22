@@ -35,7 +35,6 @@ class IntroPageView extends IntroPageState {
         roomID: '525',
         id: '',
         courseID: '',
-        week: 2,
         block: '',
         day: 1);
     final Substitution change = Substitution(

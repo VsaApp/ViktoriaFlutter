@@ -6,7 +6,6 @@ import 'package:viktoriaflutter/Utils/Downloader.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import 'package:viktoriaflutter/Utils/Tags.dart';
 
 import 'package:viktoriaflutter/Utils/Models.dart';
 
@@ -63,19 +62,12 @@ class TimetableData extends Downloader<Timetable> {
     if (version1 != version2) {
       Storage.setBool(Keys.timetableIsNew, true);
       print('There is a new timetable, reset old data');
-      final List<String> keys = Storage.getKeys()
-        ..where((String key) =>
+      //TODO: Ask if the exams should be reset or not
+      Storage.getKeys()
+        .where((String key) =>
             key.startsWith(Keys.selection('')) ||
             key.startsWith(Keys.exams(''))).toList()
         .forEach(Storage.remove);
-      await deleteTags({
-        'timestamp': Storage.getString(Keys.lastModified),
-        'selected': keys
-            .where((String key) => key.startsWith(Keys.selection('')))
-            .toList(),
-        'exams':
-            keys.where((String key) => key.startsWith(Keys.exams(''))).toList()
-      });
     }
   }
 }

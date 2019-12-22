@@ -15,7 +15,7 @@ class TimetableRow extends SubjectRow {
   }) : super(
           details: [
             SubjectRowDetails(
-              title: Data.subjects[subject.subjectID.toUpperCase()] ??
+              title: Data.subjects[subject.subjectID] ??
                   subject.subjectID,
               subtitle: subject.unit != 5 ? times[subject.unit] : '',
               unit: subject.unit,

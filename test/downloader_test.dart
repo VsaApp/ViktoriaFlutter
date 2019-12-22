@@ -3,10 +3,8 @@ import 'package:test/test.dart';
 import 'package:viktoriaflutter/Utils/Downloader.dart';
 import 'package:viktoriaflutter/Utils/Downloader/CafetoriaData.dart';
 import 'package:viktoriaflutter/Utils/Downloader/CalendarData.dart';
-import 'package:viktoriaflutter/Utils/Downloader/RoomsData.dart';
 import 'package:viktoriaflutter/Utils/Downloader/SubjectsData.dart';
 import 'package:viktoriaflutter/Utils/Downloader/SubstitutionPlanData.dart';
-import 'package:viktoriaflutter/Utils/Downloader/TeachersData.dart';
 import 'package:viktoriaflutter/Utils/Downloader/TimetableData.dart';
 import 'package:viktoriaflutter/Utils/Downloader/UpdatesData.dart';
 import 'package:viktoriaflutter/Utils/Downloader/WorkGroupsData.dart';
@@ -21,14 +19,13 @@ void main({bool main = true}) {
   if (main) {
     storage.init();
   }
+  // ignore: unused_local_variable
   final Map<String, Downloader> _downloader = {
     'timetable': TimetableData(),
     'substitution plan': SubstitutionPlanData(),
     'cafetoria': CafetoriaData(),
     'calendar': CalendarData(),
-    'rooms': RoomsData(),
     'subjects': SubjectsData(),
-    'teachers': TeachersData(),
     'updates': UpdatesData(),
     'work groups': WorkGroupsData(),
   }..forEach(downloader);

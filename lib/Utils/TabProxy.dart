@@ -27,6 +27,7 @@ class TabProxy extends StatefulWidget {
 
 // ignore: public_member_api_docs
 class TabProxyState extends State<TabProxy> {
+
   @override
   void initState() {
     super.initState();
