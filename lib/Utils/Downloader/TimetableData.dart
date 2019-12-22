@@ -62,7 +62,6 @@ class TimetableData extends Downloader<Timetable> {
     if (version1 != version2) {
       Storage.setBool(Keys.timetableIsNew, true);
       print('There is a new timetable, reset old data');
-      //TODO: Ask if the exams should be reset or not
       Storage.getKeys()
         .where((String key) =>
             key.startsWith(Keys.selection('')) ||

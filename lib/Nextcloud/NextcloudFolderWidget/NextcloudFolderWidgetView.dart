@@ -114,9 +114,6 @@ class NextcloudFolderWidgetView extends NextcloudFolderWidgetState {
                                 setState(() => isLoading = true);
                                 await widget.onTap();
                                 setState(() => isLoading = false);
-                              } else {
-                                // ignore: todo
-                                //TODO: Download directory
                               }
                             } else if (icon == Icons.edit.codePoint) {
                               onEdit();

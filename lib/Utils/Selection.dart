@@ -14,10 +14,8 @@ int getSelectedIndex(List<TimetableSubject> subjects) {
     if (selected != null) {
       final pSubjects = subjects.where((s) => s.courseID == selected).toList();
       if (pSubjects.length == 1) {
-        //TODO: Return directly the subject and not the index
         return subjects.indexOf(pSubjects[0]);
       } else {
-        //TODO: Exclude 'Freistunde'
         final pFreeLesson =
             subjects.where((s) => s.subjectID == 'Freistunde').toList();
         if (pFreeLesson.length == 1) {
