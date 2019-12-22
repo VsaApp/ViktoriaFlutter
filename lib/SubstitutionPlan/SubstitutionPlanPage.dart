@@ -53,7 +53,6 @@ abstract class SubstitutionPlanPageState extends State<SubstitutionPlanPage>
   void initState() {
     updatesListener = initDays;
     HomePageState.substitutionPlanUpdatedListeners.add(updatesListener);
-    HomePageState.setWeekChangeable(false);
     initDays();
     super.initState();
   }

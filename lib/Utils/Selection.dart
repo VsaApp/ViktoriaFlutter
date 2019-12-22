@@ -3,7 +3,7 @@ import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 
 /// Returns the selected index for the given week
-int getSelectedIndex(List<TimetableSubject> subjects, {int week = 0}) {
+int getSelectedIndex(List<TimetableSubject> subjects) {
   if (subjects.isNotEmpty) {
     // If it is the lunch break, it is always the first
     if (subjects[0].unit == 5) {
@@ -29,14 +29,12 @@ int getSelectedIndex(List<TimetableSubject> subjects, {int week = 0}) {
   return null;
 }
 
-/// Return the selected subject of a [subjects] list for a given [week]
-TimetableSubject getSelectedSubject(List<TimetableSubject> subjects,
-    {int week = 0}) {
-  final int index = getSelectedIndex(subjects, week: week);
+/// Return the selected subject of the [subjects] list
+TimetableSubject getSelectedSubject(List<TimetableSubject> subjects) {
+  final int index = getSelectedIndex(subjects);
   return index == null ? null : subjects[index];
 }
 
-//TODO: Test set and get selections
 /// Set the selected subject
 void setSelectedSubject(TimetableSubject selected,
     {bool defaultSelection = false}) {

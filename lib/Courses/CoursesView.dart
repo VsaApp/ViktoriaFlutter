@@ -16,15 +16,10 @@ class CoursesPageView extends CoursesPageState {
     // Get all selected subjects...
     Data.timetable.days.forEach((day) => day.units.forEach((unit) {
           if (unit.subjects.isNotEmpty) {
-            final int selectedA = getSelectedIndex(unit.subjects, week: 0) ??
+            final int selected = getSelectedIndex(unit.subjects) ??
                 unit.subjects.length;
-            final int selectedB = getSelectedIndex(unit.subjects, week: 1) ??
-                unit.subjects.length;
-            if (selectedA < unit.subjects.length) {
-              selectedSubjects.add(unit.subjects[selectedA]);
-            }
-            if (selectedB != selectedA && selectedB < unit.subjects.length) {
-              selectedSubjects.add(unit.subjects[selectedB]);
+            if (selected < unit.subjects.length) {
+              selectedSubjects.add(unit.subjects[selected]);
             }
           }
         }));

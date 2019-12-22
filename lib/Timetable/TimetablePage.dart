@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Tags.dart';
-import 'package:viktoriaflutter/Utils/Week.dart';
 
 import 'package:viktoriaflutter/Home/HomePage.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
@@ -26,50 +25,12 @@ class TimetableView extends State<TimetablePage>
   /// Timetable updated listener
   Function() updatedListener;
 
-  /// The current A/B week
-  bool thisWeek = true;
-
   /// All timetable days
   List<TimetableDay> days;
 
   /// The tab controller to sync day titles with day lists
   TabController _controller;
-
-  int _originalWeek;
   List<String> _weekdays;
-
-  /// Sets the week for each day
-  void setWeeks() {
-    // Get the week number of the shown week...
-    final DateTime today = DateTime(
-        DateTime.now().year, DateTime.now().month, DateTime.now().day + 1);
-    int weeks = Date.now().getWeekOfYear();
-    if (!thisWeek) {
-      weeks++;
-    }
-    final int currentWeek = weeks % 2;
-
-    // Set all days to this week...
-    Data.timetable.days.forEach((TimetableDay day) => day.showWeek = weeks % 2);
-
-    // If there are changes for other weeks, set that days to this week...
-    final DateTime dateOfMonday = today.add(Duration(
-        days: thisWeek ? -today.weekday : DateTime.sunday + 1 - today.weekday));
-    for (int i = 0; i < Data.substitutionPlan.days.length; i++) {
-      final SubstitutionPlanDay day = Data.substitutionPlan.days[i];
-      if (day.week != currentWeek) {
-        final DateTime date = day.date;
-        for (int j = 0; j < Data.timetable.days.length; j++) {
-          final DateTime dateOfDay = dateOfMonday.add(Duration(days: j));
-          if (date.isAfter(today) && dateOfDay.weekday <= date.weekday) {
-            Data.timetable.days[j - 1 > 0 ? j - 1 : 0].showWeek = day.week;
-          } else if (date.isBefore(today) && dateOfDay.weekday >= date.weekday) {
-            Data.timetable.days[j].showWeek = day.week;
-          }
-        }
-      }
-    }
-  }
 
   /// There is a day with a lesson that still is not selected, go to this day
   int getFirstPageToSelect() {
@@ -91,7 +52,6 @@ class TimetableView extends State<TimetablePage>
     bool over = false;
     if (weekday > 4) {
       weekday = 0;
-      thisWeek = false;
     } else if (days[weekday].units.isNotEmpty) {
       if (DateTime.now().isAfter(DateTime(
         DateTime.now().year,
@@ -112,7 +72,6 @@ class TimetableView extends State<TimetablePage>
     // If weekend select Monday
     if (weekday > 4) {
       weekday = 0;
-      thisWeek = false;
     }
 
     return weekday;
@@ -122,7 +81,6 @@ class TimetableView extends State<TimetablePage>
   void initState() {
     updatedListener = () => setState(() => days = Data.timetable.days);
     HomePageState.substitutionPlanUpdatedListeners.add(updatedListener);
-    HomePageState.setWeekChangeable(true);
     WidgetsBinding.instance.addPostFrameCallback((a) {
       setState(() {
         _weekdays = AppLocalizations.of(context)
@@ -139,25 +97,6 @@ class TimetableView extends State<TimetablePage>
         firstPage = getCurrentWeekday();
       }
       _controller.animateTo(firstPage);
-      setWeeks();
-
-      HomePageState.updateWeek(Data.timetable.days[firstPage].showWeek);
-      _controller.addListener(() {
-        if (_originalWeek != null) {
-          Data.timetable.days[_controller.previousIndex].showWeek = _originalWeek;
-          _originalWeek = null;
-        }
-        HomePageState.updateWeek(
-            Data.timetable.days[_controller.index].showWeek);
-      });
-
-      // Add week listener...
-      HomePageState.weekChanged = (int week) {
-        _originalWeek ??= Data.timetable.days[_controller.index].showWeek;
-        if (mounted) {
-          setState(() => Data.timetable.days[_controller.index].showWeek = week);
-        }
-      };
     });
     setState(() => days = Data.timetable.days);
     super.initState();
@@ -190,7 +129,6 @@ class TimetableView extends State<TimetablePage>
 
           Data.substitutionPlan.insert();
           Data.substitutionPlan.updateFilter();
-          setWeeks();
           setState(() => days = Data.timetable.days);
           dataUpdated(context, successfully,
               AppLocalizations.of(context).unitAndSubstitutionPlan);

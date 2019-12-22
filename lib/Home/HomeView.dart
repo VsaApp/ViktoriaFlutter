@@ -87,7 +87,7 @@ class HomePageView extends HomePageState {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
-                onPressed: weekPressed,
+                onPressed: () => null,
                 child: Text(
                   currentWeek == 0 ? 'A' : 'B',
                   style: TextStyle(

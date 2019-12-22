@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Selection.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import 'package:viktoriaflutter/Utils/Week.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 
 /// Describes the whole timetable...
@@ -92,17 +91,8 @@ class TimetableDay {
   /// The list of all timetable units on this day
   final List<TimetableUnit> units;
 
-  /// Which week should be shown in the view
-  int showWeek;
-
   // ignore: public_member_api_docs
-  TimetableDay({@required this.day, @required this.units}) {
-    int week = Date.now().getWeekOfYear();
-    if (DateTime.now().day > 5) {
-      week++;
-    }
-    showWeek = week % 2;
-  }
+  TimetableDay({@required this.day, @required this.units});
 
   /// Creates a timetable day from json map
   factory TimetableDay.fromJson(Map<String, dynamic> json) {
@@ -121,10 +111,7 @@ class TimetableDay {
   int getUserLessonsCount(String freeLesson) {
     for (int i = units.length - 1; i >= 0; i--) {
       final TimetableUnit unit = units[i];
-      final TimetableSubject selected = getSelectedSubject(
-        unit.subjects,
-        week: showWeek,
-      );
+      final TimetableSubject selected = getSelectedSubject(unit.subjects);
 
       // If nothing  or a subject (not lunchtime and free lesson) selected return the index...
       if ((selected == null || selected.subjectID != freeLesson) && i != 5) {

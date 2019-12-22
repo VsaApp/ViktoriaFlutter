@@ -22,8 +22,7 @@ class TimetableDayListView extends TimetableDayListState {
     final List<Widget> items = widget.day.units.map((unit) {
       // Check which subject is selected
       int _selected = getSelectedIndex(
-        unit.subjects,
-        week: widget.day.showWeek,
+        unit.subjects
       );
       final bool nothingSelected = _selected == null;
       if (nothingSelected) {

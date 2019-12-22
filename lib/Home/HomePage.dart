@@ -65,9 +65,6 @@ abstract class HomePageState extends State<HomePage>
   /// Sets if [currentWeek] should be shown
   bool showWeek = false;
 
-  /// Sets if [currentWeek] should be changeable
-  static bool weekChangeable = true;
-
   /// Defines the highest app scaffold
   Scaffold appScaffold;
 
@@ -115,27 +112,10 @@ abstract class HomePageState extends State<HomePage>
     }
   }
 
-  // ignore: use_setters_to_change_properties
-  /// Activates od Deactivates the week toggle button
-  static void setWeekChangeable(bool value) {
-    HomePageState.weekChangeable = value;
-  }
-
   /// Updates the week of the week button
   void _updateWeek(int week) {
     if (mounted && week != currentWeek) {
       setState(() => currentWeek = week);
-    }
-  }
-
-  /// Calls the listener and updates wee
-  void weekPressed() {
-    if (!weekChangeable) {
-      return;
-    }
-    setState(() => currentWeek = currentWeek == 1 ? 0 : 1);
-    if (weekChanged != null) {
-      weekChanged(currentWeek);
     }
   }
 
@@ -232,7 +212,7 @@ abstract class HomePageState extends State<HomePage>
     HomePageState.setShowWeek = _showWeek;
 
     // Show the current week only for timetable and substitution plan
-    if (selectedDrawerIndex <= 1) {
+    if (selectedDrawerIndex == 1) {
       setShowWeek(true);
     }
 
@@ -283,7 +263,7 @@ abstract class HomePageState extends State<HomePage>
 
   /// Changes page
   void onSelectItem(int index) {
-    if (index > 1) {
+    if (index != 1) {
       setShowWeek(false);
     } else {
       setShowWeek(true);

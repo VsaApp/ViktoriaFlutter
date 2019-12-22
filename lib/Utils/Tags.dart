@@ -33,7 +33,6 @@ Future<bool> isInitialized() async {
   return tags.isInitialized;
 }
 
-//TODO: Test synchronization
 /// Synchronize local data with server tags
 Future<void> syncWithTags(
     {Tags tags, bool autoSync = true, bool forceSync = false}) async {
