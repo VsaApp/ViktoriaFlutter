@@ -34,8 +34,7 @@ class Urls {
   static String get cafetoriaList => '/cafetoria/list?v=$_getRandomInt';
 
   // ignore: public_member_api_docs
-  static String cafetoriaLogin(String id, String password) =>
-      '/cafetoria/login/$id/$password?v=$_getRandomInt';
+  static String get cafetoria => '/cafetoria?v=$_getRandomInt';
 
   // ignore: public_member_api_docs
   static String get calendar => '/calendar?v=$_getRandomInt';
@@ -160,9 +159,7 @@ Future fetchDataAndSave(String url, String key, String defaultValue,
     bool auth = true,
     void Function(int successfully) onFinished}) async {
   timeout ??= maxTime;
-  if (body == null) {
-    url = getUrl(url, auth: auth);
-  }
+  url = getUrl(url, auth: auth);
   Response response;
   try {
     if (body != null) {

@@ -20,7 +20,7 @@ import java.util.Random;
 
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.view.FlutterView;
-
+//TODO: Change to new notifications format
 public class NotificationService extends FirebaseMessagingService {
     private static final String CHANNEL = "viktoriaflutter";
     static public FlutterView flutterView;
@@ -33,26 +33,25 @@ public class NotificationService extends FirebaseMessagingService {
         System.out.println(remoteMessage.getNotification());
         System.out.println(remoteMessage.getData());
 
-        if (remoteMessage.getNotification() == null && remoteMessage.getData().get("notificationTitle") != null) {
+        if (remoteMessage.getNotification() == null && remoteMessage.getData().get("title") != null) {
             if (remoteMessage.getData().get("type").equals("substitution plan")) {
                 int changes = remoteMessage.getData().get("notificationBody").length()
                         - remoteMessage.getData().get("notificationBody").replace("\n", "").length() + 1;
-                showNotification(remoteMessage.getData().get("notificationTitle"),
-                        changes > 1 ? String.valueOf(changes) + " Änderungen"
-                                : remoteMessage.getData().get("notificationBody"),
-                        remoteMessage.getData().get("notificationBody"), "substitutionPlan_channel",
+                showNotification(remoteMessage.getData().get("title"),
+                        remoteMessage.getData().get("body"),
+                        remoteMessage.getData().get("bigBody"), "substitutionPlan_channel",
                         Arrays.asList(new String[] { "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag" })
-                                .indexOf(remoteMessage.getData().get("notificationTitle")),
-                        remoteMessage.getData().get("notificationTitle") + " "
-                                + remoteMessage.getData().get("notificationBody"),
+                                .indexOf(remoteMessage.getData().get("title")),
+                        remoteMessage.getData().get("title") + " "
+                                + remoteMessage.getData().get("body"),
                         remoteMessage.getData());
                 System.out.println("notify");
             } else {
-                showNotification(remoteMessage.getData().get("notificationTitle"),
-                        remoteMessage.getData().get("notificationBody"),
-                        remoteMessage.getData().get("notificationBody"),
+                showNotification(remoteMessage.getData().get("title"),
+                        remoteMessage.getData().get("body"),
+                        remoteMessage.getData().get("bigBody"),
                         remoteMessage.getData().get("type") + "_channel", (new Random().nextInt() * 10000 + 5),
-                        remoteMessage.getData().get("notificationTitle"), remoteMessage.getData());
+                        remoteMessage.getData().get("title"), remoteMessage.getData());
             }
         } else if (remoteMessage.getNotification() == null) {
             System.out.println("Launch listener...");

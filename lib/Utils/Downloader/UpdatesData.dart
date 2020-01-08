@@ -19,7 +19,7 @@ class UpdatesData extends Downloader<Updates> {
         );
 
   @override
-  Future<int> download(BuildContext context, {bool update = true}) async {
+  Future<int> download(BuildContext context, {bool update = true, Map<String, dynamic> body}) async {
     if (!update) {
       saveStatic(fetch());
       return network.StatusCodes.success;

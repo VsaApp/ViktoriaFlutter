@@ -27,7 +27,7 @@ class TimetableData extends Downloader<Timetable> {
         );
 
   @override
-  Future<int> download(BuildContext context, {bool update = true}) async {
+  Future<int> download(BuildContext context, {bool update = true, Map<String, dynamic> body}) async {
     final String currentTimetable = Storage.getString(key);
     final int status = await super.download(context, update: update);
     final String newTimetable = Storage.getString(key);

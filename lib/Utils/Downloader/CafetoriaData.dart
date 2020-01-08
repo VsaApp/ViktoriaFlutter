@@ -1,17 +1,20 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/widgets.dart';
 import 'package:viktoriaflutter/Utils/Downloader.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 
+//TODO: Change to new urls
 /// Cafetoria data downloader
 class CafetoriaData extends Downloader<Cafetoria> {
   // ignore: public_member_api_docs
   CafetoriaData()
       : super(
-          url: _url,
+          url: Urls.cafetoria,
           key: Keys.cafetoria,
           defaultData: const {
             'saldo': null,
@@ -19,6 +22,19 @@ class CafetoriaData extends Downloader<Cafetoria> {
             'days': [],
           },
         );
+
+  @override
+  Future<int> download(BuildContext context,
+      {bool update = true, Map<String, dynamic> body}) {
+    final id = Storage.getString(Keys.cafetoriaId);
+    final password = Storage.getString(Keys.cafetoriaPassword);
+    Map<String, String> body;
+    if (id != null && password != null) {
+      body = {'id': id, 'pin': password};
+    }
+
+    return super.download(context, update: update, body: body);
+  }
 
   @override
   Cafetoria getData() {
@@ -39,7 +55,7 @@ class CafetoriaData extends Downloader<Cafetoria> {
   /// Check the login data of the keyfob...
   Future<bool> checkLogin({String id, String password}) async {
     try {
-      final String url = Urls.cafetoriaLogin(id, password);
+      final String url = Urls.cafetoria;
       final Response response = await fetch(url);
       if (response.statusCode != StatusCodes.success) {
         throw Exception('Failed to check login');
@@ -48,16 +64,5 @@ class CafetoriaData extends Downloader<Cafetoria> {
     } catch (e) {
       return false;
     }
-  }
-
-  static String get _url {
-    final String id = Storage.getString(Keys.cafetoriaId);
-    final String password = Storage.getString(Keys.cafetoriaPassword);
-
-    if (id != null && password != null) {
-      return Urls.cafetoriaLogin(id, password);
-    }
-
-    return Urls.cafetoriaList;
   }
 }

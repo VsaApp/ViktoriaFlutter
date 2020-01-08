@@ -26,14 +26,14 @@ abstract class Downloader<type> {
   /// Downloads and saves the data
   ///
   /// If the login data is wrong, the login page will be opened
-  Future<int> download(BuildContext context, {bool update = true}) async {
+  Future<int> download(BuildContext context, {bool update = true, Map<String, dynamic> body}) async {
     int status = StatusCodes.success;
 
     if (update || Storage.getString(key) == null) {
       final Completer<int> statusCompleter = Completer();
       // Default timetable (Only for download errors)
       await fetchDataAndSave(url, key, json.encode(defaultData),
-          onFinished: statusCompleter.complete);
+          onFinished: statusCompleter.complete, body: body);
       status = await statusCompleter.future;
 
       if (status == StatusCodes.unauthorized && context != null) {
