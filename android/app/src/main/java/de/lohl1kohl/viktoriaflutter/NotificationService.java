@@ -35,8 +35,8 @@ public class NotificationService extends FirebaseMessagingService {
 
         if (remoteMessage.getNotification() == null && remoteMessage.getData().get("title") != null) {
             if (remoteMessage.getData().get("type").equals("substitution plan")) {
-                int changes = remoteMessage.getData().get("notificationBody").length()
-                        - remoteMessage.getData().get("notificationBody").replace("\n", "").length() + 1;
+                int changes = remoteMessage.getData().get("body").length()
+                        - remoteMessage.getData().get("body").replace("\n", "").length() + 1;
                 showNotification(remoteMessage.getData().get("title"),
                         remoteMessage.getData().get("body"),
                         remoteMessage.getData().get("bigBody"), "substitutionPlan_channel",
