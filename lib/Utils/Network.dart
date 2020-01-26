@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart' as dio;
+import 'package:flutter/cupertino.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 
 /// The max download time
-Duration maxTime = Duration(seconds: 4);
+const Duration maxTime = Duration(seconds: 4);
 
 /// The base api url
 String apiUrl = 'https://vsa.fingeg.de';
@@ -136,36 +136,29 @@ void _logRequest(int statusCode, String method, String url) {
 }
 
 /// Returns an url with the correct authentication
-String getUrl(String path, {bool auth = true}) {
-  String authString = auth
-      ? '${Storage.getString(Keys.username) ?? ''}:${Storage.getString(Keys.password) ?? ''}@'
-      : '';
-  if (path.contains('@')) {
-    authString = '';
+String getUrl(String path) {
+  if (!path.startsWith('http')) {
+    if (!path.startsWith('/')) {
+      path = '/$path';
+    }
+    path = '$apiUrl$path';
   }
-  if (path.contains('http')) {
-    return path.replaceFirst('://', '://$authString');
-  }
-  if (!path.startsWith('/')) {
-    path = '/$path';
-  }
-  return '$apiUrl$path'.replaceFirst('://', '://$authString');
+  return path;
 }
 
 /// Fetches data from [url] and saves it with the given [key] in the preferences
 Future fetchDataAndSave(String url, String key, String defaultValue,
     {Map<String, dynamic> body,
-    Duration timeout,
+    Duration timeout = maxTime,
     bool auth = true,
     void Function(int successfully) onFinished}) async {
-  timeout ??= maxTime;
-  url = getUrl(url, auth: auth);
+  url = getUrl(url);
   Response response;
   try {
     if (body != null) {
-      response = await httpRequest(url, 'POST', body: body);
+      response = await httpRequest(url, 'POST', body: body, timeout: timeout);
     } else {
-      response = await request(url, timeout);
+      response = await httpRequest(url, 'GET', timeout: timeout);
     }
     if (response.statusCode == StatusCodes.notFound ||
         response.body.contains('404 Not Found')) {
@@ -189,19 +182,16 @@ Future fetchDataAndSave(String url, String key, String defaultValue,
   }
 }
 
-/// Request to the given [url]
-Future<Response> request(String url, Duration timeout) async {
-  final response = await http.Client().get(url).timeout(timeout);
-  _logRequest(response.statusCode, 'GET', url);
-  return Response(body: response.body, statusCode: response.statusCode);
-}
-
 /// Fetches data from [url]
-Future<Response> fetch(String url, {Duration timeout, bool auth = true}) async {
-  timeout ??= maxTime;
-  url = getUrl(url, auth: auth);
+Future<Response> fetch(String url,
+    {Duration timeout = maxTime,
+    bool auth = true,
+    String username,
+    String password}) async {
+  url = getUrl(url);
   try {
-    return await request(url, timeout);
+    return await httpRequest(url, 'GET',
+        timeout: timeout, auth: auth, username: username, password: password);
   } on TimeoutException catch (_) {
     return Response(body: '', statusCode: StatusCodes.timeout);
   } on SocketException catch (_) {
@@ -219,48 +209,83 @@ Future<String> httpPost(String url, {dynamic body, bool auth = true}) async {
 }
 
 /// http PUT request
-Future<String> httpPut(String url, {dynamic body, bool auth = true}) async {
-  return (await httpRequest(url, 'PUT', body: body, auth: auth)).body;
+Future<String> httpPut(String url,
+    {dynamic body, bool auth = true, String username, String password}) async {
+  return (await httpRequest(url, 'PUT',
+          body: body, auth: auth, username: username, password: password))
+      .body;
 }
 
 /// http DELETE request
-Future<String> httpDelete(String url, {dynamic body, bool auth = true}) async {
-  return (await httpRequest(url, 'DELETE', body: body, auth: auth)).body;
+Future<String> httpDelete(String url,
+    {dynamic body, bool auth = true, String username, String password}) async {
+  return (await httpRequest(url, 'DELETE',
+          body: body, auth: auth, username: username, password: password))
+      .body;
 }
 
 /// http request to given [url] with given [method]
 Future<Response> httpRequest(String url, String method,
-    {dynamic body, bool auth = true}) async {
-  final Response response =
-      await _httpRequest(url, method, body: body, auth: auth);
+    {dynamic body,
+    bool auth = true,
+    Duration timeout = maxTime,
+    String username,
+    String password}) async {
+  final Response response = await _httpRequest(url, method,
+      body: body,
+      auth: auth,
+      timeout: timeout,
+      username: username,
+      password: password);
   _logRequest(response.statusCode, method, url);
   return response;
 }
 
 Future<Response> _httpRequest(String url, String method,
-    {dynamic body, bool auth = true}) async {
-  url = getUrl(url, auth: auth);
-  HttpClientResponse response;
+    {dynamic body,
+    bool auth = true,
+    Duration timeout = maxTime,
+    String username,
+    String password}) async {
+  url = getUrl(url);
+  if (auth) {
+    username ??= Storage.getString(Keys.username);
+    password ??= Storage.getString(Keys.password);
+  }
+
+  dio.Response response;
   try {
-    final HttpClient httpClient = HttpClient();
-    HttpClientRequest request;
-    if (method == 'POST') {
-      request = await httpClient.postUrl(Uri.parse(url)).timeout(maxTime);
-    } else if (method == 'DELETE') {
-      request = await httpClient.deleteUrl(Uri.parse(url)).timeout(maxTime);
-    } else if (method == 'PUT') {
-      request = await httpClient.putUrl(Uri.parse(url)).timeout(maxTime);
-    } else if (method == 'GET') {
-      request = await httpClient.getUrl(Uri.parse(url)).timeout(maxTime);
+    final client = dio.Dio()
+      ..options = dio.BaseOptions(
+        headers: {
+          'content-type': 'application/json',
+          'authorization':
+              // ignore: lines_longer_than_80_chars
+              'Basic ${base64.encode(utf8.encode('$username:$password'))}',
+        },
+        responseType: dio.ResponseType.plain,
+        connectTimeout: timeout.inMilliseconds,
+        receiveTimeout: timeout.inMilliseconds,
+      );
+
+    switch (method) {
+      case 'GET':
+        response = await client.get(url);
+        break;
+      case 'POST':
+        response = await client.post(url, data: body);
+        break;
+      case 'DELETE':
+        response = await client.post(url, data: body);
+        break;
+      case 'PUT':
+        response = await client.post(url, data: body);
+        break;
+      default:
+        throw Exception('Undefined http method: $method');
     }
-    request.headers.set('content-type', 'application/json');
-    request.add(utf8.encode(json.encode(body)));
-    response = await request.close().timeout(maxTime);
-    // todo - you should check the response.statusCode
-    final String reply =
-        await response.transform(utf8.decoder).join().timeout(maxTime);
-    httpClient.close();
-    return Response(body: reply, statusCode: response.statusCode);
+    
+    return Response(body: response.toString(), statusCode: response.statusCode);
   } catch (e) {
     if (response != null) {
       return Response(statusCode: response.statusCode);

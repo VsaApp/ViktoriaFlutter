@@ -61,9 +61,11 @@ abstract class LoginPageState extends State<LoginPage> {
   Future checkForm() async {
     setState(() => isCheckingForm = true);
     final Response response = await fetch(
-        '$apiUrl/login/'.replaceFirst(
-            '://', '://${usernameController.text}:${passwordController.text}@'),
-        auth: true);
+      Urls.login,
+      auth: true,
+      username: usernameController.text,
+      password: passwordController.text,
+    );
 
     try {
       credentialsCorrect = response.statusCode == StatusCodes.success;
