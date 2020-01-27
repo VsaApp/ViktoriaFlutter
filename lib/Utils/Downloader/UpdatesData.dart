@@ -19,7 +19,8 @@ class UpdatesData extends Downloader<Updates> {
         );
 
   @override
-  Future<int> download(BuildContext context, {bool update = true, Map<String, dynamic> body}) async {
+  Future<int> download(BuildContext context,
+      {bool update = true, Map<String, dynamic> body}) async {
     if (!update) {
       saveStatic(fetch());
       return network.StatusCodes.success;
@@ -34,7 +35,7 @@ class UpdatesData extends Downloader<Updates> {
     }
 
     // Parse data...
-    saveStatic(parse(response.body));
+    saveStatic(parse(response.body ?? json.encode(defaultData)));
     return statusCode;
   }
 
