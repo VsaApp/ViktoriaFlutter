@@ -68,9 +68,18 @@ class SubstitutionPlanDay {
     if (isEmpty) {
       return;
     }
+    sort();
     insertInTimetable();
     filterSubstitutions();
     filterUnparsed();
+  }
+
+  /// Sorts all substitutions by the unit
+  void sort() {
+    data.forEach((String grade, List<Substitution> substitutions) {
+      substitutions.sort(
+          (s1, s2) => s1.unit < s2.unit ? -1 : s1.unit == s2.unit ? 0 : 1);
+    });
   }
 
   /// Insert the substitutions into the timetable
