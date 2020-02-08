@@ -129,7 +129,9 @@ class TimetableView extends State<TimetablePage>
 
           Data.substitutionPlan.insert();
           Data.substitutionPlan.updateFilter();
-          setState(() => days = Data.timetable.days);
+          if (mounted) {
+            setState(() => days = Data.timetable.days);
+          }
           dataUpdated(context, successfully,
               AppLocalizations.of(context).unitAndSubstitutionPlan);
         });

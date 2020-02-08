@@ -8,7 +8,6 @@ import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 
-//TODO: Change to new urls
 /// Cafetoria data downloader
 class CafetoriaData extends Downloader<Cafetoria> {
   // ignore: public_member_api_docs

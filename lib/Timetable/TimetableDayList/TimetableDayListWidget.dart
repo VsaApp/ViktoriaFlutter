@@ -71,11 +71,13 @@ abstract class TimetableDayListState extends State<TimetableDayList>
         weekday = 0;
         thisWeek = false;
       }
-      setState(() {
-        showWorkGroups = Storage.get(Keys.showWorkGroupsInTimetable);
-        showCalendar = Storage.get(Keys.showCalendarInTimetable);
-        showCafetoria = Storage.get(Keys.showCafetoriaInTimetable);
-      });
+      if (mounted) {
+        setState(() {
+          showWorkGroups = Storage.get(Keys.showWorkGroupsInTimetable);
+          showCalendar = Storage.get(Keys.showCalendarInTimetable);
+          showCafetoria = Storage.get(Keys.showCafetoriaInTimetable);
+        });
+      }
     });
     super.initState();
   }
