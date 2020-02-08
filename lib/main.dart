@@ -5,27 +5,32 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
+import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Errors.dart' as bugs;
-import 'Home/HomePage.dart';
 
+import 'Home/HomePage.dart';
 import 'Intro/IntroPage.dart';
 import 'Loading/LoadingPage.dart';
-import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'Login/LoginPage.dart';
 
-// This is the first functions which is called in the app...
-void main() async {
+/// This is the first functions which is called in the app...
+Future main() async {
   // Report all dart errors...
   try {
     runZoned<Future<void>>(launch, onError: (error, stackTrace) {
-      if (!isInDebugMode) bugs.reportError(error, stackTrace);
+      if (!isInDebugMode) {
+        bugs.reportError(error, stackTrace);
+      } else {
+        print(error);
+        print(stackTrace);
+      }
     });
   } catch (e) {
-    print("Error: $e");
+    print('Error: $e');
   }
 }
 
+/// Returns if the app is running in debug mode
 bool get isInDebugMode {
   // Assume you're in production mode
   bool inDebugMode = false;
@@ -33,11 +38,12 @@ bool get isInDebugMode {
   // Assert expressions are only evaluated during development. They are ignored
   // in production. Therefore, this code only sets `inDebugMode` to true
   // in a development environment.
-  assert(inDebugMode = true);
+  assert(inDebugMode = true, 'Is in debug mode');
 
   return inDebugMode;
 }
 
+/// Launches the app witch error catches and the correct theme
 Future launch() async {
   // This captures errors reported by the Flutter framework.
   FlutterError.onError = (FlutterErrorDetails details) {
@@ -55,7 +61,7 @@ Future launch() async {
   // Start the app...
   runApp(MaterialApp(
     title: 'VsaApp',
-    // Set fontfamily and main colors...
+    // Set font family and main colors...
     theme: ThemeData(
       brightness: Brightness.light,
       primaryColor: Color(0xFF64A441),
@@ -68,7 +74,7 @@ Future launch() async {
       GlobalWidgetsLocalizations.delegate,
     ],
     // Our app only supports the german language...
-    supportedLocales: [
+    supportedLocales: const [
       Locale('de'),
     ],
     initialRoute: '/',

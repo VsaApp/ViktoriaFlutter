@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'package:viktoriaflutter/Utils/Models.dart';
 import 'DayCard/DayCardWidget.dart';
-import 'WorkGroupsModel.dart';
 import 'WorkGroupsPage.dart';
 
+// ignore: public_member_api_docs
 class WorkGroupsPageView extends WorkGroupsPageState {
+  /// The refresh indicator key to refresh programmatically
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
@@ -16,7 +18,7 @@ class WorkGroupsPageView extends WorkGroupsPageState {
       child: ListView(
         padding: EdgeInsets.all(10),
         shrinkWrap: true,
-        children: WorkGroups.days
+        children: Data.workGroups.days
             .map((day) => WorkGroupsDayCard(
                   day: day,
                   showWeekday: true,

@@ -1,84 +1,103 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show MethodChannel, rootBundle;
+import 'package:viktoriaflutter/Utils/Models.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
-import 'package:viktoriaflutter/Utils/Id.dart';
 import 'package:viktoriaflutter/Utils/Errors.dart' as bugs;
+import 'package:viktoriaflutter/Utils/Tags.dart';
 
-import '../Cafetoria/CafetoriaData.dart' as Cafetoria;
-import '../Calendar/CalendarData.dart' as Calendar;
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import '../ReplacementPlan/ReplacementPlanData.dart' as ReplacementPlan;
-import '../Rooms/RoomsData.dart' as Rooms;
+import 'package:viktoriaflutter/Utils/Downloader/SubstitutionPlanData.dart';
+import 'package:viktoriaflutter/Utils/Downloader/TimetableData.dart';
+import 'package:viktoriaflutter/Utils/Downloader/UpdatesData.dart';
+import 'package:viktoriaflutter/Utils/Downloader/SubjectsData.dart';
+import 'package:viktoriaflutter/Utils/Downloader/CalendarData.dart';
+import 'package:viktoriaflutter/Utils/Downloader/CafetoriaData.dart';
+import 'package:viktoriaflutter/Utils/Downloader/WorkGroupsData.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import '../Subjects/SubjectsData.dart' as Subjects;
-import '../Teachers/TeachersData.dart' as Teachers;
-import '../UnitPlan/UnitPlanData.dart' as UnitPlan;
-import '../WorkGroups/WorkGroupsData.dart' as WorkGroups;
-import 'LoadingView.dart';
+import 'package:viktoriaflutter/Loading/LoadingView.dart';
 
+/// Downloads all data and visualize the process
 class LoadingPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => LoadingPageView();
 }
 
+// ignore: public_member_api_docs
 abstract class LoadingPageState extends State<LoadingPage>
     with TickerProviderStateMixin {
-  int allDownloadsCount = 9;
-  int countCurrentDownloads = 9;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+  /// The number of download that must be downloaded
+  final int allDownloadsCount = 7;
+
+  /// The number of downloads that still have to download
+  int countCurrentDownloads = 7;
+
+  /// The dimension of the ginko image
   double centerWidgetDimensions = 150;
+
+  /// All download info texts
   List<String> texts = [];
+
+  /// Defines if the [texts] should be shown
   bool showTexts = false;
+
+  /// Defines the current animation direction
   bool animationForward = true;
+
+  /// Defines the timer to hide the [texts] for a short time
   Timer textTimer;
+
+  /// The animation for the ginko animation
   Animation animation;
+
+  /// The controller for the ginko animation
   AnimationController controller;
-  Stopwatch stopwatch;
+
+  /// The stopwatch for the download process
+  Stopwatch _stopwatch;
+
+  /// Defines if the user is logged in
   bool loggedIn = true;
 
   @override
   void initState() {
     () async {
       await Storage.init();
-      await Id.init();
       bugs.init();
 
       // Set default options
-      if (Storage.get(Keys.sortReplacementPlan) == null ||
-          Storage.get(Keys.showReplacementPlanInUnitPlan) == null ||
-          Storage.get(Keys.getReplacementPlanNotifications) == null ||
-          Storage.get(Keys.showWorkGroupsInUnitPlan) == null ||
-          Storage.get(Keys.showCalendarInUnitPlan) == null ||
-          Storage.get(Keys.showCafetoriaInUnitPlan) == null) {
-        Storage.setBool(Keys.sortReplacementPlan, true);
-        Storage.setBool(Keys.showReplacementPlanInUnitPlan, true);
-        Storage.setBool(Keys.getReplacementPlanNotifications, true);
-        Storage.setBool(Keys.showWorkGroupsInUnitPlan, false);
-        Storage.setBool(Keys.showCalendarInUnitPlan, true);
-        Storage.setBool(Keys.showCafetoriaInUnitPlan, false);
+      if (Storage.get(Keys.sortSubstitutionPlan) == null ||
+          Storage.get(Keys.showSubstitutionPlanInTimetable) == null ||
+          Storage.get(Keys.getSubstitutionPlanNotifications) == null ||
+          Storage.get(Keys.showWorkGroupsInTimetable) == null ||
+          Storage.get(Keys.showCalendarInTimetable) == null ||
+          Storage.get(Keys.showCafetoriaInTimetable) == null) {
+        Storage.setBool(Keys.sortSubstitutionPlan, true);
+        Storage.setBool(Keys.showSubstitutionPlanInTimetable, true);
+        Storage.setBool(Keys.getSubstitutionPlanNotifications, true);
+        Storage.setBool(Keys.showWorkGroupsInTimetable, false);
+        Storage.setBool(Keys.showCalendarInTimetable, true);
+        Storage.setBool(Keys.showCafetoriaInTimetable, false);
       }
 
       // Check if logged in
-      if (Storage.get(Keys.grade) == null ||
-          Storage.get(Keys.username) == null ||
+      if (Storage.get(Keys.username) == null ||
           Storage.get(Keys.password) == null) {
-          Navigator.of(context).pushReplacementNamed('/login');
-          return;
+        Navigator.of(context).pushReplacementNamed('/login');
+        return;
       }
 
-      checkOnline.then((online) async {
-        if (online == 1) {}
-      });
-
-      WidgetsBinding.instance.addPostFrameCallback((a) {
+      WidgetsBinding.instance.addPostFrameCallback((a) async {
+        // Apply the android app theme
         if (Platform.isAndroid) {
           MethodChannel('viktoriaflutter').invokeMethod('applyTheme', {
-            'color': Theme
-                .of(context)
+            'color': Theme.of(context)
                 .primaryColor
                 .value
                 .toRadixString(16)
@@ -86,31 +105,36 @@ abstract class LoadingPageState extends State<LoadingPage>
                 .toUpperCase(),
           });
         }
-        texts.add(AppLocalizations
-            .of(context)
-            .updates);
-        texts.add(AppLocalizations.of(context).unitPlan);
-        texts.add(AppLocalizations.of(context).replacementPlan);
-        texts.add(AppLocalizations.of(context).workGroups);
-        texts.add(AppLocalizations.of(context).calendar);
-        texts.add(AppLocalizations.of(context).subjects);
-        texts.add(AppLocalizations.of(context).rooms);
-        texts.add(AppLocalizations.of(context).teachers);
-        texts.add(AppLocalizations.of(context).cafetoria);
-        texts.shuffle();
+
+        // Add all download texts
+        texts = [
+          AppLocalizations.of(context).updates,
+          AppLocalizations.of(context).timetable,
+          AppLocalizations.of(context).substitutionPlan,
+          AppLocalizations.of(context).workGroups,
+          AppLocalizations.of(context).calendar,
+          AppLocalizations.of(context).subjects,
+          AppLocalizations.of(context).cafetoria,
+        ]..shuffle();
         downloadAll();
       });
+
+      // Show download texts only after 3 seconds
       textTimer = Timer(Duration(seconds: 3), () {
         setState(() {
           showTexts = true;
         });
       });
+
+      // Start animation controller (For the loading app icon)
       controller = AnimationController(
         duration: Duration(milliseconds: 500),
         vsync: this,
       );
+
+      // Animate from one site to the other and so on
       setState(() {
-        animation = Tween<double>(begin: -0.01, end: 0.01).animate(controller)
+        animation = Tween<double>(begin: -0, end: 0.01).animate(controller)
           ..addStatusListener((status) {
             if (status == AnimationStatus.completed) {
               controller.reverse();
@@ -126,218 +150,218 @@ abstract class LoadingPageState extends State<LoadingPage>
 
   @override
   void dispose() {
-    if (textTimer != null) textTimer.cancel();
-    if (controller != null) controller.dispose();
+    if (textTimer != null) {
+      textTimer.cancel();
+    }
+    if (controller != null) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
+  /// Inform the user about a too old app version
   void showOldAppDialog(String version) {
     showDialog<String>(
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context1) {
           return SimpleDialog(
-              title: Text(AppLocalizations
-                  .of(context)
-                  .appTooOld,
-                  style: TextStyle(color: Theme
-                      .of(context)
-                      .accentColor)),
+              title: Text(AppLocalizations.of(context).appTooOld,
+                  style: TextStyle(color: Theme.of(context).accentColor)),
               children: <Widget>[
                 Padding(
                     padding: EdgeInsets.only(left: 20, right: 20),
-                    child: Text(AppLocalizations
-                        .of(context)
+                    child: Text(AppLocalizations.of(context)
                         .oldApp
                         .replaceAll('VERSION', version)))
               ]);
         });
   }
 
-  Future downloadAll() async {
-    stopwatch = Stopwatch()
-      ..start();
-    String oldGrade = Storage.getString(Keys.oldGrade) ?? '--';
-    String newGrade = Storage.getString(Keys.grade);
-    Storage.setString(Keys.oldGrade, newGrade);
-    Map<String, String> currentData = json
-        .decode(Storage.getString(Keys.updates) ?? '{}')
-        .cast<String, String>();
-    Map<String, String> newData = {};
-    try {
-      String raw = await fetchData('/updates');
-      if (raw.contains('401 Authorization Required')) {
-        Navigator.of(context).pushReplacementNamed('/login');
-        return;
+  /// Initialize firebase cloud messaging
+  Future initFirebase() async {
+    if (Platform.isIOS || Platform.isAndroid) {
+      _firebaseMessaging.requestNotificationPermissions(
+          const IosNotificationSettings(sound: true, badge: true, alert: true));
+      _firebaseMessaging.onIosSettingsRegistered
+          .listen((IosNotificationSettings settings) {
+        print('Settings registered: $settings');
+      });
+      final String token = await _firebaseMessaging.getToken();
+      if (token != null) {
+        // Synchronize tags for notifications
+        await initTags();
+        await syncTags();
+      } else {
+        print('Error: Firebase token is null');
       }
-      newData = json.decode(raw).cast<String, String>();
-    } catch (e) {
-      newData = currentData;
     }
+  }
+
+  /// Downloads all data from server
+  Future downloadAll() async {
+    _stopwatch = Stopwatch()..start();
+
+    // Get current versions of local data
+    final updates = UpdatesData();
+    final currentData = updates.getUpdates(loaded: false);
+
+    // Get the versions of server data
+    final int status = await updates.download(context);
+    if (status == StatusCodes.unauthorized) {
+      Navigator.of(context).pushReplacementNamed('/login');
+      return;
+    }
+
+    Updates newData = Data.updates;
+    if (status == StatusCodes.failed ||
+        status == StatusCodes.offline ||
+        newData == null) {
+      print('Offline');
+      await updates.download(context, update: false);
+      newData = Data.updates;
+    }
+
+    // Compares the old and new grade
+    final String oldGrade = Storage.getString(Keys.grade) ?? '--';
+    final String newGrade = newData.grade;
+    final bool gradeChanged = newGrade != oldGrade;
+    Storage.setString(Keys.grade, newGrade);
+
+    // Download updates finished
     setState(() {
       countCurrentDownloads--;
-      texts.remove(AppLocalizations
-          .of(context)
-          .updates);
+      texts.remove(AppLocalizations.of(context).updates);
     });
 
-    String appVersion = (await rootBundle.loadString('pubspec.yaml'))
+    // Get the current app version to check the min app level
+    final String appVersion = (await rootBundle.loadString('pubspec.yaml'))
         .split('\n')
         .where((line) => line.startsWith('version'))
         .toList()[0]
         .split(':')[1]
         .trim();
-    if (int.parse(newData['app']) > int.parse(appVersion.split('+')[1])) {
+
+    // If the app is too old, show non dismissible dialog
+    if (newData.minAppLevel > int.parse(appVersion.split('+')[1])) {
       showOldAppDialog(appVersion);
       return;
     }
 
+    // Print data count to download
+    final Map<String, dynamic> newDataMap = newData.toMap();
+    final Map<String, dynamic> currentDataMap = currentData.toMap();
+
+    // ignore: prefer_interpolation_to_compose_strings
     print('Downloading ' +
-        (newData.keys
-            .map((key) =>
-        newData[key] != currentData[key] || oldGrade != newGrade)
-            .where((a) => a)
-            .length)
+        (newDataMap.keys
+                .map((key) =>
+                    newDataMap[key] != currentDataMap[key] || gradeChanged)
+                .where((a) => a)
+                .length)
             .toString() +
-        ' new files');
-    newData.keys.forEach((key) {
-      if (key == 'subjectsDef') {
-        download(() async {
-          await Subjects.download(
-            update: currentData[key] != newData[key] || oldGrade != newGrade,
-            onFinished: (bool successfully) {
-              if (successfully ?? true) {
-                currentData[key] = newData[key];
-                Storage.setString(Keys.updates, json.encode(currentData));
-              }
-            }
-          );
-        }, 1, AppLocalizations
-            .of(context)
-            .subjects);
-      } else if (key == 'roomsDef') {
-        download(() async {
-          await Rooms.download(
-            update: currentData[key] != newData[key] || oldGrade != newGrade,
-            onFinished: (bool successfully) {
-              if (successfully ?? true) {
-                currentData[key] = newData[key];
-                Storage.setString(Keys.updates, json.encode(currentData));
-              }
-            }
-          );
-        }, 1, AppLocalizations
-            .of(context)
-            .rooms);
-      } else if (key == 'teachersDef') {
-        download(() async {
-          await Teachers.download(
-            update: currentData[key] != newData[key] || oldGrade != newGrade,
-            onFinished: (bool successfully) {
-              if (successfully ?? true) {
-                currentData[key] = newData[key];
-                Storage.setString(Keys.updates, json.encode(currentData));
-              }
-            }
-          );
-        }, 1, AppLocalizations
-            .of(context)
-            .teachers);
-      } else if (key == 'cafetoria') {
-        download(() async {
-          await Cafetoria.download(
-            id: 'null',
-            password: 'null',
-            update: currentData[key] != newData[key] || oldGrade != newGrade,
-            onFinished: (bool successfully) {
-              if (successfully ?? true) {
-                currentData[key] = newData[key];
-                Storage.setString(Keys.updates, json.encode(currentData));
-              }
-            }
-          );
-        }, 1, AppLocalizations
-            .of(context)
-            .cafetoria);
-      } else if (key == 'calendar') {
-        download(() async {
-          await Calendar.download(
-            update: currentData[key] != newData[key] || oldGrade != newGrade,
-            onFinished: (bool successfully) {
-              if (successfully ?? true) {
-                currentData[key] = newData[key];
-                Storage.setString(Keys.updates, json.encode(currentData));
-              }
-            }
-          );
-        }, 1, AppLocalizations
-            .of(context)
-            .calendar);
-      } else if (key == 'unitplan') {
-        download(() async {
-          await UnitPlan.download(
-            Storage.getString(Keys.grade),
-            false,
-            update: currentData[key] != newData[key] ||
-                currentData['replacementplantoday'] !=
-                    newData['replacementplantoday'] ||
-                currentData['replacementplantomorrow'] !=
-                    newData['replacementplantomorrow'] ||
-                oldGrade != newGrade,
-            onFinished: (bool successfully) {
-              if (successfully ?? true) {
-                currentData[key] = newData[key];
-                currentData['replacementplantoday'] = newData['replacementplantoday'];
-                currentData['replacementplantomorrow'] = newData['replacementplantomorrow'];
-              }
-            }
-          );
-          texts.remove(AppLocalizations.of(context).unitPlan);
-          ReplacementPlan.load(UnitPlan.getUnitPlan(), false);
-        }, 2, AppLocalizations
-            .of(context)
-            .replacementPlan);
-      } else if (key == 'workgroups') {
-        download(() async {
-          await WorkGroups.download(
-            update: currentData[key] != newData[key] || oldGrade != newGrade,
-            onFinished: (bool successfully) {
-              if (successfully ?? true) {
-                currentData[key] = newData[key];
-                Storage.setString(Keys.updates, json.encode(currentData));
-              }
-            }
-          );
-        }, 1, AppLocalizations
-            .of(context)
-            .workGroups);
+        '/$allDownloadsCount files');
+
+    // Download subjects, rooms, teachers, timetable and substitution plan in the correct order
+    () async {
+      // Update subjects
+      await download(() async {
+        final int status = await SubjectsData().download(
+          context,
+          update: updated(newData.subjects, currentData.subjects),
+        );
+        if (status == StatusCodes.success) {
+          currentData.subjects = newData.subjects;
+        }
+      }, AppLocalizations.of(context).subjects);
+
+      // Update timetable
+      await download(() async {
+        final int status = await TimetableData().download(context,
+            update: updated(newData.timetable, currentData.timetable) ||
+                gradeChanged);
+        if (status == StatusCodes.success) {
+          currentData.timetable = newData.timetable;
+        }
+        await initFirebase();
+      }, AppLocalizations.of(context).timetable);
+
+      // Update substitution plan
+      await download(() async {
+        final int status = await SubstitutionPlanData().download(
+          context,
+          update:
+              updated(newData.substitutionPlan, currentData.substitutionPlan),
+        );
+        if (status == StatusCodes.success) {
+          currentData.substitutionPlan = newData.substitutionPlan;
+        }
+      }, AppLocalizations.of(context).substitutionPlan);
+    }();
+
+    // Update cafetoria
+    download(() async {
+      final int status = await CafetoriaData().download(
+        context,
+        update:
+            updated(newData.cafetoria, currentData.cafetoria) || gradeChanged,
+      );
+      if (status == StatusCodes.success) {
+        currentData.cafetoria = newData.cafetoria;
       }
-      else if (key != 'replacementplantoday' && key != 'replacementplantomorrow') currentData[key] = newData[key];
-      if (currentData[key] != newData[key] || oldGrade != newGrade) {
-        print('Downloading ' + key);
+    }, AppLocalizations.of(context).cafetoria);
+
+    // Update calendar
+    download(() async {
+      final int status = await CalendarData().download(
+        context,
+        update: updated(newData.calendar, currentData.calendar) || gradeChanged,
+      );
+      if (status == StatusCodes.success) {
+        currentData.calendar = newData.calendar;
       }
-    });
+    }, AppLocalizations.of(context).calendar);
+
+    // Update workgroups
+    download(() async {
+      final int status = await WorkGroupsData().download(
+        context,
+        update:
+            updated(newData.workgroups, currentData.workgroups) || gradeChanged,
+      );
+      if (status == StatusCodes.success) {
+        currentData.workgroups = newData.workgroups;
+      }
+    }, AppLocalizations.of(context).workGroups);
   }
 
-  Future download(Function() process, int count, String text) async {
+  /// Compares the dates
+  bool updated(String oldValue, String newValue) =>
+      oldValue != newValue;
+
+  /// Executes one download process and removes the download text
+  /// 
+  /// If it was the last process, it starts the app
+  Future<void> download(Future<void> Function() process, String text) async {
     await process();
-    for (int i = 0; i < count; i++) {
-      countCurrentDownloads--;
-    }
-    setState(() {
-      texts.remove(text);
-    });
-    if (countCurrentDownloads == 0) {
-      stopwatch.stop();
-      print(stopwatch.elapsedMilliseconds);
+    countCurrentDownloads--;
+    setState(() => texts.remove(text));
+
+    if (countCurrentDownloads <= 0) {
+      _stopwatch.stop();
+      print(_stopwatch.elapsedMilliseconds);
+      UpdatesData().saveUpdates();
+      print('everything loaded');
       // After download show app
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        int storedVersion = Storage.getInt(Keys.slidesVersion) ?? 0;
-        int currentVersion = 3;
+        final int storedVersion = Storage.getInt(Keys.slidesVersion) ?? 0;
+        const int currentVersion = 3;
         if (currentVersion != storedVersion) {
           Storage.setInt(Keys.slidesVersion, currentVersion);
+          print('open intro');
           Navigator.of(context).pushReplacementNamed('/intro');
         } else {
+          print('open home');
           Navigator.of(context).pushReplacementNamed('/home');
         }
       });

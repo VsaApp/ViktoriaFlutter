@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 
+/// Defines a tab bar view for mobile and desktop
 class TabProxy extends StatefulWidget {
+  // ignore: public_member_api_docs
   final List<Widget> tabs;
+  // ignore: public_member_api_docs
   final TabController controller;
+
+  /// Update listener
   final Function onUpdate;
+
+  /// List of all weekday strings in the user language
   final List<String> weekdays;
 
-  TabProxy({
+  // ignore: public_member_api_docs
+  const TabProxy({
     @required this.tabs,
     @required this.controller,
     @required this.onUpdate,
@@ -17,7 +25,9 @@ class TabProxy extends StatefulWidget {
   State<StatefulWidget> createState() => TabProxyState();
 }
 
+// ignore: public_member_api_docs
 class TabProxyState extends State<TabProxy> {
+
   @override
   void initState() {
     super.initState();
@@ -25,7 +35,6 @@ class TabProxyState extends State<TabProxy> {
 
   @override
   void dispose() {
-    widget.controller.dispose();
     super.dispose();
   }
 
@@ -77,7 +86,7 @@ class TabProxyState extends State<TabProxy> {
             indicatorWeight: 2.5,
             tabs: widget.weekdays.map((day) {
               return Container(
-                padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
+                padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
                 child: Text(day), // Show all weekday names
               );
             }).toList(),

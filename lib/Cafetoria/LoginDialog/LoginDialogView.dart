@@ -3,24 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import '../CafetoriaData.dart';
+import 'package:viktoriaflutter/Utils/Tags.dart';
+import 'package:viktoriaflutter/Utils/Downloader/CafetoriaData.dart';
 import 'LoginDialogWidget.dart';
 
+// ignore: public_member_api_docs
 class LoginDialogView extends LoginDialogState {
-  final formKey = GlobalKey<FormState>();
-  final focus = FocusNode();
-  bool credentialsCorrect = true;
-  final idController = TextEditingController();
-  final passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _focus = FocusNode();
+  bool _credentialsCorrect = true;
 
-  // Check the login
-  void checkForm() async {
-    credentialsCorrect = await checkLogin(
-        id: idController.text, password: passwordController.text);
-    if (formKey.currentState.validate()) {
+  /// Check the login
+  Future<void> checkForm() async {
+    _credentialsCorrect = await CafetoriaData()
+        .checkLogin(id: idController.text, password: passwordController.text);
+    if (_formKey.currentState.validate()) {
       // Save correct credentials
+      Storage.setString(
+          Keys.cafetoriaModified, DateTime.now().toIso8601String());
       Storage.setString(Keys.cafetoriaId, idController.text);
       Storage.setString(Keys.cafetoriaPassword, passwordController.text);
+      syncTags(syncExams: false, syncSelections: false);
       Navigator.pop(context);
       // Update UI
       widget.onFinished();
@@ -39,97 +42,110 @@ class LoginDialogView extends LoginDialogState {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(10.0),
+      margin: EdgeInsets.all(10),
       child: Column(
         children: <Widget>[
-          (online != 1
-              ?
-              // Offline information
-              Padding(
-                  padding: EdgeInsets.only(top: 10.0),
-                  child: Center(
-                    child: Column(
-                      children: <Widget>[
-                        Text(online == -1
-                            ? AppLocalizations.of(context).goOnlineToLogin
-                            : AppLocalizations.of(context)
-                                .failedToConnectToServer),
-                        FlatButton(
+          if (online != 1)
+            // Offline information
+            Padding(
+              padding: EdgeInsets.only(top: 10),
+              child: Center(
+                child: Column(
+                  children: <Widget>[
+                    Text(online == -1
+                        ? AppLocalizations.of(context).goOnlineToLogin
+                        : AppLocalizations.of(context).failedToConnectToServer),
+                    FlatButton(
+                      color: Theme.of(context).accentColor,
+                      onPressed: () async {
+                        // Retry
+                        prepareLogin();
+                      },
+                      child: Text(AppLocalizations.of(context).retry),
+                    )
+                  ],
+                ),
+              ),
+            )
+          else
+            // Show form
+            Form(
+              key: _formKey,
+              child: Column(
+                children: <Widget>[
+                  // ID input
+                  TextFormField(
+                    controller: idController,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return AppLocalizations.of(context).fieldCantBeEmpty;
+                      }
+                      if (!_credentialsCorrect) {
+                        return AppLocalizations.of(context)
+                            .credentialsNotCorrect;
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        hintText: AppLocalizations.of(context).cafetoriaId),
+                    onFieldSubmitted: (value) {
+                      FocusScope.of(context).requestFocus(_focus);
+                    },
+                  ),
+                  // Pin input
+                  TextFormField(
+                    controller: passwordController,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return AppLocalizations.of(context).fieldCantBeEmpty;
+                      }
+                      if (!_credentialsCorrect) {
+                        return AppLocalizations.of(context)
+                            .credentialsNotCorrect;
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        hintText:
+                            AppLocalizations.of(context).cafetoriaPassword),
+                    onFieldSubmitted: (value) {
+                      checkForm();
+                    },
+                    obscureText: true,
+                    focusNode: _focus,
+                  ),
+                  // Login button
+                  Row(children: <Widget>[
+                    Expanded(
+                        child: Padding(
+                      padding: EdgeInsets.only(top: 10, right: 5),
+                      child: RaisedButton(
+                        color: Theme.of(context).accentColor,
+                        onPressed: checkForm,
+                        child: Text(AppLocalizations.of(context).login),
+                      ),
+                    )),
+                    if (isLoggedIn)
+                      Expanded(
+                          child: Padding(
+                        padding: EdgeInsets.only(top: 10, left: 5),
+                        child: RaisedButton(
                           color: Theme.of(context).accentColor,
-                          child: Text(AppLocalizations.of(context).retry),
-                          onPressed: () async {
-                            // Retry
-                            prepareLogin();
+                          onPressed: () {
+                            Storage.remove(Keys.cafetoriaId);
+                            Storage.remove(Keys.cafetoriaPassword);
+                            Storage.setString(Keys.cafetoriaModified,
+                                DateTime.now().toIso8601String());
+                            syncTags(syncExams: false, syncSelections: false);
+                            Navigator.pop(context);
                           },
-                        )
-                      ],
-                    ),
-                  ),
-                )
-              :
-              // Show form
-              Form(
-                  key: formKey,
-                  child: Column(
-                    children: <Widget>[
-                      // ID input
-                      TextFormField(
-                        controller: idController,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return AppLocalizations.of(context)
-                                .fieldCantBeEmpty;
-                          }
-                          if (!credentialsCorrect) {
-                            return AppLocalizations.of(context)
-                                .credentialsNotCorrect;
-                          }
-                        },
-                        decoration: InputDecoration(
-                            hintText: AppLocalizations.of(context).cafetoriaId),
-                        onFieldSubmitted: (value) {
-                          FocusScope.of(context).requestFocus(focus);
-                        },
-                      ),
-                      // Pin input
-                      TextFormField(
-                        controller: passwordController,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return AppLocalizations.of(context)
-                                .fieldCantBeEmpty;
-                          }
-                          if (!credentialsCorrect) {
-                            return AppLocalizations.of(context)
-                                .credentialsNotCorrect;
-                          }
-                        },
-                        decoration: InputDecoration(
-                            hintText:
-                                AppLocalizations.of(context).cafetoriaPassword),
-                        onFieldSubmitted: (value) {
-                          checkForm();
-                        },
-                        obscureText: true,
-                        focusNode: focus,
-                      ),
-                      // Login button
-                      Container(
-                        margin: EdgeInsets.only(top: 20.0),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: RaisedButton(
-                            color: Theme.of(context).accentColor,
-                            onPressed: () {
-                              checkForm();
-                            },
-                            child: Text(AppLocalizations.of(context).login),
-                          ),
+                          child: Text(AppLocalizations.of(context).logout),
                         ),
-                      ),
-                    ],
-                  ),
-                ))
+                      )),
+                  ])
+                ],
+              ),
+            )
         ],
       ),
     );

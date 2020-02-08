@@ -1,56 +1,45 @@
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:flutter/material.dart';
 
-import '../CalendarModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 
+/// A card with all infos to one event
 class EventCard extends StatelessWidget {
-  EventCard({@required this.event}) : super();
+  // ignore: public_member_api_docs
+  const EventCard({@required this.event}) : super();
+
+  /// The event for the card
   final CalendarEvent event;
 
   @override
   Widget build(BuildContext context) {
-    String startDate = event.start != null
-        ? event.start.day.toString() +
-        '.' +
-        event.start.month.toString() +
-        '.' +
-        event.start.year.toString()
+    final String startDate = event.start != null
+        ? '${event.start.day.toString()}.${event.start.month.toString()}.${event.start.year.toString()}'
         : '';
-    String startTime = event.start != null
-        ? (event.start.hour
-        .toString()
-        .length == 1 ? '0' : '') +
-        event.start.hour.toString() +
-        ':' +
-        (event.start.minute
-            .toString()
-            .length == 1 ? '0' : '') +
-        event.start.minute.toString()
+    final String startTime = event.start != null
+        ? '${event.start.hour.toString().padLeft(2, '0')}:${event.start.minute.toString().padLeft(2, '0')}'
         : '';
-    if (startTime == '00:00') {
-      startTime = '';
+    final String endDate = event.end != null
+        ? '${event.end.day.toString()}.${event.end.month.toString()}.${event.end.year.toString()}'
+        : '';
+    final String endTime = event.end != null
+        ? '${event.end.hour.toString().padLeft(2, '0')}:${event.end.minute.toString().padLeft(2, '0')}'
+        : '';
+    String line1 = startDate;
+    String line2 = 'bis $endDate';
+    if (startDate != endDate) {
+      line1 += startTime != '00:00' ? ' ($startTime Uhr)' : '';
+      line2 += endTime != '00:00' ? ' ($endTime Uhr)' : '';
+    } else {
+      if (startTime != endTime) {
+        line2 = '$startTime - $endTime Uhr';
+      } else if (startTime != '00:00') {
+        line2 = '$startTime Uhr';
+      } else {
+        line2 = '';
+      }
     }
-    String endDate = event.end != null
-        ? event.end.day.toString() +
-        '.' +
-        event.end.month.toString() +
-        '.' +
-        event.end.year.toString()
-        : '';
-    String endTime = event.end != null
-        ? (event.end.hour
-        .toString()
-        .length == 1 ? '0' : '') +
-        event.end.hour.toString() +
-        ':' +
-        (event.end.hour
-            .toString()
-            .length == 1 ? '0' : '') +
-        event.end.minute.toString()
-        : '';
-    if (endTime == '23:59') {
-      endTime = '';
-    }
+
     return Padding(
       padding: EdgeInsets.only(bottom: 5),
       child: Card(
@@ -77,15 +66,10 @@ class EventCard extends StatelessWidget {
                       Container(
                         margin: EdgeInsets.only(bottom: 10),
                         child:
-                        event.info != '' ? Text(event.info) : Container(),
+                            event.info != '' ? Text(event.info) : Container(),
                       ),
-                      Text(startDate +
-                          (startTime != '' ? ' (' + startTime + ' Uhr)' : '')),
-                      startDate + startTime != endDate + endTime
-                          ? Text('bis ' +
-                          endDate +
-                          (endTime != '' ? ' (' + endTime + ' Uhr)' : ''))
-                          : Container()
+                      Text(line1),
+                      if (line2.isNotEmpty) Text(line2)
                     ],
                   ),
                 ),

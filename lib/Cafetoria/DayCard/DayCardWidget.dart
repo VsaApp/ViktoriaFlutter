@@ -2,21 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import '../CafetoriaModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 
+/// Shows a card with all cafetoria menus for one day
 class CafetoriaDayCard extends StatelessWidget {
+  // ignore: public_member_api_docs
   const CafetoriaDayCard({
-    Key key,
     @required this.day,
     @required this.showWeekday,
+    Key key,
   }) : super(key: key);
 
+  /// The loaded cafetoria day
   final CafetoriaDay day;
+
+  /// Option to de-/activate the weekday title
   final bool showWeekday;
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> menues = day.menues
+    List<Widget> menus = day.menus
         .map((menu) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -29,17 +34,16 @@ class CafetoriaDayCard extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                menu.time != '' ? Text(menu.time) : Container(),
-                day.menues.indexOf(menu) != day.menues.length - 1
-                    ? Text('')
-                    : Container(),
+                if(menu.time != '') Text(menu.time),
+                if(day.menus.indexOf(menu) != day.menus.length - 1)
+                    Text('')
               ],
             ))
         .toList();
-    if (menues.length == 0) {
-      menues = [
+    if (menus.isEmpty) {
+      menus = [
         Text(
-          AppLocalizations.of(context).cafetoriaNoMenues,
+          AppLocalizations.of(context).cafetoriaNoMenus,
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -61,12 +65,13 @@ class CafetoriaDayCard extends StatelessWidget {
                 title: showWeekday
                     ? Padding(
                         padding: EdgeInsets.only(bottom: 5),
-                        child: Text(day.weekday),
+                        child: Text(
+                            AppLocalizations.of(context).weekdays[day.day]),
                       )
                     : null,
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: menues,
+                  children: menus,
                 ),
                 onTap: () => launch('https://www.opc-asp.de/vs-aachen/'),
               ),

@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:viktoriaflutter/Utils/Localizations.dart';
+import 'package:viktoriaflutter/Utils/Downloader/CafetoriaData.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 import 'ActionFAB/ActionFABWidget.dart';
-import 'CafetoriaData.dart';
-import 'CafetoriaModel.dart';
 import 'CafetoriaPage.dart';
 import 'DayCard/DayCardWidget.dart';
 import 'LoginDialog/LoginDialogWidget.dart';
 
+// ignore: public_member_api_docs
 class CafetoriaPageView extends CafetoriaPageState {
-  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +20,10 @@ class CafetoriaPageView extends CafetoriaPageState {
           RefreshIndicator(
             onRefresh: reload,
             child: ListView(
-              padding: EdgeInsets.only(bottom: 70, left: 10, right: 10, top: 10),
+              padding:
+                  EdgeInsets.only(bottom: 70, left: 10, right: 10, top: 10),
               shrinkWrap: true,
-              children: Cafetoria.menues.days
+              children: Data.cafetoria.days
                   .map((day) => CafetoriaDayCard(
                         day: day,
                         showWeekday: true,
@@ -32,8 +32,8 @@ class CafetoriaPageView extends CafetoriaPageState {
             ),
           ),
           Positioned(
-            bottom: 16.0,
-            right: 16.0,
+            bottom: 16,
+            right: 16,
             child: Container(
               child: ActionFab(
                 onLogin: () {
@@ -46,9 +46,9 @@ class CafetoriaPageView extends CafetoriaPageState {
                             Text(AppLocalizations.of(context).cafetoriaLogin),
                         children: <Widget>[
                           LoginDialog(onFinished: () {
-                            download().then((a) {
+                            CafetoriaData().download(context).then((_) {
                               setState(() {
-                                saldo = Cafetoria.menues.saldo;
+                                saldo = Data.cafetoria.saldo;
                               });
                             });
                           })

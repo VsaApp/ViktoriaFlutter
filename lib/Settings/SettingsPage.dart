@@ -5,6 +5,7 @@ import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
 import 'SettingsView.dart';
 
+/// Page with user settings
 class SettingsPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -12,41 +13,31 @@ class SettingsPage extends StatefulWidget {
   }
 }
 
+// ignore: public_member_api_docs
 abstract class SettingsPageState extends State<SettingsPage> {
-  static List<String> grades = [
-    '5a',
-    '5b',
-    '5c',
-    '6a',
-    '6b',
-    '6c',
-    '7a',
-    '7b',
-    '7c',
-    '8a',
-    '8b',
-    '8c',
-    '9a',
-    '9b',
-    '9c',
-    'EF',
-    'Q1',
-    'Q2'
-  ];
-  String grade = grades[0];
+  /// The grade of the user
+  String grade = '5a';
+
+  /// All shortcuts pages
   List<String> pages = [];
+
+  /// The current shortcut page
   String page = '';
-  List<String> replacementplanVerion;
-  List<String> unitplanVerion;
-  bool sortReplacementPlan = true;
-  bool showReplacementPlanInUnitPlan = true;
-  bool getReplacementPlanNotifications = true;
+
+  // ignore: public_member_api_docs
+  bool sortSubstitutionPlan = true;
+  // ignore: public_member_api_docs
+  bool showSubstitutionPlanInTimetable = true;
+  // ignore: public_member_api_docs
+  bool getSubstitutionPlanNotifications = true;
+  // ignore: public_member_api_docs
   bool showShortCutDialog = true;
-  bool showWorkGroupsInUnitPlan = true;
-  bool showCalendarInUnitPlan = true;
-  bool showCafetoriaInUnitPlan = true;
-  bool muteDevice = false;
-  bool dev = false;
+  // ignore: public_member_api_docs
+  bool showWorkGroupsInTimetable = true;
+  // ignore: public_member_api_docs
+  bool showCalendarInTimetable = true;
+  // ignore: public_member_api_docs
+  bool showCafetoriaInTimetable = true;
 
   @override
   void initState() {
@@ -56,38 +47,30 @@ abstract class SettingsPageState extends State<SettingsPage> {
     super.initState();
   }
 
-  // Load saved settings
-  void loadSettings() async {
+  /// Load saved settings
+  Future<void> loadSettings() async {
     setState(() {
       grade = Storage.get(Keys.grade) ?? '';
-      dev = Storage.get(Keys.dev) ?? false;
-      sortReplacementPlan = Storage.getBool(Keys.sortReplacementPlan) ?? true;
-      showReplacementPlanInUnitPlan =
-          Storage.getBool(Keys.showReplacementPlanInUnitPlan) ?? true;
-      getReplacementPlanNotifications =
-          Storage.getBool(Keys.getReplacementPlanNotifications) ?? true;
-      showShortCutDialog = Storage.getBool(Keys.showShortCutDialog) ?? true;
-      replacementplanVerion =
-          Storage.getStringList(Keys.historyDate('replacementplan'));
-      unitplanVerion = Storage.getStringList(Keys.historyDate('unitplan'));
-      showWorkGroupsInUnitPlan =
-          Storage.getBool(Keys.showWorkGroupsInUnitPlan) ?? true;
-      showCalendarInUnitPlan =
-          Storage.getBool(Keys.showCalendarInUnitPlan) ?? true;
-      showCafetoriaInUnitPlan =
-          Storage.getBool(Keys.showCafetoriaInUnitPlan) ?? true;
-      replacementplanVerion =
-          Storage.getStringList(Keys.historyDate('replacementplan'));
-      unitplanVerion = Storage.getStringList(Keys.historyDate('unitplan'));
+      sortSubstitutionPlan = Storage.getBool(Keys.sortSubstitutionPlan) ?? true;
+      showSubstitutionPlanInTimetable =
+          Storage.getBool(Keys.showSubstitutionPlanInTimetable) ?? true;
+      getSubstitutionPlanNotifications =
+          Storage.getBool(Keys.getSubstitutionPlanNotifications) ?? true;
+      showShortCutDialog = Storage.getBool(Keys.showShortCutDialog) ?? false;
+      showWorkGroupsInTimetable =
+          Storage.getBool(Keys.showWorkGroupsInTimetable) ?? true;
+      showCalendarInTimetable =
+          Storage.getBool(Keys.showCalendarInTimetable) ?? true;
+      showCafetoriaInTimetable =
+          Storage.getBool(Keys.showCafetoriaInTimetable) ?? true;
       pages = [
-        AppLocalizations.of(context).unitPlan,
-        AppLocalizations.of(context).replacementPlan,
+        AppLocalizations.of(context).timetable,
+        AppLocalizations.of(context).substitutionPlan,
         AppLocalizations.of(context).calendar,
         AppLocalizations.of(context).cafetoria,
         AppLocalizations.of(context).workGroups,
         AppLocalizations.of(context).courses
       ];
-      muteDevice = Storage.getBool(Keys.muteService);
       page = pages[Storage.getInt(Keys.initialPage) ?? 0];
     });
   }

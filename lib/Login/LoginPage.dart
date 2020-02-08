@@ -1,54 +1,43 @@
-import 'dart:convert';
 import 'dart:io' show Platform;
 
-import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:viktoriaflutter/Home/HomePage.dart';
 
-import 'package:viktoriaflutter/Utils/Id.dart';
 import 'package:viktoriaflutter/Utils/Keys.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
-import 'package:viktoriaflutter/Utils/Tags.dart';
 import 'LoginView.dart';
 
+/// Page to handle the user login
 class LoginPage extends StatefulWidget {
   @override
   LoginPageView createState() => LoginPageView();
 }
 
+// ignore: public_member_api_docs
 abstract class LoginPageState extends State<LoginPage> {
-  final pupilFormKey = GlobalKey<FormState>();
-  final pupilFocus = FocusNode();
+  /// Key of the login form
+  final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
+
+  /// Focus node for the password text field
+  final FocusNode passwordFocus = FocusNode();
+
+  /// Defines if the app is online
   int online;
-  bool pupilCredentialsCorrect = true;
-  bool teacherCredentialsCorrect = true;
-  static List<String> grades = [
-    '5a',
-    '5b',
-    '5c',
-    '6a',
-    '6b',
-    '6c',
-    '7a',
-    '7b',
-    '7c',
-    '8a',
-    '8b',
-    '8c',
-    '9a',
-    '9b',
-    '9c',
-    'EF',
-    'Q1',
-    'Q2'
-  ];
-  String grade = grades[0];
-  final usernameController = TextEditingController();
-  final passwordController = TextEditingController();
-  final idController = TextEditingController();
+
+  /// Defines if the credentials are correct
+  bool credentialsCorrect = true;
+
+  /// Controller for username text field
+  final TextEditingController usernameController = TextEditingController();
+
+  /// Controller for password text field
+  final TextEditingController passwordController = TextEditingController();
+
+  /// Defines if currently checks the credentials
   bool isCheckingForm = false;
 
   @override
@@ -56,8 +45,7 @@ abstract class LoginPageState extends State<LoginPage> {
     if (Platform.isAndroid) {
       WidgetsBinding.instance.addPostFrameCallback((a) {
         MethodChannel('viktoriaflutter').invokeMethod('applyTheme', {
-          'color': Theme
-              .of(context)
+          'color': Theme.of(context)
               .primaryColor
               .value
               .toRadixString(16)
@@ -69,49 +57,43 @@ abstract class LoginPageState extends State<LoginPage> {
     super.initState();
   }
 
-  // Check if credentials entered are correct
-  void checkForm() async {
+  /// Check if credentials entered are correct
+  Future checkForm() async {
     setState(() => isCheckingForm = true);
-    String _username =
-        sha256.convert(utf8.encode(usernameController.text)).toString();
-    String _password =
-        sha256.convert(utf8.encode(passwordController.text)).toString();
-    String response =
-    await fetchData('/login/$_username/$_password/', auth: false);
+    final Response response = await fetch(
+      Urls.login,
+      auth: true,
+      username: usernameController.text,
+      password: passwordController.text,
+    );
 
     try {
-      pupilCredentialsCorrect = json.decode(response)['status'];
+      credentialsCorrect = response.statusCode == StatusCodes.success;
     } catch (e) {
       online = -1;
-      Scaffold.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context).failedToCheckLogin),
-          action: SnackBarAction(
-            label: AppLocalizations.of(context).ok,
-            onPressed: () {},
+      if (HomePageState.isInForeground) {
+        Scaffold.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context).failedToCheckLogin),
+            action: SnackBarAction(
+              label: AppLocalizations.of(context).ok,
+              onPressed: () {},
+            ),
           ),
-        ),
-      );
+        );
+      }
       setState(() => isCheckingForm = false);
       return;
     }
 
-    if (pupilFormKey.currentState.validate()) {
+    if (loginFormKey.currentState.validate()) {
       // Save correct credentials
 
       askAgbDse(() async {
         Storage.setString(Keys.username, usernameController.text);
         Storage.setString(Keys.password, passwordController.text);
-        Storage.setString(Keys.grade, grade);
 
-        Map<String, dynamic> alreadyInitialized = await isInitialized();
-        if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-          askSync();
-        } else if (alreadyInitialized != null) {
-          askOldDataLoading();
-        } else {
-          Navigator.pushReplacementNamed(context, '/');
-        }
+        Navigator.pushReplacementNamed(context, '/');
       });
     } else {
       passwordController.clear();
@@ -119,33 +101,31 @@ abstract class LoginPageState extends State<LoginPage> {
     setState(() => isCheckingForm = false);
   }
 
-  launchURL(String url) async {
-    if (url == null) return;
+  /// Launches an url in the default browser
+  Future launchURL(String url) async {
+    if (url == null) {
+      return;
+    }
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      throw 'Could not launch $url';
+      throw Exception('Could not launch $url');
     }
   }
 
+  /// Ask the user to accept the agb and dse
   void askAgbDse(Function onOk) {
     showDialog<String>(
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context1) {
           return SimpleDialog(
-              title: Text(AppLocalizations
-                  .of(context)
-                  .agbDse,
-                  style: TextStyle(color: Theme
-                      .of(context)
-                      .accentColor)),
+              title: Text(AppLocalizations.of(context).agbDse,
+                  style: TextStyle(color: Theme.of(context).accentColor)),
               children: <Widget>[
                 Padding(
                     padding: EdgeInsets.only(left: 20, right: 20),
-                    child: Text(AppLocalizations
-                        .of(context)
-                        .accecptDseAndAgb)),
+                    child: Text(AppLocalizations.of(context).acceptDseAndAgb)),
                 Padding(
                     padding: EdgeInsets.only(right: 20),
                     child: Column(
@@ -153,156 +133,41 @@ abstract class LoginPageState extends State<LoginPage> {
                         children: <Widget>[
                           FlatButton(
                             padding: EdgeInsets.all(0),
+                            onPressed: () => launchURL(agbUrl),
                             child: Text(
-                              AppLocalizations
-                                  .of(context)
-                                  .readAgbDse,
+                              AppLocalizations.of(context).readAgbDse,
                               style: TextStyle(
-                                  color: Theme
-                                      .of(context)
-                                      .accentColor),
+                                  color: Theme.of(context).accentColor),
                               textAlign: TextAlign.end,
                             ),
-                            onPressed: () => launchURL(agbUrl),
                           ),
                           Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
                                 FlatButton(
                                   padding: EdgeInsets.all(0),
-                                  child: Text(
-                                      AppLocalizations
-                                          .of(context)
-                                          .reject,
-                                      style: TextStyle(
-                                          color: Theme
-                                              .of(context)
-                                              .accentColor),
-                                      textAlign: TextAlign.end),
                                   onPressed: () => Navigator.pop(context),
+                                  child: Text(
+                                      AppLocalizations.of(context).reject,
+                                      style: TextStyle(
+                                          color: Theme.of(context).accentColor),
+                                      textAlign: TextAlign.end),
                                 ),
                                 FlatButton(
-                                    padding: EdgeInsets.all(0),
-                                    child: Text(
-                                        AppLocalizations
-                                            .of(context)
-                                            .accept,
-                                        style: TextStyle(
-                                            color:
-                                            Theme
-                                                .of(context)
-                                                .accentColor),
-                                        textAlign: TextAlign.end),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      onOk();
-                                    }),
+                                  padding: EdgeInsets.all(0),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    onOk();
+                                  },
+                                  child: Text(
+                                      AppLocalizations.of(context).accept,
+                                      style: TextStyle(
+                                          color: Theme.of(context).accentColor),
+                                      textAlign: TextAlign.end),
+                                ),
                               ])
                         ]))
               ]);
-        });
-  }
-
-  void askSync() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(AppLocalizations
-                .of(context)
-                .syncPhone),
-            content: Column(
-              children: <Widget>[
-                Text(AppLocalizations
-                    .of(context)
-                    .syncPhoneDescription),
-                TextFormField(
-                  controller: idController,
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return AppLocalizations
-                          .of(context)
-                          .fieldCantBeEmpty;
-                    }
-                  },
-                  decoration: InputDecoration(
-                      hintText: AppLocalizations
-                          .of(context)
-                          .syncPhoneId),
-                  onFieldSubmitted: (value) async {
-                    Id.overrideId(value);
-                    print(value);
-                    Map<String, dynamic> alreadyInitialized =
-                    await isInitialized();
-                    if (alreadyInitialized != null) {
-                      askOldDataLoading();
-                    } else {
-                      Navigator.pushReplacementNamed(context, '/');
-                    }
-                  },
-                  obscureText: false,
-                ),
-              ],
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text(AppLocalizations
-                    .of(context)
-                    .skip),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.pushReplacementNamed(context, '/');
-                },
-              ),
-              FlatButton(
-                child: Text(AppLocalizations
-                    .of(context)
-                    .ok),
-                onPressed: () async {
-                  Id.overrideId(idController.text);
-                  await syncWithTags();
-                  Navigator.of(context).pop();
-                  Navigator.pushReplacementNamed(context, '/');
-                },
-              ),
-            ],
-          );
-        });
-  }
-
-  void askOldDataLoading() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(AppLocalizations
-                .of(context)
-                .loadOldData),
-            content: Text(AppLocalizations
-                .of(context)
-                .loadOldDataDescription),
-            actions: <Widget>[
-              FlatButton(
-                child: Text(AppLocalizations
-                    .of(context)
-                    .no),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.pushReplacementNamed(context, '/');
-                },
-              ),
-              FlatButton(
-                child: Text(AppLocalizations
-                    .of(context)
-                    .yes),
-                onPressed: () async {
-                  await syncWithTags();
-                  Navigator.of(context).pop();
-                  Navigator.pushReplacementNamed(context, '/');
-                },
-              ),
-            ],
-          );
         });
   }
 }

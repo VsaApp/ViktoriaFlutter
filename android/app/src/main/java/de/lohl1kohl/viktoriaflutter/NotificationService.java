@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Vibrator;
+import android.os.Handler;
+import android.os.Looper;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -31,29 +33,22 @@ public class NotificationService extends FirebaseMessagingService {
         System.out.println(remoteMessage.getNotification());
         System.out.println(remoteMessage.getData());
 
-        if (remoteMessage.getNotification() == null && remoteMessage.getData().get("notificationTitle") != null) {
-            if (remoteMessage.getData().get("type").equals("replacementplan")) {
-                int changes = remoteMessage.getData().get("notificationBody").length() - remoteMessage.getData().get("notificationBody").replace("\n", "").length() + 1;
-                showNotification(
-                        remoteMessage.getData().get("notificationTitle"),
-                        changes > 1 ? String.valueOf(changes) + " Änderungen" : remoteMessage.getData().get("notificationBody"),
-                        remoteMessage.getData().get("notificationBody"),
-                        "replacementplan_channel",
-                        Arrays.asList(new String[]{"Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"}).indexOf(remoteMessage.getData().get("notificationTitle")),
-                        remoteMessage.getData().get("notificationTitle") + " " + remoteMessage.getData().get("notificationBody"),
-                        remoteMessage.getData()
-                );
+        if (remoteMessage.getNotification() == null && remoteMessage.getData().get("title") != null) {
+            if (remoteMessage.getData().get("type").equals("substitution plan")) {
+                int changes = remoteMessage.getData().get("body").length()
+                        - remoteMessage.getData().get("body").replace("\n", "").length() + 1;
+                showNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("body"),
+                        remoteMessage.getData().get("bigBody"), "substitutionPlan_channel",
+                        Arrays.asList(new String[] { "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag" })
+                                .indexOf(remoteMessage.getData().get("title")),
+                        remoteMessage.getData().get("title") + " " + remoteMessage.getData().get("body"),
+                        remoteMessage.getData());
                 System.out.println("notify");
             } else {
-                showNotification(
-                        remoteMessage.getData().get("notificationTitle"),
-                        remoteMessage.getData().get("notificationBody"),
-                        remoteMessage.getData().get("notificationBody"),
-                        remoteMessage.getData().get("type") + "_channel",
-                        (new Random().nextInt() * 10000 + 5),
-                        remoteMessage.getData().get("notificationTitle"),
-                        remoteMessage.getData()
-                );
+                showNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("body"),
+                        remoteMessage.getData().get("bigBody"), remoteMessage.getData().get("type") + "_channel",
+                        (new Random().nextInt() * 10000 + 5), remoteMessage.getData().get("title"),
+                        remoteMessage.getData());
             }
         } else if (remoteMessage.getNotification() == null) {
             System.out.println("Launch listener...");
@@ -62,10 +57,16 @@ public class NotificationService extends FirebaseMessagingService {
     }
 
     public void informGui(String type, Map<String, String> data) {
-        new MethodChannel(flutterView, CHANNEL).invokeMethod(type, data);
+        try {
+            new Handler(Looper.getMainLooper())
+                    .post(() -> new MethodChannel(flutterView, CHANNEL).invokeMethod(type, data));
+        } catch (Exception e) {
+            System.out.println("Failed to inform GUI!");
+        }
     }
 
-    public void showNotification(String title, String body, String bodyLong, String channelId, int notificationId, String ticker, Map<String, String> data) {
+    public void showNotification(String title, String body, String bodyLong, String channelId, int notificationId,
+            String ticker, Map<String, String> data) {
 
         AudioManager am = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
 
@@ -73,20 +74,15 @@ public class NotificationService extends FirebaseMessagingService {
         intent.putExtra("channel", channelId);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         int uniqueInt = (int) (System.currentTimeMillis() & 0xfffffff);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, uniqueInt, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, uniqueInt, intent,
+                PendingIntent.FLAG_CANCEL_CURRENT);
 
         NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext(), channelId)
-                .setContentTitle(title)
-                .setContentText(body)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(title).setContentText(body).setSmallIcon(R.mipmap.ic_launcher)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(bodyLong))
-                .setContentIntent(pendingIntent)
-                .setTicker(ticker)
-                .setColor(Color.parseColor("#ff5bc638"))
-                .setGroup("group" + Integer.toString(notificationId))
-                .setAutoCancel(true)
-                .setColorized(true);
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(bodyLong)).setContentIntent(pendingIntent)
+                .setTicker(ticker).setColor(Color.parseColor("#ff5bc638"))
+                .setGroup("group" + Integer.toString(notificationId)).setAutoCancel(true).setColorized(true);
 
         if (am != null && am.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
             System.out.println("Vibrate");
@@ -94,11 +90,11 @@ public class NotificationService extends FirebaseMessagingService {
             if (v != null) {
                 v.vibrate(300);
             } else {
-                notification.setVibrate(new long[]{300, 300});
+                notification.setVibrate(new long[] { 300, 300 });
             }
         } else {
             System.out.println("Silent");
-            notification.setVibrate(new long[]{0});
+            notification.setVibrate(new long[] { 0 });
         }
 
         NotificationManagerCompat manager = NotificationManagerCompat.from(getApplicationContext());

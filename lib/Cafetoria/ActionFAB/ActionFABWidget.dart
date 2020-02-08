@@ -2,13 +2,22 @@ import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Localizations.dart';
 
+/// Floating action button to show the keyfob and login data
 class ActionFab extends StatefulWidget {
+  /// Login callback
   final Function() onLogin;
+
+  /// Order menu callback
   final Function() onOrder;
+
+  /// The keyfob saldo
   final double saldo;
+
+  /// The current data loading state
   final bool loading;
 
-  ActionFab({
+  // ignore: public_member_api_docs
+  const ActionFab({
     @required this.onLogin,
     @required this.onOrder,
     @required this.saldo,
@@ -19,19 +28,19 @@ class ActionFab extends StatefulWidget {
   ActionFabState createState() => ActionFabState();
 }
 
+// ignore: public_member_api_docs
 class ActionFabState extends State<ActionFab>
     with SingleTickerProviderStateMixin {
-  bool isOpened = false;
-  AnimationController animationController;
-  Animation<Color> buttonColor;
-  Animation<double> translateButton;
-  Curve curve = Curves.easeOut;
-  double fabHeight = 46.0;
-  String grade;
+  bool _isOpened = false;
+  AnimationController _animationController;
+  Animation<Color> _buttonColor;
+  Animation<double> _translateButton;
+  static const Curve _curve = Curves.easeOut;
+  static const double _fabHeight = 46;
 
   @override
-  initState() {
-    animationController =
+  void initState() {
+    _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 250))
           ..addListener(() {
             setState(() {});
@@ -39,28 +48,26 @@ class ActionFabState extends State<ActionFab>
     // Create animations
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       setState(() {
-        buttonColor = ColorTween(
-          begin: Theme
-              .of(context)
-              .primaryColor,
+        _buttonColor = ColorTween(
+          begin: Theme.of(context).primaryColor,
           end: Color(0xFF275600),
         ).animate(CurvedAnimation(
-          parent: animationController,
+          parent: _animationController,
           curve: Interval(
-            0.00,
-            1.00,
+            0,
+            1,
             curve: Curves.linear,
           ),
         ));
-        translateButton = Tween<double>(
-          begin: fabHeight,
+        _translateButton = Tween<double>(
+          begin: _fabHeight,
           end: 0,
         ).animate(CurvedAnimation(
-          parent: animationController,
+          parent: _animationController,
           curve: Interval(
-            0.0,
+            0,
             0.75,
-            curve: curve,
+            curve: _curve,
           ),
         ));
       });
@@ -69,28 +76,29 @@ class ActionFabState extends State<ActionFab>
   }
 
   @override
-  dispose() {
-    animationController.dispose();
+  void dispose() {
+    _animationController.dispose();
     super.dispose();
   }
 
-  animate() {
-    if (!isOpened) {
-      animationController.forward();
+  /// Animates the floating action buttons up or down
+  void _animate() {
+    if (!_isOpened) {
+      _animationController.forward();
     } else {
-      animationController.reverse();
+      _animationController.reverse();
     }
-    isOpened = !isOpened;
+    _isOpened = !_isOpened;
   }
 
-  // Smaller order FAB
+  /// Small order FAB
   Widget order() {
     return Container(
       child: FloatingActionButton(
         heroTag: 'order',
         mini: true,
         onPressed: () {
-          animate();
+          _animate();
           widget.onOrder();
         },
         child: Icon(Icons.payment, color: Colors.white),
@@ -98,14 +106,14 @@ class ActionFabState extends State<ActionFab>
     );
   }
 
-  // Smaller login FAB
+  /// Small login FAB
   Widget login() {
     return Container(
       child: FloatingActionButton(
         heroTag: 'login',
         mini: true,
         onPressed: () {
-          animate();
+          _animate();
           widget.onLogin();
         },
         child: Icon(Icons.vpn_key, color: Colors.white),
@@ -113,21 +121,21 @@ class ActionFabState extends State<ActionFab>
     );
   }
 
-  // Toggle FAB
+  /// Toggle FAB
   Widget toggle() {
     return Container(
       child: FloatingActionButton.extended(
         heroTag: 'toggle',
-        backgroundColor: buttonColor.value,
-        onPressed: animate,
+        backgroundColor: _buttonColor.value,
+        onPressed: _animate,
         icon: Icon(
           Icons.euro_symbol,
           color: Colors.white,
         ),
         label: widget.loading
             ? SizedBox(
-                height: 25.0,
-                width: 25.0,
+                height: 25,
+                width: 25,
                 child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                   strokeWidth: 3,
@@ -145,27 +153,27 @@ class ActionFabState extends State<ActionFab>
 
   @override
   Widget build(BuildContext context) {
-    if (translateButton == null) {
+    if (_translateButton == null) {
       return Container();
     }
-    // List of FABs
+    // List of floating action buttons
     return Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Transform(
             transform: Matrix4.translationValues(
-              0.0,
-              translateButton.value * 2,
-              0.0,
+              0,
+              _translateButton.value * 2,
+              0,
             ),
             child: order(),
           ),
           Transform(
             transform: Matrix4.translationValues(
-              0.0,
-              translateButton.value * 1,
-              0.0,
+              0,
+              _translateButton.value * 1,
+              0,
             ),
             child: login(),
           ),

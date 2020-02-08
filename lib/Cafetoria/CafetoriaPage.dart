@@ -1,33 +1,41 @@
 import 'package:flutter/material.dart';
 
 import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Utils/Network.dart';
 import 'package:viktoriaflutter/Utils/Storage.dart';
+import 'package:viktoriaflutter/Utils/Tags.dart';
 import 'package:viktoriaflutter/Utils/Update.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import 'CafetoriaData.dart';
-import 'CafetoriaModel.dart';
+import 'package:viktoriaflutter/Utils/Downloader/CafetoriaData.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 import 'CafetoriaView.dart';
 
+/// This Page shows all menus for the current week and the user saldo if logged in
 class CafetoriaPage extends StatefulWidget {
   @override
   CafetoriaPageView createState() => CafetoriaPageView();
 }
 
+// ignore: public_member_api_docs
 abstract class CafetoriaPageState extends State<CafetoriaPage> {
-  double saldo = Cafetoria.menues.saldo;
+  /// The current keyfob saldo
+  double saldo = Data.cafetoria.saldo;
+
+  /// The current data loading state
   bool loading = true;
 
+  /// Reloads the cafetoria data
   Future reload() async {
     setState(() {
-     loading = true; 
+      loading = true;
     });
-    download(onFinished: (successfully) {
-      dataUpdated(context, successfully, AppLocalizations.of(context).cafetoria);
-    }).then((a) {
-      setState(() {
-        saldo = Cafetoria.menues.saldo;
-        loading = false;
-      });
+    await syncWithTags();
+    final successfully =
+        await CafetoriaData().download(context) == StatusCodes.success;
+    dataUpdated(context, successfully, AppLocalizations.of(context).cafetoria);
+    setState(() {
+      saldo = Data.cafetoria.saldo;
+      loading = false;
     });
   }
 
@@ -40,9 +48,9 @@ abstract class CafetoriaPageState extends State<CafetoriaPage> {
         loading = false;
       });
     } else {
-      download().then((a) {
+      CafetoriaData().download(context).then((_) {
         setState(() {
-          saldo = Cafetoria.menues.saldo;
+          saldo = Data.cafetoria.saldo;
           loading = false;
         });
       });

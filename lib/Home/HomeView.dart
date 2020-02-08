@@ -1,43 +1,38 @@
-import 'dart:io' show Platform;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-import '../Cafetoria/CafetoriaPage.dart';
-import '../Calendar/CalendarPage.dart';
-import '../Courses/CoursesPage.dart';
-import 'package:viktoriaflutter/Utils/Keys.dart';
+import 'package:viktoriaflutter/Nextcloud/NextcloudPage.dart';
+import 'package:viktoriaflutter/Cafetoria/CafetoriaPage.dart';
+import 'package:viktoriaflutter/Calendar/CalendarPage.dart';
+import 'package:viktoriaflutter/Courses/CoursesPage.dart';
 import 'package:viktoriaflutter/Utils/Localizations.dart';
-import '../ReplacementPlan/ReplacementPlanPage.dart';
-import '../Settings/SettingsPage.dart';
-import 'package:viktoriaflutter/Utils/Storage.dart';
-import '../UnitPlan/UnitPlanPage.dart';
-import '../WorkGroups/WorkGroupsPage.dart';
-import 'HomePage.dart';
-import 'OfflineWidget.dart';
-import 'ShortCutDialog/ShortCutDialogWidget.dart';
+import 'package:viktoriaflutter/SubstitutionPlan/SubstitutionPlanPage.dart';
+import 'package:viktoriaflutter/Settings/SettingsPage.dart';
+import 'package:viktoriaflutter/Timetable/TimetablePage.dart';
+import 'package:viktoriaflutter/WorkGroups/WorkGroupsPage.dart';
+import 'package:viktoriaflutter/Home/HomePage.dart';
+import 'package:viktoriaflutter/Home/OfflineWidget.dart';
 
+// ignore: public_member_api_docs
 class HomePageView extends HomePageState {
   @override
   Widget build(BuildContext context) {
     // List of pages
-    List<Page> pages = [
-      Page(AppLocalizations.of(context).unitPlan, Icons.event_note,
-          UnitPlanPage(),
-          url:
-          'https://${Storage.getString(Keys.username)}:${Storage.getString(Keys
-              .password)}@www.viktoriaschule-aachen.de/sundvplan/sps/index.html'),
-      Page(AppLocalizations.of(context).replacementPlan,
-          Icons.format_list_numbered, ReplacementPlanPage(),
-          url:
-          'https://${Storage.getString(Keys.username)}:${Storage.getString(Keys
-              .password)}@www.viktoriaschule-aachen.de/sundvplan/vps/index.html'),
+    final List<Page> pages = [
+      Page(AppLocalizations.of(context).timetable, Icons.event_note,
+          TimetablePage(),
+          url: 'https://www.viktoriaschule-aachen.de/sundvplan/sps/index.html'),
+      Page(AppLocalizations.of(context).substitutionPlan,
+          Icons.format_list_numbered, SubstitutionPlanPage(),
+          url: 'https://www.viktoriaschule-aachen.de/sundvplan/vps/index.html'),
       Page(AppLocalizations.of(context).calendar, Icons.calendar_today,
           CalendarPage()),
       Page(AppLocalizations.of(context).cafetoria, Icons.fastfood,
           CafetoriaPage(),
           url: 'https://www.opc-asp.de/vs-aachen/'),
+      Page(AppLocalizations.of(context).cloud, Icons.cloud, NextcloudPage(),
+          url: 'https://nextcloud.aachen-vsa.logoip.de/'),
       Page(AppLocalizations.of(context).workGroups, MdiIcons.soccer,
           WorkGroupsPage()),
       Page(AppLocalizations.of(context).courses, Icons.person, CoursesPage()),
@@ -46,14 +41,14 @@ class HomePageView extends HomePageState {
     ];
 
     // Map pages to drawer items
-    List<DrawerItem> drawerItems = pages
+    final List<DrawerItem> drawerItems = pages
         .map((Page page) => DrawerItem(page.name, page.icon, page.url))
         .toList();
 
     // Create list of widget options
-    var drawerOptions = <Widget>[];
-    for (var i = 0; i < drawerItems.length; i++) {
-      var d = drawerItems[i];
+    final drawerOptions = <Widget>[];
+    for (int i = 0; i < drawerItems.length; i++) {
+      final d = drawerItems[i];
       drawerOptions.add(ListTile(
         leading: Icon(d.icon),
         title: Text(
@@ -66,45 +61,6 @@ class HomePageView extends HomePageState {
         onTap: () => onSelectItem(i),
       ));
     }
-    // Only show the dialog only at the opening
-    if (!dialogShown) {
-      dialogShown = true;
-
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        bool selectedSubjects = Storage.getKeys().where((key) {
-          if (key
-              .startsWith('unitPlan-${Storage.getString(Keys.grade)}-')) {
-            if ('-'
-                .allMatches(key)
-                .length == 3)
-              return key.split('-')[key
-                  .split('-')
-                  .length - 1] != '5';
-            return true;
-          }
-          return false;
-        }).length >
-            0;
-        // Check if user selected anything in the unit plan (setup)
-        if (selectedSubjects) {
-          // Check if short cut dialog enabled
-          if (showDialog1) {
-            showDialog<String>(
-                context: context,
-                barrierDismissible: true,
-                builder: (BuildContext context1) {
-                  return ShortCutDialog(
-                    items: drawerItems,
-                    selectItem: onSelectItem,
-                  );
-                });
-          }
-        } else {
-          String grade = Storage.getString(Keys.grade);
-          // TODO: Add scan dialog
-        }
-      });
-    }
 
     appScaffold = Scaffold(
       key: scaffoldKey,
@@ -112,35 +68,35 @@ class HomePageView extends HomePageState {
         // Current page's title
         title: FlatButton(
           padding: EdgeInsets.only(left: 0),
+          onPressed: () => launchURL(drawerItems[selectedDrawerIndex].url),
           child: Text(drawerItems[selectedDrawerIndex].title,
               style: TextStyle(color: Colors.white, fontSize: 20)),
-          onPressed: () => launchURL(drawerItems[selectedDrawerIndex].url),
         ),
-        elevation: 0.0,
+        elevation: 0,
         actions: <Widget>[
-          showWeek
-              ? Container(
-            margin: EdgeInsets.all(10),
-            child: OutlineButton(
+          if (showWeek)
+            Container(
+              margin: EdgeInsets.all(10),
+              child: OutlineButton(
                 borderSide: BorderSide(
                   color: Colors.white,
-                  width: 1.0,
+                  width: 1,
                 ),
                 color: Colors.white,
                 highlightedBorderColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
+                  borderRadius: BorderRadius.circular(30),
                 ),
+                onPressed: () => null,
                 child: Text(
-                  currentWeek,
+                  currentWeek == 0 ? 'A' : 'B',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                   ),
                 ),
-                onPressed: weekPressed),
-          )
-              : Container()
+              ),
+            )
         ],
       ),
       drawer: Drawer(
@@ -148,21 +104,19 @@ class HomePageView extends HomePageState {
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
+              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
               child: Column(
                 children: <Widget>[
                   // Logo
-                  GestureDetector(
-                    onTap: logoClick,
-                    child: Container(
-                      height: 100.0,
-                      child: SvgPicture.asset(
-                        'assets/images/logo_white.svg',
-                      ),
+                  Container(
+                    height: 100,
+                    child: SvgPicture.asset(
+                      'assets/images/logo_white.svg',
                     ),
                   ),
                   // Grade
                   Text(
-                    HomePageState.grade,
+                    AppLocalizations.of(context).gradeName(HomePageState.grade),
                     style: TextStyle(
                       fontSize: 20,
                       color: Colors.white,
@@ -170,7 +124,6 @@ class HomePageView extends HomePageState {
                   )
                 ],
               ),
-              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
             ),
             // Drawer options
             Column(children: drawerOptions)
@@ -180,7 +133,7 @@ class HomePageView extends HomePageState {
       // Current page
       body: Stack(
         children: <Widget>[
-          !offlineShown ? OfflineWidget() : Container(),
+          if(!offlineShown) OfflineWidget(),
           getDrawerItemWidget(selectedDrawerIndex, pages),
         ],
       ),

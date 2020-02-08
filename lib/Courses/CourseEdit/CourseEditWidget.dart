@@ -1,54 +1,35 @@
 import 'package:flutter/material.dart';
 
-import 'package:viktoriaflutter/Utils/Keys.dart';
-import 'package:viktoriaflutter/Utils/Selection.dart';
-import 'package:viktoriaflutter/Utils/Storage.dart';
-import '../../UnitPlan/UnitPlanData.dart' as UnitPlan;
-import '../../UnitPlan/UnitPlanModel.dart';
+import 'package:viktoriaflutter/Utils/Models.dart';
 import 'CourseEditView.dart';
 
+/// Dialog to edit course properties
 class CourseEdit extends StatefulWidget {
-  final UnitPlanSubject subject;
-  final List<String> blocks;
+  /// One subject of the course to edit
+  final TimetableSubject subject;
+
+  /// Exam changed listener
   final Function onExamChange;
 
-  CourseEdit(
-      {Key key,
-      @required this.subject,
-      @required this.blocks,
-      this.onExamChange})
-      : super(key: key);
+  // ignore: public_member_api_docs
+  const CourseEdit({
+    @required this.subject,
+    this.onExamChange,
+    Key key,
+  }) : super(key: key);
 
   @override
   CourseEditView createState() => CourseEditView();
 }
 
+// ignore: public_member_api_docs
 abstract class CourseEditState extends State<CourseEdit> {
+  /// Writing exams option
   bool exams = false;
-  List<dynamic> subjects1 = [];
 
   @override
   void initState() {
-    setState(() {
-      exams = Storage.getBool(Keys.exams(Storage.getString(Keys.grade),
-          widget.subject.lesson.toUpperCase())) ??
-          true;
-    });
-    List<UnitPlanDay> days = UnitPlan.getUnitPlan();
-    days.forEach((day) {
-      day.lessons.forEach((lesson) {
-        UnitPlanSubject _selected = getSelectedSubject(
-            lesson.subjects, days.indexOf(day), day.lessons.indexOf(lesson));
-        if (_selected == null) return;
-        if (_selected.lesson == widget.subject.lesson) {
-          subjects1.add({
-            'weekday': days.indexOf(day),
-            'unit': day.lessons.indexOf(lesson),
-            'subject': _selected
-          });
-        }
-      });
-    });
+    exams = widget.subject.writeExams;
     super.initState();
   }
 }
