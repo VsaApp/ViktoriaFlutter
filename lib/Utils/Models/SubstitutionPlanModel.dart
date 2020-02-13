@@ -117,12 +117,16 @@ class SubstitutionPlanDay {
   List<String> filterUnparsed({String grade}) {
     print('filter u ${date.weekday}');
     myUnparsed = [];
-    if (grade == null) {
-      filteredGrade = Data.timetable.grade;
-      myUnparsed..addAll(unparsed[filteredGrade])..addAll(unparsed['other']);
-      return null;
+    try {
+      if (grade == null) {
+        filteredGrade = Data.timetable.grade;
+        myUnparsed..addAll(unparsed[filteredGrade])..addAll(unparsed['other']);
+        return null;
+      }
+      return [...unparsed[grade]..addAll(unparsed['other'])];
+    } catch (_) {
+      return [];
     }
-    return [...unparsed[grade]..addAll(unparsed['other'])];
   }
 
   /// Set the filtered lists
